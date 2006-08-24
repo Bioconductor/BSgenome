@@ -1,0 +1,16 @@
+import(Biostrings)
+
+exportClasses(
+    "BStringGenome"
+)
+
+exportMethods(
+    ## Generics defined elsewhere
+    initialize, show, "$",
+    ## New generics
+    unload
+)
+
+export(
+    buildDataFiles
+)
