@@ -6,7 +6,8 @@
 
 \description{
   This function is used to build the data files included
-  in the genome data packages like HsapiensGenome.hg18.
+  in the "Biostring-based genome data packages" (aka "BSgenome
+  packages") like the BSgenome.Hsapiens.UCSC.hg18 package.
   It's intended to be used by the maintainer of these
   packages, not by the end-user.
 }

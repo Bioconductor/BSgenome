@@ -1,23 +1,23 @@
-\name{BStringGenome}
+\name{BSgenome}
 \docType{class}
 
 % Classes
-\alias{class:BStringGenome}
-\alias{BStringGenome-class}
+\alias{class:BSgenome}
+\alias{BSgenome-class}
 
 % Constructor-like functions and generics:
-\alias{initialize,BStringGenome-method}
+\alias{initialize,BSgenome-method}
 
 % Standard generic methods:
-\alias{show,BStringGenome-method}
-\alias{$,BStringGenome-method}
+\alias{show,BSgenome-method}
+\alias{$,BSgenome-method}
 
 % Other functions and generics:
 \alias{unload}
-\alias{unload,BStringGenome-method}
+\alias{unload,BSgenome-method}
 
 
-\title{The BStringGenome class}
+\title{The BSgenome class}
 
 \description{
   A container for the complete genome sequence of a given specie.
@@ -29,7 +29,7 @@
 
 \section{Standard generic methods}{
   In the code snippets below,
-  \code{x} is a BStringGenome object
+  \code{x} is a BSgenome object
   and \code{name} is the name of a chromosome (character-string).
 
   \describe{
@@ -42,7 +42,7 @@
 
 \section{Other functions and generics}{
   In the code snippets below,
-  \code{x} is a BStringGenome object
+  \code{x} is a BSgenome object
   and \code{name} is the name of a chromosome (character-string).
 
   \describe{

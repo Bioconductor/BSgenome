@@ -1,16 +1,17 @@
 # ===========================================================================
-# The BStringGenome class
+# The BSgenome class
 # ---------------------------------------------------------------------------
 
 setClass(
-    "BStringGenome",
+    "BSgenome",
     representation(
         organism="character",
-        UCSCRelease="character",
-        UCSCBaseUrl="character",
-        UCSCFiles="character",
-        data_env="environment",  # Env where we define the data objects
-        cache_env="environment"  # Private data store
+        source_provider="character", # "UCSC", "BDGP", etc...
+        source_release="character",  # replace the UCSCRelease slot
+        source_url="character",      # replace the UCSCBaseUrl slot
+        source_files="character",    # replace the UCSCFiles slot
+        data_env="environment",      # env. where we define the data objects
+        cache_env="environment"      # private data store
     )
 )
 
@@ -19,22 +20,35 @@ setClass(
 # Constructor-like functions and generics
 
 # IMPORTANT: This function will NOT work on Windows if the "SaveImage"
-# feature is on in the DESCRIPTION file of the client package
-# (i.e. the package that creates BStringGenome objects at load-time
-# by having something like
+# feature is "on" in the DESCRIPTION file of the "client" package.
+# A "client" package will typically create a BSgenome object at load-time
+# by have something like this in its R/zzz.R file:
 #   organism <- "Caenorhabditis elegans"
-#   UCSCRelease <- "ce2"
-#   UCSCBaseUrl <- "ftp://hgdownload.cse.ucsc.edu/goldenPath/ce2/"
-#   ce2 <- new("BStringGenome", organism, UCSCRelease, UCSCBaseUrl, UCSCnames,
-#              "CelegansGenome")
-# in its zzz.R file).
-# You NEED to have "SaveImage: no" in the DESCRIPTION file.
+#   source_provider <- "UCSC"
+#   source_release <- "ce2"
+#   source_url <- "ftp://hgdownload.cse.ucsc.edu/goldenPath/ce2/bigZips/"
+#   source_files <- c(
+#       "chrI",
+#       "chrII",
+#       "chrIII",
+#       "chrIV",
+#       "chrV",
+#       "chrM",
+#       "chrX",
+#       "upstream1000",
+#       "upstream2000",
+#       "upstream5000"
+#   )
+#   Celegans <- new("BSgenome", organism, source_provider,
+#                   source_release, source_url, source_files,
+#                   "BSgenome.Celegans.UCSC.ce2", "extdata")
+# The "client" package NEEDS to have "SaveImage: no" in its DESCRIPTION file.
 # The problem with "SaveImage: yes" is that "R CMD INSTALL" will execute
 # this function BEFORE installing the "inst files", but this function needs
 # the "inst files" to be installed BEFORE it can be called!
 assignDataToNames <- function(x, package, subdir)
 {
-    names <- x@UCSCFiles
+    names <- x@source_files
     data_env <- x@data_env
     cache_env <- x@cache_env
 
@@ -64,13 +78,15 @@ assignDataToNames <- function(x, package, subdir)
     }
 }
 
-setMethod("initialize", "BStringGenome",
-    function(.Object, organism, UCSCRelease, UCSCBaseUrl, UCSCFiles, package, subdir)
+setMethod("initialize", "BSgenome",
+    function(.Object, organism, source_provider, source_release, source_url,
+                      source_files, package, subdir)
     {
         .Object@organism <- organism
-        .Object@UCSCRelease <- UCSCRelease
-        .Object@UCSCBaseUrl <- UCSCBaseUrl
-        .Object@UCSCFiles <- UCSCFiles
+        .Object@source_provider <- source_provider
+        .Object@source_release <- source_release
+        .Object@source_url <- source_url
+        .Object@source_files <- source_files
         .Object@data_env <- new.env(parent=emptyenv())
         .Object@cache_env <- new.env(parent=emptyenv())
         assignDataToNames(.Object, package, subdir)
@@ -82,7 +98,7 @@ setMethod("initialize", "BStringGenome",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Standard generic methods
 
-setMethod("show", "BStringGenome",
+setMethod("show", "BSgenome",
     function(object)
     {
         cat(object@organism, "genome:\n")
@@ -91,7 +107,7 @@ setMethod("show", "BStringGenome",
     }
 )
 
-setMethod("$", "BStringGenome",
+setMethod("$", "BSgenome",
     function(x, name) get(name, envir=x@data_env)
 )
 
@@ -101,7 +117,7 @@ setMethod("$", "BStringGenome",
 
 setGeneric("unload", function(x, what) standardGeneric("unload"))
 
-setMethod("unload", "BStringGenome",
+setMethod("unload", "BSgenome",
     function(x, what)
     {
         if (missing(what))
