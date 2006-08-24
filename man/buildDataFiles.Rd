@@ -13,7 +13,7 @@
 }
 
 \usage{
-  buildDataFiles(srcdir, destdir, files, comments)
+  buildDataFiles(srcdir, destdir, files, prefix="", suffix="", comments=NULL)
 }
 
 \arguments{
@@ -24,6 +24,12 @@
     [TODO: Document me]
   }
   \item{files}{
+    [TODO: Document me]
+  }
+  \item{prefix}{
+    [TODO: Document me]
+  }
+  \item{suffix}{
     [TODO: Document me]
   }
   \item{comments}{
