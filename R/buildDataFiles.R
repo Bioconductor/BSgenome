@@ -6,14 +6,15 @@ buildDataFiles <- function(srcdir, destdir, files, prefix="", suffix="", comment
         srcpath <- paste(srcdir, srcfile, sep="/")
         cat("Loading FASTA file '", srcpath, "' in '", varname, "' object... ", sep="")
         f <- file(srcpath)
-        dnav <- BStringViews(f, "DNAString")
+        bsv <- BStringViews(f, "DNAString")
         close(f)
         cat("DONE\n")
-        if (!is.null(comments)) {
-            comment(dnav) <- paste(comments[i],
-                                   " (generated from FASTA file ", srcfile, ")", sep="")
-        }
-        assign(varname, dnav)
+        if (is.null(comments))
+            c <- ""
+        else
+            c <- comments[i]
+        comment(bsv) <- paste(c, " (generated from FASTA file ", srcfile, ")", sep="")
+        assign(varname, bsv)
         dest <- paste(destdir, "/", varname, ".rda", sep="")
         cat("Saving '", varname, "' object to compressed data file '", dest, "'... ", sep="")
         save(list=varname, file=dest, compress=TRUE)
