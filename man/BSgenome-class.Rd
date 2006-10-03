@@ -10,8 +10,8 @@
 
 % Standard generic methods:
 \alias{show,BSgenome-method}
-\alias{[[,BStringViews-method}
-\alias{[[<-,BStringViews-method}
+\alias{[[,BSgenome-method}
+\alias{[[<-,BSgenome-method}
 \alias{$,BSgenome-method}
 
 % Other functions and generics:
