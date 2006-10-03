@@ -10,6 +10,8 @@
 
 % Standard generic methods:
 \alias{show,BSgenome-method}
+\alias{[[,BStringViews-method}
+\alias{[[<-,BStringViews-method}
 \alias{$,BSgenome-method}
 
 % Other functions and generics:
@@ -33,6 +35,10 @@
   and \code{name} is the name of a chromosome (character-string).
 
   \describe{
+    \item{}{
+      \code{x[[name]]}:
+      [TODO: Document me]
+    }
     \item{}{
       \code{x$name}:
       [TODO: Document me]

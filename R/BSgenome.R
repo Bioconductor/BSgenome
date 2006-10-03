@@ -102,13 +102,48 @@ setMethod("show", "BSgenome",
     function(object)
     {
         cat(object@organism, "genome:\n")
-        print(ls(object@data_env))
-        cat("(use the '$' operator to access a given chromosome)\n") 
+        ans <- show(object@source_files)
+        cat("(use the '$' or '[[' operator to access a given chromosome)\n")
+        ans
+    }
+)
+
+setMethod("[[", "BSgenome",
+    function(x, i, j, ...)
+    {
+        # 'x' is guaranteed to be a "BSgenome" object
+        # so nargs() is guaranteed to be >= 1
+        subscripts <- list(...)
+        if (!missing(i))
+            subscripts$i <- i
+        if (!missing(j))
+            subscripts$j <- j
+        if (length(subscripts) == 0)
+            stop("no index specified")
+        if (length(subscripts) >= 2)
+            stop("incorrect number of subscripts")
+        i <- subscripts[[1]]
+        if (length(i) < 1)
+            stop("attempt to select less than one element")
+        if (length(i) > 1)
+            stop("attempt to select more than one element")
+        if (is.character(i))
+            name <- match.arg(i, x@source_files)
+        else
+            name <- x@source_files[i]
+        get(name, envir=x@data_env)
+    }
+)
+
+setReplaceMethod("[[", "BSgenome",
+    function(x, i, j,..., value)
+    {
+        stop("attempt to modify the value of a \"BSgenome\" object")
     }
 )
 
 setMethod("$", "BSgenome",
-    function(x, name) get(name, envir=x@data_env)
+    function(x, name) x[[name]]
 )
 
 
