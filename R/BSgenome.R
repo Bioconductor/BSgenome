@@ -113,15 +113,17 @@ setMethod("[[", "BSgenome",
     {
         # 'x' is guaranteed to be a "BSgenome" object
         # so nargs() is guaranteed to be >= 1
+        if (nargs() >= 3)
+            stop("too many subscripts")
         subscripts <- list(...)
         if (!missing(i))
             subscripts$i <- i
         if (!missing(j))
             subscripts$j <- j
+        # At this point, 'subscripts' should be guaranteed
+        # to be of length <= 1
         if (length(subscripts) == 0)
             stop("no index specified")
-        if (length(subscripts) >= 2)
-            stop("incorrect number of subscripts")
         i <- subscripts[[1]]
         if (length(i) < 1)
             stop("attempt to select less than one element")
