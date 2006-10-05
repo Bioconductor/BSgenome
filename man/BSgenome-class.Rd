@@ -1,4 +1,4 @@
-\name{BSgenome}
+\name{BSgenome-class}
 \docType{class}
 
 % Classes
@@ -10,6 +10,7 @@
 
 % Standard generic methods:
 \alias{show,BSgenome-method}
+\alias{length,BSgenome-method}
 \alias{[[,BSgenome-method}
 \alias{[[<-,BSgenome-method}
 \alias{$,BSgenome-method}
@@ -36,6 +37,14 @@
 
   \describe{
     \item{}{
+      \code{length(x)}:
+      Used to get the length of a BSgenome, i.e., the number
+      of \link[Biostrings]{BStringViews} objects that it contains,
+      i.e., the number of FASTA files that were used to create this
+      BSgenome object (each \link[Biostrings]{BStringViews} object
+      actually corresponds to one file).
+    }
+    \item{}{
       \code{x[[name]]}:
       [TODO: Document me]
     }
@@ -59,15 +68,38 @@
   }
 }
 
-
 \author{H. Pages}
 
 \seealso{
-  \link[Biostrings]{BStringViews}, \link[Biostrings]{DNAString}
+  \link[Biostrings]{matchPattern}, \link[Biostrings]{BStringViews},
+  \link[Biostrings]{DNAString}
 }
 
 \examples{
-  ## [TODO: Put some examples here]
+  library(BSgenome.Celegans.UCSC.ce2)
+  length(Celegans)
+  Celegans
+
+  ## Access chromosome V (BStringViews object) with
+  Celegans[["chrV"]]
+  ## or with
+  Celegans$chrV
+
+  ## Note that the chromosome V data are not loaded into memory until the
+  ## first time you try to access them (what gets loaded is the serialized
+  ## BStringViews instance stored in the "chrV.rda" file)
+  ## To unload chromosome V (if you need to free some memory)
+  unload(Celegans, "chrV")
+
+  ## Note that assignment of BStringViews objects does NOT copy the data
+  c <- Celegans[["chrV"]]
+
+  ## But then, clean unloading is a bit more complicated
+  unload(Celegans, "chrV")
+  remove(c)
+  ## More generally, you need to keep track of all BStringViews objects
+  ## referencing the same data if you want to be able to unload these data
+  ## from memory
 }
 
 \keyword{methods}

@@ -96,7 +96,7 @@ setMethod("initialize", "BSgenome",
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Standard generic methods
+# The 'show' method
 
 setMethod("show", "BSgenome",
     function(object)
@@ -108,11 +108,18 @@ setMethod("show", "BSgenome",
     }
 )
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Subsetting
+
+setMethod("length", "BSgenome", function(x) length(x@source_files))
+
 setMethod("[[", "BSgenome",
     function(x, i, j, ...)
     {
-        # 'x' is guaranteed to be a "BSgenome" object
-        # so nargs() is guaranteed to be >= 1
+        # 'x' is guaranteed to be a "BSgenome" object (if it's not, then the
+        # method dispatch algo will not even call this method), so nargs() is
+        # guaranteed to be >= 1
         if (nargs() >= 3)
             stop("too many subscripts")
         subscripts <- list(...)
