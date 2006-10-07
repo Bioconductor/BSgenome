@@ -6,7 +6,7 @@ exportClasses(
 
 exportMethods(
     ## Generics defined elsewhere
-    initialize, show, "$",
+    initialize, names, show, length, "[[", "$",
     ## New generics
     unload
 )
