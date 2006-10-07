@@ -96,13 +96,15 @@ setMethod("initialize", "BSgenome",
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# The 'show' method
+# The 'names' and 'show' methods
+
+setMethod("names", "BSgenome", function(x) x@source_files)
 
 setMethod("show", "BSgenome",
     function(object)
     {
         cat(object@organism, "genome:\n")
-        ans <- show(object@source_files)
+        ans <- show(names(object))
         cat("(use the '$' or '[[' operator to access a given chromosome)\n")
         ans
     }
@@ -112,7 +114,7 @@ setMethod("show", "BSgenome",
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Subsetting
 
-setMethod("length", "BSgenome", function(x) length(x@source_files))
+setMethod("length", "BSgenome", function(x) length(names(x)))
 
 setMethod("[[", "BSgenome",
     function(x, i, j, ...)
@@ -137,9 +139,9 @@ setMethod("[[", "BSgenome",
         if (length(i) > 1)
             stop("attempt to select more than one element")
         if (is.character(i))
-            name <- match.arg(i, x@source_files)
+            name <- match.arg(i, names(x))
         else
-            name <- x@source_files[i]
+            name <- names(x)[i]
         get(name, envir=x@data_env)
     }
 )

@@ -9,6 +9,7 @@
 \alias{initialize,BSgenome-method}
 
 % Standard generic methods:
+\alias{names,BSgenome-method}
 \alias{show,BSgenome-method}
 \alias{length,BSgenome-method}
 \alias{[[,BSgenome-method}
@@ -37,12 +38,20 @@
 
   \describe{
     \item{}{
+      \code{names(x)}:
+      Returns the index of \link[Biostrings]{BStringViews} objects
+      contained in \code{x}.
+      Each \link[Biostrings]{BStringViews} object in \code{x} was created
+      from a single FASTA file. The names returned by \code{names(x)}
+      are usually the names of those source files but eventually
+      a common prefix or suffix was removed in order to keep them as
+      short as possible.
+    }
+    \item{}{
       \code{length(x)}:
-      Used to get the length of a BSgenome, i.e., the number
-      of \link[Biostrings]{BStringViews} objects that it contains,
-      i.e., the number of FASTA files that were used to create this
-      BSgenome object (each \link[Biostrings]{BStringViews} object
-      actually corresponds to one file).
+      Returns the length of \code{x}, i.e., the number
+      of \link[Biostrings]{BStringViews} objects that it contains.
+      This is the same as \code{length(names(x))}.
     }
     \item{}{
       \code{x[[name]]}:
