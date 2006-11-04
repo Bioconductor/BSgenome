@@ -12,5 +12,5 @@ exportMethods(
 )
 
 export(
-    buildDataFiles
+    buildDataFiles, getSeq
 )
