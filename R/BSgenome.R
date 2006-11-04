@@ -119,25 +119,40 @@ setMethod("initialize", "BSgenome",
 setMethod("show", "BSgenome",
     function(object)
     {
+        showSequenceIndex <- function(names, indent)
+        {
+            index_width <- 81 - nchar(indent)
+            col_width <- max(nchar(names))
+            ncols <- index_width %/% (col_width + 2)
+            col <- 1
+            for (name in names) {
+                if (col == 1) cat(indent)
+                cat(format(name, width=col_width))
+                if (col == ncols) {
+                    cat("\n")
+                    col <- 1
+                } else {
+                    cat("  ")
+                    col <- col + 1
+                }
+            }
+            if (col != 1) cat("\n")
+        }
         cat(object@organism, "genome:\n")
         if (length(mseqnames(object)) != 0) {
-            cat("  Single sequences (DNAString objects, see '?seqnames'):\n")
+            cat("\n  Single sequences (DNAString objects, see '?seqnames'):\n")
             indent <- "    "
         } else
             indent <- "  "
         if (length(seqnames(object)) != 0)
-            for (name in seqnames(object)) {
-                cat(indent, name, "\n", sep="")
-            }
+            showSequenceIndex(seqnames(object), indent)
         else
             cat(indent, "NONE\n", sep="")
         if (length(mseqnames(object)) != 0) {
-            cat("  Multiple sequences (BStringViews objects, see '?mseqnames'):\n")
-                for (name in mseqnames(object)) {
-                    cat(indent, name, "\n", sep="")
-                }
+            cat("\n  Multiple sequences (BStringViews objects, see '?mseqnames'):\n")
+            showSequenceIndex(mseqnames(object), indent)
         }
-        cat("  (use the '$' or '[[' operator to access a given sequence)\n")
+        cat("\n  (use the '$' or '[[' operator to access a given sequence)\n")
     }
 )
 
