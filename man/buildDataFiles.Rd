@@ -13,7 +13,7 @@
 }
 
 \usage{
-  buildDataFiles(srcdir, destdir, files, prefix="", suffix="", comments=NULL)
+  buildDataFiles(srcdir, destdir, names, prefix="", suffix="", comments=NULL, single.seq=TRUE)
 }
 
 \arguments{
@@ -23,7 +23,7 @@
   \item{destdir}{
     [TODO: Document me]
   }
-  \item{files}{
+  \item{names}{
     [TODO: Document me]
   }
   \item{prefix}{
@@ -33,6 +33,9 @@
     [TODO: Document me]
   }
   \item{comments}{
+    [TODO: Document me]
+  }
+  \item{single.seq}{
     [TODO: Document me]
   }
 }

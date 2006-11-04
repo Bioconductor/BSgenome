@@ -5,11 +5,17 @@
 \alias{class:BSgenome}
 \alias{BSgenome-class}
 
+% Accesor methods:
+\alias{seqnames}
+\alias{seqnames,BSgenome-method}
+\alias{mseqnames}
+\alias{mseqnames,BSgenome-method}
+\alias{names,BSgenome-method}
+
 % Constructor-like functions and generics:
 \alias{initialize,BSgenome-method}
 
 % Standard generic methods:
-\alias{names,BSgenome-method}
 \alias{show,BSgenome-method}
 \alias{length,BSgenome-method}
 \alias{[[,BSgenome-method}
@@ -31,27 +37,47 @@
     [TODO: Put some details here]
 }
 
-\section{Standard generic methods}{
+\section{Accesor methods}{
   In the code snippets below,
-  \code{x} is a BSgenome object
-  and \code{name} is the name of a chromosome (character-string).
+  \code{x} is a BSgenome object.
 
   \describe{
     \item{}{
-      \code{names(x)}:
-      Returns the index of \link[Biostrings]{BStringViews} objects
-      contained in \code{x}.
-      Each \link[Biostrings]{BStringViews} object in \code{x} was created
-      from a single FASTA file. The names returned by \code{names(x)}
-      are usually the names of those source files but eventually
-      a common prefix or suffix was removed in order to keep them as
-      short as possible.
+      \code{seqnames(x)}:
+      Returns the index of the single sequences contained in \code{x}.
+      Each single sequence is stored in a \link[Biostrings]{DNAString}
+      object and comes from a source file (FASTA) with a single record.
+      The names returned by \code{seqnames(x)} usually reflect the names
+      of those source files but a common prefix or suffix was eventually
+      removed in order to keep them as short as possible.
     }
     \item{}{
+      \code{mseqnames(x)}:
+      Returns the index of the multiple sequences contained in \code{x}.
+      Each multiple sequence is stored in a \link[Biostrings]{BStringViews}
+      object and comes from a source file (FASTA) with multiple records.
+      The names returned by \code{mseqnames(x)} usually reflect the names
+      of those source files but a common prefix or suffix was eventually
+      removed in order to keep them as short as possible.
+    }
+    \item{}{
+      \code{names(x)}:
+      Returns the index of all sequences contained in \code{x}.
+      This is the same as \code{c(seqnames(x), mseqnames(x))}.
+    }
+  }
+}
+
+\section{Standard generic methods}{
+  In the code snippets below,
+  \code{x} is a BSgenome object
+  and \code{name} is the name of a sequence (character-string).
+
+  \describe{
+    \item{}{
       \code{length(x)}:
-      Returns the length of \code{x}, i.e., the number
-      of \link[Biostrings]{BStringViews} objects that it contains.
-      This is the same as \code{length(names(x))}.
+      Returns the length of \code{x}, i.e., the number of all sequences
+      that it contains. This is the same as \code{length(names(x))}.
     }
     \item{}{
       \code{x[[name]]}:
@@ -67,7 +93,7 @@
 \section{Other functions and generics}{
   In the code snippets below,
   \code{x} is a BSgenome object
-  and \code{name} is the name of a chromosome (character-string).
+  and \code{name} is the name of a sequence (character-string).
 
   \describe{
     \item{}{

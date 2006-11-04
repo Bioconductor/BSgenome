@@ -6,14 +6,29 @@ setClass(
     "BSgenome",
     representation(
         organism="character",
-        source_provider="character", # "UCSC", "BDGP", etc...
-        source_release="character",  # replace the UCSCRelease slot
-        source_url="character",      # replace the UCSCBaseUrl slot
-        source_files="character",    # replace the UCSCFiles slot
-        data_env="environment",      # env. where we define the data objects
-        cache_env="environment"      # private data store
+        provider="character",   # "UCSC", "BDGP", etc...
+        release="character", 
+        source_url="character", 
+        seqnames="character",   # names of "single" sequences (e.g. chromosomes),
+                                # "single" sequences are stored as DNAString objects
+        mseqnames="character",  # names of "multiple" sequences (e.g. upstream),
+                                # "multiple" sequences are stored as BStringViews objects
+        data_env="environment", # env. where we define the data objects
+        cache_env="environment" # private data store
     )
 )
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# The 'seqnames', 'mseqnames' and 'names' accessors
+
+setGeneric("seqnames", function(x) standardGeneric("seqnames"))
+setMethod("seqnames", "BSgenome", function(x) x@seqnames)
+
+setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
+setMethod("mseqnames", "BSgenome", function(x) x@mseqnames)
+
+setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -24,23 +39,25 @@ setClass(
 # A "client" package will typically create a BSgenome object at load-time
 # by have something like this in its R/zzz.R file:
 #   organism <- "Caenorhabditis elegans"
-#   source_provider <- "UCSC"
-#   source_release <- "ce2"
+#   provider <- "UCSC"
+#   release <- "ce2"
 #   source_url <- "ftp://hgdownload.cse.ucsc.edu/goldenPath/ce2/bigZips/"
-#   source_files <- c(
+#   seqnames <- c(
 #       "chrI",
 #       "chrII",
 #       "chrIII",
 #       "chrIV",
 #       "chrV",
-#       "chrM",
 #       "chrX",
+#       "chrM"
+#   }
+#   mseqnames <- c(
 #       "upstream1000",
 #       "upstream2000",
 #       "upstream5000"
 #   )
-#   Celegans <- new("BSgenome", organism, source_provider,
-#                   source_release, source_url, source_files,
+#   Celegans <- new("BSgenome", organism, provider,
+#                   release, source_url, seqnames, mseqnames,
 #                   "BSgenome.Celegans.UCSC.ce2", "extdata")
 # The "client" package NEEDS to have "SaveImage: no" in its DESCRIPTION file.
 # The problem with "SaveImage: yes" is that "R CMD INSTALL" will execute
@@ -48,7 +65,7 @@ setClass(
 # the "inst files" to be installed BEFORE it can be called!
 assignDataToNames <- function(x, package, subdir)
 {
-    names <- x@source_files
+    names <- names(x)
     data_env <- x@data_env
     cache_env <- x@cache_env
 
@@ -79,14 +96,15 @@ assignDataToNames <- function(x, package, subdir)
 }
 
 setMethod("initialize", "BSgenome",
-    function(.Object, organism, source_provider, source_release, source_url,
-                      source_files, package, subdir)
+    function(.Object, organism, provider, release, source_url,
+                      seqnames, mseqnames, package, subdir)
     {
         .Object@organism <- organism
-        .Object@source_provider <- source_provider
-        .Object@source_release <- source_release
+        .Object@provider <- provider
+        .Object@release <- release
         .Object@source_url <- source_url
-        .Object@source_files <- source_files
+        .Object@seqnames <- seqnames
+        .Object@mseqnames <- mseqnames
         .Object@data_env <- new.env(parent=emptyenv())
         .Object@cache_env <- new.env(parent=emptyenv())
         assignDataToNames(.Object, package, subdir)
@@ -96,17 +114,30 @@ setMethod("initialize", "BSgenome",
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# The 'names' and 'show' methods
-
-setMethod("names", "BSgenome", function(x) x@source_files)
+# The 'show' method
 
 setMethod("show", "BSgenome",
     function(object)
     {
         cat(object@organism, "genome:\n")
-        ans <- show(names(object))
-        cat("(use the '$' or '[[' operator to access a given chromosome)\n")
-        ans
+        if (length(mseqnames(object)) != 0) {
+            cat("  Single sequences (DNAString objects, see '?seqnames'):\n")
+            indent <- "    "
+        } else
+            indent <- "  "
+        if (length(seqnames(object)) != 0)
+            for (name in seqnames(object)) {
+                cat(indent, name, "\n", sep="")
+            }
+        else
+            cat(indent, "NONE\n", sep="")
+        if (length(mseqnames(object)) != 0) {
+            cat("  Multiple sequences (BStringViews objects, see '?mseqnames'):\n")
+                for (name in mseqnames(object)) {
+                    cat(indent, name, "\n", sep="")
+                }
+        }
+        cat("  (use the '$' or '[[' operator to access a given sequence)\n")
     }
 )
 
