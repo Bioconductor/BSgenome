@@ -1,5 +1,7 @@
 buildDataFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments=NULL, single.seq=TRUE)
 {
+    if (length(names) == 0)
+        return()
     for (i in 1:length(names)) {
         name <- names[i]
         srcfile <- paste(prefix, name, suffix, sep="")
