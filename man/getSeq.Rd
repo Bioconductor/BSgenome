@@ -49,9 +49,9 @@
   # Look at the index of sequences:
   Celegans
 
-  # Get 10-base sequences starting at position 150, 250, ..., 2050
+  # Get the 10-base sequences starting at positions 150, 250, ..., 1250
   # in chromosome V:
-  starts <- seq(150, by=100, length.out=20)
+  starts <- seq(150, by=100, length.out=12)
   getSeq(Celegans, "chrV", starts, starts + 9)
 
   # The same returned as a BStringViews object (_much_ faster, no data is copied):
