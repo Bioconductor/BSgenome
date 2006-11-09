@@ -6,9 +6,9 @@ exportClasses(
 
 exportMethods(
     ## Generics defined elsewhere
-    initialize, seqnames, mseqnames, names, show, length, "[[", "$",
+    initialize, names, show, length, "[[", "$",
     ## New generics
-    unload
+    seqnames, mseqnames, unload
 )
 
 export(
