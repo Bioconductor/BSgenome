@@ -49,17 +49,18 @@
   # Look at the index of sequences:
   Celegans
 
-  # Get 9-base sequences starting at position 150, 250, ..., 2050
+  # Get 10-base sequences starting at position 150, 250, ..., 2050
   # in chromosome V:
   starts <- seq(150, by=100, length.out=20)
   getSeq(Celegans, "chrV", starts, starts + 9)
 
-  # The same as a BStringViews object (_much_ faster, no data is copied):
+  # The same returned as a BStringViews object (_much_ faster, no data is copied):
   getSeq(Celegans, "chrV", starts, starts + 9, as.character=FALSE)
 
   # The display of a BStringViews object stays compact:
   starts <- seq(1, by=1000, length.out=50)
-  getSeq(Celegans, "chrV", starts, starts + 1000, as.character=FALSE)
+  getSeq(Celegans, "chrV", starts, starts + 1002, as.character=FALSE)
+  # Note that the views overlap.
 }
 
 \keyword{manip}
