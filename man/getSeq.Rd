@@ -58,7 +58,7 @@
   getSeq(Celegans, "chrV", starts, starts + 9, as.character=FALSE)
 
   # The display of a BStringViews object stays compact:
-  starts <- seq(1, by=1000, length.out=50)
+  starts <- seq(-10, by=1000, length.out=50)
   getSeq(Celegans, "chrV", starts, starts + 1002, as.character=FALSE)
   # Note that the views overlap.
 }
