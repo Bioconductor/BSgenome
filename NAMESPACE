@@ -1,3 +1,4 @@
+import(Biobase) # only for the 'biocReposList' function
 import(Biostrings)
 
 exportClasses(
@@ -12,5 +13,5 @@ exportMethods(
 )
 
 export(
-    buildDataFiles, getSeq
+    available.genomes, getSeq, buildDataFiles
 )

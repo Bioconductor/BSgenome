@@ -4,6 +4,7 @@
 % Classes
 \alias{class:BSgenome}
 \alias{BSgenome-class}
+\alias{BSgenome}
 
 % Accesor methods:
 \alias{seqnames}
@@ -106,8 +107,11 @@
 \author{H. Pages}
 
 \seealso{
-  \link[Biostrings]{matchPattern}, \link[Biostrings]{BStringViews},
-  \link[Biostrings]{DNAString}
+  \code{\link{available.genomes}},
+  \link[Biostrings]{DNAString},
+  \link[Biostrings]{BStringViews},
+  \code{\link{getSeq}},
+  \code{\link[Biostrings]{matchPattern}}
 }
 
 \examples{
@@ -139,3 +143,4 @@
 
 \keyword{methods}
 \keyword{classes}
+

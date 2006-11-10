@@ -184,10 +184,18 @@ setMethod("[[", "BSgenome",
             stop("attempt to select less than one element")
         if (length(i) > 1)
             stop("attempt to select more than one element")
-        if (is.character(i))
-            name <- match.arg(i, names(x))
-        else
+        if (is.character(i)) {
+            name <- try(match.arg(i, names(x)), silent=TRUE)
+            if (is(name, "try-error"))
+                stop("no such sequence")
+        } else {
+            if (!is.numeric(i) || is.na(i))
+                stop("no such sequence")
+            i <- as.integer(i)
+            if (i < 1 || length(x) < i)
+                stop("no such sequence")
             name <- names(x)[i]
+        }
         get(name, envir=x@data_env)
     }
 )
