@@ -7,7 +7,7 @@ buildDataFiles <- function(srcdir, destdir, names, prefix="", suffix="", comment
         srcfile <- paste(prefix, name, suffix, sep="")
         srcpath <- paste(srcdir, srcfile, sep="/")
         cat("Loading FASTA file '", srcpath, "' in '", name, "' object... ", sep="")
-        f <- file(srcpath)
+        f <- file(srcpath, "r")
         seq <- BStringViews(f, "DNAString")
         close(f)
         cat("DONE\n")
