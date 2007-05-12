@@ -8,4 +8,4 @@ biocViews: Genetics, Infrastructure
 Depends: R (>= 2.5.0), methods, Biobase (>= 1.13.44), Biostrings (>= 2.3.14)
 Suggests: BSgenome.Celegans.UCSC.ce2
 License: LGPL
-SaveImage: yes
+LazyLoad: yes
