@@ -120,9 +120,9 @@
 \examples{
   library(BSgenome.Celegans.UCSC.ce2)   # This doesn't load the chromosome 
                                         # sequences into memory.
-  length(Celegans)                      # Number of sequences for this genome.
-  Celegans                              # Displays all the sequences for this
-                                        # genome.
+  length(Celegans)                      # Number of sequences in this genome.
+  Celegans                              # Displays index of all the sequences
+                                        # in this genome.
   mem0 <- gc()["Vcells", "(Mb)"]        # Current amount of data in memory (in
                                         # Mb).
   Celegans[["chrV"]]                    # Loads chromosome V into memory (hence
