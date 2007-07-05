@@ -1,11 +1,11 @@
 Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages
 Description: Infrastructure shared by all the Biostrings-based genome data packages
-Version: 1.5.0
+Version: 1.5.1
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure
-Depends: R (>= 2.5.0), methods, Biobase (>= 1.13.44), Biostrings (>= 2.3.14)
+Depends: R (>= 2.5.0), methods, Biobase (>= 1.15.17), Biostrings (>= 2.5.12)
 Suggests: BSgenome.Celegans.UCSC.ce2
 License: LGPL
 LazyLoad: yes

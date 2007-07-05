@@ -46,7 +46,7 @@
     \item{}{
       \code{seqnames(x)}:
       Returns the index of the single sequences contained in \code{x}.
-      Each single sequence is stored in a \link[Biostrings]{DNAString}
+      Each single sequence is stored in a \link[Biostrings]{BString} (or derived)
       object and comes from a source file (FASTA) with a single record.
       The names returned by \code{seqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
@@ -108,37 +108,51 @@
 
 \seealso{
   \code{\link{available.genomes}},
+  \link[Biostrings]{BString},
   \link[Biostrings]{DNAString},
   \link[Biostrings]{BStringViews},
   \code{\link{getSeq}},
-  \code{\link[Biostrings]{matchPattern}}
+  \code{\link[Biostrings]{matchPattern}},
+  \code{\link{rm}},
+  \code{\link{gc}}
 }
 
 \examples{
-  library(BSgenome.Celegans.UCSC.ce2)
-  length(Celegans)
-  Celegans
-
-  ## Access chromosome V (BStringViews object) with
-  Celegans[["chrV"]]
-  ## or with
-  Celegans$chrV
-
-  ## Note that the chromosome V data are not loaded into memory until the
-  ## first time you try to access them (what gets loaded is the serialized
-  ## BStringViews instance stored in the "chrV.rda" file)
-  ## To unload chromosome V (if you need to free some memory)
+  library(BSgenome.Celegans.UCSC.ce2)   # This doesn't load the chromosome 
+                                        # sequences into memory.
+  length(Celegans)                      # Number of sequences for this genome.
+  Celegans                              # Displays all the sequences for this
+                                        # genome.
+  mem0 <- gc()["Vcells", "(Mb)"]        # Current amount of data in memory (in
+                                        # Mb).
+  Celegans[["chrV"]]                    # Loads chromosome V into memory (hence
+                                        # takes a long time).
+  gc()["Vcells", "(Mb)"] - mem0         # Chromosome V occupies 20Mb of memory.
+  Celegans[["chrV"]]                    # Much faster (sequence is already in
+                                        # memory, hence it's not loaded again).
+  Celegans$chrV                         # Equivalent to Celegans[["chrV"]].
+  class(Celegans$chrV)                  # Chromosome V (like any other
+                                        # chromosome sequence) is a DNAString
+                                        # object.
+  nchar(Celegans$chrV)                  # Its has 20922231 letters (nucleotides).
+  x <- Celegans$chrV                    # Very fast because a BString object
+                                        # doesn't contain the sequence, only a
+                                        # pointer to the sequence, hence chrV
+                                        # seq is not duplicated in memory. But
+                                        # we now have 2 objects pointing to the
+                                        # same place in memory.
+  y <- substr(x, 10, 100)               # A 3rd object pointing to chrV seq.
+  
+  ## We must remove all references to chrV seq if we want the 20Mb of memory
+  ## used by it to be freed (note that it can be hard to keep track of all the
+  ## references to a given sequence).
+  ## IMPORTANT: The 1st reference to this seq (Celegans$chrV) should be removed
+  ## last. This is achieved with unload(). All other references are removed by
+  ## just removing the referencing object.
+  rm(x)
+  rm(y)
   unload(Celegans, "chrV")
-
-  ## Note that assignment of BStringViews objects does NOT copy the data
-  c <- Celegans[["chrV"]]
-
-  ## But then, clean unloading is a bit more complicated
-  unload(Celegans, "chrV")
-  remove(c)
-  ## More generally, you need to keep track of all BStringViews objects
-  ## referencing the same data if you want to be able to unload these data
-  ## from memory
+  gc()["Vcells", "(Mb)"]
 }
 
 \keyword{methods}
