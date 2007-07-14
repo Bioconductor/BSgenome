@@ -31,7 +31,7 @@
 \title{The BSgenome class}
 
 \description{
-  A container for the complete genome sequence of a given specie.
+  A container for the complete genome sequence of a given species.
 }
 
 \details{
