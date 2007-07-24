@@ -7,26 +7,37 @@ setClass(
     representation(
         ## organism: "Homo sapiens", "Mus musculus", etc...
         organism="character",
+
         ## species: "Human", "Mouse", etc...
         species="character",
+
         ## provider: "UCSC", "BDGP", etc...
         provider="character",
+
         ## provider_version: "hg18", "mm8", "sacCer1", etc...
         provider_version="character",
+
         ## release_date: "Mar. 2006", "Feb. 2006", "Oct. 2003", etc...
         release_date="character",
+
         ## release_name: "NCBI Build 36.1", "NCBI Build 36", "SGD 1 Oct 2003 sequence", etc...
         release_name="character",
-        ## source_url: where the original FASTA files where downloaded from
+
+        ## source_url: permanent URL to the place where the FASTA files used
+        ## to produce the sequences below can be found (and downloaded)
         source_url="character",
+
         ## seqnames: names of "single" sequences (e.g. chromosomes),
         ##           "single" sequences are stored as DNAString objects
         seqnames="character",
+
         ## mseqnames: names of "multiple" sequences (e.g. upstream),
         ##            "multiple" sequences are stored as BStringViews objects
         mseqnames="character",
+
         ## .data_env: env. where we define the data objects
-        .data_env="environment", 
+        .data_env="environment",
+
         ## .cache_env: private data store
         .cache_env="environment"
     )
@@ -34,8 +45,29 @@ setClass(
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The 'seqnames', 'mseqnames' and 'names' accessors
+### Accessor methods
 ###
+
+setGeneric("organism", function(x) standardGeneric("organism"))
+setMethod("organism", "BSgenome", function(x) x@organism)
+
+setGeneric("species", function(x) standardGeneric("species"))
+setMethod("species", "BSgenome", function(x) x@species)
+
+setGeneric("provider", function(x) standardGeneric("provider"))
+setMethod("provider", "BSgenome", function(x) x@provider)
+
+setGeneric("providerVersion", function(x) standardGeneric("providerVersion"))
+setMethod("providerVersion", "BSgenome", function(x) x@provider_version)
+
+setGeneric("releaseDate", function(x) standardGeneric("releaseDate"))
+setMethod("releaseDate", "BSgenome", function(x) x@release_date)
+
+setGeneric("releaseName", function(x) standardGeneric("releaseName"))
+setMethod("releaseName", "BSgenome", function(x) x@release_name)
+
+setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
+setMethod("sourceUrl", "BSgenome", function(x) x@source_url)
 
 setGeneric("seqnames", function(x) standardGeneric("seqnames"))
 setMethod("seqnames", "BSgenome", function(x) x@seqnames)
@@ -165,7 +197,7 @@ setMethod("show", "BSgenome",
             }
             if (col != 1) cat("\n")
         }
-        cat(object@species, " genome:\n")
+        cat(object@species, "genome:\n")
         cat("- organism: ", object@organism, "\n", sep="")
         cat("- provider: ", object@provider, "\n", sep="")
         cat("- provider version: ", object@provider_version, "\n", sep="")
@@ -184,7 +216,7 @@ setMethod("show", "BSgenome",
             cat("- multiple sequences (BStringViews objects, see '?mseqnames'):\n")
             showSequenceIndex(mseqnames(object), indent)
         }
-        cat("(use the '$' or '[[' operator to access a given sequence)\n")
+        cat("  (use the '$' or '[[' operator to access a given sequence)\n")
     }
 )
 

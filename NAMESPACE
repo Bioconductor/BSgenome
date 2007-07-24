@@ -9,9 +9,12 @@ exportMethods(
     ## Generics defined elsewhere
     initialize, names, show, length, "[[", "$",
     ## New generics
+    organism, species, provider, providerVersion,
+    releaseDate, releaseName, sourceUrl,
     seqnames, mseqnames, unload
 )
 
 export(
     available.genomes, getSeq, buildDataFiles
 )
+
