@@ -187,7 +187,7 @@
   class(Celegans$chrV)                  # Chromosome V (like any other
                                         # chromosome sequence) is a DNAString
                                         # object.
-  nchar(Celegans$chrV)                  # Its has 20922231 letters (nucleotides).
+  nchar(Celegans$chrV)                  # It has 20922231 letters (nucleotides).
   x <- Celegans$chrV                    # Very fast because a BString object
                                         # doesn't contain the sequence, only a
                                         # pointer to the sequence, hence chrV
