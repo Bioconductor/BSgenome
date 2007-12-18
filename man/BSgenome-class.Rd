@@ -48,13 +48,10 @@
   A container for the complete genome sequence of a given species.
 }
 
-\details{
-    [TODO: Put some details here]
-}
-
 \section{Accesor methods}{
   In the code snippets below,
-  \code{x} is a BSgenome object.
+  \code{x} is a BSgenome object
+  and \code{name} is the name of a sequence (character-string).
 
   \describe{
     \item{}{
@@ -119,15 +116,6 @@
       Return the index of all sequences contained in \code{x}.
       This is the same as \code{c(seqnames(x), mseqnames(x))}.
     }
-  }
-}
-
-\section{Standard generic methods}{
-  In the code snippets below,
-  \code{x} is a BSgenome object
-  and \code{name} is the name of a sequence (character-string).
-
-  \describe{
     \item{}{
       \code{length(x)}:
       Return the length of \code{x}, i.e., the number of all sequences
@@ -135,11 +123,15 @@
     }
     \item{}{
       \code{x[[name]]}:
-      [TODO: Document me]
+      Return sequence (single or multiple) named \code{name}.
+      No sequence is actually loaded into memory until this is explicitely
+      requested with a call to \code{x[[name]]} or \code{x$name}.
     }
     \item{}{
       \code{x$name}:
-      [TODO: Document me]
+      Same as \code{x[[name]]} but \code{name} is not evaluated and
+      therefore must be a literal character string or a name (possibly
+      backtick quoted).
     }
   }
 }
@@ -152,7 +144,11 @@
   \describe{
     \item{}{
       \code{unload(x, name)}:
-      [TODO: Document me]
+      Try to free the memory occupied by a loaded sequence by
+      removing the 1st reference to this sequence. This 1st
+      reference is a hidden reference that is created behind the scene
+      by \code{x[[name]]} or \code{x$name}.
+      See below for an example of how to make proper use of \code{unload()}.
     }
   }
 }
@@ -174,8 +170,17 @@
   library(BSgenome.Celegans.UCSC.ce2)   # This doesn't load the chromosome 
                                         # sequences into memory.
   length(Celegans)                      # Number of sequences in this genome.
-  Celegans                              # Displays index of all the sequences
-                                        # in this genome.
+  Celegans                              # Displays a summary of the sequences
+                                        # provided in this genome.
+  seqnames(Celegans)                    # Index of single sequences.
+  class(Celegans$chrI)                  # A DNAString instance.
+  mseqnames(Celegans)                   # Index of multiple sequences.
+  class(Celegans$upstream1000)          # A BStringViews instance.
+  desc(Celegans$upstream1000)[1:4]      # Character vector containing the
+                                        # description line found in the FASTA
+                                        # file for the first 4 FASTA records.
+
+  ## Some important considerations about memory usage:
   mem0 <- gc()["Vcells", "(Mb)"]        # Current amount of data in memory (in
                                         # Mb).
   Celegans[["chrV"]]                    # Loads chromosome V into memory (hence
