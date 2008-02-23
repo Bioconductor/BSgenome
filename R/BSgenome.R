@@ -175,17 +175,23 @@ setMethod("initialize", "BSgenome",
 ### The 'show' method
 ###
 
+.SHOW_PREFIX <- "| "
+.SHOW_SEQSECTION_PREFIX <- "|   "
+
 setMethod("show", "BSgenome",
     function(object)
     {
-        showSequenceIndex <- function(names, indent)
+        mystrwrap <- function(line)
+            writeLines(strwrap(line, width=getOption("width")+1,
+                               exdent=0, prefix=.SHOW_PREFIX))
+        showSequenceIndex <- function(names, prefix)
         {
-            index_width <- getOption("width") + 2 - nchar(indent)
+            index_width <- getOption("width") + 2 - nchar(prefix)
             col_width <- max(nchar(names))
             ncols <- index_width %/% (col_width + 2)
             col <- 1
             for (name in names) {
-                if (col == 1) cat(indent)
+                if (col == 1) cat(prefix)
                 cat(format(name, width=col_width))
                 if (col == ncols) {
                     cat("\n")
@@ -198,29 +204,28 @@ setMethod("show", "BSgenome",
             if (col != 1) cat("\n")
         }
         cat(object@species, "genome\n")
-        cat("|\n")
-        cat("| organism: ", object@organism, "\n", sep="")
-        cat("| provider: ", object@provider, "\n", sep="")
-        cat("| provider version: ", object@provider_version, "\n", sep="")
-        cat("| release date: ", object@release_date, "\n", sep="")
-        cat("| release name: ", object@release_name, "\n", sep="")
-        cat("|\n")
+        cat(.SHOW_PREFIX, "\n", sep="")
+        cat(.SHOW_PREFIX, "organism: ", object@organism, "\n", sep="")
+        cat(.SHOW_PREFIX, "provider: ", object@provider, "\n", sep="")
+        cat(.SHOW_PREFIX, "provider version: ", object@provider_version, "\n", sep="")
+        cat(.SHOW_PREFIX, "release date: ", object@release_date, "\n", sep="")
+        cat(.SHOW_PREFIX, "release name: ", object@release_name, "\n", sep="")
+        cat(.SHOW_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0)
-            cat("| single sequences (DNAString objects, see '?seqnames'):\n")
+            mystrwrap("single sequences (DNAString objects, see '?seqnames'):")
         else
-            cat("| sequences (DNAString objects, see '?seqnames'):\n")
-        indent <- "|   "
+            mystrwrap("sequences (DNAString objects, see '?seqnames'):")
         if (length(seqnames(object)) != 0)
-            showSequenceIndex(seqnames(object), indent)
+            showSequenceIndex(seqnames(object), .SHOW_SEQSECTION_PREFIX)
         else
-            cat(format("|", width=nchar(indent)), "NONE\n", sep="")
+            cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
+        cat(.SHOW_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0) {
-            cat("|\n")
-            cat("| multiple sequences (BStringViews objects, see '?mseqnames'):\n")
-            showSequenceIndex(mseqnames(object), indent)
+            mystrwrap("multiple sequences (BStringViews objects, see '?mseqnames'):")
+            showSequenceIndex(mseqnames(object), .SHOW_SEQSECTION_PREFIX)
+            cat(.SHOW_PREFIX, "\n", sep="")
         }
-        cat("|\n")
-        cat("| (use the '$' or '[[' operator to access a given sequence)\n")
+        mystrwrap("(use the '$' or '[[' operator to access a given sequence)")
     }
 )
 
