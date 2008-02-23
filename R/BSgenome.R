@@ -180,7 +180,7 @@ setMethod("show", "BSgenome",
     {
         showSequenceIndex <- function(names, indent)
         {
-            index_width <- 81 - nchar(indent)
+            index_width <- getOption("width") + 2 - nchar(indent)
             col_width <- max(nchar(names))
             ncols <- index_width %/% (col_width + 2)
             col <- 1
@@ -197,26 +197,30 @@ setMethod("show", "BSgenome",
             }
             if (col != 1) cat("\n")
         }
-        cat(object@species, "genome:\n")
-        cat("- organism: ", object@organism, "\n", sep="")
-        cat("- provider: ", object@provider, "\n", sep="")
-        cat("- provider version: ", object@provider_version, "\n", sep="")
-        cat("- release date: ", object@release_date, "\n", sep="")
-        cat("- release name: ", object@release_name, "\n", sep="")
-        if (length(mseqnames(object)) != 0) {
-            cat("- single sequences (DNAString objects, see '?seqnames'):\n")
-            indent <- "    "
-        } else
-            indent <- "  "
+        cat(object@species, "genome\n")
+        cat("|\n")
+        cat("| organism: ", object@organism, "\n", sep="")
+        cat("| provider: ", object@provider, "\n", sep="")
+        cat("| provider version: ", object@provider_version, "\n", sep="")
+        cat("| release date: ", object@release_date, "\n", sep="")
+        cat("| release name: ", object@release_name, "\n", sep="")
+        cat("|\n")
+        if (length(mseqnames(object)) != 0)
+            cat("| single sequences (DNAString objects, see '?seqnames'):\n")
+        else
+            cat("| sequences (DNAString objects, see '?seqnames'):\n")
+        indent <- "|   "
         if (length(seqnames(object)) != 0)
             showSequenceIndex(seqnames(object), indent)
         else
-            cat(indent, "NONE\n", sep="")
+            cat(format("|", width=nchar(indent)), "NONE\n", sep="")
         if (length(mseqnames(object)) != 0) {
-            cat("- multiple sequences (BStringViews objects, see '?mseqnames'):\n")
+            cat("|\n")
+            cat("| multiple sequences (BStringViews objects, see '?mseqnames'):\n")
             showSequenceIndex(mseqnames(object), indent)
         }
-        cat("  (use the '$' or '[[' operator to access a given sequence)\n")
+        cat("|\n")
+        cat("| (use the '$' or '[[' operator to access a given sequence)\n")
     }
 )
 
