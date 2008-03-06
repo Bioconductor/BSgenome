@@ -32,7 +32,7 @@ setClass(
         seqnames="character",
 
         ## mseqnames: names of "multiple" sequences (e.g. upstream),
-        ##            "multiple" sequences are stored as BStringViews objects
+        ##            "multiple" sequences are stored as DNAStringSet objects
         mseqnames="character",
 
         ## .data_env: env. where we define the data objects
@@ -221,7 +221,7 @@ setMethod("show", "BSgenome",
             cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
         cat(.SHOW_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0) {
-            mystrwrap("multiple sequences (BStringViews objects, see '?mseqnames'):")
+            mystrwrap("multiple sequences (DNAStringSet objects, see '?mseqnames'):")
             showSequenceIndex(mseqnames(object), .SHOW_SEQSECTION_PREFIX)
             cat(.SHOW_PREFIX, "\n", sep="")
         }

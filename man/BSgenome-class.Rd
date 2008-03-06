@@ -105,7 +105,7 @@
     \item{}{
       \code{mseqnames(x)}:
       Return the index of the multiple sequences contained in \code{x}.
-      Each multiple sequence is stored in a \link[Biostrings]{BStringViews}
+      Each multiple sequence is stored in a \link[Biostrings]{DNAStringSet}
       object and comes from a source file (FASTA) with multiple records.
       The names returned by \code{mseqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
@@ -157,9 +157,9 @@
 
 \seealso{
   \code{\link{available.genomes}},
-  \link[Biostrings]{BString},
-  \link[Biostrings]{DNAString},
-  \link[Biostrings]{BStringViews},
+  \link[Biostrings]{BString-class},
+  \link[Biostrings]{DNAString-class},
+  \link[Biostrings]{DNAStringSet-class},
   \code{\link{getSeq}},
   \code{\link[Biostrings]{matchPattern}},
   \code{\link{rm}},
@@ -175,7 +175,7 @@
   seqnames(Celegans)                    # Index of single sequences.
   class(Celegans$chrI)                  # A DNAString instance.
   mseqnames(Celegans)                   # Index of multiple sequences.
-  class(Celegans$upstream1000)          # A BStringViews instance.
+  class(Celegans$upstream1000)          # A DNAStringSet instance.
   desc(Celegans$upstream1000)[1:4]      # Character vector containing the
                                         # description line found in the FASTA
                                         # file for the first 4 FASTA records.

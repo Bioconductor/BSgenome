@@ -105,6 +105,8 @@
 
   # Get the whole chromosome V sequence as a DNAString object:
   getSeq(Celegans, "chrV", as.BStringViews=TRUE)[[1]]
+  # Which is in fact the same as doing:
+  Celegans$chrV
 }
 
 \keyword{manip}

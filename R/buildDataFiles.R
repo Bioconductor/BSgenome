@@ -1,3 +1,6 @@
+###
+###
+
 buildDataFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments=NULL, single.seq=TRUE)
 {
     if (length(names) == 0)
@@ -7,7 +10,7 @@ buildDataFiles <- function(srcdir, destdir, names, prefix="", suffix="", comment
         srcfile <- paste(prefix, name, suffix, sep="")
         srcpath <- paste(srcdir, srcfile, sep="/")
         cat("Loading FASTA file '", srcpath, "' in '", name, "' object... ", sep="")
-        seq <- read.BStringViews(srcpath, "fasta", "DNAString")
+        seq <- read.DNAStringSet(srcpath, "fasta")
         cat("DONE\n")
         if (single.seq) {
             if (length(seq) != 1)
