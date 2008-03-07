@@ -149,26 +149,26 @@ assignDataToNames <- function(x, package, subdir)
     }
 }
 
-setMethod("initialize", "BSgenome",
-    function(.Object, organism, species, provider, provider_version,
-                      release_date, release_name, source_url,
-                      seqnames, mseqnames, package, subdir)
-    {
-        .Object@organism <- organism
-        .Object@species <- species
-        .Object@provider <- provider
-        .Object@provider_version <- provider_version
-        .Object@release_date <- release_date
-        .Object@release_name <- release_name
-        .Object@source_url <- source_url
-        .Object@seqnames <- seqnames
-        .Object@mseqnames <- mseqnames
-        .Object@.data_env <- new.env(parent=emptyenv())
-        .Object@.cache_env <- new.env(parent=emptyenv())
-        assignDataToNames(.Object, package, subdir)
-        .Object
-    }
-)
+BSgenome <- function(organism, species, provider, provider_version,
+                     release_date, release_name, source_url,
+                     seqnames, mseqnames, package, subdir)
+{
+    ans <- new("BSgenome",
+        organism=organism,
+        species=species,
+        provider=provider,
+        provider_version=provider_version,
+        release_date=release_date,
+        release_name=release_name,
+        source_url=source_url,
+        seqnames=seqnames,
+        mseqnames=mseqnames,
+        .data_env=new.env(parent=emptyenv()),
+        .cache_env=new.env(parent=emptyenv())
+    )
+    assignDataToNames(ans, package, subdir)
+    ans
+}
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

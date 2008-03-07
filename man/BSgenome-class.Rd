@@ -28,7 +28,7 @@
 \alias{names,BSgenome-method}
 
 % Constructor-like functions and generics:
-\alias{initialize,BSgenome-method}
+\alias{BSgenome}
 
 % Standard generic methods:
 \alias{show,BSgenome-method}

@@ -8,7 +8,7 @@ exportClasses(
 
 exportMethods(
     ## Generics defined elsewhere
-    initialize, names, show, length, "[[", "$",
+    names, show, length, "[[", "$",
     ## New generics
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
@@ -16,6 +16,7 @@ exportMethods(
 )
 
 export(
-    available.genomes, getSeq, buildDataFiles
+    available.genomes, getSeq, buildDataFiles,
+    BSgenome
 )
 
