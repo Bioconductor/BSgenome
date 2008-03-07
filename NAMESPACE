@@ -1,3 +1,4 @@
+import(methods)
 import(Biobase) # only for the 'biocReposList' function
 import(Biostrings)
 
