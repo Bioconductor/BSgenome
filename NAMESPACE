@@ -12,11 +12,14 @@ exportMethods(
     ## New generics
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
-    seqnames, mseqnames, unload
+    SNPlocs_pkgname,
+    seqnames, mseqnames,
+    unload
 )
 
 export(
     available.genomes, getSeq, buildDataFiles,
-    BSgenome
+    BSgenome, injectSNPs,
+    available.SNPs
 )
 

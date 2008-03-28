@@ -27,6 +27,9 @@ setClass(
         ## to produce the sequences below can be found (and downloaded)
         source_url="character",
 
+        ## for SNPs injection
+        SNPlocs_pkgname="character",
+
         ## seqnames: names of "single" sequences (e.g. chromosomes),
         ##           "single" sequences are stored as DNAString objects
         seqnames="character",
@@ -34,6 +37,9 @@ setClass(
         ## mseqnames: names of "multiple" sequences (e.g. upstream),
         ##            "multiple" sequences are stored as DNAStringSet objects
         mseqnames="character",
+
+        package="character",
+        subdir="character",
 
         ## .data_env: env. where we define the data objects
         .data_env="environment",
@@ -69,6 +75,11 @@ setMethod("releaseName", "BSgenome", function(x) x@release_name)
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
 setMethod("sourceUrl", "BSgenome", function(x) x@source_url)
 
+setGeneric("SNPlocs_pkgname", function(x) standardGeneric("SNPlocs_pkgname"))
+setMethod("SNPlocs_pkgname", "BSgenome",
+    function(x) if (length(x@SNPlocs_pkgname) == 0) NULL else x@SNPlocs_pkgname
+)
+
 setGeneric("seqnames", function(x) standardGeneric("seqnames"))
 setMethod("seqnames", "BSgenome", function(x) x@seqnames)
 
@@ -82,12 +93,12 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 ### Constructor-like functions and generics
 ###
 
-### IMPORTANT: The "assignDataToNames" function below will NOT work on Windows
+### IMPORTANT: The ".assignDataToNames" function below will NOT work on Windows
 ### if the "SaveImage" feature is "on" in the DESCRIPTION file of the "client"
 ### package. A "client" package will typically create a BSgenome object at
 ### load-time by having something like this in its R/zzz.R file:
 ###
-###   Celegans <- new("BSgenome",
+###   Celegans <- BSgenome(
 ###       organism="Caenorhabditis elegans",
 ###       species="C. elegans",
 ###       provider="UCSC",
@@ -117,7 +128,7 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 ### The problem with "SaveImage: yes" is that "R CMD INSTALL" will execute
 ### this function BEFORE installing the "inst files", but this function needs
 ### the "inst files" to be installed BEFORE it can be called!
-assignDataToNames <- function(x, package, subdir)
+.assignDataToNames <- function(x, getSNPlocs=NULL)
 {
     names <- names(x)
     data_env <- x@.data_env
@@ -138,13 +149,17 @@ assignDataToNames <- function(x, package, subdir)
               cache_env[[name]] <- get(found, envir=cache_env)
               #stop("bad data file: name of objects must match:\n",
               #     sQuote(name), " != ", sQuote(found))
+            if (!is.null(getSNPlocs)) {
+                snps <- getSNPlocs(name)
+                .inplaceReplaceLetterAtLoc(cache_env[[name]], snps$loc, snps$alleles_as_ambig)
+            }
             cache_env[[name]]
         }
         makeActiveBinding(name, getter, data_env)
     }
 
     for (name in names) {
-        file <- system.file(subdir, paste(name, ".rda", sep=""), package=package)
+        file <- system.file(x@subdir, paste(name, ".rda", sep=""), package=x@package)
         addCachedItem(name, file)
     }
 }
@@ -163,11 +178,37 @@ BSgenome <- function(organism, species, provider, provider_version,
         source_url=source_url,
         seqnames=seqnames,
         mseqnames=mseqnames,
+        package=package,
+        subdir=subdir,
         .data_env=new.env(parent=emptyenv()),
         .cache_env=new.env(parent=emptyenv())
     )
-    assignDataToNames(ans, package, subdir)
+    .assignDataToNames(ans)
     ans
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The injectSNPs() function.
+###
+
+injectSNPs <- function(bsgenome, SNPlocs_pkgname)
+{
+    if (!is(bsgenome, "BSgenome"))
+        stop("'bsgenome' must be a BSgenome object")
+    if (!is.null(SNPlocs_pkgname(bsgenome)))
+        stop("SNPs already injected in genome, injecting from more than 1 package is not supported")
+    if (!is.character(SNPlocs_pkgname) || length(SNPlocs_pkgname) != 1 || is.na(SNPlocs_pkgname))
+        stop("'SNPlocs_pkgname' must be a single string")
+    library(SNPlocs_pkgname, character.only=TRUE)
+    getSNPlocs <- get("getSNPlocs",
+                      envir=as.environment(paste("package", SNPlocs_pkgname, sep=":")),
+                      inherits=FALSE)
+    bsgenome@SNPlocs_pkgname <- SNPlocs_pkgname
+    bsgenome@.data_env=new.env(parent=emptyenv())
+    bsgenome@.cache_env=new.env(parent=emptyenv())
+    .assignDataToNames(ans, getSNPlocs)
+    bsgenome
 }
 
 
@@ -210,6 +251,8 @@ setMethod("show", "BSgenome",
         cat(.SHOW_PREFIX, "provider version: ", object@provider_version, "\n", sep="")
         cat(.SHOW_PREFIX, "release date: ", object@release_date, "\n", sep="")
         cat(.SHOW_PREFIX, "release name: ", object@release_name, "\n", sep="")
+        if (!is.null(SNPlocs_pkgname(object)))
+            cat(.SHOW_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         cat(.SHOW_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0)
             mystrwrap("single sequences (DNAString objects, see '?seqnames'):")
@@ -300,4 +343,5 @@ setMethod("unload", "BSgenome",
         remove(list=what, envir=x@.cache_env)
     }
 )
+
 
