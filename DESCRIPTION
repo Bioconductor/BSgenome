@@ -5,7 +5,7 @@ Version: 1.7.5
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure
-Depends: R (>= 2.7.0), methods, Biobase (>= 1.99.1), Biostrings (>= 2.7.31)
+Depends: R (>= 2.7.0), methods, Biobase (>= 1.99.1), Biostrings (>= 2.7.41)
 Import: methods, Biobase, Biostrings
 Suggests: BSgenome.Celegans.UCSC.ce2 (>= 1.3.2)
 License: Artistic-2.0
