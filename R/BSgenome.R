@@ -207,7 +207,7 @@ injectSNPs <- function(bsgenome, SNPlocs_pkgname)
     bsgenome@SNPlocs_pkgname <- SNPlocs_pkgname
     bsgenome@.data_env=new.env(parent=emptyenv())
     bsgenome@.cache_env=new.env(parent=emptyenv())
-    .assignDataToNames(ans, getSNPlocs)
+    .assignDataToNames(bsgenome, getSNPlocs)
     bsgenome
 }
 
