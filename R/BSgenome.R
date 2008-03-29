@@ -128,7 +128,7 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 ### The problem with "SaveImage: yes" is that "R CMD INSTALL" will execute
 ### this function BEFORE installing the "inst files", but this function needs
 ### the "inst files" to be installed BEFORE it can be called!
-.assignDataToNames <- function(x, getSNPlocs=NULL)
+.assignDataToNames <- function(x, getSNPcount=NULL, getSNPlocs=NULL)
 {
     names <- names(x)
     data_env <- x@.data_env
@@ -149,8 +149,13 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
               cache_env[[name]] <- get(found, envir=cache_env)
               #stop("bad data file: name of objects must match:\n",
               #     sQuote(name), " != ", sQuote(found))
-            if (!is.null(getSNPlocs)) {
+            if (!is.null(getSNPcount) && name %in% names(getSNPcount())) {
                 snps <- getSNPlocs(name)
+                if (nrow(snps) != getSNPcount()[name])
+                    warning("reported SNP count for ", names, " in package ",
+                            SNPlocs_pkgname(x), " does not match the ",
+                            "number of SNPs returned by ", SNPlocs_pkgname(x),
+                            ":::getSNPlocs()")
                 .inplaceReplaceLetterAtLoc(cache_env[[name]], snps$loc, snps$alleles_as_ambig)
             }
             cache_env[[name]]
@@ -201,13 +206,19 @@ injectSNPs <- function(bsgenome, SNPlocs_pkgname)
     if (!is.character(SNPlocs_pkgname) || length(SNPlocs_pkgname) != 1 || is.na(SNPlocs_pkgname))
         stop("'SNPlocs_pkgname' must be a single string")
     library(SNPlocs_pkgname, character.only=TRUE)
+    getSNPcount <- get("getSNPcount",
+                      envir=as.environment(paste("package", SNPlocs_pkgname, sep=":")),
+                      inherits=FALSE)
+    if (!all(names(getSNPcount()) %in% seqnames(bsgenome)))
+        stop("seqnames in package ", SNPlocs_pkgname, " are not compatible ",
+             "with the seqnames of this BSgenome object")
     getSNPlocs <- get("getSNPlocs",
                       envir=as.environment(paste("package", SNPlocs_pkgname, sep=":")),
                       inherits=FALSE)
     bsgenome@SNPlocs_pkgname <- SNPlocs_pkgname
     bsgenome@.data_env=new.env(parent=emptyenv())
     bsgenome@.cache_env=new.env(parent=emptyenv())
-    .assignDataToNames(bsgenome, getSNPlocs)
+    .assignDataToNames(bsgenome, getSNPcount, getSNPlocs)
     bsgenome
 }
 
