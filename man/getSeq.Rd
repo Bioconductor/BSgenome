@@ -10,7 +10,7 @@
 }
 
 \usage{
-  getSeq(bsgenome, seqname, start=NA, end=NA, as.BStringViews=FALSE)
+  getSeq(bsgenome, seqname, start=NA, end=NA, as.XStringViews=FALSE)
 }
 
 \arguments{
@@ -28,7 +28,7 @@
   \item{end}{
     [TODO: Document me]
   }
-  \item{as.BStringViews}{
+  \item{as.XStringViews}{
     [TODO: Document me]
   }
 }
@@ -37,14 +37,14 @@
 }
 
 \value{
-  If \code{length(seqname) == 1}, a character vector (\code{as.BStringViews=FALSE})
-  or a \code{\link[Biostrings]{BStringViews}} object (\code{as.BStringViews=TRUE}).
-  If \code{length(seqname) != 1}, a character vector (\code{as.BStringViews}
+  If \code{length(seqname) == 1}, a character vector (\code{as.XStringViews=FALSE})
+  or an \code{\link[Biostrings]{XStringViews}} object (\code{as.XStringViews=TRUE}).
+  If \code{length(seqname) != 1}, a character vector (\code{as.XStringViews}
   is ignored).
 }
 
 \note{
-  \code{getSeq} is very efficient when used with \code{as.BStringViews=TRUE}
+  \code{getSeq} is very efficient when used with \code{as.XStringViews=TRUE}
   (this only works when \code{seqname} is of length 1), because in this case
   the sequence data are not copied.
   Otherwise, the data are copied. Be aware that this can be very inefficient
@@ -60,7 +60,7 @@
   \code{\link{seqnames}},
   \code{\link[base]{substr}},
   \code{\link[Biostrings]{subBString}},
-  \code{\link[Biostrings]{BStringViews}},
+  \code{\link[Biostrings]{XStringViews}},
   \code{\link[Biostrings]{DNAString}}
 }
 
@@ -95,16 +95,16 @@
   starts <- seq(150, by=100, length.out=12)
   getSeq(Celegans, "chrV", starts, starts + 9)
 
-  # The same returned as a BStringViews object (_much_ faster, no data is copied):
-  getSeq(Celegans, "chrV", starts, starts + 9, as.BStringViews=TRUE)
+  # The same returned as an XStringViews object (_much_ faster, no data is copied):
+  getSeq(Celegans, "chrV", starts, starts + 9, as.XStringViews=TRUE)
 
-  # The display of a BStringViews object stays compact:
+  # The display of a XStringViews object stays compact:
   starts <- seq(-10, by=1000, length.out=50)
-  getSeq(Celegans, "chrV", starts, starts + 1002, as.BStringViews=TRUE)
+  getSeq(Celegans, "chrV", starts, starts + 1002, as.XStringViews=TRUE)
   # Note that those views have overlaps of 3 nucleotides.
 
   # Get the whole chromosome V sequence as a DNAString object:
-  getSeq(Celegans, "chrV", as.BStringViews=TRUE)[[1]]
+  getSeq(Celegans, "chrV", as.XStringViews=TRUE)[[1]]
   # Which is in fact the same as doing:
   Celegans$chrV
 }
