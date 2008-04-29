@@ -21,6 +21,8 @@
 \alias{releaseName,BSgenome-method}
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
+\alias{SNPlocs_pkgname}
+\alias{SNPlocs_pkgname,BSgenome-method}
 \alias{seqnames}
 \alias{seqnames,BSgenome-method}
 \alias{mseqnames}
@@ -92,6 +94,11 @@
       Return the source URL i.e. the permanent URL to the place where the
       FASTA files used to produce the sequences contained in \code{x} can
       be found (and downloaded).
+    }
+    \item{}{
+      \code{SNPlocs_pkgname(x)}:
+      Return the name of the package from which the SNPs are injected,
+      if any.
     }
     \item{}{
       \code{seqnames(x)}:
