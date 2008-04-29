@@ -50,7 +50,7 @@
     ## Inject into the Human genome:
     library(BSgenome.Hsapiens.UCSC.hg18)
     Hsapiens
-    HsWithSNPs <- injectSNPs(bsgenome, "SNPlocs.Hsapiens.dbSNP.20071016")
+    HsWithSNPs <- injectSNPs(Hsapiens, "SNPlocs.Hsapiens.dbSNP.20071016")
     HsWithSNPs
     alphabetFrequency(Hsapiens$chr1)
     alphabetFrequency(HsWithSNPs$chr1)
