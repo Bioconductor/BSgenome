@@ -40,7 +40,7 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     } else {
         ## If the liftAll.lft file is missing, the fallback is to mask
         ## N-blocks of width >= 4
-        ans <- maskMotif(seq, "N", min.block.width=4)
+        ans <- masks(maskMotif(seq, "N", min.block.width=4))
     }
     ans
 }
@@ -73,9 +73,9 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     ans
 }
 
-forgeMaskFiles <- function(srcdir, destdir, names, seqdir)
+forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir)
 {
-    for (seqname in names) {
+    for (seqname in seqnames) {
         ## Get the length of the sequence.
         seqfile <- file.path(seqdir, paste(seqname, ".rda", sep=""))
         load(seqfile)
