@@ -18,8 +18,12 @@ exportMethods(
 )
 
 export(
-    available.genomes, getSeq, buildDataFiles,
+    available.genomes, getSeq,
     BSgenome, injectSNPs,
-    available.SNPs
+    available.SNPs,
+
+    ## BSgenomeForge functions
+    forgeSeqFiles,
+    forgeMaskFiles
 )
 
