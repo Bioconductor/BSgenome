@@ -31,46 +31,68 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     }
 }
 
-newEmptyMask <- function(width)
+## mask1 is the mask of "inter-contig gaps".
+.makeMask1 <- function(srcdir, seqname, seq)
 {
-    nir1 <- Biostrings:::newEmptyNormalIRanges()
-    new("MaskCollection", nir_list=list(nir1), width=width, active=TRUE)
+    file <- file.path(srcdir, "liftAll.lft")
+    if (file.exists(file)) {
+        ans <- read.liftMask(file, seqname=seqname, width=length(seq))
+    } else {
+        ## If the liftAll.lft file is missing, the fallback is to mask
+        ## N-blocks of width >= 4
+        ans <- maskMotif(seq, "N", min.block.width=4)
+    }
+    ans
+}
+
+## mask2 is the "rm" mask (from the RepeatMasker .out file).
+.makeMask2 <- function(srcdir, seqname, mask_width)
+{
+    file <- file.path(srcdir, paste(seqname, ".fa.out", sep=""))
+    if (file.exists(file)) {
+        ans <- read.rmMask(file, mask_width)
+        names(ans) <- "RepeatMasker"
+    } else {
+        ans <- Mask(mask_width, start=integer(0), width=integer(0))
+        names(ans) <- "RepeatMasker (empty)"
+    }
+    ans
+}
+
+## mask3 is the "trf" mask (from the Tandem Repeats Finder .bed file).
+.makeMask3 <- function(srcdir, seqname, mask_width)
+{
+    file <- file.path(srcdir, paste(seqname, ".bed", sep=""))
+    if (file.exists(file)) {
+        ans <- read.trfMask(file, mask_width)
+        names(ans) <- "Tandem Repeats Finder (period<=12)"
+    } else {
+        ans <- Mask(mask_width, start=integer(0), width=integer(0))
+        names(ans) <- "Tandem Repeats Finder (empty)"
+    }
+    ans
 }
 
 forgeMaskFiles <- function(srcdir, destdir, names, seqdir)
 {
     for (seqname in names) {
-        ## Get the length of the sequence
+        ## Get the length of the sequence.
         seqfile <- file.path(seqdir, paste(seqname, ".rda", sep=""))
         load(seqfile)
-        seq_len <- length(get(seqname))
+        mask_width <- length(get(seqname))
+
+        ## Start with an empty mask collection (i.e. a MaskCollection of
+        ## length 0).
+        masks <- new("MaskCollection", width=mask_width)
+        mask1 <- .makeMask1(srcdir, seqname, get(seqname))
         remove(list=seqname)
-
-        masks <- new("MaskCollection", width=seq_len)
-
-        ## Make the "rm" mask (from RepeatMasker .out file)
-        file1 <- file.path(srcdir, paste(seqname, ".fa.out", sep=""))
-        if (file.exists(file1)) {
-            mask1 <- read.rmMask(file1, seq_len)
-            #names(mask1) <- "RepeatMasker"
-        } else {
-            mask1 <- newEmptyMask(seq_len)
-            names(mask1) <- "rm (empty)"
-        }
         masks <- append(masks, mask1)
-
-        ## Make the "trf mask (Tandem Repeats Finder .bed file)
-        file2 <- file.path(srcdir, paste(seqname, ".bed", sep=""))
-        if (file.exists(file2)) {
-            mask2 <- read.trfMask(file2, seq_len)
-            #names(mask2) <- "Tandem Repeats Finder (period<=12)"
-        } else {
-            mask2 <- newEmptyMask(seq_len)
-            names(mask2) <- "trf (empty)"
-        }
+        mask2 <- .makeMask2(srcdir, seqname, mask_width)
         masks <- append(masks, mask2)
+        mask3 <- .makeMask3(srcdir, seqname, mask_width)
+        masks <- append(masks, mask3)
 
-        ## Save the masks
+        ## Save the masks.
         objname <- paste("masks.", seqname, sep="")
         assign(objname, masks)
         dest <- file.path(destdir, paste(objname, ".rda", sep=""))
