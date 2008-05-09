@@ -18,7 +18,7 @@
 
 \usage{
   forgeSeqFiles(srcdir, destdir, names, prefix="", suffix="", comments=NULL, single.seq=TRUE)
-  forgeMaskFiles(srcdir, destdir, names, seqdir)
+  forgeMaskFiles(srcdir, destdir, seqnames, seqdir)
 }
 
 \arguments{
@@ -43,19 +43,14 @@
   \item{single.seq}{
     [TODO: Document me]
   }
+  \item{seqnames}{
+    [TODO: Document me]
+  }
   \item{seqdir}{
     [TODO: Document me]
   }
 }
 
-\details{
-}
-
 \author{H. Pages}
-
-\seealso{}
-
-\examples{
-}
 
 \keyword{manip}

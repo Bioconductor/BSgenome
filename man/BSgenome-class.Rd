@@ -103,8 +103,9 @@
     \item{}{
       \code{seqnames(x)}:
       Return the index of the single sequences contained in \code{x}.
-      Each single sequence is stored in a \link[Biostrings]{BString} (or derived)
-      object and comes from a source file (FASTA) with a single record.
+      Each single sequence is stored in an \link[Biostrings]{XString}
+      or \link[Biostrings]{MaskedXString} object and typically comes
+      from a source file (FASTA) with a single record.
       The names returned by \code{seqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
       removed in order to keep them as short as possible.
@@ -112,8 +113,9 @@
     \item{}{
       \code{mseqnames(x)}:
       Return the index of the multiple sequences contained in \code{x}.
-      Each multiple sequence is stored in a \link[Biostrings]{DNAStringSet}
-      object and comes from a source file (FASTA) with multiple records.
+      Each multiple sequence is stored in an \link[Biostrings]{XStringSet}
+      object and typically comes from a source file (FASTA) with multiple
+      records.
       The names returned by \code{mseqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
       removed in order to keep them as short as possible.
@@ -164,9 +166,9 @@
 
 \seealso{
   \code{\link{available.genomes}},
-  \link[Biostrings]{BString-class},
-  \link[Biostrings]{DNAString-class},
-  \link[Biostrings]{DNAStringSet-class},
+  \link[Biostrings]{XString-class},
+  \link[Biostrings]{MaskedXString-class},
+  \link[Biostrings]{XStringSet-class},
   \code{\link{getSeq}},
   \code{\link[Biostrings]{matchPattern}},
   \code{\link{rm}},

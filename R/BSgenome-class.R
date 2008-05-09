@@ -30,22 +30,17 @@ setClass(
         ## for SNPs injection
         SNPlocs_pkgname="character",
 
-        ## seqnames: names of "single" sequences (e.g. chromosomes),
-        ##           "single" sequences are stored as DNAString objects
+        ## seqnames: names of "single" sequences (e.g. chromosomes)
         seqnames="character",
 
-        ## mseqnames: names of "multiple" sequences (e.g. upstream),
-        ##            "multiple" sequences are stored as DNAStringSet objects
+        ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
 
         package="character",
         subdir="character",
 
-        ## .data_env: env. where we define the data objects
-        .data_env="environment",
-
-        ## .cache_env: private data store
-        .cache_env="environment"
+        .activebindings_env="environment",
+        .datacache_env="environment"
     )
 )
 
@@ -131,8 +126,8 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 .assignDataToNames <- function(x, getSNPcount=NULL, getSNPlocs=NULL)
 {
     names <- names(x)
-    data_env <- x@.data_env
-    cache_env <- x@.cache_env
+    activebindings_env <- x@.activebindings_env
+    datacache_env <- x@.datacache_env
 
     addCachedItem <- function(name, file)
     {
@@ -142,25 +137,37 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
         force(file)
         getter <- function()
         {
-            if (!is.null(cache_env[[name]]))
-              return(cache_env[[name]])
-            found <- load(file, envir=cache_env)
-            if (name != found)
-              cache_env[[name]] <- get(found, envir=cache_env)
-              #stop("bad data file: name of objects must match:\n",
-              #     sQuote(name), " != ", sQuote(found))
+            if (exists(name, envir=datacache_env, inherits=FALSE))
+                return(datacache_env[[name]])
+            found <- load(file, envir=datacache_env)
+            if (name != found) {
+                datacache_env[[name]] <- get(found, envir=datacache_env)
+            }
+
+            ## Inject the SNPs, if any
             if (!is.null(getSNPcount) && name %in% names(getSNPcount())) {
                 snps <- getSNPlocs(name)
                 if (nrow(snps) != getSNPcount()[name])
-                    warning("reported SNP count for ", names, " in package ",
+                    warning("reported SNP count for ", name, " in package ",
                             SNPlocs_pkgname(x), " does not match the ",
                             "number of SNPs returned by ", SNPlocs_pkgname(x),
                             ":::getSNPlocs()")
-                .inplaceReplaceLetterAtLoc(cache_env[[name]], snps$loc, snps$alleles_as_ambig)
+                .inplaceReplaceLetterAtLoc(datacache_env[[name]], snps$loc, snps$alleles_as_ambig)
             }
-            cache_env[[name]]
+
+            ## Load and put the (inactive) built-in masks, if any
+            objname <- paste("masks.", name, sep="")
+            filename <- system.file("data", paste(objname, ".rda", sep=""), package=x@package)
+            if (file.exists(filename)) {
+                load(filename)
+                masks(datacache_env[[name]]) <- get(objname)
+                active(masks(datacache_env[[name]])) <- FALSE
+                remove(list=objname)
+            }
+
+            datacache_env[[name]]
         }
-        makeActiveBinding(name, getter, data_env)
+        makeActiveBinding(name, getter, activebindings_env)
     }
 
     for (name in names) {
@@ -185,8 +192,8 @@ BSgenome <- function(organism, species, provider, provider_version,
         mseqnames=mseqnames,
         package=package,
         subdir=subdir,
-        .data_env=new.env(parent=emptyenv()),
-        .cache_env=new.env(parent=emptyenv())
+        .activebindings_env=new.env(parent=emptyenv()),
+        .datacache_env=new.env(parent=emptyenv())
     )
     .assignDataToNames(ans)
     ans
@@ -216,8 +223,8 @@ injectSNPs <- function(bsgenome, SNPlocs_pkgname)
                       envir=as.environment(paste("package", SNPlocs_pkgname, sep=":")),
                       inherits=FALSE)
     bsgenome@SNPlocs_pkgname <- SNPlocs_pkgname
-    bsgenome@.data_env=new.env(parent=emptyenv())
-    bsgenome@.cache_env=new.env(parent=emptyenv())
+    bsgenome@.activebindings_env <- new.env(parent=emptyenv())
+    bsgenome@.datacache_env <- new.env(parent=emptyenv())
     .assignDataToNames(bsgenome, getSNPcount, getSNPlocs)
     bsgenome
 }
@@ -266,16 +273,16 @@ setMethod("show", "BSgenome",
             cat(.SHOW_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         cat(.SHOW_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0)
-            mystrwrap("single sequences (DNAString objects, see '?seqnames'):")
+            mystrwrap("single sequences (see '?seqnames'):")
         else
-            mystrwrap("sequences (DNAString objects, see '?seqnames'):")
+            mystrwrap("sequences (see '?seqnames'):")
         if (length(seqnames(object)) != 0)
             showSequenceIndex(seqnames(object), .SHOW_SEQSECTION_PREFIX)
         else
             cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
         cat(.SHOW_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0) {
-            mystrwrap("multiple sequences (DNAStringSet objects, see '?mseqnames'):")
+            mystrwrap("multiple sequences (see '?mseqnames'):")
             showSequenceIndex(mseqnames(object), .SHOW_SEQSECTION_PREFIX)
             cat(.SHOW_PREFIX, "\n", sep="")
         }
@@ -324,7 +331,7 @@ setMethod("[[", "BSgenome",
                 stop("no such sequence")
             name <- names(x)[i]
         }
-        get(name, envir=x@.data_env)
+        get(name, envir=x@.activebindings_env)
     }
 )
 
@@ -350,8 +357,8 @@ setMethod("unload", "BSgenome",
     function(x, what)
     {
         if (missing(what))
-            what <- ls(x@.cache_env) ## everything
-        remove(list=what, envir=x@.cache_env)
+            what <- ls(x@.datacache_env) ## everything
+        remove(list=what, envir=x@.datacache_env)
     }
 )
 
