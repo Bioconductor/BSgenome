@@ -69,10 +69,10 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     file <- file.path(srcdir, paste(seqname, ".bed", sep=""))
     if (file.exists(file)) {
         ans <- read.trfMask(file, mask_width)
-        names(ans) <- "Tandem Repeats Finder (period<=12)"
+        names(ans) <- "Tandem Repeats Finder [period<=12]"
     } else {
         ans <- Mask(mask_width, start=integer(0), width=integer(0))
-        names(ans) <- "Tandem Repeats Finder (empty)"
+        names(ans) <- "Tandem Repeats Finder [period<=12] (empty)"
     }
     ans
 }
