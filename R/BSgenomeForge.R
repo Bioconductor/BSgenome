@@ -31,9 +31,13 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     }
 }
 
-## mask1 is the mask of "inter-contig gaps".
-.makeMask1 <- function(srcdir, seqname, seq)
+## mask1 is the mask of "N-gaps" (when extracted from NCBI "agp" files) or
+## "inter-contig gaps" (when extracted from UCSC liftAll.lft file).
+.makeMask1 <- function(srcdir, seqname, seq, prefix, suffix)
 {
+    file <- file.path(srcdir, paste(prefix, seqname, suffix, sep=""))
+    if (file.exists(file))
+        return(read.agpMask(file, length(seq), seqname=seqname))
     file <- file.path(srcdir, "liftAll.lft")
     if (file.exists(file)) {
         ans <- read.liftMask(file, seqname=seqname, width=length(seq))
@@ -73,7 +77,8 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     ans
 }
 
-forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir)
+## 'nmasks' must be 1, 2 or 3.
+forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir, nmasks, prefix="", suffix="")
 {
     for (seqname in seqnames) {
         ## Get the length of the sequence.
@@ -84,13 +89,19 @@ forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir)
         ## Start with an empty mask collection (i.e. a MaskCollection of
         ## length 0).
         masks <- new("MaskCollection", width=mask_width)
-        mask1 <- .makeMask1(srcdir, seqname, get(seqname))
+        if (nmasks >= 1) {
+            mask1 <- .makeMask1(srcdir, seqname, get(seqname), prefix, suffix)
+            masks <- append(masks, mask1)
+        }
         remove(list=seqname)
-        masks <- append(masks, mask1)
-        mask2 <- .makeMask2(srcdir, seqname, mask_width)
-        masks <- append(masks, mask2)
-        mask3 <- .makeMask3(srcdir, seqname, mask_width)
-        masks <- append(masks, mask3)
+        if (nmasks >= 2) {
+            mask2 <- .makeMask2(srcdir, seqname, mask_width)
+            masks <- append(masks, mask2)
+        }
+        if (nmasks >= 3) {
+            mask3 <- .makeMask3(srcdir, seqname, mask_width)
+            masks <- append(masks, mask3)
+        }
 
         ## Save the masks.
         objname <- paste("masks.", seqname, sep="")
