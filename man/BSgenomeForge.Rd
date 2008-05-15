@@ -18,7 +18,8 @@
 
 \usage{
   forgeSeqFiles(srcdir, destdir, names, prefix="", suffix="", comments=NULL, single.seq=TRUE)
-  forgeMaskFiles(srcdir, destdir, seqnames, seqdir, nmasks, prefix="", suffix="")
+  forgeMaskFiles(srcdir, destdir, seqnames, seqdir,
+                 masks_per_seq, agp_or_gap, prefix="", suffix="")
 }
 
 \arguments{
@@ -49,7 +50,10 @@
   \item{seqdir}{
     [TODO: Document me]
   }
-  \item{nmasks}{
+  \item{masks_per_seq}{
+    [TODO: Document me]
+  }
+  \item{agp_or_gap}{
     [TODO: Document me]
   }
 }
