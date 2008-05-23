@@ -86,7 +86,7 @@ that is not yet available.
 
 \section{Finding an arbitrary nucleotide pattern in a chromosome}
 
-In this section we show how to find (or count) the occurences of some
+In this section we show how to find (or just count) the occurences of some
 arbitrary nucleotide pattern in a chromosome. The basic tool for this is
 the \Rfunction{matchPattern} (or \Rfunction{countPattern}) function
 from the \Rpackage{Biostrings} package.
@@ -97,7 +97,7 @@ chromosome I of {\it Caenorhabditis elegans}.
 
 UCSC provides several versions of the C. elegans genome: ce1, ce2 and ce4.
 These versions correspond to different {\it releases} from WormBase,
-which are respectively the WS100, WS120 and WS170 releases.
+which are the WS100, WS120 and WS170 releases, respectively.
 See \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1} for the list
 of all UCSC genome releases and for the correspondance between UCSC
 versions and release names.
@@ -185,29 +185,31 @@ sum(afI) == length(chrI)
 
 Count all exact matches of pattern \Robject{"ACCCAGGGC"}:
 <<b7>>=
-p <- "ACCCAGGGC"
-countPattern(p, chrI)
-countPattern(p, chrI, max.mismatch=1)
+p1 <- "ACCCAGGGC"
+countPattern(p1, chrI)
+countPattern(p1, chrI, max.mismatch=1)
 @
 
-The matches can be stored in an \Rclass{XStringViews} object
-by using the \Rmethod{matchPattern} method:
+With the \Rmethod{matchPattern} function, the locations of the matches are
+stored in an \Rclass{XStringViews} object:
 <<b8>>=
-m <- matchPattern(p, chrI, max.mismatch=1)
-m[4:6]
-mismatch(p, m[4:6])
+m1 <- matchPattern(p1, chrI, max.mismatch=1)
+m1[4:6]
+class(m1)
 @
 
-The \Rmethod{mismatch} method (new in \Rpackage{Biostrings}~2)
-returns the positions of the mismatching letters.
+The \Rmethod{mismatch} function (new in \Rpackage{Biostrings}~2)
+returns the positions of the mismatching letters for each match:
+<<b9>>=
+mismatch(p1, m1[4:6])
+@
 
 Note: The \Rmethod{mismatch} method is in fact a particular case
 of a (vectorized) {\it alignment} function where only ``replacements''
 are allowed. Current implementation is slow but this will be addressed.
 
-
 It may happen that a match is {\it out of limits} like in this example:
-<<b9>>=
+<<b10>>=
 p2 <- DNAString("AAGCCTAAGCCTAAGCCTAA")
 m2 <- matchPattern(p2, chrI, max.mismatch=2)
 m2[1:4]
@@ -217,7 +219,7 @@ mismatch(p2, m2[1:4])
 
 The list of exact matches and the list of inexact matches
 can both be obtained with:
-<<b10,results=hide>>=
+<<b11,results=hide>>=
 m2[p2 == m2]
 m2[p2 != m2]
 @
