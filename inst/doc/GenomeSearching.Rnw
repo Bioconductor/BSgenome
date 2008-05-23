@@ -183,33 +183,40 @@ afI
 sum(afI) == length(chrI)
 @
 
-Count all exact matches of pattern \Robject{"ACCCAGGGC"}:
+Count all {\it exact} matches of pattern \Robject{"ACCCAGGGC"}:
 <<b7>>=
 p1 <- "ACCCAGGGC"
 countPattern(p1, chrI)
+@
+
+Like most pattern matching functions in \Rpackage{Biostrings},
+the \Rfunction{countPattern} and \Rfunction{matchPattern} functions
+support {\it inexact} matching. One form of inexact matching is to
+allow a few mismatching letters per match. Here we allow at most one:
+<<b8>>=
 countPattern(p1, chrI, max.mismatch=1)
 @
 
-With the \Rmethod{matchPattern} function, the locations of the matches are
+With the \Rfunction{matchPattern} function, the locations of the matches are
 stored in an \Rclass{XStringViews} object:
-<<b8>>=
+<<b9>>=
 m1 <- matchPattern(p1, chrI, max.mismatch=1)
 m1[4:6]
 class(m1)
 @
 
-The \Rmethod{mismatch} function (new in \Rpackage{Biostrings}~2)
+The \Rfunction{mismatch} function (new in \Rpackage{Biostrings}~2)
 returns the positions of the mismatching letters for each match:
-<<b9>>=
+<<b10>>=
 mismatch(p1, m1[4:6])
 @
 
-Note: The \Rmethod{mismatch} method is in fact a particular case
+Note: The \Rfunction{mismatch} method is in fact a particular case
 of a (vectorized) {\it alignment} function where only ``replacements''
 are allowed. Current implementation is slow but this will be addressed.
 
 It may happen that a match is {\it out of limits} like in this example:
-<<b10>>=
+<<b11>>=
 p2 <- DNAString("AAGCCTAAGCCTAAGCCTAA")
 m2 <- matchPattern(p2, chrI, max.mismatch=2)
 m2[1:4]
@@ -219,7 +226,7 @@ mismatch(p2, m2[1:4])
 
 The list of exact matches and the list of inexact matches
 can both be obtained with:
-<<b11,results=hide>>=
+<<b12,results=hide>>=
 m2[p2 == m2]
 m2[p2 != m2]
 @
@@ -640,8 +647,8 @@ as wildcards:
 countPattern(Ebox, chrY, fixed=c(pattern=FALSE,subject=TRUE))
 @
 
-Finally, this can be achieved more efficiently by simply masking the
-assembly gaps:
+Finally, \Rfunction{countPattern} being {\it mask aware}, this can be
+achieved more efficiently by simply masking the assembly gaps:
 <<f12>>=
 active(masks(chrY))[1] <- TRUE
 countPattern(Ebox, chrY, fixed=FALSE)
@@ -678,14 +685,13 @@ a biological point of view. Or maybe it will, but we haven't
 seen any use case for this at the moment.
 Anyway, most of the times there is a systematic way to exclude some
 arbitrary regions from an analysis without having to use {\it mask aware}
-functions. This is described below in the {\it Filling the masked regions
-with the gap letter} section.
+functions. This is described below in the {\it Hard masking} section.
 
 
 
 % ---------------------------------------------------------------------------
 
-\section{Filling the masked regions with the gap letter}
+\section{Hard masking}
 
 coming soon...
 
