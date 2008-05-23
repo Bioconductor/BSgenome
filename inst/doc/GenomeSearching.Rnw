@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{How to efficiently use matchPattern() and matchPDict() for fast genome searching}
+%\VignetteIndexEntry{Efficient genome searching with Biostrings and the BSgenome data packages}
 %\VignetteKeywords{BSgenome, genome, DNA, RNA, Sequence, Biostrings, Sequence alignment, SNPs} 
 %\VignettePackage{BSgenome}
 
@@ -6,6 +6,7 @@
 % NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
 % likely to be overwritten.
 %
+\SweaveOpts{keep.source=TRUE}
 \documentclass[11pt]{article}
 
 %\usepackage{pstricks}
@@ -38,8 +39,7 @@
 \begin{document}
 %\setkeys{Gin}{width=0.55\textwidth}
 
-\title{How to efficiently use \Rmethod{matchPattern} and \Rmethod{matchPDict}
-       for fast genome searching}
+\title{Efficient genome searching with Biostrings and the BSgenome data packages}
 \author{Herv\'e Pag\`es}
 \maketitle
 
@@ -51,42 +51,57 @@
 \section{The Biostrings-based genome data packages}
 
 The Bioconductor project provides data packages that contain the full genome
-of a given organism. These packages are called {\it Biostrings-based genome
-data packages} because the sequences they contain are stored in the basic
-containers defined in the \Rpackage{Biostrings} package (i.e. the
-\Rclass{DNAString} and \Rclass{DNAStringSet} classes).
-Except for the data they contain, all the Biostrings-based genome data
-packages are very similar and can be manipulated in an easy and consistent
-way. This is achieved by defining and sharing their basic functionalies
-in the infrastructure package \Rpackage{BSgenome} that they all depend on.
-This is the reason why they are also known as the {\it BSgenome data packages}.
+sequences of a given organism. These packages are called
+{\it Biostrings-based genome data packages} because the sequences they
+contain are stored in some of the basic containers defined in the
+\Rpackage{Biostrings} package, like the \Rclass{DNAString},
+the \Rclass{DNAStringSet} or the \Rclass{MaskedDNAString} containers.
+Regardless of the particular sequence data that they contain, all the
+Biostrings-based genome data packages are very similar and can be
+manipulated in a consistent and easy way.
+They all require the \Rpackage{BSgenome} package in order to work properly.
+This package, unlike the Biostrings-based genome data packages,
+is a software package that provides the infrastructure needed to
+support them (this is why the Biostrings-based genome data packages
+are also called {\it BSgenome data packages}).
+The \Rpackage{BSgenome} package itself requires the \Rpackage{Biostrings}
+package.
 
 See the \Rfunction{available.genomes} man page (\Rfunction{?available.genomes})
 for more information about how to get the list of all the
-{\it Biostrings-based genome data packages} currently available
-in your version of Bioconductor.
+BSgenome data packages currently available in your version of
+Bioconductor (you need to be connected to the internet for this
+so \Rfunction{available.genomes} can query the Bioconductor website).
 
 More genomes can be added if necessary. Note that the process of making a
 {\it Biostrings-based genome data package} is not yet documented but you
 are welcome to ask for help on the bioc-devel mailing
-(\url{http://bioconductor.org/docs/mailList.html}).
+(\url{http://bioconductor.org/docs/mailList.html}) if you need a genome
+that is not yet available.
 
 
 
 % ---------------------------------------------------------------------------
 
-\section{Find arbitrary patterns in a chromosome}
+\section{Finding an arbitrary nucleotide pattern in a chromosome}
 
-In this section we show how to find some arbitrary patterns in
-{\it Caenorhabditis elegans} chromosome I.
+In this section we show how to find (or count) the occurences of some
+arbitrary nucleotide pattern in a chromosome. The basic tool for this is
+the \Rfunction{matchPattern} (or \Rfunction{countPattern}) function
+from the \Rpackage{Biostrings} package.
+
+First we need to install and load the BSgenome data package for the
+organism that we want to look at. In our case, we want to search
+chromosome I of {\it Caenorhabditis elegans}.
+
 UCSC provides several versions of the C. elegans genome: ce1, ce2 and ce4.
-These versions correspond to different genome releases from WormBase:
-respectively WS100, WS120 and WS170.
+These versions correspond to different {\it releases} from WormBase,
+which are respectively the WS100, WS120 and WS170 releases.
 See \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1} for the list
 of all UCSC genome releases and for the correspondance between UCSC
 versions and release names.
 
-The {\it Biostrings-based genome data packages} for the ce2 genome is
+The BSgenome data package for the ce2 genome is
 \Rpackage{BSgenome.Celegans.UCSC.ce2}. Note that ce1 and ce4 are not
 available in Bioconductor but they could be added if there is demand for
 them.
@@ -211,7 +226,7 @@ equal to \Robject{countPattern(p2, chrI, max.mismatch=0)}.
 
 % ---------------------------------------------------------------------------
 
-\section{Find arbitrary patterns in a genome}
+\section{Finding an arbitrary nucleotide pattern in an entire genome}
 
 Now we want to extend our analysis to the {\it forward} and {\it reverse}
 strands of all the C. elegans chromosomes.
@@ -228,10 +243,10 @@ More precisely, here is the analysis we want to perform:
 %   > ce2dict0 <- sapply(1:50, function(i) { x <- Celegans[[sample(seqnames(Celegans), 1)]]; start <- as.integer(runif(1, min=1, length(x)-20)); end <- start + as.integer(runif(1, min=14, max=25)); x <- subXString(x, start, end); if (sample(1:2, 1) == 2) x <- reverseComplement(x); as.character(x) })
 %   > names(ce2dict0) <- paste("pattern", 1:50, sep="")
 %   > write.XStringViews(XStringViews(ce2dict0, "DNAString"), file="ce2dict0.fa", format="fasta")
-  See the {\it Find all the occurences of a constant width dictionary of patterns
-  in a genome} section of this document for a very efficient way to deal with
-  the special case where all the patterns in the input dictionary have the same
-  length.
+  See the {\it Finding all the patterns of a constant width dictionary
+  in an entire genome} section of this document for a very efficient way
+  to deal with the special case where all the patterns in the input
+  dictionary have the same length.
 
   \item{The target: }
   Our target (or subject) is the {\it forward} and {\it reverse} strands of
@@ -277,7 +292,7 @@ ce2dict0
 @
 
 Here is how we can write the functions that will perform our analysis:
-<<c2,keep.source=TRUE>>=
+<<c2>>=
 writeHits <- function(seqname, matches, strand, file="", append=FALSE)
 {
     if (file.exists(file) && !append)
@@ -394,7 +409,7 @@ setdiff(names(ce2dict0), hits1$patternID) # pattern(s) with no hits
 @
   \item{}
 And finally a function that can be used to plot the hits:
-<<c9,keep.source=TRUE>>=
+<<c9>>=
 plotGenomeHits <- function(bsgenome, seqnames, hits)
 {
     ## Retrieve the sequence lengths
@@ -437,7 +452,7 @@ plotGenomeHits(Celegans, seqnames(Celegans), hits1)
 
 % ---------------------------------------------------------------------------
 
-\section{More precautions when using \Rmethod{matchPattern}}
+\section{Some precautions when using \Rmethod{matchPattern}}
 
 Improper use of \Rmethod{matchPattern} (or \Rmethod{countPattern}) can affect
 performance.
@@ -451,7 +466,7 @@ So if you need to reuse the same pattern a high number of times,
 it's a good idea to convert it {\it before} to pass it to the
 \Rmethod{matchPattern} or \Rmethod{countPattern} method.
 This way the conversion is done only once:
-<<d1,keep.source=TRUE>>=
+<<d1>>=
 library(hgu95av2probe)
 tmpseq <- DNAStringSet(hgu95av2probe$sequence)
 someStats <- function(v)
@@ -497,8 +512,186 @@ someStats(tmpseq[1:10])
 
 % ---------------------------------------------------------------------------
 
-\section{Find all the occurences of a constant width dictionary of patterns
-         in a genome}
+\section{Masking the chromosome sequences}
+
+Starting with Bioconductor 2.2, some {\it BSgenome data packages} provide
+built-in masks for the chromosome sequences. 
+For example, each chromosome in \Rpackage{BSgenome.Hsapiens.UCSC.hg18}
+has 3 masks on it: the mask of assembly gaps, the mask of repeat
+regions that were determined by the RepeatMasker software, and the mask
+of repeat regions that were determined by the Tandem Repeats Finder
+software (where only repeats with period less than or equal to 12
+were kept).
+
+<<f1>>=
+library(BSgenome.Hsapiens.UCSC.hg18)
+chrY <- Hsapiens$chrY
+chrY
+@
+
+Note that the built-in masks are always inactive by default.
+When displaying a masked sequence (here a \Rclass{MaskedDNAString}
+object), the {\it masked width} and {\it masked ratio} are reported for
+each individual mask, as well as for all the masks together, and for all
+the active masks together.
+The {\it masked width} is the total number of nucleotide positions
+that are masked and the {\it masked ratio} is the {\it masked width}
+divided by the length of the sequence.
+
+To activate a mask, use the \Rmethod{active} replacement method
+in conjonction with the \Rmethod{masks} method. For example, to
+activate the first mask (assembly gaps), do:
+<<f2>>=
+active(masks(chrY))[1] <- TRUE
+chrY
+@
+
+As you can see, the {\it masked width} for all the active masks
+together (i.e. the total number of nucleotide positions that are
+masked by at least one active mask) is now the same as for the
+first mask. This represents a {\it masked ratio} of about 55.6\%.
+
+Now when we use a {\it mask aware} functions like
+\Rfunction{alphabetFrequency}, the masked regions of the
+input sequence are ignored:
+<<f3>>=
+alphabetFrequency(unmasked(chrY))
+alphabetFrequency(chrY)
+@
+
+This output indicates that, for this chromosome, the assembly gaps
+correspond exactly to the regions in the sequence that were filled
+with the letter N.
+
+When coercing a \Rclass{MaskedXString} object to an \Rclass{XStringViews}
+object, each non-masked region in the original sequence is converted into
+a view on the sequence:
+<<f4>>=
+as(chrY, "XStringViews")
+@
+
+This can be used in conjonction with the \Rmethod{gaps} method to
+see the gaps between the views i.e. the masked regions themselves:
+<<f5,results=hide>>=
+gaps(as(chrY, "XStringViews"))
+@
+
+To extract the sizes of the assembly gaps:
+<<f6>>=
+width(gaps(as(chrY, "XStringViews")))
+@
+
+Note that, if applied directly to \Robject{chrY}, \Rmethod{gaps}
+returns a \Rclass{MaskedDNAString} object with a single mask masking
+the regions that are not masked in the original object:
+<<f7>>=
+gaps(chrY)
+alphabetFrequency(gaps(chrY))
+@
+
+In fact, for any \Rclass{MaskedDNAString} object, the following should
+always be \Robject{TRUE}, whatever masks are put on it:
+<<f8>>=
+af0 <- alphabetFrequency(unmasked(chrY))
+af1 <- alphabetFrequency(chrY)
+af2 <- alphabetFrequency(gaps(chrY))
+all(af0 == af1 + af2)
+@
+
+<<f9>>=
+active(masks(chrY)) <- TRUE
+af1 <- alphabetFrequency(chrY)
+af1
+gaps(chrY)
+af2 <- alphabetFrequency(gaps(chrY))
+af2
+all(af0 == af1 + af2)
+@
+
+Now let's compare three different ways of finding all the occurences of
+the \Robject{"CANNGT"} consensus sequence in chrY. The Ns in this
+pattern need to be treated as wildcards i.e. they must match any
+letter in the subject.
+
+Without the mask feature, the first way to do it would be to use
+the \Robject{fixed=FALSE} option in the call to \Rfunction{matchPattern}
+(or \Rfunction{countPattern}):
+<<f10>>=
+Ebox <- "CANNGT"
+active(masks(chrY)) <- FALSE
+countPattern(Ebox, chrY, fixed=FALSE)
+@
+
+The problem with this method is that the Ns in the subject
+are also treated as wildcards hence the abnormally high number of
+matches.
+A better method is to specify the {\it side} of the matching problem
+(i.e. {\it pattern} or {\it subject}) where the Ns should be treated
+as wildcards:
+<<f11>>=
+countPattern(Ebox, chrY, fixed=c(pattern=FALSE,subject=TRUE))
+@
+
+Finally, this can be achieved more efficiently by simply masking the
+assembly gaps:
+<<f12>>=
+active(masks(chrY))[1] <- TRUE
+countPattern(Ebox, chrY, fixed=FALSE)
+@
+
+Note that with chromosomes that have Ns outside the assembly
+gaps like chromosome 2, you need to use
+\Robject{fixed=c(pattern=FALSE,subject=TRUE)} even when the mask
+of assembly gaps is active:
+<<f13>>=
+chr2 <- Hsapiens$chr2
+active(masks(chr2))[1] <- TRUE
+alphabetFrequency(chr2)
+countPattern(Ebox, chr2, fixed=FALSE)
+countPattern(Ebox, chr2, fixed=c(pattern=FALSE,subject=TRUE))
+@
+
+Or, alternatively, you could mask the Ns yourself with the
+\Rfunction{maskMotif} function:
+<<f14>>=
+chr2_noNs <- maskMotif(unmasked(chr2), "N")
+alphabetFrequency(chr2_noNs)
+countPattern(Ebox, chr2_noNs, fixed=FALSE)
+@
+
+Note that not all functions that work with an \Rclass{XString}
+input are {\it mask aware} but more will be added in the near future.
+However, there is no plan to do this in a systematic way since
+the usefulness of supporting masks depends on the function itself.
+For example it's clear that making \Rfunction{dinucleotideFrequency}
+{\it mask aware} is going to provide a lot of convenience, but doing
+so for \Rfunction{reverseComplement} would not really make sense from
+a biological point of view. Or maybe it will, but we haven't
+seen any use case for this at the moment.
+Anyway, most of the times there is a systematic way to exclude some
+arbitrary regions from an analysis without having to use {\it mask aware}
+functions. This is described below in the {\it Filling the masked regions
+with the gap letter} section.
+
+
+
+% ---------------------------------------------------------------------------
+
+\section{Filling the masked regions with the gap letter}
+
+coming soon...
+
+
+% ---------------------------------------------------------------------------
+\section{Injecting known SNPs in the chromosome sequences}
+
+coming soon...
+
+
+% ---------------------------------------------------------------------------
+
+\section{Finding all the patterns of a constant width dictionary
+         in an entire genome}
 
 The \Rfunction{matchPDict} function can be used instead of \Rfunction{matchPattern}
 for the kind of analysis described in the {\it Find arbitrary patterns in a genome}
@@ -511,8 +704,9 @@ See \Rfunction{?matchPDict} for more information.
 
 Here is how our \Rfunction{runAnalysis1} function can be modified in order to use
 \Rfunction{matchPDict} instead of \Rfunction{matchPattern}:
-<<e1,keep.source=TRUE>>=
-runOneStrandAnalysis <- function(dict0, bsgenome, seqnames, strand, outfile="", append=FALSE)
+<<e1>>=
+runOneStrandAnalysis <- function(dict0, bsgenome, seqnames, strand,
+                                 outfile="", append=FALSE)
 {
     cat("\nTarget: strand", strand, "of", providerVersion(bsgenome),
         "chromosomes", paste(seqnames, collapse=", "), "\n")
@@ -544,168 +738,17 @@ Remember that \Rfunction{matchPDict} only works if all the patterns in the
 input dictionary have the same length so for this 2nd analysis, we will truncate
 the patterns in \Robject{ce2dict0} to 15 nucleotides:
 <<e2>>=
-ULce2dict0 <- DNAStringSet(ce2dict0, end=15)
+ce2dict0cw15 <- DNAStringSet(ce2dict0, end=15)
 @
 
 Now we can run this 2nd analysis and put the results in the
-\Robject{"ULce2dict0_ana2.txt"} file:
+\Robject{"ce2dict0cw15_ana2.txt"} file:
 <<e3>>=
-runAnalysis2(ULce2dict0, outfile="ULce2dict0_ana2.txt")
+runAnalysis2(ce2dict0cw15, outfile="ce2dict0cw15_ana2.txt")
 @
 
 
 % ---------------------------------------------------------------------------
-
-\section{Putting masks on the chromosome sequences}
-
-Starting with Bioconductor 2.2, some {\it BSgenome data packages} provide
-built-in masks for the chromosome sequences. 
-For example, each chromosome in \Rpackage{BSgenome.Hsapiens.UCSC.hg18}
-has 3 masks on it: the mask of inter-contig gaps, the mask of repeat
-regions that were determined by the RepeatMasker software, and the mask
-of repeat regions that were determined by the Tandem Repeats Finder
-software (where only repeats with period less than or equal to 12
-were kept).
-
-<<f1>>=
-library(BSgenome.Hsapiens.UCSC.hg18)
-chrY <- Hsapiens$chrY
-chrY
-@
-
-Note that the built-in masks are always inactive by default.
-When displaying a masked sequence (here a \Rclass{MaskedDNAString}
-object), the {\it masked width} and {\it masked ratio} are reported for
-each individual mask, for all the masks together, and for all
-the active masks together.
-The {\it masked width} is the total number of nucleotide positions
-that are masked and the {\it masked ratio} is the {\it masked width}
-divided by the length of the sequence.
-
-To activate a mask, use the \Rmethod{active} replacement method
-in conjonction with the \Rmethod{masks} method. For example, to
-activate the first mask (inter-contig gaps), do:
-<<f2>>=
-active(masks(chrY))[1] <- TRUE
-chrY
-@
-
-As you can see, the {\it masked width} for all the active masks
-together (i.e. the total number of nucleotide positions that are
-masked by at least one active mask) is now the same as for the
-first mask. This represents a {\it masked ratio} of about 55.6\%.
-
-Now when we use a {\it mask aware} functions like
-\Rfunction{alphabetFrequency}, the masked regions of the
-input sequence are ignored:
-<<f3>>=
-alphabetFrequency(unmasked(chrY))
-alphabetFrequency(chrY)
-@
-
-Note that not all functions that work with an \Rclass{XString}
-input are {\it mask aware} but more will be added in the near future.
-However, there is no plan to do this in a systematic way since
-the usefulness of supporting masks can vary a lot between
-functions.
-For example it's clear that making \Rfunction{dinucleotideFrequency}
-{\it mask aware} is going to provide a lot of convenience, but doing
-so for \Rfunction{reverseComplement} would not really make sense from
-a biological point of view. Or maybe it will, but we haven't
-seen any use case for this at the moment.
-Anyway, most of the times there is a systematic way to exclude some
-arbitrary regions from an analysis without having to use {\it mask aware}
-functions. This is described below in the {\it Filling the masked regions
-with the gap letter} section.
-
-When coercing a \Rclass{MaskedXString} object to an \Rclass{XStringViews}
-object, each non-masked region in the original sequence is converted into
-a view on the sequence:
-<<f4>>=
-as(chrY, "XStringViews")
-@
-
-This can be used in conjonction with the \Rmethod{gaps} method to
-see the gaps between the views i.e. the masked regions themselves:
-<<f5>>=
-gaps(as(chrY, "XStringViews"))
-@
-
-Not surprisingly, the inter-contig gaps are made of Ns.
-Note that, if applied directly to \Robject{chrY}, \Rmethod{gaps}
-returns a \Rclass{MaskedDNAString} object with just one mask masking
-the non-masked regions in the original object:
-<<f6>>=
-gaps(chrY)
-alphabetFrequency(gaps(chrY))
-active(masks(chrY)) <- TRUE
-alphabetFrequency(chrY)
-gaps(chrY)
-as(gaps(chrY), "XStringViews")
-alphabetFrequency(gaps(chrY))
-@
-
-Now let's compare three different ways to find all the occurences of
-the \Robject{"CANNGT"} consensus sequence in chrY. The Ns in this
-pattern need to be treated as wildcards i.e. they must match any
-letter in the subject.
-
-Without the mask feature, the first way to do it would be to use
-the \Robject{fixed=FALSE} option in the call to \Rfunction{matchPattern}
-(or \Rfunction{countPattern}):
-<<f7>>=
-Ebox <- "CANNGT"
-active(masks(chrY)) <- FALSE
-countPattern(Ebox, chrY, fixed=FALSE)
-@
-
-However, the problem with this method is that the Ns in the subject
-are also treated as wildcards hence the unexpected high number of
-matches.
-A better method is to specify the side of the matching problem
-where Ns should be treated as wildcards:
-<<f8>>=
-countPattern(Ebox, chrY, fixed=c(pattern=FALSE,subject=TRUE))
-@
-
-Finally, this can be achieved more efficiently by masking the
-inter-contig gaps:
-<<f9>>=
-active(masks(chrY))[1] <- TRUE
-countPattern(Ebox, chrY, fixed=FALSE)
-@
-
-Note that with chromosomes that have Ns outside the inter-contig
-gaps like chromosome 2, you need to use
-\Robject{fixed=c(pattern=FALSE,subject=TRUE)} even with the mask
-of inter-contig gaps activated:
-<<f10>>=
-chr2 <- Hsapiens$chr2
-active(masks(chr2))[1] <- TRUE
-alphabetFrequency(chr2)
-countPattern(Ebox, chr2, fixed=FALSE)
-countPattern(Ebox, chr2, fixed=c(pattern=FALSE,subject=TRUE))
-@
-
-or, alternatively, you could mask the Ns yourself:
-<<f11>>=
-chr2_noNs <- maskMotif(unmasked(chr2), "N")
-countPattern(Ebox, chr2_noNs, fixed=FALSE)
-@
-
-
-% ---------------------------------------------------------------------------
-\section{Injecting known SNPs in the chromosome sequences}
-
-coming soon...
-
-
-% ---------------------------------------------------------------------------
-
-\section{Filling the masked regions with the gap letter}
-
-coming soon...
-
 
 % ---------------------------------------------------------------------------
 
