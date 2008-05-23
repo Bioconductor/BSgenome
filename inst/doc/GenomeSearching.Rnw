@@ -597,7 +597,7 @@ alphabetFrequency(gaps(chrY))
 @
 
 In fact, for any \Rclass{MaskedDNAString} object, the following should
-always be \Robject{TRUE}, whatever masks are put on it:
+always be \Robject{TRUE}, whatever the masks are:
 <<f8>>=
 af0 <- alphabetFrequency(unmasked(chrY))
 af1 <- alphabetFrequency(chrY)
