@@ -558,7 +558,7 @@ together (i.e. the total number of nucleotide positions that are
 masked by at least one active mask) is now the same as for the
 first mask. This represents a {\it masked ratio} of about 55.6\%.
 
-Now when we use a {\it mask aware} functions like
+Now when we use a {\it mask aware} function like
 \Rfunction{alphabetFrequency}, the masked regions of the
 input sequence are ignored:
 <<f3>>=
