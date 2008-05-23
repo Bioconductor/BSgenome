@@ -67,15 +67,16 @@ are also called {\it BSgenome data packages}).
 The \Rpackage{BSgenome} package itself requires the \Rpackage{Biostrings}
 package.
 
-See the \Rfunction{available.genomes} man page (\Rfunction{?available.genomes})
-for more information about how to get the list of all the
-BSgenome data packages currently available in your version of
-Bioconductor (you need to be connected to the internet for this
-so \Rfunction{available.genomes} can query the Bioconductor website).
+See the man page for the \Rfunction{available.genomes} function
+(\Rfunction{?available.genomes}) for more information about how to get
+the list of all the BSgenome data packages currently available in your
+version of Bioconductor (you need an internet connection so that
+\Rfunction{available.genomes} can query the Bioconductor package
+repositories).
 
 More genomes can be added if necessary. Note that the process of making a
-{\it Biostrings-based genome data package} is not yet documented but you
-are welcome to ask for help on the bioc-devel mailing
+BSgenome data package is not yet documented but you are welcome to ask for
+help on the bioc-devel mailing list
 (\url{http://bioconductor.org/docs/mailList.html}) if you need a genome
 that is not yet available.
 
@@ -150,7 +151,7 @@ nucleotide sequence of the {\it reverse} strand (aka {\it indirect}
 or {\it antisense} or {\it negative} or {\it minus} or {\it opposite} strand)
 of the chromosomes because these sequences can be deduced from the {\it forward}
 sequences by taking their reverse complements.
-The {\it Biostrings-based genome data packages} are no exceptions: they only
+The BSgenome data packages are no exceptions: they only
 provide the {\it forward} strand sequence of every chromosome.
 See \Rfunction{?reverseComplement} for more details about the reverse
 complement of a \Rclass{DNAString} object.
@@ -161,8 +162,9 @@ can (and should) always be transposed into a {\it forward} strand analysis.
 Therefore trying to compute the {\it reverse} strand sequence of an entire
 chromosome by applying \Rfunction{reverseComplement} to its {\it forward}
 strand sequence is almost always a bad idea.
-See the {\it Find arbitrary patterns in a genome} section of this document
-for how to find arbitrary patterns in the {\it reverse} strand of a chromosome.
+See the {\it Finding an arbitrary nucleotide pattern in an entire genome} section
+of this document for how to find arbitrary patterns in the {\it reverse} strand
+of a chromosome.
 
 % It seems like this page http://www.medterms.com/script/main/art.asp?articlekey=20468
 % is lying about the noncoding (or coding, they are in fact contradicting themselves)
@@ -222,6 +224,7 @@ m2[p2 != m2]
 
 Note that the length of \Robject{m2[p2 == m2]} should be
 equal to \Robject{countPattern(p2, chrI, max.mismatch=0)}.
+
 
 
 % ---------------------------------------------------------------------------
@@ -450,6 +453,7 @@ plotGenomeHits(Celegans, seqnames(Celegans), hits1)
 \end{itemize}
 
 
+
 % ---------------------------------------------------------------------------
 
 \section{Some precautions when using \Rmethod{matchPattern}}
@@ -508,6 +512,7 @@ someStats(tmpseq[1:10])
 %     )
 % }
 % someStats(tmpseq[1:10])
+
 
 
 % ---------------------------------------------------------------------------
@@ -682,10 +687,12 @@ with the gap letter} section.
 coming soon...
 
 
+
 % ---------------------------------------------------------------------------
 \section{Injecting known SNPs in the chromosome sequences}
 
 coming soon...
+
 
 
 % ---------------------------------------------------------------------------
@@ -694,9 +701,9 @@ coming soon...
          in an entire genome}
 
 The \Rfunction{matchPDict} function can be used instead of \Rfunction{matchPattern}
-for the kind of analysis described in the {\it Find arbitrary patterns in a genome}
-section but it will be much faster (between 100x and 10000x faster depending on the
-size of the input dictionary).
+for the kind of analysis described in the {\it Finding an arbitrary nucleotide
+pattern in an entire genome} section but it will be much faster (between 100x and
+10000x faster depending on the size of the input dictionary).
 Note that a current limitation of \Rfunction{matchPDict} is that it only works with
 a dictionary of DNA patterns where all the patterns have the same number of
 nucleotides (constant width dictionary).
@@ -748,7 +755,6 @@ runAnalysis2(ce2dict0cw15, outfile="ce2dict0cw15_ana2.txt")
 @
 
 
-% ---------------------------------------------------------------------------
 
 % ---------------------------------------------------------------------------
 
