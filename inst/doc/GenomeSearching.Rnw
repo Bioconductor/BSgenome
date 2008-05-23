@@ -605,6 +605,7 @@ af2 <- alphabetFrequency(gaps(chrY))
 all(af0 == af1 + af2)
 @
 
+With all chrY masks active:
 <<f9>>=
 active(masks(chrY)) <- TRUE
 af1 <- alphabetFrequency(chrY)
