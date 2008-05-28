@@ -17,9 +17,10 @@
 }
 
 \usage{
-  forgeSeqFiles(srcdir, destdir, names, prefix="", suffix="", comments=NULL, single.seq=TRUE)
+  forgeSeqFiles(srcdir, destdir, names, prefix="", suffix="",
+                comments=NULL, single.seq=TRUE)
   forgeMaskFiles(srcdir, destdir, seqnames, seqdir,
-                 masks_per_seq, agp_or_gap, prefix="", suffix="")
+                 masks_per_seq, agp_or_gap, prefix=NA, suffix=NA)
 }
 
 \arguments{

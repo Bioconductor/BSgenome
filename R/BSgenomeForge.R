@@ -38,7 +38,10 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
 {
     if (is.na(agp_or_gap))
         return(masks(maskMotif(seq, "N", min.block.width=4)))
-    file <- file.path(srcdir, paste(prefix, seqname, suffix, sep=""))
+    if (is.na(prefix))
+        file <- file.path(srcdir, "gap.txt")
+    else
+        file <- file.path(srcdir, paste(prefix, seqname, suffix, sep=""))
     if (agp_or_gap == "agp")
         read.agpMask(file, length(seq), seqname=seqname)
     else
@@ -75,7 +78,7 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
 
 ## 'masks_per_seq' must be 1, 2 or 3.
 forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir,
-                           masks_per_seq, agp_or_gap, prefix="", suffix="")
+                           masks_per_seq, agp_or_gap, prefix=NA, suffix=NA)
 {
     for (seqname in seqnames) {
         ## Get the length of the sequence.
