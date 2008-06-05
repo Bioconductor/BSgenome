@@ -678,11 +678,6 @@ Note that not all functions that work with an \Rclass{XString}
 input are {\it mask aware} but more will be added in the near future.
 However, there is no plan to do this in a systematic way since
 the usefulness of supporting masks depends on the function itself.
-For example it's clear that making \Rfunction{dinucleotideFrequency}
-{\it mask aware} is going to provide a lot of convenience, but doing
-so for \Rfunction{reverseComplement} would not really make sense from
-a biological point of view. Or maybe it will, but we haven't
-seen any use case for this at the moment.
 Anyway, most of the times there is a systematic way to exclude some
 arbitrary regions from an analysis without having to use {\it mask aware}
 functions. This is described below in the {\it Hard masking} section.
