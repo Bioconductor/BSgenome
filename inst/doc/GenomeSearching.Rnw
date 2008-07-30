@@ -9,7 +9,6 @@
 \SweaveOpts{keep.source=TRUE}
 \documentclass[11pt]{article}
 
-%\usepackage{pstricks}
 %\usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
 \usepackage{underscore}
