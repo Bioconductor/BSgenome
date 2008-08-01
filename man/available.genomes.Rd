@@ -10,7 +10,14 @@
 }
 
 \usage{
-  available.genomes()
+  available.genomes(type=getOption("pkgType"))
+}
+
+\arguments{
+  \item{type}{
+    Character string indicating the type of package (\code{"source"},
+    \code{"mac.binary"} or \code{"win.binary"}) to look for.
+  }
 }
 
 \details{
@@ -33,7 +40,8 @@
 \author{H. Pages}
 
 \seealso{
-  \link{BSgenome-class}
+  \link{BSgenome-class},
+  \code{\link[utils]{available.packages}}
 }
 
 \examples{
@@ -52,4 +60,3 @@
 }
 
 \keyword{manip}
-
