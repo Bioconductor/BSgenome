@@ -1,9 +1,10 @@
 import(methods)
-import(Biobase) # only for the 'biocReposList' function
+import(Biobase) # just for the "biocReposList" function
+import(IRanges)
 import(Biostrings)
 
 exportClasses(
-    "BSgenome"
+    BSgenome
 )
 
 exportMethods(

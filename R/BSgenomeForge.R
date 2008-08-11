@@ -31,52 +31,78 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     }
 }
 
-## mask1 is the mask of "assembly gaps" (extracted from NCBI "agp" files or
-## UCSC "gap" files).
-## If 'agp_or_gap' is NA, mask N-blocks of width >= 4.
-.makeMask1 <- function(agp_or_gap, srcdir, seqname, seq, prefix, suffix)
+## mask1 is the mask of "assembly gaps" (inter-contig Ns).
+## If 'agp_or_gap' is "agp", then mask1 is extracted from NCBI "agp" files.
+## If 'agp_or_gap' is "gap", then mask1 is extracted from UCSC "gap" files.
+## If 'agp_or_gap' is NA, then mask1 is an empty mask.
+## mask1 is active by default.
+.makeMask1 <- function(agp_or_gap, srcdir, seqname, mask_width, prefix, suffix)
 {
-    if (is.na(agp_or_gap))
-        return(masks(maskMotif(seq, "N", min.block.width=4)))
-    if (is.na(prefix))
-        file <- file.path(srcdir, "gap.txt")
-    else
-        file <- file.path(srcdir, paste(prefix, seqname, suffix, sep=""))
-    if (agp_or_gap == "agp")
-        read.agpMask(file, length(seq), seqname=seqname)
-    else
-        read.gapMask(file, length(seq), seqname=seqname)
+    if (is.na(agp_or_gap)) {
+        ans <- Mask(mask_width)
+        names(ans) <- "assembly gaps (empty)"
+    } else {
+        if (is.na(prefix))
+            file <- file.path(srcdir, "gap.txt")
+        else
+            file <- file.path(srcdir, paste(prefix, seqname, suffix, sep=""))
+        if (agp_or_gap == "agp")
+            ans <- read.agpMask(file, mask_width, seqname=seqname)
+        else
+            ans <- read.gapMask(file, mask_width, seqname=seqname)
+    }
+    active(ans) <- TRUE
+    ans
 }
 
-## mask2 is the "rm" mask (from the RepeatMasker .out file).
-.makeMask2 <- function(srcdir, seqname, mask_width)
+## mask2 is the mask of "intra-contig Ns".
+## mask2 is active by default.
+.makeMask2 <- function(seq, mask1)
+{
+    active(mask1) <- TRUE
+    masks(seq) <- mask1
+    ans <- masks(maskMotif(seq, "N"))[2]
+    names(ans) <- "intra-contig Ns"
+    if (isEmpty(ans))
+        names(ans) <- paste(names(ans), "(empty)")
+    active(ans) <- TRUE
+    ans
+}
+
+## mask3 is the "RepeatMasker" mask (from the RepeatMasker .out file).
+## mask3 is NOT active by default.
+.makeMask3 <- function(srcdir, seqname, mask_width)
 {
     file <- file.path(srcdir, paste(seqname, ".fa.out", sep=""))
     if (file.exists(file)) {
         ans <- read.rmMask(file, mask_width)
         names(ans) <- "RepeatMasker"
     } else {
-        ans <- Mask(mask_width, start=integer(0), width=integer(0))
+        ans <- Mask(mask_width)
         names(ans) <- "RepeatMasker (empty)"
     }
+    active(ans) <- FALSE
     ans
 }
 
-## mask3 is the "trf" mask (from the Tandem Repeats Finder .bed file).
-.makeMask3 <- function(srcdir, seqname, mask_width)
+## mask4 is the "Tandem Repeats Finder" mask (from the Tandem Repeats Finder
+## .bed file).
+## mask4 is NOT active by default.
+.makeMask4 <- function(srcdir, seqname, mask_width)
 {
     file <- file.path(srcdir, paste(seqname, ".bed", sep=""))
     if (file.exists(file)) {
         ans <- read.trfMask(file, mask_width)
         names(ans) <- "Tandem Repeats Finder [period<=12]"
     } else {
-        ans <- Mask(mask_width, start=integer(0), width=integer(0))
+        ans <- Mask(mask_width)
         names(ans) <- "Tandem Repeats Finder [period<=12] (empty)"
     }
+    active(ans) <- FALSE
     ans
 }
 
-## 'masks_per_seq' must be 1, 2 or 3.
+## 'masks_per_seq' must be 1, 2, 3 or 4.
 forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir,
                            masks_per_seq, agp_or_gap, prefix=NA, suffix=NA)
 {
@@ -84,24 +110,29 @@ forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir,
         ## Get the length of the sequence.
         seqfile <- file.path(seqdir, paste(seqname, ".rda", sep=""))
         load(seqfile)
-        mask_width <- length(get(seqname))
+        seq <- get(seqname)
+        mask_width <- length(seq)
 
         ## Start with an empty mask collection (i.e. a MaskCollection of
         ## length 0).
         masks <- new("MaskCollection", width=mask_width)
         if (masks_per_seq >= 1) {
-            mask1 <- .makeMask1(agp_or_gap, srcdir, seqname, get(seqname),
+            mask1 <- .makeMask1(agp_or_gap, srcdir, seqname, mask_width,
                                 prefix, suffix)
             masks <- append(masks, mask1)
         }
-        remove(list=seqname)
         if (masks_per_seq >= 2) {
-            mask2 <- .makeMask2(srcdir, seqname, mask_width)
+            mask2 <- .makeMask2(seq, mask1)
             masks <- append(masks, mask2)
         }
+        remove(seq, list=seqname)
         if (masks_per_seq >= 3) {
             mask3 <- .makeMask3(srcdir, seqname, mask_width)
             masks <- append(masks, mask3)
+        }
+        if (masks_per_seq >= 4) {
+            mask4 <- .makeMask4(srcdir, seqname, mask_width)
+            masks <- append(masks, mask4)
         }
 
         ## Save the masks.

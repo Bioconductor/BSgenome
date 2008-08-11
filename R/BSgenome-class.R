@@ -161,7 +161,7 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
             if (file.exists(filename)) {
                 load(filename)
                 masks(datacache_env[[name]]) <- get(objname)
-                active(masks(datacache_env[[name]])) <- FALSE
+                #active(masks(datacache_env[[name]])) <- FALSE
                 remove(list=objname)
             }
 
