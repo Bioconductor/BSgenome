@@ -1,13 +1,17 @@
-bsapply <- function(X, FUN, exclude = "rand", ...){
+bsapply <- function(X, FUN, exclude = "", ...){
 
-    #HP: Please check the arguments. E.g. what would happen if the 'X'
-    #you get from the user was not a BSgenome object?
+    ##Some argument checking.
+    if(!is(X, "BSgenome")){stop("'X' must be a BSgenome object")}
+    if(!is.function(FUN)){stop("'FUN' must be a function that takes a DNAString object as its 1st argument.")}
+    if(!is.character(exclude) || length(exclude)>1){stop("'exclude' must be a single string.")}
 
     ##get the csomes:
     csomes <- seqnames(X)
 
     ##Restrict the csomes based on our exclusion factor:
-    csomes <- csomes[-grep(exclude, csomes)]
+    if(length(grep(exclude, csomes)) > 0 && length(grep(exclude, csomes)) != length(csomes)){
+        csomes <- csomes[-grep(exclude, csomes)]
+    }
     
     ##get a list of existing csome item the user has in memory 'right now'
     loadedCSomes <- ls(X@.datacache_env)
