@@ -48,22 +48,13 @@
 }
 
 \examples{
-  ## Get the alphabet frequencies for all the chromosomes
+  ## Load the Worm genome:
+  library("BSgenome.Celegans.UCSC.ce2")
 
+  ## Count the alphabet frequencies for every chromosome but exclude
+  ## mitochrondrial ones:
+  bsapply(Celegans, alphabetFrequency, exclude = "M")
 
-  if (interactive()) {
-    ## Make your choice and install with:
-    source("http://bioconductor.org/biocLite.R")
-    biocLite("BSgenome.Celegans.UCSC.ce2")
-
-    ## Load the Worm genome:
-    library("BSgenome.Celegans.UCSC.ce2")
-
-    ## Count the alphabet frequencies for every chromosome but exclude
-    ## mitochrondrial ones:
-    bsapply(Celegans, alphabetFrequency, exclude = "M")
-
-  }
 }
 
 \keyword{manip}
