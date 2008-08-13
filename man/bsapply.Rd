@@ -1,0 +1,69 @@
+\name{bsapply}
+
+\alias{bsapply}
+
+\title{bsapply}
+
+\description{
+  Apply a function to each chromosome in a genome.
+}
+
+\usage{
+  bsapply(X, FUN, exclude, ...)
+}
+
+\arguments{
+  \item{X}{
+    a BSgenome object that contains chromosomes that you wish to apply
+  FUN on
+  }
+  \item{FUN}{
+    the function to apply to each chromosome in the BSgenome object
+  }
+  \item{exclude}{
+    this is a string that will be used to exclude chromosomes whose
+  names match it.
+  }
+  \item{...}{
+    optional arguments to 'FUN'.
+  }
+}
+
+\details{
+  By default the exclude parameter is set to exclude "rand" which will
+  hopefully filter out the random chromosomes in most cases.
+}
+
+\value{
+  A named list is returned where each element is whatever was returned by the
+  function FUN.  The names of the list correspond to the names of the
+  chromosomes as they were labeled by the BSgenome obect in the slot
+  accessed by seqnames().
+}
+
+\author{Marc Carlson}
+
+\seealso{
+  \link{BSgenome-class}
+}
+
+\examples{
+  ## Get the alphabet frequencies for all the chromosomes
+
+
+  if (interactive()) {
+    ## Make your choice and install with:
+    source("http://bioconductor.org/biocLite.R")
+    biocLite("BSgenome.Celegans.UCSC.ce2")
+
+    ## Load the Worm genome:
+    library("BSgenome.Celegans.UCSC.ce2")
+
+    ## Count the alphabet frequencies for every chromosome but exclude
+    ## mitochrondrial ones:
+    bsapply(Celegans, alphabetFrequency, exclude = "M")
+
+  }
+}
+
+\keyword{manip}

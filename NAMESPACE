@@ -22,7 +22,8 @@ export(
     available.genomes, getSeq,
     BSgenome, injectSNPs,
     available.SNPs,
-
+    bsapply,
+       
     ## BSgenomeForge functions
     forgeSeqFiles,
     forgeMaskFiles
