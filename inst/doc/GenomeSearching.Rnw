@@ -623,7 +623,7 @@ all(af0 == af1 + af2)
 @
 
 Now let's compare three different ways of finding all the occurences of
-the \Robject{"CANNGT"} consensus sequence in chrY. The Ns in this
+the \Robject{"CANNTG"} consensus sequence in chrY. The Ns in this
 pattern need to be treated as wildcards i.e. they must match any
 letter in the subject.
 
@@ -631,7 +631,7 @@ Without the mask feature, the first way to do it would be to use
 the \Robject{fixed=FALSE} option in the call to \Rfunction{matchPattern}
 (or \Rfunction{countPattern}):
 <<f10>>=
-Ebox <- "CANNGT"
+Ebox <- "CANNTG"
 active(masks(chrY)) <- FALSE
 countPattern(Ebox, chrY, fixed=FALSE)
 @
@@ -753,7 +753,8 @@ ce2dict0cw15 <- DNAStringSet(ce2dict0, end=15)
 
 Now we can run this 2nd analysis and put the results in the
 \Robject{"ce2dict0cw15_ana2.txt"} file:
-<<e3>>=
+%%FIXME: this is not working
+<<e3, eval=FALSE>>=
 runAnalysis2(ce2dict0cw15, outfile="ce2dict0cw15_ana2.txt")
 @
 
