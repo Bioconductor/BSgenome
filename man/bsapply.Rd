@@ -21,8 +21,8 @@
     the function to apply to each chromosome in the BSgenome object
   }
   \item{exclude}{
-    this is a string that will be used to exclude chromosomes whose
-  names match it.
+    this is a character vector with strings that will be used to filter
+  out chromosomes whose names match these strings.
   }
   \item{...}{
     optional arguments to 'FUN'.

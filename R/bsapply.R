@@ -3,14 +3,25 @@ bsapply <- function(X, FUN, exclude = "", ...){
     ##Some argument checking.
     if(!is(X, "BSgenome")){stop("'X' must be a BSgenome object")}
     if(!is.function(FUN)){stop("'FUN' must be a function that takes a DNAString object as its 1st argument.")}
-    if(!is.character(exclude) || length(exclude)>1){stop("'exclude' must be a single string.")}
+    if(!is.character(exclude)){stop("'exclude' must be a character vector.")}
 
     ##get the csomes:
     csomes <- seqnames(X)
+    csomeLength = length(csomes)
 
     ##Restrict the csomes based on our exclusion factor:
-    if(length(grep(exclude, csomes)) > 0 && length(grep(exclude, csomes)) != length(csomes)){
-        csomes <- csomes[-grep(exclude, csomes)]
+    pariahIndex = numeric()
+    for(i in seq_len(length(exclude))){
+        ind = grep(exclude[i],csomes)
+        ##Catenate the indices together as we go
+        pariahIndex = c(pariahIndex, ind)
+    }
+    ##Added precaution in case some indices are found more than once...
+    pariahIndex = unique(pariahIndex)
+    ##IF the grepping has found something then we need to change our csomes
+    ##But let's not be silly and allow people to exclude EVERYTHING.
+    if(length(pariahIndex) > 0 && length(pariahIndex) != csomeLength){
+        csomes <- csomes[-pariahIndex]
     }
     
     ##get a list of existing csome item the user has in memory 'right now'
