@@ -152,7 +152,7 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
                             SNPlocs_pkgname(x), " does not match the ",
                             "number of SNPs returned by ", SNPlocs_pkgname(x),
                             ":::getSNPlocs()")
-                .inplaceReplaceLetterAtLoc(datacache_env[[name]], snps$loc, snps$alleles_as_ambig)
+                .inplaceReplaceLetterAt(datacache_env[[name]], snps$loc, snps$alleles_as_ambig)
             }
 
             ## Load and put the (inactive) built-in masks, if any
