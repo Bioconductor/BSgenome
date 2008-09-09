@@ -12,7 +12,7 @@
 getSeq <- function(bsgenome, seqname, start=NA, end=NA, as.XStringViews=FALSE)
 {
     if (length(seqname) == 1) {
-        ans <- views(bsgenome[[seqname]], start, end)
+        ans <- Views(bsgenome[[seqname]], start=start, end=end)
         if (!as.XStringViews)
             ans <- as.character(ans)
         return(ans)
