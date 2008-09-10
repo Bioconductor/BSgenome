@@ -30,8 +30,9 @@
 }
 
 \details{
-  By default the exclude parameter is set to exclude "rand" which will
-  hopefully filter out the random chromosomes in most cases.
+  By default the exclude parameter is set to not exclude anything.  A
+  popular option will probably be to set this to "rand" so that random
+  bits of unassigned contigs are filtered out.
 }
 
 \value{
