@@ -1,55 +1,107 @@
-###
+### =========================================================================
+### The BSgenomeForge functions
+### -------------------------------------------------------------------------
+
+
+.isSingleString <- function(x)
+{
+    is.character(x) && length(x) == 1 && !is.na(x)
+}
+
+.isSingleStringOrNA <- function(x)
+{
+    is.vector(x) && is.atomic(x) && length(x) == 1 && (is.character(x) || is.na(x))
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "forgeSeqFiles" function.
 ###
 
-forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments=NULL, single.seq=TRUE)
+.forgeSeqFile <- function(name, prefix="", suffix=".fa",
+                          srcdir=".", destdir=".", is.single.seq=TRUE, verbose=TRUE)
 {
-    if (length(names) == 0)
-        return()
-    for (i in 1:length(names)) {
-        name <- names[i]
-        srcfile <- paste(prefix, name, suffix, sep="")
-        srcpath <- paste(srcdir, srcfile, sep="/")
+    if (!.isSingleString(name))
+        stop("'name' must be a single string")
+    if (!.isSingleString(prefix))
+        stop("'prefix' must be a single string")
+    if (!.isSingleString(suffix))
+        stop("'suffix' must be a single string")
+    if (!.isSingleString(srcdir))
+        stop("'srcdir' must be a single string")
+    if (!.isSingleString(destdir))
+        stop("'destdir' must be a single string")
+    srcfile <- paste(prefix, name, suffix, sep="")
+    srcpath <- file.path(srcdir, srcfile)
+    if (verbose)
         cat("Loading FASTA file '", srcpath, "' in '", name, "' object... ", sep="")
-        seq <- read.DNAStringSet(srcpath, "fasta")
+    seq <- read.DNAStringSet(srcpath, "fasta")
+    if (verbose)
         cat("DONE\n")
-        if (single.seq) {
-            if (length(seq) != 1)
-                stop("file should contain exactly one sequence, found ", length(seq))
-            seq <- seq[[1]] # now 'seq' is a DNAString object
-        }
-        if (is.null(comments))
-            c <- ""
-        else
-            c <- comments[i]
-        comment(seq) <- paste(c, " (generated from FASTA file ", srcfile, ")", sep="")
-        assign(name, seq)
-        dest <- paste(destdir, "/", name, ".rda", sep="")
+    if (is.single.seq) {
+        if (length(seq) == 0)
+            stop("file contains no DNA sequence")
+        if (length(seq) > 1)
+            warning("file contains ", length(seq), " sequences, ",
+                    "using the first sequence only")
+        seq <- seq[[1]] # now 'seq' is a DNAString object
+    }
+    assign(name, seq)
+    dest <- file.path(destdir, paste(name, ".rda", sep=""))
+    if (verbose)
         cat("Saving '", name, "' object to compressed data file '", dest, "'... ", sep="")
-        save(list=name, file=dest, compress=TRUE)
+    save(list=name, file=dest, compress=TRUE)
+    if (verbose)
         cat("DONE\n")
-        remove(list=name)
+    remove(list=name)
+}
+
+forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
+                          srcdir=".", destdir=".", verbose=TRUE)
+{
+    if (length(seqnames) == 0)
+        warning("'seqnames' is empty")
+    for (name in seqnames) {
+        .forgeSeqFile(name, prefix=prefix, suffix=suffix,
+                      srcdir=srcdir, destdir=destdir, is.single.seq=TRUE, verbose=verbose)
+    }
+    for (name in mseqnames) {
+        .forgeSeqFile(name, prefix=prefix, suffix=suffix,
+                      srcdir=srcdir, destdir=destdir, is.single.seq=FALSE, verbose=verbose)
     }
 }
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "forgeMaskFiles" function.
+###
+
 ## mask1 is the mask of "assembly gaps" (inter-contig Ns).
-## If 'agp_or_gap' is "agp", then mask1 is extracted from NCBI "agp" files.
-## If 'agp_or_gap' is "gap", then mask1 is extracted from UCSC "gap" files.
-## If 'agp_or_gap' is NA, then mask1 is an empty mask.
+## If 'srctype1' is NA, then mask1 is an empty mask.
+## If 'srctype1' is "gap", then mask1 is extracted from UCSC "gap" files.
+## If 'srctype1' is "agp", then mask1 is extracted from NCBI "agp" files.
 ## mask1 is active by default.
-.makeMask1 <- function(agp_or_gap, srcdir, seqname, mask_width, prefix, suffix)
+.forgeMask1 <- function(seqname, mask_width, srcdir, srctype1, prefix1, suffix1)
 {
-    if (is.na(agp_or_gap)) {
+    if (!.isSingleStringOrNA(srctype1))
+        stop("'srctype1' must be a single string or NA")
+    if (!.isSingleStringOrNA(prefix1))
+        stop("'prefix1' must be a single string or NA")
+    if (!.isSingleStringOrNA(suffix1))
+        stop("'suffix1' must be a single string or NA")
+    if (is.na(srctype1)) {
         ans <- Mask(mask_width)
         names(ans) <- "assembly gaps (empty)"
     } else {
-        if (is.na(prefix))
-            file <- file.path(srcdir, "gap.txt")
+        if (is.na(prefix1))
+            file <- "gap.txt"
         else
-            file <- file.path(srcdir, paste(prefix, seqname, suffix, sep=""))
-        if (agp_or_gap == "agp")
-            ans <- read.agpMask(file, mask_width, seqname=seqname)
-        else
+            file <- paste(prefix1, seqname, suffix1, sep="")
+        file <- file.path(srcdir, file)
+        if (srctype1 == "gap")
             ans <- read.gapMask(file, mask_width, seqname=seqname)
+        else
+            ans <- read.agpMask(file, mask_width, seqname=seqname)
     }
     active(ans) <- TRUE
     ans
@@ -57,7 +109,7 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
 
 ## mask2 is the mask of "intra-contig Ns".
 ## mask2 is active by default.
-.makeMask2 <- function(seq, mask1)
+.forgeMask2 <- function(seq, mask1)
 {
     active(mask1) <- TRUE
     masks(seq) <- mask1
@@ -71,7 +123,7 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
 
 ## mask3 is the "RepeatMasker" mask (from the RepeatMasker .out file).
 ## mask3 is NOT active by default.
-.makeMask3 <- function(srcdir, seqname, mask_width)
+.forgeMask3 <- function(seqname, mask_width, srcdir)
 {
     file <- file.path(srcdir, paste(seqname, ".fa.out", sep=""))
     if (file.exists(file)) {
@@ -88,7 +140,7 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
 ## mask4 is the "Tandem Repeats Finder" mask (from the Tandem Repeats Finder
 ## .bed file).
 ## mask4 is NOT active by default.
-.makeMask4 <- function(srcdir, seqname, mask_width)
+.forgeMask4 <- function(seqname, mask_width, srcdir)
 {
     file <- file.path(srcdir, paste(seqname, ".bed", sep=""))
     if (file.exists(file)) {
@@ -102,47 +154,74 @@ forgeSeqFiles <- function(srcdir, destdir, names, prefix="", suffix="", comments
     ans
 }
 
-## 'masks_per_seq' must be 1, 2, 3 or 4.
-forgeMaskFiles <- function(srcdir, destdir, seqnames, seqdir,
-                           masks_per_seq, agp_or_gap, prefix=NA, suffix=NA)
+.forgeMaskFile <- function(seqname, masks_per_seq,
+                           seqdir=".", srcdir=".", destdir=".",
+                           srctype1="gap", prefix1="", suffix1="_gap.txt", verbose=TRUE)
 {
-    for (seqname in seqnames) {
-        ## Get the length of the sequence.
-        seqfile <- file.path(seqdir, paste(seqname, ".rda", sep=""))
-        load(seqfile)
-        seq <- get(seqname)
-        mask_width <- length(seq)
+    if (!.isSingleString(seqname))
+        stop("'seqname' must be a single string")
+    if (!is.numeric(masks_per_seq)
+     || length(masks_per_seq) != 1
+     || !(masks_per_seq %in% 0:4))
+        stop("'masks_per_seq' must be 0, 1, 2, 3 or 4")
+    if (masks_per_seq == 0)
+        warning("forging an empty mask collection ('masks_per_seq' is set to 0)")
+    if (!.isSingleString(seqdir))
+        stop("'seqdir' must be a single string")
+    if (!.isSingleString(srcdir))
+        stop("'srcdir' must be a single string")
+    if (!.isSingleString(destdir))
+        stop("'destdir' must be a single string")
 
-        ## Start with an empty mask collection (i.e. a MaskCollection of
-        ## length 0).
-        masks <- new("MaskCollection", width=mask_width)
-        if (masks_per_seq >= 1) {
-            mask1 <- .makeMask1(agp_or_gap, srcdir, seqname, mask_width,
-                                prefix, suffix)
-            masks <- append(masks, mask1)
-        }
-        if (masks_per_seq >= 2) {
-            mask2 <- .makeMask2(seq, mask1)
-            masks <- append(masks, mask2)
-        }
-        remove(seq, list=seqname)
-        if (masks_per_seq >= 3) {
-            mask3 <- .makeMask3(srcdir, seqname, mask_width)
-            masks <- append(masks, mask3)
-        }
-        if (masks_per_seq >= 4) {
-            mask4 <- .makeMask4(srcdir, seqname, mask_width)
-            masks <- append(masks, mask4)
-        }
+    ## Get the length of the sequence.
+    seqfile <- file.path(seqdir, paste(seqname, ".rda", sep=""))
+    load(seqfile)
+    seq <- get(seqname)
+    mask_width <- length(seq)
 
-        ## Save the masks.
-        objname <- paste("masks.", seqname, sep="")
-        assign(objname, masks)
-        dest <- file.path(destdir, paste(objname, ".rda", sep=""))
+    ## Start with an empty mask collection (i.e. a MaskCollection of
+    ## length 0).
+    masks <- new("MaskCollection", width=mask_width)
+    if (masks_per_seq >= 1) {
+        mask1 <- .forgeMask1(seqname, mask_width, srcdir, srctype1, prefix1, suffix1)
+        masks <- append(masks, mask1)
+    }
+    if (masks_per_seq >= 2) {
+        mask2 <- .forgeMask2(seq, mask1)
+        masks <- append(masks, mask2)
+    }
+    remove(seq, list=seqname)
+    if (masks_per_seq >= 3) {
+        mask3 <- .forgeMask3(seqname, mask_width, srcdir)
+        masks <- append(masks, mask3)
+    }
+    if (masks_per_seq >= 4) {
+        mask4 <- .forgeMask4(seqname, mask_width, srcdir)
+        masks <- append(masks, mask4)
+    }
+
+    ## Save the masks.
+    objname <- paste("masks.", seqname, sep="")
+    assign(objname, masks)
+    dest <- file.path(destdir, paste(objname, ".rda", sep=""))
+    if (verbose)
         cat("Saving '", objname, "' object to compressed data file '", dest, "'... ", sep="")
-        save(list=objname, file=dest, compress=TRUE)
+    save(list=objname, file=dest, compress=TRUE)
+    if (verbose)
         cat("DONE\n")
-        remove(list=objname)
+    remove(list=objname)
+}
+
+forgeMaskFiles <- function(seqnames, masks_per_seq,
+                           seqdir=".", srcdir=".", destdir=".",
+                           srctype1="gap", prefix1="", suffix1="_gap.txt", verbose=TRUE)
+{
+    if (length(seqnames) == 0)
+        warning("'seqnames' is empty")
+    for (seqname in seqnames) {
+        .forgeMaskFile(seqname, masks_per_seq,
+                       seqdir=seqdir, srcdir=srcdir, destdir=destdir,
+                       srctype1=srctype1, prefix1=prefix1, suffix1=suffix1, verbose=verbose)
     }
 }
 

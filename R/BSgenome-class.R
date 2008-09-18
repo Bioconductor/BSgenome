@@ -76,10 +76,14 @@ setMethod("SNPlocs_pkgname", "BSgenome",
 )
 
 setGeneric("seqnames", function(x) standardGeneric("seqnames"))
-setMethod("seqnames", "BSgenome", function(x) x@seqnames)
+setMethod("seqnames", "BSgenome",
+    function(x) { if (length(x@seqnames) == 0) NULL else x@seqnames }
+)
 
 setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
-setMethod("mseqnames", "BSgenome", function(x) x@mseqnames)
+setMethod("mseqnames", "BSgenome",
+    function(x) { if (length(x@mseqnames) == 0) NULL else x@mseqnames }
+)
 
 setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 
