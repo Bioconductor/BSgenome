@@ -184,6 +184,10 @@ BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, mseqnames, package, subdir)
 {
+    if (is.null(seqnames))
+        seqnames <- character(0)
+    if (is.null(mseqnames))
+        mseqnames <- character(0)
     ans <- new("BSgenome",
         organism=organism,
         species=species,

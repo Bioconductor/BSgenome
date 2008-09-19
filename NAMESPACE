@@ -4,28 +4,44 @@ import(IRanges)
 import(Biostrings)
 
 exportClasses(
-    BSgenome
-)
+    BSgenome,
 
-exportMethods(
-    ## Generics defined elsewhere
-    names, show, length, "[[", "$",
-    ## New generics
-    organism, species, provider, providerVersion,
-    releaseDate, releaseName, sourceUrl,
-    SNPlocs_pkgname,
-    seqnames, mseqnames,
-    unload
+    ## BSgenomeForge classes:
+    BSgenomeDataPkgSeed
 )
 
 export(
+    ## Non-generic functions:
     available.genomes, getSeq,
     BSgenome, injectSNPs,
     available.SNPs,
     bsapply,
+
+    ## Generic functions:
+    organism, species, provider, providerVersion,
+    releaseDate, releaseName, sourceUrl,
+    SNPlocs_pkgname,
+    seqnames, mseqnames,
+    unload,
        
-    ## BSgenomeForge functions
+    ## BSgenomeForge functions:
     forgeSeqFiles,
-    forgeMaskFiles
+    forgeMaskFiles,
+    forgeBSgenomeDataPkg
+)
+
+exportMethods(
+    ## Methods for generics defined elsewhere:
+    names, show, length, "[[", "$",
+
+    ## Methods for generics defined in this package:
+    organism, species, provider, providerVersion,
+    releaseDate, releaseName, sourceUrl,
+    SNPlocs_pkgname,
+    seqnames, mseqnames,
+    unload,
+
+    ## BSgenomeForge methods:
+    forgeBSgenomeDataPkg
 )
 
