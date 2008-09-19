@@ -1,0 +1,18 @@
+Package: @PKGNAME@
+Title: @PKGTITLE@
+Description: @PKGDESCRIPTION@
+Version: @PKGVERSION@
+Author: @AUTHOR@
+Maintainer: @MAINTAINER@
+Depends: BSgenome (>= @BSGENOMEVERSION@)
+Imports: BSgenome
+License: @LIC@
+LazyLoad: no
+organism: @ORGANISM@
+species: @SPECIES@
+provider: @PROVIDER@
+provider_version: @PROVIDERVERSION@
+release_date: @RELEASEDATE@
+release_name: @RELEASENAME@
+source_url: @SOURCEURL@
+biocViews: AnnotationData, Genetics, @ORGANISM@
