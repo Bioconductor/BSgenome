@@ -36,8 +36,14 @@ setClass(
         ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
 
-        package="character",
-        subdir="character",
+        ## where to find the serialized objects containing the sequences
+        seqs_pkg="character",
+        seqs_dir="character",
+
+        ## where to find the serialized objects containing the masks
+        nmask_per_seq="integer",
+        masks_pkg="character",
+        masks_dir="character",
 
         .activebindings_env="environment",
         .datacache_env="environment"
@@ -119,8 +125,8 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 ###           "upstream2000",
 ###           "upstream5000"
 ###       ),
-###       package="BSgenome.Celegans.UCSC.ce2",
-###       subdir="extdata"
+###       seqs_pkg="BSgenome.Celegans.UCSC.ce2",
+###       seqs_dir="extdata"
 ###   )
 ###
 ### The "client" package NEEDS to have "SaveImage: no" in its DESCRIPTION file.
@@ -159,30 +165,37 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
                 .inplaceReplaceLetterAt(datacache_env[[name]], snps$loc, snps$alleles_as_ambig)
             }
 
-            ## Load and put the (inactive) built-in masks, if any
-            objname <- paste("masks.", name, sep="")
-            filename <- system.file("data", paste(objname, ".rda", sep=""), package=x@package)
-            if (file.exists(filename)) {
+            if (is(datacache_env[[name]], "XString") && x@nmask_per_seq > 0) {
+                ## Load and set the built-in masks
+                objname <- paste("masks.", name, sep="")
+                filename <- system.file(x@masks_dir, paste(objname, ".rda", sep=""), package=x@masks_pkg)
                 load(filename)
-                masks(datacache_env[[name]]) <- get(objname)
+                builtinmasks <- get(objname)
+                if (length(builtinmasks) < x@nmask_per_seq)
+                    stop("expecting ", x@nmask_per_seq, " built-in masks per ",
+                         "single sequence, found only ", length(builtinmasks),
+                         " in ", filename)
+                if (length(builtinmasks) > x@nmask_per_seq)
+                    builtinmasks <- builtinmasks[seq_len(x@nmask_per_seq)]
+                masks(datacache_env[[name]]) <- builtinmasks
                 #active(masks(datacache_env[[name]])) <- FALSE
                 remove(list=objname)
             }
-
             datacache_env[[name]]
         }
         makeActiveBinding(name, getter, activebindings_env)
     }
 
     for (name in names) {
-        file <- system.file(x@subdir, paste(name, ".rda", sep=""), package=x@package)
+        file <- system.file(x@seqs_dir, paste(name, ".rda", sep=""), package=x@seqs_pkg)
         addCachedItem(name, file)
     }
 }
 
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
-                     seqnames, mseqnames, package, subdir)
+                     seqnames, mseqnames, seqs_pkg, seqs_dir,
+                     nmask_per_seq, masks_pkg, masks_dir)
 {
     if (is.null(seqnames))
         seqnames <- character(0)
@@ -198,8 +211,11 @@ BSgenome <- function(organism, species, provider, provider_version,
         source_url=source_url,
         seqnames=seqnames,
         mseqnames=mseqnames,
-        package=package,
-        subdir=subdir,
+        seqs_pkg=seqs_pkg,
+        seqs_dir=seqs_dir,
+        nmask_per_seq=as.integer(nmask_per_seq),
+        masks_pkg=masks_pkg,
+        masks_dir=masks_dir,
         .activebindings_env=new.env(parent=emptyenv()),
         .datacache_env=new.env(parent=emptyenv())
     )

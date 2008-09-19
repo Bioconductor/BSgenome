@@ -25,7 +25,7 @@
   forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                 seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
 
-  forgeMaskFiles(seqnames, nmask.per.seq,
+  forgeMaskFiles(seqnames, nmask_per_seq,
                  seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
                  mask1.srctype="gap", mask1.prefix="", mask1.suffix="_gap.txt",
                  verbose=TRUE)
@@ -87,7 +87,7 @@
   \item{verbose}{
     \code{TRUE} or \code{FALSE}.
   }
-  \item{nmask.per.seq}{
+  \item{nmask_per_seq}{
     [TODO: Document me]
   }
   \item{mask1.srctype}{

@@ -12,7 +12,10 @@
     source_url="@SOURCEURL@",
     seqnames=@SEQNAMES@,
     mseqnames=@MSEQNAMES@,
-    package="@PKGNAME@",
-    subdir="extdata"
+    seqs_pkg="@PKGNAME@",
+    seqs_dir="extdata",
+    nmask_per_seq=@NMASKPERSEQ@,
+    masks_pkg="@PKGNAME@",
+    masks_dir="data"
 )
 
