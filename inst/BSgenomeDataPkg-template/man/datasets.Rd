@@ -14,6 +14,7 @@
 
 \usage{
   data(seqlengths, package="@PKGNAME@")
+
   @MASKSDATASETUSAGES@
 }
 
