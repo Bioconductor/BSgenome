@@ -14,7 +14,7 @@
 
 \usage{
 ## Load the lengths of the single sequences contained in the package:
-data(seqlengths, package="@PKGNAME@")
+data(seqlengths)
 
 @MASKSDATASETUSAGES@
 }
@@ -27,6 +27,8 @@ data(seqlengths, package="@PKGNAME@")
 }
 
 \examples{
+  ## You need to specify the 'package' argument if @PKGNAME@
+  ## is not the first package in your search path:
   data(seqlengths, package="@PKGNAME@")
   seqlengths  ## same as seqlengths(@BSGENOMEOBJNAME@)
 }
