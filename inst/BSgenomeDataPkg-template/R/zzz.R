@@ -2,6 +2,9 @@
 ###
 ###
 
+.seqnames <- @SEQNAMES@
+.mseqnames <- @MSEQNAMES@
+
 @BSGENOMEOBJNAME@ <- BSgenome(
     organism="@ORGANISM@",
     species="@SPECIES@",
@@ -10,9 +13,10 @@
     release_date="@RELEASEDATE@",
     release_name="@RELEASENAME@",
     source_url="@SOURCEURL@",
-    seqnames=@SEQNAMES@,
-    mseqnames=@MSEQNAMES@,
+    seqnames=.seqnames,
+    mseqnames=.mseqnames,
     seqs_pkg="@PKGNAME@",
+    seqlengths_dir="data",
     seqs_dir="extdata",
     nmask_per_seq=@NMASKPERSEQ@,
     masks_pkg="@PKGNAME@",

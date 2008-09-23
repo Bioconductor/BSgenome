@@ -1,4 +1,4 @@
-\name{@PKGNAME@-package}
+\name{@BSGENOMEOBJNAME@}
 \docType{package}
 
 \alias{@PKGNAME@-package}
@@ -18,10 +18,12 @@
 
 \note{
   This BSgenome data package was made from the following source data files:
-  @SRCDATAFILES@
-
+  \preformatted{
+@SRCDATAFILES1@
+@SRCDATAFILES2@
+  }
   See \code{?\link[BSgenome]{BSgenomeForge}} and the BSgenomeForge
-  vignette (\code{vignette("BSgenomeForge")}) from the BSgenome software
+  vignette (\code{vignette("BSgenomeForge")}) in the BSgenome software
   package for how to make a BSgenome data package.
 }
 
@@ -37,7 +39,7 @@
 \examples{
   @PKGEXAMPLES@
 
-  ## See the GenomeSearching vignette from the BSgenome software
+  ## See the GenomeSearching vignette in the BSgenome software
   ## package for some examples of genome-wide motif searching using
   ## Biostrings and a BSgenome data package:
   if (interactive())

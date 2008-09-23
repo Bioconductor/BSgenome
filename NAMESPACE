@@ -25,6 +25,9 @@ export(
     unload,
        
     ## BSgenomeForge functions:
+    getSeqSrcpaths,
+    getSeqlengths,
+    forgeSeqlengthsFile,
     forgeSeqFiles,
     forgeMaskFiles,
     forgeBSgenomeDataPkg

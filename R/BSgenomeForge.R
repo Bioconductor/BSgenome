@@ -13,6 +13,93 @@
     is.vector(x) && is.atomic(x) && length(x) == 1 && (is.character(x) || is.na(x))
 }
 
+.saveObject <- function(object, objname, destdir=".", verbose=TRUE)
+{
+    assign(objname, object)
+    destfile <- file.path(destdir, paste(objname, ".rda", sep=""))
+    if (verbose)
+        cat("Saving '", objname, "' object to compressed data file '",
+            destfile, "'... ", sep="")
+    save(list=objname, file=destfile, compress=TRUE)
+    if (verbose)
+        cat("DONE\n")
+    remove(list=objname)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "getSeqSrcpaths" function.
+###
+
+getSeqSrcpaths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
+{
+    if (!is.null(seqnames) && !is.character(seqnames))
+        stop("'seqnames' must be a character vector (or NULL)")
+    if (length(seqnames) == 0) {
+        warning("'seqnames' is empty")
+        return(character(0))
+    }
+    if (!.isSingleString(prefix))
+        stop("'prefix' must be a single string")
+    if (!.isSingleString(suffix))
+        stop("'suffix' must be a single string")
+    if (!.isSingleString(seqs_srcdir))
+        stop("'seqs_srcdir' must be a single string")
+    srcfiles <- paste(prefix, seqnames, suffix, sep="")
+    ans <- file.path(seqs_srcdir, srcfiles)
+    is_OK <- file.exists(ans)
+    if (!all(is_OK)) {
+        missing_files <- paste(ans[!is_OK], collapse=", ")
+        stop(missing_files, ": file(s) not found")
+    }
+    names(ans) <- seqnames
+    ans
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "getSeqlengths" and "forgeSeqlengthsFile" functions.
+###
+
+getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
+{
+    if (length(seqnames) == 0) {
+        warning("'seqnames' is empty")
+        return(integer(0))
+    }
+    srcpaths <- getSeqSrcpaths(seqnames, prefix=prefix, suffix=suffix,
+                               seqs_srcdir=seqs_srcdir)
+    sapply(seqnames, function(seqname)
+           {
+               srcpath <- srcpaths[[seqname]]
+               ans <- fasta.info(srcpath)
+               if (length(ans) == 0)
+                   stop("In file '", srcpath, "': no sequence found")
+               if (length(ans) > 1)
+                   warning("In file '", srcpath, "': ", length(ans),
+                           " sequences found, using first sequence only")
+               if (names(ans)[1] != seqname)
+                   warning("In file '", srcpath, "': sequence description \"",
+                           names(ans), "\" doesn't match user-specified ",
+                           "sequence name \"", seqname, "\"")
+               ans[[1]]
+           },
+           USE.NAMES=TRUE
+    )
+}
+
+forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
+                                seqs_srcdir=".", seqlengths_destdir=".",
+                                verbose=TRUE)
+{
+    seqlengths <- getSeqlengths(seqnames, prefix=prefix, suffix=suffix,
+                                seqs_srcdir=seqs_srcdir)
+    if (!.isSingleString(seqlengths_destdir))
+        stop("'seqlengths_destdir' must be a single string")
+    .saveObject(seqlengths, "seqlengths", destdir=seqlengths_destdir,
+                verbose=verbose)
+}
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The "forgeSeqFiles" function.
@@ -23,8 +110,8 @@
 {
     if (!.isSingleString(name))
         stop("'name' must be a single string")
-    srcfile <- paste(prefix, name, suffix, sep="")
-    srcpath <- file.path(seqs_srcdir, srcfile)
+    srcpath <- getSeqSrcpaths(name, prefix=prefix, suffix=suffix,
+                              seqs_srcdir=seqs_srcdir)
     if (verbose)
         cat("Loading FASTA file '", srcpath, "' in '", name, "' object... ", sep="")
     seq <- read.DNAStringSet(srcpath, "fasta")
@@ -38,41 +125,28 @@
                     "using the first sequence only")
         seq <- seq[[1]] # now 'seq' is a DNAString object
     }
-    assign(name, seq)
-    dest <- file.path(seqs_destdir, paste(name, ".rda", sep=""))
-    if (verbose)
-        cat("Saving '", name, "' object to compressed data file '", dest, "'... ", sep="")
-    save(list=name, file=dest, compress=TRUE)
-    if (verbose)
-        cat("DONE\n")
-    remove(list=name)
+    .saveObject(seq, name, destdir=seqs_destdir, verbose=verbose)
 }
 
 forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
 {
-    if (!is.null(seqnames) && !is.character(seqnames))
-        stop("'seqnames' must be a character vector (or NULL)")
-    if (length(seqnames) == 0)
+    if (length(seqnames) == 0) {
         warning("'seqnames' is empty")
-    if (!is.null(mseqnames) && !is.character(mseqnames))
-        stop("'mseqnames' must be a character vector (or NULL)")
-    if (!.isSingleString(prefix))
-        stop("'prefix' must be a single string")
-    if (!.isSingleString(suffix))
-        stop("'suffix' must be a single string")
-    if (!.isSingleString(seqs_srcdir))
-        stop("'seqs_srcdir' must be a single string")
+    } else {
+        ## just for the side effect of checking the arguments
+        getSeqSrcpaths(seqnames, prefix=prefix, suffix=suffix,
+                       seqs_srcdir=seqs_srcdir)
+    }
+    if (length(mseqnames) != 0) {
+        if (!is.character(mseqnames))
+            stop("'mseqnames' must be a character vector (or NULL)")
+        ## just for the side effect of checking the arguments
+        getSeqSrcpaths(mseqnames, prefix=prefix, suffix=suffix,
+                       seqs_srcdir=seqs_srcdir)
+    }
     if (!.isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
-
-    srcfiles <- paste(prefix, c(seqnames, mseqnames), suffix, sep="")
-    srcpaths <- file.path(seqs_srcdir, srcfiles)
-    is_OK <- file.exists(srcpaths)
-    if (!all(is_OK)) {
-        missing_files <- paste(srcfiles[!is_OK], collapse=", ")
-        stop(missing_files, ": files not found in directory ", seqs_srcdir)
-    }
     for (name in seqnames) {
         .forgeSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
                       is.single.seq=TRUE, verbose=verbose)
@@ -214,17 +288,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         mask4 <- .forgeMask4(seqname, mask_width, masks_srcdir)
         masks <- append(masks, mask4)
     }
-
-    ## Save the masks.
     objname <- paste("masks.", seqname, sep="")
-    assign(objname, masks)
-    dest <- file.path(masks_destdir, paste(objname, ".rda", sep=""))
-    if (verbose)
-        cat("Saving '", objname, "' object to compressed data file '", dest, "'... ", sep="")
-    save(list=objname, file=dest, compress=TRUE)
-    if (verbose)
-        cat("DONE\n")
-    remove(list=objname)
+    .saveObject(masks, objname, destdir=masks_destdir, verbose=verbose)
 }
 
 forgeMaskFiles <- function(seqnames, nmask_per_seq,
@@ -277,7 +342,8 @@ setClass(
         mask1.prefix="character",
         mask1.suffix="character",
         PkgDetails="character",
-        SrcDataFiles="character",
+        SrcDataFiles1="character",
+        SrcDataFiles2="character",
         PkgExamples="character"
     ),
     prototype(
@@ -294,7 +360,8 @@ setClass(
         mask1.prefix="",
         mask1.suffix="_gap.txt",
         PkgDetails="",
-        SrcDataFiles="-- information not available --",
+        SrcDataFiles1="-- information not available --",
+        SrcDataFiles2="",
         PkgExamples=""
     )
 )   
@@ -335,7 +402,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             MSEQNAMES=x@mseqnames,
             NMASKPERSEQ=as.character(x@nmask_per_seq),
             PKGDETAILS=x@PkgDetails,
-            SRCDATAFILES=x@SrcDataFiles,
+            SRCDATAFILES1=x@SrcDataFiles1,
+            SRCDATAFILES2=x@SrcDataFiles2,
             PKGEXAMPLES=x@PkgExamples
         )
         ## Should never happen
@@ -344,10 +412,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             stop("'symvals' contains duplicated symbols")
         }
         ## All symvals should by single strings (non-NA)
-        is_OK <- sapply(symvals,
-                        function(val)
-                          { is.character(val) && length(val) == 1 && !is.na(val) }
-                 )
+        is_OK <- sapply(symvals, function(val) {.isSingleString(val)})
         if (!all(is_OK)) {
             bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
             stop("values for symbols ", bad_syms, " are not single strings")
@@ -356,6 +421,14 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         pkgdir <- file.path(destdir, x@Package)
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
         bsgenome <- get(x@BSgenomeObjname, inherits=FALSE)
+        ## Forge the "seqlengths.rda" file
+        seqlengths_destdir <- file.path(pkgdir, "data")
+        forgeSeqlengthsFile(seqnames(bsgenome),
+                            prefix=x@seqfiles.prefix, suffix=x@seqfiles.suffix,
+                            seqs_srcdir=seqs_srcdir,
+                            seqlengths_destdir=seqlengths_destdir,
+                            verbose=verbose)
+        ## Forge the sequence "*.rda" files
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
         forgeSeqFiles(seqnames(bsgenome), mseqnames=mseqnames(bsgenome),
                       prefix=x@seqfiles.prefix, suffix=x@seqfiles.suffix,
@@ -363,9 +436,11 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                       seqs_destdir=seqs_destdir,
                       verbose=verbose)
         if (x@nmask_per_seq > 0) {
+            ## Forge the "masks.*.rda" files
+            masks_destdir <- file.path(pkgdir, "data")
             forgeMaskFiles(seqnames(bsgenome), x@nmask_per_seq,
                       seqs_destdir=seqs_destdir,
-                      masks_srcdir=masks_srcdir, masks_destdir=file.path(pkgdir, "data"),
+                      masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                       mask1.srctype=x@mask1.srctype,
                       mask1.prefix=x@mask1.prefix, mask1.suffix=x@mask1.suffix,
                       verbose=verbose)
@@ -419,7 +494,7 @@ readSeedFile <- function(file)
     ans <- read.dcf(tmp_file)  # a character matrix
     file.remove(tmp_file)
     if (nrow(ans) != 1)
-        stop("seed file ", file, " must have exactly 1 record")
+        stop("seed file '", file, "' must have exactly 1 record")
     ans[1, , drop=TRUE]
 }
 
@@ -428,17 +503,28 @@ setMethod("forgeBSgenomeDataPkg", "character",
     {
         if (!file.exists(x)) {
             x0 <- x
-            seed_dir <- system.file("extdata", "GentlemanLab", package="BSgenome")
+            seed_dir <- system.file("extdata", "GentlemanLab",
+                                    package="BSgenome")
             x <- file.path(seed_dir, x)
             if (!file.exists(x)) {
                 x <- paste(x, "-seed", sep="")
                 if (!file.exists(x))
-                    stop("seed file ", x0, " not found")
+                    stop("seed file '", x0, "' not found")
             }
             if (verbose)
-                cat("Seed file ", x0, " not found, using file ", x, "\n", sep="")
+                cat("Seed file '", x0, "' not found, using file '", x, "'\n",
+                    sep="")
         }
         y <- as.list(readSeedFile(x))
+        if (missing(seqs_srcdir)) {
+            seqs_srcdir <- y[["seqs_srcdir"]]
+            if (is.null(seqs_srcdir))
+                stop("'seqs_srcdir' argument is missing, and the ",
+                     "'seqs_srcdir' field is missing in seed file")
+        }
+        if (missing(masks_srcdir) && !is.null(y[["masks_srcdir"]]))
+            masks_srcdir <- y[["masks_srcdir"]]
+        y <- y[!(names(y) %in% c("seqs_srcdir", "masks_srcdir"))]
         forgeBSgenomeDataPkg(y,
             seqs_srcdir=seqs_srcdir,
             masks_srcdir=masks_srcdir,

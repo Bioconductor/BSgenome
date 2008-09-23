@@ -36,8 +36,10 @@ setClass(
         ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
 
-        ## where to find the serialized objects containing the sequences
+        ## where to find the serialized objects containing the lengths of the
+        ## sequences and the sequences
         seqs_pkg="character",
+        seqlengths_dir="character",
         seqs_dir="character",
 
         ## where to find the serialized objects containing the masks
@@ -126,6 +128,7 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 ###           "upstream5000"
 ###       ),
 ###       seqs_pkg="BSgenome.Celegans.UCSC.ce2",
+###       seqlengths_dir="data"
 ###       seqs_dir="extdata"
 ###   )
 ###
@@ -194,7 +197,7 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
-                     seqnames, mseqnames, seqs_pkg, seqs_dir,
+                     seqnames, mseqnames, seqs_pkg, seqlengths_dir, seqs_dir,
                      nmask_per_seq, masks_pkg, masks_dir)
 {
     if (is.null(seqnames))
@@ -212,6 +215,7 @@ BSgenome <- function(organism, species, provider, provider_version,
         seqnames=seqnames,
         mseqnames=mseqnames,
         seqs_pkg=seqs_pkg,
+        seqlengths_dir=seqlengths_dir,
         seqs_dir=seqs_dir,
         nmask_per_seq=as.integer(nmask_per_seq),
         masks_pkg=masks_pkg,
