@@ -13,6 +13,13 @@
     is.vector(x) && is.atomic(x) && length(x) == 1 && (is.character(x) || is.na(x))
 }
 
+.getMasksObjname <- function(seqnames)
+{
+    if (length(seqnames) == 0)
+        return(character(0))
+    paste("masks.", seqnames, sep="")
+}
+
 .saveObject <- function(object, objname, destdir=".", verbose=TRUE)
 {
     assign(objname, object)
@@ -159,7 +166,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "forgeMaskFiles" function.
+### The "forgeMasksFiles" function.
 ###
 
 ## mask1 is the mask of "assembly gaps" (inter-contig Ns).
@@ -241,10 +248,10 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     ans
 }
 
-.forgeMaskFile <- function(seqname, nmask_per_seq,
-                           seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                           mask1.srctype="gap", mask1.prefix="", mask1.suffix="_gap.txt",
-                           verbose=TRUE)
+.forgeMasksFile <- function(seqname, nmask_per_seq,
+                            seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
+                            mask1.srctype="gap", mask1.prefix="", mask1.suffix="_gap.txt",
+                            verbose=TRUE)
 {
     if (!.isSingleString(seqname))
         stop("'seqname' must be a single string")
@@ -288,24 +295,24 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         mask4 <- .forgeMask4(seqname, mask_width, masks_srcdir)
         masks <- append(masks, mask4)
     }
-    objname <- paste("masks.", seqname, sep="")
+    objname <- .getMasksObjname(seqname)
     .saveObject(masks, objname, destdir=masks_destdir, verbose=verbose)
 }
 
-forgeMaskFiles <- function(seqnames, nmask_per_seq,
-                           seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                           mask1.srctype="gap", mask1.prefix="", mask1.suffix="_gap.txt",
-                           verbose=TRUE)
+forgeMasksFiles <- function(seqnames, nmask_per_seq,
+                            seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
+                            mask1.srctype="gap", mask1.prefix="", mask1.suffix="_gap.txt",
+                            verbose=TRUE)
 {
     if (length(seqnames) == 0)
         warning("'seqnames' is empty")
     for (seqname in seqnames) {
-        .forgeMaskFile(seqname, nmask_per_seq,
-                       seqs_destdir=seqs_destdir,
-                       masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
-                       mask1.srctype=mask1.srctype,
-                       mask1.prefix=mask1.prefix, mask1.suffix=mask1.suffix,
-                       verbose=verbose)
+        .forgeMasksFile(seqname, nmask_per_seq,
+                        seqs_destdir=seqs_destdir,
+                        masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
+                        mask1.srctype=mask1.srctype,
+                        mask1.prefix=mask1.prefix, mask1.suffix=mask1.suffix,
+                        verbose=verbose)
     }
 }
 
@@ -371,6 +378,21 @@ setClass(
 ### The "forgeBSgenomeDataPkg" generic and methods.
 ###
 
+.getMasksDatasetsAliases <- function(masks_objnames)
+{
+    if (length(masks_objnames) == 0)
+        return("")
+    paste(paste("\alias{", masks_objnames, "}", sep=""), collapse="\n")
+}
+
+.getMasksDatasetsUsages <- function(masks_objnames, pkgname)
+{
+    if (length(masks_objnames) == 0)
+        return("")
+    paste(paste("data(", masks_objnames, ", package=\"", pkgname, "\")", sep=""),
+          collapse="\n")
+}
+
 setGeneric("forgeBSgenomeDataPkg", signature="x",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
@@ -381,6 +403,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     {
         template_path <- system.file("BSgenomeDataPkg-template", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
+        .seqnames <- eval(parse(text=x@seqnames))
+        masks_objnames <- .getMasksObjname(.seqnames)
         symvals <- list(
             PKGTITLE=x@Title,
             PKGDESCRIPTION=x@Description,
@@ -404,7 +428,9 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             PKGDETAILS=x@PkgDetails,
             SRCDATAFILES1=x@SrcDataFiles1,
             SRCDATAFILES2=x@SrcDataFiles2,
-            PKGEXAMPLES=x@PkgExamples
+            PKGEXAMPLES=x@PkgExamples,
+            MASKSDATASETALIASES=.getMasksDatasetsAliases(masks_objnames),
+            MASKSDATASETUSAGES=.getMasksDatasetsUsages(masks_objnames, x@Package)
         )
         ## Should never happen
         if (any(duplicated(names(symvals)))) {
@@ -438,12 +464,12 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         if (x@nmask_per_seq > 0) {
             ## Forge the "masks.*.rda" files
             masks_destdir <- file.path(pkgdir, "data")
-            forgeMaskFiles(seqnames(bsgenome), x@nmask_per_seq,
-                      seqs_destdir=seqs_destdir,
-                      masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
-                      mask1.srctype=x@mask1.srctype,
-                      mask1.prefix=x@mask1.prefix, mask1.suffix=x@mask1.suffix,
-                      verbose=verbose)
+            forgeMasksFiles(seqnames(bsgenome), x@nmask_per_seq,
+                            seqs_destdir=seqs_destdir,
+                            masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
+                            mask1.srctype=x@mask1.srctype,
+                            mask1.prefix=x@mask1.prefix, mask1.suffix=x@mask1.suffix,
+                            verbose=verbose)
         }
     }
 )
@@ -461,7 +487,7 @@ setMethod("forgeBSgenomeDataPkg", "list",
     }
 )
 
-removeCommentsFromFile <- function(infile, outfile)
+.removeCommentsFromFile <- function(infile, outfile)
 {
     if (!.isSingleString(infile))
         stop("'infile' must be a single string")
@@ -485,12 +511,12 @@ removeCommentsFromFile <- function(infile, outfile)
 }
 
 ### Return a named character vector.
-readSeedFile <- function(file)
+.readSeedFile <- function(file)
 {
     if (!.isSingleString(file))
         stop("'file' must be a single string")
     tmp_file <- file.path(tempdir(), "cleanseed9999.dcf")
-    removeCommentsFromFile(file, tmp_file)
+    .removeCommentsFromFile(file, tmp_file)
     ans <- read.dcf(tmp_file)  # a character matrix
     file.remove(tmp_file)
     if (nrow(ans) != 1)
@@ -515,7 +541,7 @@ setMethod("forgeBSgenomeDataPkg", "character",
                 cat("Seed file '", x0, "' not found, using file '", x, "'\n",
                     sep="")
         }
-        y <- as.list(readSeedFile(x))
+        y <- as.list(.readSeedFile(x))
         if (missing(seqs_srcdir)) {
             seqs_srcdir <- y[["seqs_srcdir"]]
             if (is.null(seqs_srcdir))

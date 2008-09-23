@@ -33,7 +33,8 @@
   \link[BSgenome]{BSgenome-class},
   \link[Biostrings]{DNAString-class},
   \code{\link[BSgenome]{available.genomes}},
-  \link[BSgenome]{BSgenomeForge}
+  \link[BSgenome]{BSgenomeForge},
+  \link{@PKGNAME@-datasets}
 }
 
 \examples{
