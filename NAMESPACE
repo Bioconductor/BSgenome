@@ -41,7 +41,7 @@ exportMethods(
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
     SNPlocs_pkgname,
-    seqnames, mseqnames,
+    seqnames, seqlengths, mseqnames,
     unload,
 
     ## BSgenomeForge methods:

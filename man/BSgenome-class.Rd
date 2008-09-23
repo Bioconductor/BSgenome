@@ -25,6 +25,8 @@
 \alias{SNPlocs_pkgname,BSgenome-method}
 \alias{seqnames}
 \alias{seqnames,BSgenome-method}
+\alias{seqlengths}
+\alias{seqlengths,BSgenome-method}
 \alias{mseqnames}
 \alias{mseqnames,BSgenome-method}
 \alias{names,BSgenome-method}
@@ -111,6 +113,12 @@
       removed in order to keep them as short as possible.
     }
     \item{}{
+      \code{seqlengths(x)}:
+      Return the lengths of the single sequences contained in \code{x}.
+      \code{names(seqlengths(x))} is guaranteed to be identical to
+      \code{seqnames(x)}.
+    }
+    \item{}{
       \code{mseqnames(x)}:
       Return the index of the multiple sequences contained in \code{x}.
       Each multiple sequence is stored in an \link[Biostrings]{XStringSet}
@@ -182,6 +190,7 @@
   Celegans                              # Displays a summary of the sequences
                                         # provided in this genome.
   seqnames(Celegans)                    # Index of single sequences.
+  seqlengths(Celegans)                  # Lengths of single sequences.
   class(Celegans$chrI)                  # A DNAString instance.
   mseqnames(Celegans)                   # Index of multiple sequences.
   class(Celegans$upstream1000)          # A DNAStringSet instance.

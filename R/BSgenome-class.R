@@ -20,7 +20,8 @@ setClass(
         ## release_date: "Mar. 2006", "Feb. 2006", "Oct. 2003", etc...
         release_date="character",
 
-        ## release_name: "NCBI Build 36.1", "NCBI Build 36", "SGD 1 Oct 2003 sequence", etc...
+        ## release_name: "NCBI Build 36.1", "NCBI Build 36",
+        ## "SGD 1 Oct 2003 sequence", etc...
         release_name="character",
 
         ## source_url: permanent URL to the place where the FASTA files used
@@ -32,6 +33,9 @@ setClass(
 
         ## seqnames: names of "single" sequences (e.g. chromosomes)
         seqnames="character",
+
+        ## seqlengths: lengths of "single" sequences
+        seqlengths="integer",
 
         ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
@@ -88,6 +92,26 @@ setMethod("seqnames", "BSgenome",
     function(x) { if (length(x@seqnames) == 0) NULL else x@seqnames }
 )
 
+setGeneric("seqlengths", function(x) standardGeneric("seqlengths"))
+setMethod("seqlengths", "BSgenome",
+    function(x)
+    {
+        if (length(x@seqlengths) == 1 && is.na(x@seqlengths)) {
+            objname <- "seqlengths"
+            filepath <- system.file(x@seqlengths_dir,
+                                    paste(objname, ".rda", sep=""),
+                                    package=x@seqs_pkg)
+            load(filepath)
+            x@seqlengths <- get(objname)
+            if (!identical(names(x@seqlengths), x@seqnames))
+                stop("sequence names found in file '", filepath, "' are not ",
+                     "identical to the names returned by seqnames(). ",
+                     "May be the ", x@seqs_pkg, " package is corrupted?")
+        }
+        x@seqlengths
+    }
+)
+
 setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
 setMethod("mseqnames", "BSgenome",
     function(x) { if (length(x@mseqnames) == 0) NULL else x@mseqnames }
@@ -142,21 +166,27 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
     activebindings_env <- x@.activebindings_env
     datacache_env <- x@.datacache_env
 
-    addCachedItem <- function(name, file)
+    addCachedItem <- function(name, seq_filepath)
     {
         ## Add a lazy-loading active binding thingie named 'name'
-        ## containing the single object serialized in file 'file'.
+        ## containing the single object serialized in file 'seq_filepath'.
         force(name)
-        force(file)
+        force(seq_filepath)
         getter <- function()
         {
             if (exists(name, envir=datacache_env, inherits=FALSE))
                 return(datacache_env[[name]])
-            found <- load(file, envir=datacache_env)
+            found <- load(seq_filepath, envir=datacache_env)
             if (name != found) {
                 datacache_env[[name]] <- get(found, envir=datacache_env)
             }
-
+            ## Check the length of the sequence
+            if (is(datacache_env[[name]], "XString")) {
+                if (length(datacache_env[[name]]) != seqlengths(x)[[name]])
+                    stop("sequence found in file '", seq_filepath, "' does ",
+                         "not have the length reported by seqlengths(). ",
+                         "May be the ", x@seqs_pkg, " package is corrupted?")
+            }
             ## Inject the SNPs, if any
             if (!is.null(getSNPcount) && name %in% names(getSNPcount())) {
                 snps <- getSNPlocs(name)
@@ -171,13 +201,16 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
             if (is(datacache_env[[name]], "XString") && x@nmask_per_seq > 0) {
                 ## Load and set the built-in masks
                 objname <- paste("masks.", name, sep="")
-                filename <- system.file(x@masks_dir, paste(objname, ".rda", sep=""), package=x@masks_pkg)
-                load(filename)
+                masks_filepath <- system.file(x@masks_dir,
+                                              paste(objname, ".rda", sep=""),
+                                              package=x@masks_pkg)
+                load(masks_filepath)
                 builtinmasks <- get(objname)
                 if (length(builtinmasks) < x@nmask_per_seq)
                     stop("expecting ", x@nmask_per_seq, " built-in masks per ",
                          "single sequence, found only ", length(builtinmasks),
-                         " in ", filename)
+                         " in file '", masks_filepath, "'. ",
+                         "May be the ", x@masks_pkg, " package is corrupted?")
                 if (length(builtinmasks) > x@nmask_per_seq)
                     builtinmasks <- builtinmasks[seq_len(x@nmask_per_seq)]
                 masks(datacache_env[[name]]) <- builtinmasks
@@ -190,8 +223,10 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
     }
 
     for (name in names) {
-        file <- system.file(x@seqs_dir, paste(name, ".rda", sep=""), package=x@seqs_pkg)
-        addCachedItem(name, file)
+        seq_filepath <- system.file(x@seqs_dir,
+                                    paste(name, ".rda", sep=""),
+                                    package=x@seqs_pkg)
+        addCachedItem(name, seq_filepath)
     }
 }
 
@@ -213,6 +248,7 @@ BSgenome <- function(organism, species, provider, provider_version,
         release_name=release_name,
         source_url=source_url,
         seqnames=seqnames,
+        seqlengths=as.integer(NA),
         mseqnames=mseqnames,
         seqs_pkg=seqs_pkg,
         seqlengths_dir=seqlengths_dir,
