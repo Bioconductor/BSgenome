@@ -30,7 +30,7 @@ data(seqlengths)
   ## You need to specify the 'package' argument if @PKGNAME@
   ## is not the first package in your search path:
   data(seqlengths, package="@PKGNAME@")
-  seqlengths  ## same as seqlengths(@BSGENOMEOBJNAME@)
+  seqlengths  # same as seqlengths(@BSGENOMEOBJNAME@)
 }
 
 \keyword{package}
