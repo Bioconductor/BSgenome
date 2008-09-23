@@ -18,5 +18,8 @@ SrcDataFiles1: sequences: chromFa.zip, upstream1000.zip, upstream2000.zip, upstr
 	from http://hgdownload.cse.ucsc.edu/goldenPath/hg18/bigZips/
 SrcDataFiles2: masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/
 	+ chromOut.zip and chromTrf.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg18/bigZips/
+PkgExamples: Hsapiens
+	seqlengths(Hsapiens)
+	Hsapiens$chr1  # same as Hsapiens[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/masks

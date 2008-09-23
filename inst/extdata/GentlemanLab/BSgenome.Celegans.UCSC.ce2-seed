@@ -19,4 +19,7 @@ SrcDataFiles1: chromFa.zip
 	upstream2000.zip
 	upstream5000.zip
 	from http://hgdownload.cse.ucsc.edu/goldenPath/ce2/bigZips/
+PkgExamples: Celegans
+	seqlengths(Celegans)
+	Celegans$chrI  # same as Celegans[["chrI"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Celegans.UCSC.ce2/seqs

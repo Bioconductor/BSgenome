@@ -190,5 +190,5 @@ SrcDataFiles1: Escherichia_coli_536/NC_008253.fna
 PkgExamples: ## The names of the sequences are the Refseq numbers:
 	Ecoli
 	seqlengths(Ecoli)
-	Ecoli$NC_008253
+	Ecoli$NC_008253  # same as Ecoli[["NC_008253"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ecoli.NCBI.20080805/seqs

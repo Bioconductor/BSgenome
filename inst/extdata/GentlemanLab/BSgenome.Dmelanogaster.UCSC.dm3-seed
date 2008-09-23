@@ -18,5 +18,8 @@ SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/
 SrcDataFiles2: masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm3/database/
 	+ chromOut.tar.gz and chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/
+PkgExamples: Dmelanogaster
+	seqlengths(Dmelanogaster)
+	Dmelanogaster$chr2L  # same as Dmelanogaster[["chr2L"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm3/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm3/masks
