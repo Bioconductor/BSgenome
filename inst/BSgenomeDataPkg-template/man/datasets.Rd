@@ -13,10 +13,10 @@
 }
 
 \usage{
-  ## Load the lengths of the single sequences contained in the package:
-  data(seqlengths, package="@PKGNAME@")
+## Load the lengths of the single sequences contained in the package:
+data(seqlengths, package="@PKGNAME@")
 
-  @MASKSDATASETUSAGES@
+@MASKSDATASETUSAGES@
 }
 
 \author{@AUTHOR@}
