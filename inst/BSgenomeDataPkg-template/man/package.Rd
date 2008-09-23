@@ -37,13 +37,14 @@
 }
 
 \examples{
-  @PKGEXAMPLES@
+@PKGEXAMPLES@
 
-  ## See the GenomeSearching vignette in the BSgenome software
-  ## package for some examples of genome-wide motif searching using
-  ## Biostrings and a BSgenome data package:
-  if (interactive())
+## See the GenomeSearching vignette in the BSgenome software
+## package for some examples of genome-wide motif searching using
+## Biostrings and a BSgenome data package:
+if (interactive())
     vignette("GenomeSearching", package="BSgenome")
 }
 
 \keyword{package}
+\keyword{data}
