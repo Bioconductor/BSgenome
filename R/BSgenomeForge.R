@@ -382,7 +382,7 @@ setClass(
 {
     if (length(masks_objnames) == 0)
         return("")
-    paste(paste("\alias{", masks_objnames, "}", sep=""), collapse="\n")
+    paste(paste("\\alias{", masks_objnames, "}", sep=""), collapse="\n")
 }
 
 .getMasksDatasetsUsages <- function(masks_objnames, pkgname)
