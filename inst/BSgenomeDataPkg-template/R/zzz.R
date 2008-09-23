@@ -3,6 +3,7 @@
 ###
 
 .seqnames <- @SEQNAMES@
+
 .mseqnames <- @MSEQNAMES@
 
 @BSGENOMEOBJNAME@ <- BSgenome(

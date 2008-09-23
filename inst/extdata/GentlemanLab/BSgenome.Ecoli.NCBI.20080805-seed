@@ -1,0 +1,206 @@
+Package: BSgenome.Ecoli.NCBI.20080805
+Title: Escherichia coli full genomes
+Description: Escherichia coli full genomes for several strains as provided by NCBI on 2008/08/05 and stored in Biostrings objects.
+Version: 1.3.9
+organism: Escherichia coli
+species: E. coli
+provider: NCBI
+provider_version: 2008/08/05
+release_date: NA
+release_name: NA
+source_url: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/
+organism_biocview: Escherichia_coli
+BSgenomeObjname: Ecoli
+seqfiles.suffix: .fna
+seqnames: c(paste("NC_", c("008253", "008563", "010468", "004431", "009801", "009800", "002655", "002695", "010498", "007946", "010473", "000913"), sep=""), "AC_000091")
+nmask_per_seq: 0
+PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequence.
+	The full genomes for the following strains are present in
+	this package (one sequence per strain):
+	\describe{
+	\item{}{
+	  Escherichia coli 536
+	  \preformatted{
+	  Taxonomy ID: 362663
+	  Other names: Escherichia coli strain 536,
+	               Escherichia coli str. 536
+	  Refseq: NC_008253
+	  Length: 4,938,920 nt
+	  Seq.Status: Completed
+	  Sequencing center: University of Goettingen
+	  Completed: 2006/07/24
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_536/NC_008253.fna
+	}}
+	\item{}{
+	  Escherichia coli APEC O1
+	  \preformatted{
+	  Taxonomy ID: 405955
+	  Other names: Escherichia coli strain APEC O1,
+	               Escherichia coli str. APEC O1
+	  Refseq: NC_008563
+	  Length: 5,082,025 nt
+	  Seq.Status: Completed
+	  Sequencing center: Iowa State University
+	  Completed: 2006/11/08
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_APEC_O1/NC_008563.fna
+	}}
+	\item{}{
+	  Escherichia coli ATCC 8739
+	  \preformatted{
+	  Taxonomy ID: 481805
+	  Other names: Escherichia coli C (ATCC 8739),
+	               Escherichia coli C str. ATCC 8739,
+	               Escherichia coli strain ATCC 8739,
+	               Escherichia coli str. ATCC 8739
+	  Refseq: NC_010468
+	  Length: 4,746,218 nt
+	  Seq.Status: Completed
+	  Sequencing center: US DOE Joint Genome Institute (JGI-PGF)
+	  Completed: 2008/03/17
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_C_ATCC_8739/NC_010468.fna
+	}}
+	\item{}{
+	  Escherichia coli CFT073
+	  \preformatted{
+	  Taxonomy ID: 199310
+	  Other names: Escherichia coli strain CFT073,
+	               Escherichia coli str. CFT073
+	  Refseq: NC_004431
+	  Length: 5,231,428 nt
+	  Seq.Status: Completed
+	  Sequencing center: Univ. Wisconsin
+	  Completed: 2002/12/09
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_CFT073/NC_004431.fna
+	}}
+	\item{}{
+	  Escherichia coli E24377A
+	  \preformatted{
+	  Taxonomy ID: 331111
+	  Refseq: NC_009801
+	  Length: 4,979,619 nt
+	  Seq.Status: Completed
+	  Sequencing center: TIGR
+	  Completed: 2007/09/13
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_E24377A/NC_009801.fna
+	}}
+	\item{}{
+	  Escherichia coli HS
+	  \preformatted{
+	  Taxonomy ID: 331112
+	  Refseq: NC_009800
+	  Length: 4,643,538 nt
+	  Seq.Status: Completed
+	  Sequencing center: TIGR
+	  Completed: 2007/09/13
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_HS/NC_009800.fna
+	}}
+	\item{}{
+	  Escherichia coli O157:H7 EDL933
+	  \preformatted{
+	  Taxonomy ID: 155864
+	  Refseq: NC_002655
+	  Length: 5,528,445 nt
+	  Seq.Status: Completed
+	  Sequencing center: Univ. Wisconsin
+	  Completed: 2001/09/27
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_O157H7_EDL933/NC_002655.fna
+	}}
+	\item{}{
+	  Escherichia coli O157:H7 str. Sakai
+	  \preformatted{
+	  Taxonomy ID: 386585
+	  Other names: Escherichia coli O157:H7 strain Sakai
+	  Refseq: NC_002695
+	  Length: 5,498,450 nt
+	  Seq.Status: Completed
+	  Sequencing center: GIRC
+	  Completed: 2001/10/02
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_O157H7/NC_002695.fna
+	}}
+	\item{}{
+	  Escherichia coli SMS-3-5
+	  \preformatted{
+	  Taxonomy ID: 439855
+	  Other names: Escherichia coli strain SMS-3-5,
+	               Escherichia coli str. SMS-3-5
+	  Refseq: NC_010498
+	  Length: 5,068,389 nt
+	  Seq.Status: Completed
+	  Sequencing center: TIGR
+	  Completed: 2008/03/24
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_SMS_3_5/NC_010498.fna
+	}}
+	\item{}{
+	  Escherichia coli UTI89
+	  \preformatted{
+	  Taxonomy ID: 364106
+	  Other names: Escherichia coli strain UTI89,
+	               Escherichia coli str. UTI89
+	  Refseq: NC_007946
+	  Length: 5,065,741 nt
+	  Seq.Status: Completed
+	  Sequencing center: Washington University (WashU)
+	  Completed: 2006/04/07
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_UTI89/NC_007946.fna
+	}}
+	\item{}{
+	  Escherichia coli str. K12 substr. DH10B
+	  \preformatted{
+	  Taxonomy ID: 316385
+	  Other names: Escherichia coli DH10B,
+	               Escherichia coli strain K12 substrain DH10B
+	  Refseq: NC_010473
+	  Length: 4,686,137 nt
+	  Seq.Status: Completed
+	  Sequencing center: University of Wisconsin-Madison
+	  Completed: 2008/03/17
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_K_12_substr__DH10B/NC_010473.fna
+	}}
+	\item{}{
+	  Escherichia coli str. K12 substr. MG1655
+	  \preformatted{
+	  Taxonomy ID: 511145
+	  Other names: Escherichia coli MG1655,
+	               Escherichia coli strain MG1655,
+	               Escherichia coli str. MG1655
+	  Refseq: NC_000913
+	  Length: 4,639,675 nt
+	  Seq.Status: Completed
+	  Sequencing center: Univ. Wisconsin
+	  Completed: 2001/10/15
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_K12_substr__MG1655/NC_000913.fna
+	}}
+	\item{}{
+	  Escherichia coli str. K12 substr. W3110
+	  \preformatted{
+	  Taxonomy ID: 316407
+	  Other names: Escherichia coli W3110,
+	               Escherichia coli strain W3110,
+	               Escherichia coli str. W3110
+	  Refseq: AC_000091
+	  Length: 4,646,332 nt
+	  Seq.Status: Completed
+	  Sequencing center: Nara Institute of Science and Technology
+	  Completed: 2006/03/01
+	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_W3110/AC_000091.fna
+	}}
+	}
+SrcDataFiles1: Escherichia_coli_536/NC_008253.fna
+	Escherichia_coli_APEC_O1/NC_008563.fna
+	Escherichia_coli_C_ATCC_8739/NC_010468.fna
+	Escherichia_coli_CFT073/NC_004431.fna
+	Escherichia_coli_E24377A/NC_009801.fna
+	Escherichia_coli_HS/NC_009800.fna
+	Escherichia_coli_O157H7_EDL933/NC_002655.fna
+	Escherichia_coli_O157H7/NC_002695.fna
+	Escherichia_coli_SMS_3_5/NC_010498.fna
+	Escherichia_coli_UTI89/NC_007946.fna
+	Escherichia_coli_K_12_substr__DH10B/NC_010473.fna
+	Escherichia_coli_K12_substr__MG1655/NC_000913.fna
+	Escherichia_coli_W3110/AC_000091.fna
+	from ftp://ftp.ncbi.nih.gov/genomes/Bacteria/ (downloaded on 2008/08/05)
+PkgExamples: ## The names of the sequences are the Refseq numbers:
+	Ecoli
+	seqlengths(Ecoli)
+	Ecoli$NC_008253
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ecoli.NCBI.20080805/seqs
