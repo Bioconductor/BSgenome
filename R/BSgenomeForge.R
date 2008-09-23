@@ -389,8 +389,10 @@ setClass(
 {
     if (length(masks_objnames) == 0)
         return("")
-    paste(paste("data(", masks_objnames, ", package=\"", pkgname, "\")", sep=""),
-          collapse="\n")
+    usages <- paste(paste("data(", masks_objnames, ", package=\"", pkgname, "\")", sep=""),
+                    collapse="\n")
+    paste("## Load the masks of the single sequences contained in the package:",
+          usages, sep="\n")
 }
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",

@@ -13,6 +13,7 @@
 }
 
 \usage{
+  ## Load the lengths of the single sequences contained in the package:
   data(seqlengths, package="@PKGNAME@")
 
   @MASKSDATASETUSAGES@
@@ -27,6 +28,7 @@
 
 \examples{
   data(seqlengths, package="@PKGNAME@")
+  seqlengths  ## same as seqlengths(@BSGENOMEOBJNAME@)
 }
 
 \keyword{package}
