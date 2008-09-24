@@ -9,7 +9,7 @@
 }
 
 \usage{
-  bsapply(X, FUN, exclude, ...)
+  bsapply(X, FUN, exclude, simplify, ...)
 }
 
 \arguments{
@@ -23,6 +23,10 @@
   \item{exclude}{
     this is a character vector with strings that will be used to filter
   out chromosomes whose names match these strings.
+  }
+  \item{simplify}{
+    TRUE/FALSE value to indicate whether or not the function should try
+  to simplify the output for you.
   }
   \item{...}{
     optional arguments to 'FUN'.
@@ -55,6 +59,31 @@
   ## Count the alphabet frequencies for every chromosome but exclude
   ## mitochrondrial ones:
   bsapply(Celegans, alphabetFrequency, exclude = "M")
+
+  ## Or we can do this same function with the simplif option:
+  bsapply(Celegans, alphabetFrequency, exclude = "M", simplify = TRUE)
+
+  ## Or we can call matchPDict
+##   library(drosophila2probe)
+##   dict0 <- DNAStringSet(drosophila2probe$sequence)
+##   dicthit <- dict0[100] #just grab the 100th pattern
+##   pdict0 <- PDict(dicthit)
+
+##   library(BSgenome.Dmelanogaster.UCSC.dm3)
+##   chr3R <- Dmelanogaster$chr3R         # Load chromosome 3R
+##   chr3R
+##   matchPDict(pdict0, chr3R)
+
+
+  Ebox <- DNAStringSet("CACGTG")
+  pdict0 <- PDict(Ebox)
+
+  bsapply(Celegans, countPDict, pdict = pdict0)
+  bsapply(Celegans, countPDict, simplify = TRUE, pdict = pdict0)
+
+  bsapply(Celegans, matchPDict, pdict = pdict0)
+  bsapply(Celegans, matchPDict, simplify = TRUE, pdict = pdict0)
+
 
 }
 

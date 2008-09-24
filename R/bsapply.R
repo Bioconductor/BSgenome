@@ -1,4 +1,4 @@
-bsapply <- function(X, FUN, exclude = "", ...){
+bsapply <- function(X, FUN, exclude = "", simplify = FALSE, ...){
 
     ##Some argument checking.
     if(!is(X, "BSgenome")){stop("'X' must be a BSgenome object")}
@@ -62,8 +62,13 @@ bsapply <- function(X, FUN, exclude = "", ...){
     on.exit(checkSeqs())
     
     ##Then apply the above function to each
-    list <- lapply(csomes, processSeqname, ...)
-    names(list) <- csomes
-    return(list)
-
+    if(simplify == FALSE){
+        list <- lapply(csomes, processSeqname, ...)
+        names(list) <- csomes
+        return(list)
+    }else{
+        list <- sapply(csomes, processSeqname, ...)
+        return(list)
+    }
+    
 }
