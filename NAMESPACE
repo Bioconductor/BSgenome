@@ -20,7 +20,7 @@ export(
     ## Generic functions:
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
-    SNPlocs_pkgname,
+    SNPlocs_pkg, SNPcount, SNPlocs,
     seqnames, mseqnames,
     unload,
        
@@ -40,7 +40,7 @@ exportMethods(
     ## Methods for generics defined in this package:
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
-    SNPlocs_pkgname,
+    SNPlocs_pkg, SNPcount, SNPlocs,
     seqnames, seqlengths, mseqnames,
     unload,
 

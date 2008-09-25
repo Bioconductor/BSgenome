@@ -25,7 +25,7 @@ bsapply <- function(X, FUN, exclude = "", simplify = FALSE, ...){
     }
     
     ##get a list of existing csome item the user has in memory 'right now'
-    loadedCSomes <- ls(X@.datacache_env)
+    loadedCSomes <- ls(X@.seqs_cache)
     
     ##Some stuff has to be done for each chromosome
     processSeqname <- function(seqname, ...){
@@ -53,7 +53,7 @@ bsapply <- function(X, FUN, exclude = "", simplify = FALSE, ...){
                 ##1st we check to make sure that it was NOT loaded at the beginning
                 if(!(csomes[i] %in% loadedCSomes)){
                     ##Then we should also check if it is loaded "right now"
-                    if(csomes[i] %in% ls(X@.datacache_env)){
+                    if(csomes[i] %in% ls(X@.seqs_cache)){
                         cat("Unloading unwanted Chromosome:",csomes[i], "\n")
                         unload(X, csomes[i])
                     }

@@ -21,8 +21,8 @@
 \alias{releaseName,BSgenome-method}
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
-\alias{SNPlocs_pkgname}
-\alias{SNPlocs_pkgname,BSgenome-method}
+\alias{SNPlocs_pkg}
+\alias{SNPlocs_pkg,BSgenome-method}
 \alias{seqnames}
 \alias{seqnames,BSgenome-method}
 \alias{seqlengths}
@@ -98,7 +98,7 @@
       be found (and downloaded).
     }
     \item{}{
-      \code{SNPlocs_pkgname(x)}:
+      \code{SNPlocs_pkg(x)}:
       Return the name of the package from which the SNPs are injected,
       if any.
     }

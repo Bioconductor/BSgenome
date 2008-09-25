@@ -11,7 +11,7 @@
 }
 
 \usage{
-  injectSNPs(bsgenome, SNPlocs_pkgname)
+  injectSNPs(bsgenome, SNPlocs_pkg)
   available.SNPs()
 }
 
@@ -19,7 +19,7 @@
   \item{bsgenome}{
     [TODO]
   }
-  \item{SNPlocs_pkgname}{
+  \item{SNPlocs_pkg}{
     [TODO]
   }
 }

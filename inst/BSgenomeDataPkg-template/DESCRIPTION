@@ -15,4 +15,3 @@ release_date: @RELEASEDATE@
 release_name: @RELEASENAME@
 source_url: @SOURCEURL@
 biocViews: AnnotationData, Genetics, @ORGANISMBIOCVIEW@
-LazyLoad: no
