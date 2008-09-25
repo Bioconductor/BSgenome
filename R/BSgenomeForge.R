@@ -174,8 +174,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 ## If 'mask1.srctype' is "gap", then mask1 is extracted from UCSC "gap" files.
 ## If 'mask1.srctype' is "agp", then mask1 is extracted from NCBI "agp" files.
 ## mask1 is active by default.
-.forgeMask1 <- function(seqname, mask_width, masks_srcdir,
-                        mask1.srctype, mask1.prefix, mask1.suffix)
+.forge.AGAPS.mask <- function(seqname, mask_width, masks_srcdir,
+                              mask1.srctype, mask1.prefix, mask1.suffix)
 {
     if (!.isSingleStringOrNA(mask1.srctype))
         stop("'mask1.srctype' must be a single string or NA")
@@ -185,7 +185,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         stop("'mask1.suffix' must be a single string or NA")
     if (is.na(mask1.srctype)) {
         ans <- Mask(mask_width)
-        names(ans) <- "assembly gaps (empty)"
+        desc(ans) <- "assembly gaps (empty)"
     } else {
         if (is.na(mask1.prefix))
             file <- "gap.txt"
@@ -198,53 +198,60 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
             ans <- read.agpMask(file, mask_width, seqname=seqname)
     }
     active(ans) <- TRUE
+    names(ans) <- "AGAPS"
     ans
 }
 
 ## mask2 is the mask of "intra-contig Ns".
 ## mask2 is active by default.
-.forgeMask2 <- function(seq, mask1)
+.forge.AMB.mask <- function(seq, mask1)
 {
     active(mask1) <- TRUE
     masks(seq) <- mask1
-    ans <- masks(maskMotif(seq, "N"))[2]
-    names(ans) <- "intra-contig Ns"
+    amb_letters <- names(IUPAC_CODE_MAP)[nchar(IUPAC_CODE_MAP) > 1]
+    for (amb_letter in amb_letters)
+        seq <- maskMotif(seq, amb_letter)
+    ans <- reduce(masks(seq)[-1])
+    desc(ans) <- "intra-contig ambiguities"
     if (isEmpty(ans))
-        names(ans) <- paste(names(ans), "(empty)")
+        desc(ans) <- paste(desc(ans), "(empty)")
     active(ans) <- TRUE
+    names(ans) <- "AMB"
     ans
 }
 
 ## mask3 is the "RepeatMasker" mask (from the RepeatMasker .out file).
 ## mask3 is NOT active by default.
-.forgeMask3 <- function(seqname, mask_width, masks_srcdir)
+.forge.RM.mask <- function(seqname, mask_width, masks_srcdir)
 {
     file <- file.path(masks_srcdir, paste(seqname, ".fa.out", sep=""))
     if (file.exists(file)) {
         ans <- read.rmMask(file, mask_width)
-        names(ans) <- "RepeatMasker"
+        desc(ans) <- "RepeatMasker"
     } else {
         ans <- Mask(mask_width)
-        names(ans) <- "RepeatMasker (empty)"
+        desc(ans) <- "RepeatMasker (empty)"
     }
     active(ans) <- FALSE
+    names(ans) <- "RM"
     ans
 }
 
 ## mask4 is the "Tandem Repeats Finder" mask (from the Tandem Repeats Finder
 ## .bed file).
 ## mask4 is NOT active by default.
-.forgeMask4 <- function(seqname, mask_width, masks_srcdir)
+.forge.TRF.mask <- function(seqname, mask_width, masks_srcdir)
 {
     file <- file.path(masks_srcdir, paste(seqname, ".bed", sep=""))
     if (file.exists(file)) {
         ans <- read.trfMask(file, mask_width)
-        names(ans) <- "Tandem Repeats Finder [period<=12]"
+        desc(ans) <- "Tandem Repeats Finder [period<=12]"
     } else {
         ans <- Mask(mask_width)
-        names(ans) <- "Tandem Repeats Finder [period<=12] (empty)"
+        desc(ans) <- "Tandem Repeats Finder [period<=12] (empty)"
     }
     active(ans) <- FALSE
+    names(ans) <- "TRF"
     ans
 }
 
@@ -278,21 +285,21 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     ## length 0).
     masks <- new("MaskCollection", width=mask_width)
     if (nmask_per_seq >= 1) {
-        mask1 <- .forgeMask1(seqname, mask_width, masks_srcdir,
+        mask1 <- .forge.AGAPS.mask(seqname, mask_width, masks_srcdir,
                              mask1.srctype, mask1.prefix, mask1.suffix)
         masks <- append(masks, mask1)
     }
     if (nmask_per_seq >= 2) {
-        mask2 <- .forgeMask2(seq, mask1)
+        mask2 <- .forge.AMB.mask(seq, mask1)
         masks <- append(masks, mask2)
     }
     remove(seq, list=seqname)
     if (nmask_per_seq >= 3) {
-        mask3 <- .forgeMask3(seqname, mask_width, masks_srcdir)
+        mask3 <- .forge.RM.mask(seqname, mask_width, masks_srcdir)
         masks <- append(masks, mask3)
     }
     if (nmask_per_seq >= 4) {
-        mask4 <- .forgeMask4(seqname, mask_width, masks_srcdir)
+        mask4 <- .forge.TRF.mask(seqname, mask_width, masks_srcdir)
         masks <- append(masks, mask4)
     }
     objname <- .getMasksObjname(seqname)
