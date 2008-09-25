@@ -164,11 +164,14 @@ setMethod("seqlengths", "BSgenome",
     function(x)
     {
         if (length(x@seqlengths) == 1 && is.na(x@seqlengths)) {
-            x@seqlengths <- .loadSingleObject("seqlengths", x@seqs_dir, x@seqs_pkg)
-            if (!identical(names(x@seqlengths), x@seqnames))
+            objname <- "seqlengths"
+            x@seqlengths <- .loadSingleObject(objname, x@seqs_dir, x@seqs_pkg)
+            if (!identical(names(x@seqlengths), x@seqnames)) {
+                filepath <- .getObjFilepath(objname, x@seqs_dir, x@seqs_pkg)
                 stop("sequence names found in file '", filepath, "' are not ",
                      "identical to the names returned by seqnames(). ",
                      "May be the ", x@seqs_pkg, " package is corrupted?")
+            }
         }
         x@seqlengths
     }
@@ -312,15 +315,16 @@ setMethod("show", "BSgenome",
     nmask_per_seq <- bsgenome@nmask_per_seq
     masks_pkg <- bsgenome@masks_pkg
     masks_dir <- bsgenome@masks_dir
-    seq_filepath <- .getObjFilepath(name, seqs_dir, seqs_pkg)
     ans <- .loadSingleObject(name, seqs_dir, seqs_pkg)
     if (!is(ans, "XString"))
         return(ans)
     ## Check the length of the sequence
-    if (length(ans) != seqlengths(bsgenome)[[name]])
+    if (length(ans) != seqlengths(bsgenome)[[name]]) {
+        seq_filepath <- .getObjFilepath(name, seqs_dir, seqs_pkg)
         stop("sequence found in file '", seq_filepath, "' does ",
              "not have the length reported by seqlengths(). ",
              "May be the ", seqs_pkg, " package is corrupted?")
+    }
     ## Inject the SNPs, if any
     if (!is.null(SNPlocs_pkg(bsgenome))) {
         snp_count <- SNPcount(bsgenome)
@@ -339,6 +343,7 @@ setMethod("show", "BSgenome",
         objname <- paste("masks.", name, sep="")
         builtinmasks <- .loadSingleObject(objname, masks_dir, masks_pkg)
         if (length(builtinmasks) < nmask_per_seq) {
+            masks_filepath <- .getObjFilepath(objname, masks_dir, masks_pkg)
             stop("expecting ", nmask_per_seq, " built-in masks per ",
                  "single sequence, found only ", length(builtinmasks),
                  " in file '", masks_filepath, "'. ",
