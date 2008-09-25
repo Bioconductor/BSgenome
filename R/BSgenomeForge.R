@@ -96,14 +96,14 @@ getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
 }
 
 forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
-                                seqs_srcdir=".", seqlengths_destdir=".",
+                                seqs_srcdir=".", seqs_destdir=".",
                                 verbose=TRUE)
 {
     seqlengths <- getSeqlengths(seqnames, prefix=prefix, suffix=suffix,
                                 seqs_srcdir=seqs_srcdir)
-    if (!.isSingleString(seqlengths_destdir))
-        stop("'seqlengths_destdir' must be a single string")
-    .saveObject(seqlengths, "seqlengths", destdir=seqlengths_destdir,
+    if (!.isSingleString(seqs_destdir))
+        stop("'seqs_destdir' must be a single string")
+    .saveObject(seqlengths, "seqlengths", destdir=seqs_destdir,
                 verbose=verbose)
 }
 
@@ -378,22 +378,6 @@ setClass(
 ### The "forgeBSgenomeDataPkg" generic and methods.
 ###
 
-.getMasksDatasetsAliases <- function(masks_objnames)
-{
-    if (length(masks_objnames) == 0)
-        return("")
-    paste(paste("\\alias{", masks_objnames, "}", sep=""), collapse="\n")
-}
-
-.getMasksDatasetsUsages <- function(masks_objnames, pkgname)
-{
-    if (length(masks_objnames) == 0)
-        return("")
-    usages <- paste(paste("data(", masks_objnames, ")", sep=""), collapse="\n")
-    paste("## Load the masks of the single sequences contained in the package:",
-          usages, sep="\n")
-}
-
 setGeneric("forgeBSgenomeDataPkg", signature="x",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
@@ -405,7 +389,6 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         template_path <- system.file("BSgenomeDataPkg-template", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
         .seqnames <- eval(parse(text=x@seqnames))
-        masks_objnames <- .getMasksObjname(.seqnames)
         symvals <- list(
             PKGTITLE=x@Title,
             PKGDESCRIPTION=x@Description,
@@ -429,9 +412,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             PKGDETAILS=x@PkgDetails,
             SRCDATAFILES1=x@SrcDataFiles1,
             SRCDATAFILES2=x@SrcDataFiles2,
-            PKGEXAMPLES=x@PkgExamples,
-            MASKSDATASETALIASES=.getMasksDatasetsAliases(masks_objnames),
-            MASKSDATASETUSAGES=.getMasksDatasetsUsages(masks_objnames, x@Package)
+            PKGEXAMPLES=x@PkgExamples
         )
         ## Should never happen
         if (any(duplicated(names(symvals)))) {
@@ -449,11 +430,11 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
         bsgenome <- get(x@BSgenomeObjname, inherits=FALSE)
         ## Forge the "seqlengths.rda" file
-        seqlengths_destdir <- file.path(pkgdir, "data")
+        seqs_destdir <- file.path(pkgdir, "inst", "extdata")
         forgeSeqlengthsFile(seqnames(bsgenome),
                             prefix=x@seqfiles.prefix, suffix=x@seqfiles.suffix,
                             seqs_srcdir=seqs_srcdir,
-                            seqlengths_destdir=seqlengths_destdir,
+                            seqs_destdir=seqs_destdir,
                             verbose=verbose)
         ## Forge the sequence "*.rda" files
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
@@ -464,7 +445,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                       verbose=verbose)
         if (x@nmask_per_seq > 0) {
             ## Forge the "masks.*.rda" files
-            masks_destdir <- file.path(pkgdir, "data")
+            masks_destdir <- file.path(pkgdir, "inst", "extdata")
             forgeMasksFiles(seqnames(bsgenome), x@nmask_per_seq,
                             seqs_destdir=seqs_destdir,
                             masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,

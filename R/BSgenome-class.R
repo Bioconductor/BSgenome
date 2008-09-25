@@ -40,10 +40,8 @@ setClass(
         ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
 
-        ## where to find the serialized objects containing the lengths of the
-        ## sequences and the sequences
+        ## where to find the serialized objects containing the sequences
         seqs_pkg="character",
-        seqlengths_dir="character",
         seqs_dir="character",
 
         ## where to find the serialized objects containing the masks
@@ -54,6 +52,40 @@ setClass(
         .seqs_cache="environment"
     )
 )
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Low-level helper functions used for delayed-loading the sequences.
+###
+
+.getObjFilepath <- function(objname, objdir, objpkg)
+{
+    pkg_topfolder <- system.file(".", package=objpkg)
+    if (pkg_topfolder == "")
+        stop("package ", objpkg, " doesn't seem to be installed")
+    filename <- paste(objname, ".rda", sep="")
+    filepath <- file.path(pkg_topfolder, objdir, filename)
+    if (!file.exists(filepath))
+        stop("file '", filepath, "' doesn't exist")
+    filepath
+}
+
+.loadSingleObject <- function(objname, objdir, objpkg)
+{
+    filepath <- .getObjFilepath(objname, objdir, objpkg)
+    tmp_env <- new.env(parent=emptyenv())
+    loaded_names <- load(filepath, envir=tmp_env)
+    ## Check that we get only 1 object
+    if (length(loaded_names) != 1)
+        stop("file '", filepath, "' contains 0 or more than 1 serialized object. ",
+             "May be the ", objpkg, " package is corrupted?")
+    ## ... and that it has the expected name
+    if (loaded_names != objname)
+        stop("the serialized object in file '", filepath, "' ",
+             "doesn't have the expected name. ",
+             "May be the ", objpkg, " package is corrupted?")
+    get(objname, envir=tmp_env)
+}
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -132,12 +164,7 @@ setMethod("seqlengths", "BSgenome",
     function(x)
     {
         if (length(x@seqlengths) == 1 && is.na(x@seqlengths)) {
-            objname <- "seqlengths"
-            filepath <- system.file(x@seqlengths_dir,
-                                    paste(objname, ".rda", sep=""),
-                                    package=x@seqs_pkg)
-            load(filepath)
-            x@seqlengths <- get(objname)
+            x@seqlengths <- .loadSingleObject("seqlengths", x@seqs_dir, x@seqs_pkg)
             if (!identical(names(x@seqlengths), x@seqnames))
                 stop("sequence names found in file '", filepath, "' are not ",
                      "identical to the names returned by seqnames(). ",
@@ -161,7 +188,7 @@ setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
-                     seqnames, mseqnames, seqs_pkg, seqlengths_dir, seqs_dir,
+                     seqnames, mseqnames, seqs_pkg, seqs_dir,
                      nmask_per_seq, masks_pkg, masks_dir)
 {
     if (is.null(seqnames))
@@ -180,7 +207,6 @@ BSgenome <- function(organism, species, provider, provider_version,
         seqlengths=as.integer(NA),
         mseqnames=mseqnames,
         seqs_pkg=seqs_pkg,
-        seqlengths_dir=seqlengths_dir,
         seqs_dir=seqs_dir,
         nmask_per_seq=as.integer(nmask_per_seq),
         masks_pkg=masks_pkg,
@@ -279,35 +305,6 @@ setMethod("show", "BSgenome",
 ### Subsetting.
 ###
 
-.getObjFilepath <- function(objname, objdir, objpkg)
-{
-    pkg_topfolder <- system.file(".", package=objpkg)
-    if (pkg_topfolder == "")
-        stop("package ", objpkg, " doesn't seem to be installed")
-    filename <- paste(objname, ".rda", sep="")
-    filepath <- file.path(pkg_topfolder, objdir, filename)
-    if (!file.exists(filepath))
-        stop("file '", filepath, "' doesn't exist")
-    filepath
-}
-
-.loadSingleObject <- function(objname, objdir, objpkg)
-{
-    filepath <- .getObjFilepath(objname, objdir, objpkg)
-    tmp_env <- new.env(parent=emptyenv())
-    loaded_names <- load(filepath, envir=tmp_env)
-    ## Check that we get only 1 object
-    if (length(loaded_names) != 1)
-        stop("file '", filepath, "' contains 0 or more than 1 serialized object. ",
-             "May be the ", objpkg, " package is corrupted?")
-    ## ... and that it has the expected name
-    if (loaded_names != objname)
-        stop("the serialized object in file '", filepath, "' ",
-             "doesn't have the expected name. ",
-             "May be the ", objpkg, " package is corrupted?")
-    get(objname, envir=tmp_env)
-}
-
 .loadBSgenomeSequence <- function(name, bsgenome)
 {
     seqs_pkg <- bsgenome@seqs_pkg
@@ -330,7 +327,7 @@ setMethod("show", "BSgenome",
         if (name %in% names(snp_count)) {
             snps <- SNPlocs(bsgenome, name)
             if (nrow(snps) != snp_count[name])
-                warning("reported SNP count for ", name, " in package ",
+                warning("reported SNP count for sequence ", name, " in package ",
                         SNPlocs_pkg(bsgenome), " does not match the ",
                         "number of SNPs returned by ", SNPlocs_pkg(bsgenome),
                         ":::getSNPlocs()")

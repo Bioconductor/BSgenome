@@ -17,10 +17,9 @@
     seqnames=.seqnames,
     mseqnames=.mseqnames,
     seqs_pkg="@PKGNAME@",
-    seqlengths_dir="data",
     seqs_dir="extdata",
     nmask_per_seq=@NMASKPERSEQ@,
     masks_pkg="@PKGNAME@",
-    masks_dir="data"
+    masks_dir="extdata"
 )
 
