@@ -11,6 +11,9 @@ exportClasses(
 )
 
 export(
+    ## Constants:
+    BUILTIN_MASKNAMES,
+
     ## Non-generic functions:
     available.genomes, getSeq,
     BSgenome, injectSNPs,
@@ -21,7 +24,8 @@ export(
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
     SNPlocs_pkg, SNPcount, SNPlocs,
-    seqnames, mseqnames,
+    seqnames, seqlengths, mseqnames,
+    masknames,
     unload,
        
     ## BSgenomeForge functions:
@@ -42,6 +46,7 @@ exportMethods(
     releaseDate, releaseName, sourceUrl,
     SNPlocs_pkg, SNPcount, SNPlocs,
     seqnames, seqlengths, mseqnames,
+    masknames,
     unload,
 
     ## BSgenomeForge methods:

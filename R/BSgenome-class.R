@@ -89,7 +89,14 @@ setClass(
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "length" and accessor methods
+### The names of the built-in masks.
+###
+
+BUILTIN_MASKNAMES <- c("AGAPS", "AMB", "RM", "TRF")
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "length" and accessor methods.
 ###
 
 setMethod("length", "BSgenome", function(x) length(names(x)))
@@ -183,6 +190,18 @@ setMethod("mseqnames", "BSgenome",
 )
 
 setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
+
+setGeneric("masknames", function(x) standardGeneric("masknames"))
+setMethod("masknames", "BSgenome",
+    function(x)
+    {
+         ## FIXME: Put this kind of checking in a validity method for BSgenome
+         ## objects.
+         if (x@nmask_per_seq > length(BUILTIN_MASKNAMES))
+             stop("internal anomaly: x@nmask_per_seq > ", length(BUILTIN_MASKNAMES))
+         BUILTIN_MASKNAMES[seq_len(x@nmask_per_seq)]
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -312,7 +331,7 @@ setMethod("show", "BSgenome",
 {
     seqs_pkg <- bsgenome@seqs_pkg
     seqs_dir <- bsgenome@seqs_dir
-    nmask_per_seq <- bsgenome@nmask_per_seq
+    nmask_per_seq <- length(masknames(bsgenome))
     masks_pkg <- bsgenome@masks_pkg
     masks_dir <- bsgenome@masks_dir
     ans <- .loadSingleObject(name, seqs_dir, seqs_pkg)
@@ -351,6 +370,12 @@ setMethod("show", "BSgenome",
         }
         if (length(builtinmasks) > nmask_per_seq)
             builtinmasks <- builtinmasks[seq_len(nmask_per_seq)]
+        if (!identical(names(builtinmasks), masknames(bsgenome))) {
+            masks_filepath <- .getObjFilepath(objname, masks_dir, masks_pkg)
+            stop("mask names found in file '", masks_filepath, "' are not ",
+                 "identical to the names returned by masknames(). ",
+                 "May be the ", masks_pkg, " package is corrupted?")
+        }
         masks(ans) <- builtinmasks
     }
     ans
