@@ -39,9 +39,30 @@
 \examples{
 @PKGEXAMPLES@
 
+if ("AGAPS" %in% masknames(@BSGENOMEOBJNAME@)) {
+  ## Check that the assembly gaps contain only Ns:
+  checkOnlyNsInGaps <- function(seq)
+  {
+    ## Replace all masks by the inverted AGAPS mask
+    masks(seq) <- gaps(masks(seq)["AGAPS"])
+    af <- alphabetFrequency(seq)
+    found_letters <- names(af)[af != 0]
+    if (any(found_letters != "N"))
+        stop("assembly gaps contain more than just Ns")
+  }
+  for (seqname in seqnames(@BSGENOMEOBJNAME@)) {
+    cat("Checking sequence", seqname, "... ")
+    seq <- @BSGENOMEOBJNAME@[[seqname]]
+    checkOnlyNsInGaps(seq)
+    cat("OK\n")
+    rm(seq)
+    unload(@BSGENOMEOBJNAME@, seqname)
+  }
+}
+
 ## See the GenomeSearching vignette in the BSgenome software
 ## package for some examples of genome-wide motif searching using
-## Biostrings and a BSgenome data package:
+## Biostrings and the BSgenome data packages:
 if (interactive())
     vignette("GenomeSearching", package="BSgenome")
 }

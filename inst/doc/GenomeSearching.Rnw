@@ -527,22 +527,59 @@ someStats(tmpseq[1:10])
 
 \section{Masking the chromosome sequences}
 
-Starting with Bioconductor 2.2, some {\it BSgenome data packages} provide
-built-in masks for the chromosome sequences. 
-For example, each chromosome in \Rpackage{BSgenome.Hsapiens.UCSC.hg18}
-has 3 masks on it: the mask of assembly gaps, the mask of repeat
-regions that were determined by the RepeatMasker software, and the mask
-of repeat regions that were determined by the Tandem Repeats Finder
-software (where only repeats with period less than or equal to 12
-were kept).
+Starting with Bioconductor 2.2, the chromosome sequences in a {\it BSgenome
+data package} can have built-in masks.
+Starting with Bioconductor 2.3, there can be up to 4 built-in masks per
+sequence. These will always be (in this order): (1) the mask of assembly gaps,
+(2) the mask of intra-contig ambiguities, (3) the mask of repeat regions that
+were determined by the RepeatMasker software, and (4) the mask of repeat
+regions that were determined by the Tandem Repeats Finder software (where only
+repeats with period less than or equal to 12 were kept).
+
+For a given package, all the sequences will always have the same number of
+masks.
 
 <<f1>>=
 library(BSgenome.Hsapiens.UCSC.hg18)
 chrY <- Hsapiens$chrY
 chrY
+chrM <- Hsapiens$chrM
+chrM
 @
 
-Note that the built-in masks are always inactive by default.
+The built-in masks are named consistenly across all the BSgenome data packages
+available in Bioconductor:
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{l|l|l|l}
+\hline
+Name  & Active by default & Short description & Long description \\
+\hline
+AGAPS & yes & assembly gaps
+      & Masks the big N-blocks that have been placed
+        between the contigs during the assembly.
+        This mask is consistent with the Gap track from UCSC
+        Genome Browser.\\
+AMB   & yes & intra-contig ambiguities
+      & Masks any IUPAC ambiguity letter that was found in the contig
+        regions of the original sequence.
+        Note that only As, Cs, Gs and Ts remain unmasked when the
+        AGAPS and AMB masks are both active (before SNPs are eventually
+        injected, see below). \\
+RM    & no & RepeatMasker
+      & Masks the repeat regions determined by the RepeatMasker software.
+        This mask is consistent with the RepeatMasker track from
+        UCSC Genome Browser. \\
+TRF   & no & Tandem Repeats Finder
+      & Masks the tandem repeat regions that were determined by the
+        Tandem Repeats Finder software (with period of 12 or less). \\
+\hline
+\end{tabular}
+\end{center}
+\caption{The built-in masks provided by the BSgenome data packages.}
+\end{table}
+
 When displaying a masked sequence (here a \Rclass{MaskedDNAString}
 object), the {\it masked width} and {\it masked ratio} are reported for
 each individual mask, as well as for all the masks together, and for all
@@ -553,28 +590,31 @@ divided by the length of the sequence.
 
 To activate a mask, use the \Rmethod{active} replacement method
 in conjonction with the \Rmethod{masks} method. For example, to
-activate the first mask (assembly gaps), do:
+activate the RepeatMasker mask, do:
 <<f2>>=
-active(masks(chrY))[1] <- TRUE
+active(masks(chrY))["RM"] <- TRUE
 chrY
 @
 
 As you can see, the {\it masked width} for all the active masks
 together (i.e. the total number of nucleotide positions that are
 masked by at least one active mask) is now the same as for the
-first mask. This represents a {\it masked ratio} of about 55.6\%.
+first mask. This represents a {\it masked ratio} of about 83\%.
 
-Now when we use a {\it mask aware} function like
+Now when we use a function that is {\it mask aware}, like
 \Rfunction{alphabetFrequency}, the masked regions of the
 input sequence are ignored:
 <<f3>>=
+active(masks(chrY)) <- FALSE
+active(masks(chrY))["AGAPS"] <- TRUE
 alphabetFrequency(unmasked(chrY))
 alphabetFrequency(chrY)
 @
 
 This output indicates that, for this chromosome, the assembly gaps
 correspond exactly to the regions in the sequence that were filled
-with the letter N.
+with the letter N. Note that this is not always the case: sometimes
+Ns, and other IUPAC ambiguity letters, can be found inside the contigs.
 
 When coercing a \Rclass{MaskedXString} object to an \Rclass{XStringViews}
 object, each non-masked region in the original sequence is converted into
@@ -647,37 +687,26 @@ countPattern(Ebox, chrY, fixed=c(pattern=FALSE,subject=TRUE))
 @
 
 Finally, \Rfunction{countPattern} being {\it mask aware}, this can be
-achieved more efficiently by simply masking the assembly gaps:
+achieved more efficiently by just masking the assembly gaps and
+ambiguities:
 <<f12>>=
-active(masks(chrY))[1] <- TRUE
+active(masks(chrY))[c("AGAPS", "AMB")] <- TRUE
+alphabetFrequency(chrY, baseOnly=TRUE)  # no ambiguities
 countPattern(Ebox, chrY, fixed=FALSE)
 @
 
-Note that with chromosomes that have Ns outside the assembly
-gaps like chromosome 2, you need to use
-\Robject{fixed=c(pattern=FALSE,subject=TRUE)} even when the mask
-of assembly gaps is active:
+Note that some chromosomes can have Ns outside the assembly gaps:
 <<f13>>=
 chr2 <- Hsapiens$chr2
-active(masks(chr2))[1] <- TRUE
-alphabetFrequency(chr2)
-countPattern(Ebox, chr2, fixed=FALSE)
-countPattern(Ebox, chr2, fixed=c(pattern=FALSE,subject=TRUE))
+active(masks(chr2))[-2] <- FALSE
+alphabetFrequency(gaps(chr2))
 @
-
-Or, alternatively, you could mask the Ns yourself with the
-\Rfunction{maskMotif} function:
-<<f14>>=
-chr2_noNs <- maskMotif(unmasked(chr2), "N")
-alphabetFrequency(chr2_noNs)
-countPattern(Ebox, chr2_noNs, fixed=FALSE)
-@
+so it is recommended to always keep the AMB mask active (in addition to
+the AGAPS mask) whatever the sequence is.
 
 Note that not all functions that work with an \Rclass{XString}
 input are {\it mask aware} but more will be added in the near future.
-However, there is no plan to do this in a systematic way since
-the usefulness of supporting masks depends on the function itself.
-Anyway, most of the times there is a systematic way to exclude some
+However, most of the times there is a alternate way to exclude some
 arbitrary regions from an analysis without having to use {\it mask aware}
 functions. This is described below in the {\it Hard masking} section.
 

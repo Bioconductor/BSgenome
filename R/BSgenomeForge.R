@@ -202,7 +202,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     ans
 }
 
-## mask2 is the mask of "intra-contig Ns".
+## mask2 is the mask of "intra-contig ambiguities".
 ## mask2 is active by default.
 .forge.AMB.mask <- function(seq, mask1)
 {

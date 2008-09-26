@@ -195,11 +195,13 @@ setGeneric("masknames", function(x) standardGeneric("masknames"))
 setMethod("masknames", "BSgenome",
     function(x)
     {
-         ## FIXME: Put this kind of checking in a validity method for BSgenome
-         ## objects.
-         if (x@nmask_per_seq > length(BUILTIN_MASKNAMES))
-             stop("internal anomaly: x@nmask_per_seq > ", length(BUILTIN_MASKNAMES))
-         BUILTIN_MASKNAMES[seq_len(x@nmask_per_seq)]
+        if (x@nmask_per_seq == 0)
+            return(NULL)
+        ## TODO: Put this kind of checking in a validity method for BSgenome
+        ## objects (that's what validity methods are for).
+        if (x@nmask_per_seq > length(BUILTIN_MASKNAMES))
+            stop("internal anomaly: x@nmask_per_seq > ", length(BUILTIN_MASKNAMES))
+        BUILTIN_MASKNAMES[seq_len(x@nmask_per_seq)]
     }
 )
 
