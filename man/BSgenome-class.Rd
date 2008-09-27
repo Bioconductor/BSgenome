@@ -194,7 +194,7 @@
   class(Celegans$chrI)                  # A DNAString instance.
   mseqnames(Celegans)                   # Index of multiple sequences.
   class(Celegans$upstream1000)          # A DNAStringSet instance.
-  desc(Celegans$upstream1000)[1:4]      # Character vector containing the
+  names(Celegans$upstream1000)[1:4]     # Character vector containing the
                                         # description line found in the FASTA
                                         # file for the first 4 FASTA records.
 
