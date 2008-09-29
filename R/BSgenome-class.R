@@ -49,7 +49,8 @@ setClass(
         masks_pkg="character",
         masks_dir="character",
 
-        .seqs_cache="environment"
+        .seqs_cache="environment",
+        .gc_monitoring="environment"
     )
 )
 
@@ -235,7 +236,8 @@ BSgenome <- function(organism, species, provider, provider_version,
         nmask_per_seq=as.integer(nmask_per_seq),
         masks_pkg=masks_pkg,
         masks_dir=masks_dir,
-        .seqs_cache=new.env(parent=emptyenv())
+        .seqs_cache=new.env(parent=emptyenv()),
+        .gc_monitoring=new.env(parent=emptyenv())
     )
     ans
 }
@@ -256,6 +258,7 @@ injectSNPs <- function(bsgenome, SNPlocs_pkg)
     ans <- bsgenome
     ans@SNPlocs_pkg <- SNPlocs_pkg
     ans@.seqs_cache <- new.env(parent=emptyenv())
+    ans@.gc_monitoring <- new.env(parent=emptyenv())
     snp_count <- SNPcount(ans)
     if (!all(names(snp_count) %in% seqnames(ans)))
         stop("seqnames in package ", SNPlocs_pkg, " are not compatible ",
@@ -387,10 +390,19 @@ setMethod("show", "BSgenome",
 {
     seqs_cache <- bsgenome@.seqs_cache
     if (!exists(name, envir=seqs_cache, inherits=FALSE)) {
-        seq <- .loadBSgenomeSequence(name, bsgenome)
-        assign(name, seq, envir=seqs_cache)
+        ans <- .loadBSgenomeSequence(name, bsgenome)
+        assign(name, ans, envir=seqs_cache)
     }
-    get(name, envir=seqs_cache)
+    ans <- get(name, envir=seqs_cache)
+    ## TODO: uncomment this when all the BSgenome data packages >= 1.3.11
+    ## are available:
+    #.momitor_me <- new.env(parent=emptyenv())
+    #monitorGarbageCollection(.momitor_me, name, bsgenome@.gc_monitoring)
+    #if (is(ans, "XString"))
+    #    ans@xdata@.momitor_me <- .momitor_me
+    #else
+    #    ans@super@xdata@.momitor_me <- .momitor_me
+    ans
 }
 
 setMethod("[[", "BSgenome",
@@ -447,14 +459,22 @@ setMethod("$", "BSgenome",
 ### Other functions and generics
 ###
 
-setGeneric("unload", function(x, what) standardGeneric("unload"))
+setGeneric("unload", function(x, names) standardGeneric("unload"))
 
 setMethod("unload", "BSgenome",
-    function(x, what)
+    function(x, names)
     {
-        if (missing(what))
-            what <- ls(x@.seqs_cache) ## everything
-        remove(list=what, envir=x@.seqs_cache)
+        if (missing(names))
+            names <- ls(x@.seqs_cache)  # everything
+        gc()
+        for (name in names) {
+            ## TODO: uncomment this when all the BSgenome data packages >=
+            ## 1.3.11 are available:
+            #if (get(name, envir=x@.gc_monitoring) == 0)
+                remove(list=name, envir=x@.seqs_cache)
+            #else
+            #    warning("sequence ", name, " is in use, cannot unload it")
+        }
     }
 )
 
