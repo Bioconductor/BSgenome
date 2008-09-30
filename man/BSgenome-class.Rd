@@ -41,10 +41,6 @@
 \alias{[[<-,BSgenome-method}
 \alias{$,BSgenome-method}
 
-% Other functions and generics:
-\alias{unload}
-\alias{unload,BSgenome-method}
-
 
 \title{The BSgenome class}
 
@@ -143,29 +139,17 @@
       Return sequence (single or multiple) named \code{name}.
       No sequence is actually loaded into memory until this is explicitely
       requested with a call to \code{x[[name]]} or \code{x$name}.
+      When loaded, a sequence is kept in a cache. It will be automatically
+      removed from the cache at garbage collection if it's not in use anymore
+      i.e. if there are no reference to it (other than the reference stored
+      in the cache). With \code{options(verbose=TRUE)}, a message is printed
+      each time a sequence is removed from the cache. 
     }
     \item{}{
       \code{x$name}:
       Same as \code{x[[name]]} but \code{name} is not evaluated and
       therefore must be a literal character string or a name (possibly
       backtick quoted).
-    }
-  }
-}
-
-\section{Other functions and generics}{
-  In the code snippets below,
-  \code{x} is a BSgenome object
-  and \code{name} is the name of a sequence (character-string).
-
-  \describe{
-    \item{}{
-      \code{unload(x, name)}:
-      Try to free the memory occupied by a loaded sequence by
-      removing the 1st reference to this sequence. This 1st
-      reference is a hidden reference that is created behind the scene
-      by \code{x[[name]]} or \code{x$name}.
-      See below for an example of how to make proper use of \code{unload()}.
     }
   }
 }
@@ -177,6 +161,7 @@
   \link[Biostrings]{XString-class},
   \link[Biostrings]{MaskedXString-class},
   \link[Biostrings]{XStringSet-class},
+  \code{\link[IRanges]{subseq}},
   \code{\link{getSeq}},
   \code{\link[Biostrings]{matchPattern}},
   \code{\link{rm}},
@@ -184,51 +169,84 @@
 }
 
 \examples{
-  library(BSgenome.Celegans.UCSC.ce2)   # This doesn't load the chromosome 
-                                        # sequences into memory.
-  length(Celegans)                      # Number of sequences in this genome.
-  Celegans                              # Displays a summary of the sequences
-                                        # provided in this genome.
-  seqnames(Celegans)                    # Index of single sequences.
-  seqlengths(Celegans)                  # Lengths of single sequences.
-  class(Celegans$chrI)                  # A DNAString instance.
-  mseqnames(Celegans)                   # Index of multiple sequences.
-  class(Celegans$upstream1000)          # A DNAStringSet instance.
-  names(Celegans$upstream1000)[1:4]     # Character vector containing the
-                                        # description line found in the FASTA
-                                        # file for the first 4 FASTA records.
+  ## Loading a BSgenome data package doesn't load its sequence data
+  ## into memory:
+  library(BSgenome.Celegans.UCSC.ce2)
 
-  ## Some important considerations about memory usage:
-  mem0 <- gc()["Vcells", "(Mb)"]        # Current amount of data in memory (in
-                                        # Mb).
-  Celegans[["chrV"]]                    # Loads chromosome V into memory (hence
-                                        # takes a long time).
-  gc()["Vcells", "(Mb)"] - mem0         # Chromosome V occupies 20Mb of memory.
-  Celegans[["chrV"]]                    # Much faster (sequence is already in
-                                        # memory, hence it's not loaded again).
-  Celegans$chrV                         # Equivalent to Celegans[["chrV"]].
-  class(Celegans$chrV)                  # Chromosome V (like any other
-                                        # chromosome sequence) is a DNAString
-                                        # object.
-  nchar(Celegans$chrV)                  # It has 20922231 letters (nucleotides).
-  x <- Celegans$chrV                    # Very fast because a BString object
-                                        # doesn't contain the sequence, only a
-                                        # pointer to the sequence, hence chrV
-                                        # seq is not duplicated in memory. But
-                                        # we now have 2 objects pointing to the
-                                        # same place in memory.
-  y <- substr(x, 10, 100)               # A 3rd object pointing to chrV seq.
+  ## Number of sequences in this genome:
+  length(Celegans) 
+
+  ## Display a summary of the sequences:
+  Celegans
+
+  ## Index of single sequences:
+  seqnames(Celegans)
+
+  ## Lengths (i.e. number of nucleotides) per single sequence:
+  seqlengths(Celegans)
+
+  ## Load chromosome I into memory (hence takes some time) and keep
+  ## a reference to it:
+  chrI <- Celegans[["chrI"]]  # Celegans$chrI is equivalent
+
+  class(chrI)  # a DNAString instance
+  length(chrI) # with 15080483 nucleotides
+
+  ## Multiple sequences:
+  mseqnames(Celegans) 
+  upstream1000 <- Celegans$upstream1000
+  upstream1000
+  class(upstream1000)  # a DNAStringSet instance
+  ## Character vector containing the description lines of the first
+  ## 4 sequences in the original FASTA file:
+  names(upstream1000)[1:4]
+
+  ## ---------------------------------------------------------------------
+  ## PASS-BY-ADDRESS SEMANTIC, CACHING AND MEMORY USAGE
+  ## ---------------------------------------------------------------------
+
+  ## A message will be printed each time a sequence is removed from
+  ## the cache:
+  options(verbose=TRUE)
+
+  gc()  # nothing seems to be removed from the cache
+  rm(chrI, upstream1000)
+  gc()  # chrI and upstream1000 are removed from the cache (they are
+        # not in use anymore)
+
+  options(verbose=FALSE)
+
+  ## Get the current amount of data in memory (in Mb):
+  mem0 <- gc()["Vcells", "(Mb)"]
+
+  system.time(chrV <- Celegans[["chrV"]])
   
-  ## We must remove all references to chrV seq if we want the 20Mb of memory
-  ## used by it to be freed (note that it can be hard to keep track of all the
-  ## references to a given sequence).
-  ## IMPORTANT: The 1st reference to this seq (Celegans$chrV) should be removed
-  ## last. This is achieved with unload(). All other references are removed by
-  ## just removing the referencing object.
-  rm(x)
+  gc()["Vcells", "(Mb)"] - mem0  # chrV occupies 20Mb in memory
+
+  system.time(tmp <- Celegans[["chrV"]])  # much faster! (sequence is in
+                                          # the cache)
+
+  gc()["Vcells", "(Mb)"] - mem0  # we're still using 20Mb (sequences have
+                                 # a pass-by-address semantic i.e. the
+                                 # sequence data are not duplicated)
+  
+  ## subseq() doesn't copy the sequence data either, hence it's very fast
+  ## and memory efficient (but it creates a new reference to chrV):
+  y <- subseq(chrV, 10, 8000000) 
+  gc()["Vcells", "(Mb)"] - mem0
+
+  ## We must remove all references to chrV before it can be removed from
+  ## the cache (so the 20Mb of memory used by this sequence are freed).
+  options(verbose=TRUE)
+  rm(chrV, tmp)
+  gc()
+
+  ## Remember that 'y' holds a reference to chrV too:
   rm(y)
-  unload(Celegans, "chrV")
-  gc()["Vcells", "(Mb)"]
+  gc()
+
+  options(verbose=FALSE)
+  gc()["Vcells", "(Mb)"] - mem0
 }
 
 \keyword{methods}

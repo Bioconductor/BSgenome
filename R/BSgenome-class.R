@@ -516,25 +516,3 @@ setMethod("$", "BSgenome",
     function(x, name) x[[name]]
 )
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Other functions and generics
-###
-
-setGeneric("unload", function(x, names) standardGeneric("unload"))
-
-setMethod("unload", "BSgenome",
-    function(x, names)
-    {
-        if (missing(names))
-            names <- ls(x@.seqs_cache)  # everything
-        tmp <- gc()
-        for (name in names) {
-            if (get(name, envir=x@.link_counts) == 0)
-                remove(list=name, envir=x@.seqs_cache)
-            else
-                warning("cannot unload ", name, ", sequence is in use")
-        }
-    }
-)
-

@@ -344,7 +344,6 @@ runAnalysis1 <- function(dict0, outfile="")
             writeHits(seqname, minus_matches, "-", file=outfile, append=append)
         }
         cat(">>> DONE\n")
-        unload(Celegans, seqname)
     }
 }
 @
@@ -355,11 +354,8 @@ function:
   \item{}
   \Robject{subject <- Celegans[[seqname]]} is the code that actually loads a
   chromosome sequence into memory.
-  After it's not needed anymore, the sequence is removed from memory by
-  calling \Robject{unload(Celegans, seqname)}.
-  Using only one sequence at a time and unloading it after it's not needed
-  anymore is a good practice to avoid memory allocation problems on a machine
-  with a limited amount of memory.
+  Using only one sequence at a time is a good practice to avoid memory
+  allocation problems on a machine with a limited amount of memory.
   For example, loading all the human chromosome sequences in memory would
   require more than 3GB of memory!
 
@@ -370,11 +366,7 @@ function:
   especially with a bigger number of patterns because this would require
   to load each chromosome sequence into memory as many times as the
   number of patterns.
-  Trying to minimize the number of loading/unloading cycles for each
-  target sequence during an analysis is good practice because this cycle
-  takes a long time.
-  The \Rfunction{runAnalysis1} does this only once for each target
-  sequence.
+  \Rfunction{runAnalysis1} loads each sequence only once.
 
   \item{}
   We find the matches in the minus strand (\Robject{minus_matches}) by
@@ -428,7 +420,6 @@ plotGenomeHits <- function(bsgenome, seqnames, hits)
     for (i in seq_len(length(seqnames))) {
         seqname <- seqnames[i]
         seqlengths[i] <- length(bsgenome[[seqname]])
-        unload(bsgenome, seqname)
     }
     XMAX <- max(seqlengths)
     YMAX <- length(seqnames)
@@ -760,7 +751,6 @@ runOneStrandAnalysis <- function(dict0, bsgenome, seqnames, strand,
         writeHits(seqname, matches, strand, file=outfile, append=append)
         append <- TRUE
         cat(">>> DONE\n")
-        unload(bsgenome, seqname)
     }
 }
 
