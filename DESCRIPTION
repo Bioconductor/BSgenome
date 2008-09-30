@@ -1,14 +1,14 @@
 Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages
 Description: Infrastructure shared by all the Biostrings-based genome data packages
-Version: 1.9.16
+Version: 1.9.17
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure
-Depends: R (>= 2.7.0), methods, Biobase (>= 2.0.1), IRanges (>= 0.99.17), Biostrings (>= 2.9.80)
+Depends: R (>= 2.7.0), methods, Biobase (>= 2.0.1), IRanges (>= 0.99.18), Biostrings (>= 2.9.82)
 Import: methods, Biobase, IRanges, Biostrings
-Suggests: BSgenome.Celegans.UCSC.ce2 (>= 1.3.10),
-	BSgenome.Hsapiens.UCSC.hg18 (>= 1.3.10),
+Suggests: BSgenome.Celegans.UCSC.ce2 (>= 1.3.11),
+	BSgenome.Hsapiens.UCSC.hg18 (>= 1.3.11),
 	hgu95av2probe
 License: Artistic-2.0
 LazyLoad: yes

@@ -6,6 +6,8 @@
 
 .mseqnames <- @MSEQNAMES@
 
+.nmask_per_seq <- @NMASKPERSEQ@
+
 .onLoad <- function(libname, pkgname)
 {
     extdata_dir <- system.file("extdata", package=pkgname, lib.loc=libname)
@@ -21,7 +23,7 @@
         mseqnames=.mseqnames,
         seqs_pkg=pkgname,
         seqs_dir=extdata_dir,
-        nmask_per_seq=@NMASKPERSEQ@,
+        nmask_per_seq=.nmask_per_seq,
         masks_pkg=pkgname,
         masks_dir=extdata_dir
     )

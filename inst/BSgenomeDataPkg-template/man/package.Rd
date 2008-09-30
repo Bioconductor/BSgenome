@@ -39,7 +39,8 @@
 \examples{
 @PKGEXAMPLES@
 
-if ("AGAPS" %in% masknames(@BSGENOMEOBJNAME@)) {
+if ("AGAPS" \%in\% masknames(@BSGENOMEOBJNAME@)) {
+
   ## Check that the assembly gaps contain only Ns:
   checkOnlyNsInGaps <- function(seq)
   {
@@ -50,13 +51,16 @@ if ("AGAPS" %in% masknames(@BSGENOMEOBJNAME@)) {
     if (any(found_letters != "N"))
         stop("assembly gaps contain more than just Ns")
   }
+
+  ## A message will be printed each time a sequence is removed
+  ## from the cache:
+  options(verbose=TRUE)
+
   for (seqname in seqnames(@BSGENOMEOBJNAME@)) {
     cat("Checking sequence", seqname, "... ")
     seq <- @BSGENOMEOBJNAME@[[seqname]]
     checkOnlyNsInGaps(seq)
     cat("OK\n")
-    rm(seq)
-    unload(@BSGENOMEOBJNAME@, seqname)
   }
 }
 

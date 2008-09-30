@@ -50,22 +50,25 @@ setClass(
         masks_dir="character",
 
         .seqs_cache="environment",
-        .gc_monitoring="environment"
+        .link_counts="environment"
     )
 )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Low-level helper functions used for delayed-loading the sequences.
+### Low-level helper functions used for delayed-loading/caching/unloading the
+### sequences.
 ###
 
 .getObjFilepath <- function(objname, objdir, objpkg)
 {
-    pkg_topfolder <- system.file(".", package=objpkg)
-    if (pkg_topfolder == "")
-        stop("package ", objpkg, " doesn't seem to be installed")
+    ## Should never happen.
+    if (objdir == "")
+        ## TODO: Put this kind of checking in a validity method for BSgenome
+        ## objects (that's what validity methods are for).
+        stop("internal anomaly: objdir is \"\"")
     filename <- paste(objname, ".rda", sep="")
-    filepath <- file.path(pkg_topfolder, objdir, filename)
+    filepath <- file.path(objdir, filename)
     if (!file.exists(filepath))
         stop("file '", filepath, "' doesn't exist")
     filepath
@@ -87,6 +90,71 @@ setClass(
              "May be the ", objpkg, " package is corrupted?")
     get(objname, envir=tmp_env)
 }
+
+### Return a new link to a cached object.
+### 'objname' is the name of the cached object.
+### 'cache' is the caching environment.
+### 'link_counts' is the environment where we keep track of the number of links
+### for each cached object. When the number of links for a given cached object
+### reaches 0, then it is removed from the cache.
+.newLinkToCachedObject <- function(objname, cache, link_counts)
+{
+    ans <- new.env(parent=emptyenv())
+    if (exists(objname, envir=link_counts, inherits=FALSE))
+        link_count0 <- get(objname, envir=link_counts, inherits=FALSE) + 1L
+    else
+        link_count0 <- 1L
+    reg.finalizer(ans,
+        function(e)
+        {
+            link_count <- get(objname, envir=link_counts, inherits=FALSE) - 1L
+            assign(objname, link_count, envir=link_counts)
+            if (link_count == 0) {
+                if (getOption("verbose"))
+                    cat("uncaching ", objname, "\n", sep="")
+                remove(list=objname, envir=cache)
+            }
+        }
+    )
+    assign(objname, link_count0, envir=link_counts)
+    ans
+}
+
+setGeneric(".linkToCachedObject<-", signature="x",
+    function(x, value) standardGeneric(".linkToCachedObject<-")
+)
+
+setReplaceMethod(".linkToCachedObject", "SequencePtr",
+    function(x, value)
+    {
+        x@.link_to_cached_object <- value
+        x
+    }
+)
+
+setReplaceMethod(".linkToCachedObject", "XString",
+    function(x, value)
+    {
+        .linkToCachedObject(x@xdata) <- value
+        x
+    }
+)
+
+setReplaceMethod(".linkToCachedObject", "MaskedXString",
+    function(x, value)
+    {
+        .linkToCachedObject(x@unmasked) <- value
+        x
+    }
+)
+
+setReplaceMethod(".linkToCachedObject", "XStringSet",
+    function(x, value)
+    {
+        .linkToCachedObject(x@super) <- value
+        x
+    }
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -237,7 +305,7 @@ BSgenome <- function(organism, species, provider, provider_version,
         masks_pkg=masks_pkg,
         masks_dir=masks_dir,
         .seqs_cache=new.env(parent=emptyenv()),
-        .gc_monitoring=new.env(parent=emptyenv())
+        .link_counts=new.env(parent=emptyenv())
     )
     ans
 }
@@ -258,7 +326,7 @@ injectSNPs <- function(bsgenome, SNPlocs_pkg)
     ans <- bsgenome
     ans@SNPlocs_pkg <- SNPlocs_pkg
     ans@.seqs_cache <- new.env(parent=emptyenv())
-    ans@.gc_monitoring <- new.env(parent=emptyenv())
+    ans@.link_counts <- new.env(parent=emptyenv())
     snp_count <- SNPcount(ans)
     if (!all(names(snp_count) %in% seqnames(ans)))
         stop("seqnames in package ", SNPlocs_pkg, " are not compatible ",
@@ -364,7 +432,7 @@ setMethod("show", "BSgenome",
     }
     ## Load and set the built-in masks, if any
     if (nmask_per_seq > 0) {
-        objname <- paste("masks.", name, sep="")
+        objname <- paste(name, ".masks", sep="")
         builtinmasks <- .loadSingleObject(objname, masks_dir, masks_pkg)
         if (length(builtinmasks) < nmask_per_seq) {
             masks_filepath <- .getObjFilepath(objname, masks_dir, masks_pkg)
@@ -394,14 +462,8 @@ setMethod("show", "BSgenome",
         assign(name, ans, envir=seqs_cache)
     }
     ans <- get(name, envir=seqs_cache)
-    ## TODO: uncomment this when all the BSgenome data packages >= 1.3.11
-    ## are available:
-    #.momitor_me <- new.env(parent=emptyenv())
-    #monitorGarbageCollection(.momitor_me, name, bsgenome@.gc_monitoring)
-    #if (is(ans, "XString"))
-    #    ans@xdata@.momitor_me <- .momitor_me
-    #else
-    #    ans@super@xdata@.momitor_me <- .momitor_me
+    .linkToCachedObject(ans) <- .newLinkToCachedObject(name, seqs_cache,
+                                                       bsgenome@.link_counts)
     ans
 }
 
@@ -466,14 +528,12 @@ setMethod("unload", "BSgenome",
     {
         if (missing(names))
             names <- ls(x@.seqs_cache)  # everything
-        gc()
+        tmp <- gc()
         for (name in names) {
-            ## TODO: uncomment this when all the BSgenome data packages >=
-            ## 1.3.11 are available:
-            #if (get(name, envir=x@.gc_monitoring) == 0)
+            if (get(name, envir=x@.link_counts) == 0)
                 remove(list=name, envir=x@.seqs_cache)
-            #else
-            #    warning("sequence ", name, " is in use, cannot unload it")
+            else
+                warning("cannot unload ", name, ", sequence is in use")
         }
     }
 )

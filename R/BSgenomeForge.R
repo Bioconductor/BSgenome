@@ -17,7 +17,7 @@
 {
     if (length(seqnames) == 0)
         return(character(0))
-    paste("masks.", seqnames, sep="")
+    paste(seqnames, ".masks", sep="")
 }
 
 .saveObject <- function(object, objname, destdir=".", verbose=TRUE)
@@ -434,26 +434,26 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         }
         createPackage(x@Package, destdir, template_path, symvals)
         pkgdir <- file.path(destdir, x@Package)
+        ## This sourcing defines the '.seqnames', '.mseqnames'
+        ## and '.nmask_per_seq' variables
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
-        bsgenome <- get(x@BSgenomeObjname, inherits=FALSE)
         ## Forge the "seqlengths.rda" file
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
-        forgeSeqlengthsFile(seqnames(bsgenome),
+        forgeSeqlengthsFile(.seqnames,
                             prefix=x@seqfiles.prefix, suffix=x@seqfiles.suffix,
                             seqs_srcdir=seqs_srcdir,
                             seqs_destdir=seqs_destdir,
                             verbose=verbose)
         ## Forge the sequence "*.rda" files
-        seqs_destdir <- file.path(pkgdir, "inst", "extdata")
-        forgeSeqFiles(seqnames(bsgenome), mseqnames=mseqnames(bsgenome),
+        forgeSeqFiles(.seqnames, mseqnames=.mseqnames,
                       prefix=x@seqfiles.prefix, suffix=x@seqfiles.suffix,
                       seqs_srcdir=seqs_srcdir,
                       seqs_destdir=seqs_destdir,
                       verbose=verbose)
-        if (x@nmask_per_seq > 0) {
-            ## Forge the "masks.*.rda" files
+        if (.nmask_per_seq > 0) {
+            ## Forge the "*.masks.rda" files
             masks_destdir <- file.path(pkgdir, "inst", "extdata")
-            forgeMasksFiles(seqnames(bsgenome), x@nmask_per_seq,
+            forgeMasksFiles(.seqnames, .nmask_per_seq,
                             seqs_destdir=seqs_destdir,
                             masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                             mask1.srctype=x@mask1.srctype,
@@ -500,10 +500,30 @@ setMethod("forgeBSgenomeDataPkg", "list",
 }
 
 ### Return a named character vector.
-.readSeedFile <- function(file)
+.readSeedFile <- function(file, verbose=TRUE)
 {
     if (!.isSingleString(file))
         stop("'file' must be a single string")
+    if (file.exists(file)) {
+        ## Using 'x["isdir"][[1]]' is safer than using 'x$isdir' or
+        ## 'x[["isdir"]]' because it will fail if "isdir" is not a defined
+        ## column
+        isdir <- file.info(file)["isdir"][[1]]
+        if (isdir)
+            stop("'", file, "' is a directory, not a seed file")
+    } else {
+        file0 <- file
+        seed_dir <- system.file("extdata", "GentlemanLab", package="BSgenome")
+        file <- file.path(seed_dir, file)
+        if (!file.exists(file)) {
+            file <- paste(file, "-seed", sep="")
+            if (!file.exists(file))
+                stop("seed file '", file0, "' not found")
+        }
+        if (verbose)
+            cat("Seed file '", file0, "' not found, using file '", file, "'\n",
+                sep="")
+    }
     tmp_file <- file.path(tempdir(), "cleanseed9999.dcf")
     .removeCommentsFromFile(file, tmp_file)
     ans <- read.dcf(tmp_file)  # a character matrix
@@ -516,21 +536,7 @@ setMethod("forgeBSgenomeDataPkg", "list",
 setMethod("forgeBSgenomeDataPkg", "character",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
     {
-        if (!file.exists(x)) {
-            x0 <- x
-            seed_dir <- system.file("extdata", "GentlemanLab",
-                                    package="BSgenome")
-            x <- file.path(seed_dir, x)
-            if (!file.exists(x)) {
-                x <- paste(x, "-seed", sep="")
-                if (!file.exists(x))
-                    stop("seed file '", x0, "' not found")
-            }
-            if (verbose)
-                cat("Seed file '", x0, "' not found, using file '", x, "'\n",
-                    sep="")
-        }
-        y <- as.list(.readSeedFile(x))
+        y <- as.list(.readSeedFile(x, verbose=verbose))
         if (missing(seqs_srcdir)) {
             seqs_srcdir <- y[["seqs_srcdir"]]
             if (is.null(seqs_srcdir))
