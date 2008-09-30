@@ -169,7 +169,7 @@
 }
 
 \examples{
-  ## Loading a BSgenome data package doesn't load its sequence data
+  ## Loading a BSgenome data package doesn't load its sequences
   ## into memory:
   library(BSgenome.Celegans.UCSC.ce2)
 
@@ -182,15 +182,17 @@
   ## Index of single sequences:
   seqnames(Celegans)
 
-  ## Lengths (i.e. number of nucleotides) per single sequence:
+  ## Lengths (i.e. number of nucleotides) of the sequences:
   seqlengths(Celegans)
 
-  ## Load chromosome I into memory (hence takes some time) and keep
-  ## a reference to it:
-  chrI <- Celegans[["chrI"]]  # Celegans$chrI is equivalent
+  ## Load chromosome I from disk to memory (hence takes some time)
+  ## and keep a reference to it:
+  chrI <- Celegans[["chrI"]]  # equivalent to Celegans$chrI
 
-  class(chrI)  # a DNAString instance
-  length(chrI) # with 15080483 nucleotides
+  chrI
+
+  class(chrI)   # a DNAString instance
+  length(chrI)  # with 15080483 nucleotides
 
   ## Multiple sequences:
   mseqnames(Celegans) 
@@ -205,8 +207,8 @@
   ## PASS-BY-ADDRESS SEMANTIC, CACHING AND MEMORY USAGE
   ## ---------------------------------------------------------------------
 
-  ## A message will be printed each time a sequence is removed from
-  ## the cache:
+  ## We want a message to be printed each time a sequence is removed
+  ## from the cache:
   options(verbose=TRUE)
 
   gc()  # nothing seems to be removed from the cache
@@ -219,19 +221,21 @@
   ## Get the current amount of data in memory (in Mb):
   mem0 <- gc()["Vcells", "(Mb)"]
 
-  system.time(chrV <- Celegans[["chrV"]])
+  system.time(chrV <- Celegans[["chrV"]])  # read from disk
   
   gc()["Vcells", "(Mb)"] - mem0  # chrV occupies 20Mb in memory
 
-  system.time(tmp <- Celegans[["chrV"]])  # much faster! (sequence is in
-                                          # the cache)
+  system.time(tmp <- Celegans[["chrV"]])  # much faster! (sequence
+                                          # is in the cache)
 
-  gc()["Vcells", "(Mb)"] - mem0  # we're still using 20Mb (sequences have
-                                 # a pass-by-address semantic i.e. the
-                                 # sequence data are not duplicated)
+  gc()["Vcells", "(Mb)"] - mem0  # we're still using 20Mb (sequences
+                                 # have a pass-by-address semantic
+                                 # i.e. the sequence data are not
+                                 # duplicated)
   
-  ## subseq() doesn't copy the sequence data either, hence it's very fast
-  ## and memory efficient (but it creates a new reference to chrV):
+  ## subseq() doesn't copy the sequence data either, hence it is very
+  ## fast and memory efficient (but the returned object will hold a
+  ## reference to chrV):
   y <- subseq(chrV, 10, 8000000) 
   gc()["Vcells", "(Mb)"] - mem0
 
