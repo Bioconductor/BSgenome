@@ -9,7 +9,7 @@
 }
 
 \usage{
-  bsapply(X, FUN, exclude, simplify, ...)
+  bsapply(X, FUN, exclude, simplify, maskList, ...)
 }
 
 \arguments{
@@ -27,6 +27,11 @@
   \item{simplify}{
     TRUE/FALSE value to indicate whether or not the function should try
   to simplify the output for you.
+  }
+  \item{maskList}{
+    A list of mask names for the BSGenome object.  For each of these
+  mask names, the active status will be toggled to be something other
+  than the default state.
   }
   \item{...}{
     optional arguments to 'FUN'.
@@ -61,29 +66,36 @@
   bsapply(Celegans, alphabetFrequency, exclude = "M")
 
   ## Or we can do this same function with the simplif option:
-  bsapply(Celegans, alphabetFrequency, exclude = "M", simplify = TRUE)
-
-  ## Or we can call matchPDict
-##   library(drosophila2probe)
-##   dict0 <- DNAStringSet(drosophila2probe$sequence)
-##   dicthit <- dict0[100] #just grab the 100th pattern
-##   pdict0 <- PDict(dicthit)
-
-##   library(BSgenome.Dmelanogaster.UCSC.dm3)
-##   chr3R <- Dmelanogaster$chr3R         # Load chromosome 3R
-##   chr3R
-##   matchPDict(pdict0, chr3R)
+#  bsapply(Celegans, alphabetFrequency, exclude = "M", simplify = TRUE)
 
 
-  Ebox <- DNAStringSet("CACGTG")
-  pdict0 <- PDict(Ebox)
+  ## Examples to show how we might look for a string (in this case an
+  ## ebox motif) across the whole genome.
+#  Ebox <- DNAStringSet("CACGTG")
+#  pdict0 <- PDict(Ebox)
 
-  bsapply(Celegans, countPDict, pdict = pdict0)
-  bsapply(Celegans, countPDict, simplify = TRUE, pdict = pdict0)
+#  bsapply(Celegans, countPDict, pdict = pdict0)
+#  bsapply(Celegans, countPDict, simplify = TRUE, pdict = pdict0)
 
-  bsapply(Celegans, matchPDict, pdict = pdict0)
-  bsapply(Celegans, matchPDict, simplify = TRUE, pdict = pdict0)
+#  bsapply(Celegans, matchPDict, pdict = pdict0)
+#  bsapply(Celegans, matchPDict, simplify = TRUE, pdict = pdict0)
 
+##  bsapply(Celegans, matchPattern, pdict = pdict0)
+##  bsapply(Celegans, matchPattern, simplify = TRUE, pdict = pdict0)
+
+
+ library("BSgenome.Hsapiens.UCSC.hg18")
+ #options(verbose=TRUE)
+ #use default masks
+ bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"))
+
+ #Enable all masks
+ bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
+ maskList = c("RM","TRF"))
+
+ #Disable all masks
+ bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
+ maskList = c("AGAPS","AMB"))
 
 }
 
