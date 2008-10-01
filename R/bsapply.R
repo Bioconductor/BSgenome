@@ -1,30 +1,41 @@
-bsapply <- function(X, FUN, exclude = "", simplify = FALSE, maskList = c(), ...){
+setClass("BSParams",
+         representation=representation(
+           X="BSgenome",
+           FUN="function",
+           exclude = "character",
+           simplify="logical",
+           maskList="ANY"),
+         prototype=prototype(
+           exclude="",
+           simplify=FALSE,
+           maskList=c()
+           ))
 
-    ##Some argument checking.
-    if(!is(X, "BSgenome")) stop("'X' must be a BSgenome object")
-    if(!is.function(FUN)) stop("'FUN' must be a function")
-    if(!is.character(exclude)) stop("'exclude' must be a character vector")
 
-    #Argument checking for maskList:
-    if(length(maskList)>0){ ##if there are masks
-        for(i in seq_len(length(maskList))){ #loop thru masks and deal with each in turn
-            if( !( maskList[i] %in% masknames(X)) ){stop("'maskList' must be vector of names corresponding to the default BSgenome masks.")}
-            ##     if( !( maskList[i] %in% masknames(X) || is.function(maskList[i]) || is(maskList[i], "IRanges") ) ){stop("'masks' must be an integer corresponding to the default BSgenome masks that are desired, an IRanges object that be used to generate a mask or a function that returns an IRanges object so that the masks can be generated.")}
+bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, maskList = c(), ...){
+
+    ##Some argument checking in case someone changes the value inside the params object.
+    if(!is(BSParams@X, "BSgenome")) stop("'X' must be a BSgenome object")
+    if(!is.function(BSParams@FUN)) stop("'FUN' must be a function")
+    if(!is.character(BSParams@exclude)) stop("'exclude' must be a character vector")
+
+    ##Argument checking for maskList:
+    if(length(BSParams@maskList)>0){ ##if there are masks
+        for(i in seq_len(length(BSParams@maskList))){ #loop thru masks and deal with each in turn
+            if( !( BSParams@maskList[i] %in% masknames(BSParams@X)) ){stop("'BSParams@maskList' must be vector of names corresponding to the default BSgenome masks.")}
+            ##     if( !( BSParams@maskList[i] %in% masknames(BSParams@X) || is.function(BSParams@maskList[i]) || is(BSParams@maskList[i], "IRanges") ) ){stop("'masks' must be an integer corresponding to the default BSgenome masks that are desired, an IRanges object that be used to generate a mask or a function that returns an IRanges object so that the masks can be generated.")}
         }
     }
-
-            
-
     
     
     ##get the seqnames:
-    seqnames <- seqnames(X)
+    seqnames <- seqnames(BSParams@X)
     seqLength = length(seqnames)
 
     ##Restrict the seqnames based on our exclusion factor:
     pariahIndex = numeric()
-    for(i in seq_len(length(exclude))){
-        ind = grep(exclude[i],seqnames)
+    for(i in seq_len(length(BSParams@exclude))){
+        ind = grep(BSParams@exclude[i],seqnames)
         ##Catenate the indices together as we go
         pariahIndex = c(pariahIndex, ind)
     }
@@ -41,16 +52,16 @@ bsapply <- function(X, FUN, exclude = "", simplify = FALSE, maskList = c(), ...)
     ##Some stuff has to be done for each chromosome
     processSeqname <- function(seqname, ...){
 
-        seq = X[[seqname]]
+        seq = BSParams@X[[seqname]]
         
-        if(length(maskList)>0){ ##if there are masks
-            for(i in seq_len(length(maskList))){ #loop thru masks and deal with each in turn
-                if(maskList[i] %in% masknames(X)){#IF its one of the names, then change its active state to be different from the default...
-                    if(active(masks(seq))[maskList[i]] == FALSE){
-                        active(masks(seq))[maskList[i]] <- TRUE
-                    }else{active(masks(seq))[maskList[i]] <- FALSE}
+        if(length(BSParams@maskList)>0){ ##if there are masks
+            for(i in seq_len(length(BSParams@maskList))){ #loop thru masks and deal with each in turn
+                if(BSParams@maskList[i] %in% masknames(BSParams@X)){#IF its one of the names, then change its active state to be different from the default...
+                    if(active(masks(seq))[BSParams@maskList[i]] == FALSE){
+                        active(masks(seq))[BSParams@maskList[i]] <- TRUE
+                    }else{active(masks(seq))[BSParams@maskList[i]] <- FALSE}
                 }
-##                 if(is.function(maskList[i])){#IF its a function, then lets call it to generate a GENOMIC RANGES object
+##                 if(is.function(BSParams@maskList[i])){#IF its a function, then lets call it to generate a GENOMIC RANGES object
 ##                     ##
 ##                 }
             }
@@ -60,13 +71,13 @@ bsapply <- function(X, FUN, exclude = "", simplify = FALSE, maskList = c(), ...)
         
 
         ## This is where we finally get run the function that was passed in
-        result <- FUN(seq, ...)
+        result <- BSParams@FUN(seq, ...)
         return(result)
     }
 
     
     ##Then apply the above function to each
-    if(simplify == FALSE){
+    if(BSParams@simplify == FALSE){
         ans <- lapply(seqnames, processSeqname, ...)
         names(ans) <- seqnames
         return(ans)

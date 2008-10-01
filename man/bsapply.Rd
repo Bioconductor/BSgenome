@@ -9,29 +9,13 @@
 }
 
 \usage{
-  bsapply(X, FUN, exclude, simplify, maskList, ...)
+  bsapply(BSParams, ...)
 }
 
 \arguments{
-  \item{X}{
-    a BSgenome object that contains chromosomes that you wish to apply
-  FUN on
-  }
-  \item{FUN}{
-    the function to apply to each chromosome in the BSgenome object
-  }
-  \item{exclude}{
-    this is a character vector with strings that will be used to filter
-  out chromosomes whose names match these strings.
-  }
-  \item{simplify}{
-    TRUE/FALSE value to indicate whether or not the function should try
-  to simplify the output for you.
-  }
-  \item{maskList}{
-    A list of mask names for the BSGenome object.  For each of these
-  mask names, the active status will be toggled to be something other
-  than the default state.
+  \item{BSParams}{
+    a BSParams object that holds the various parameters needed to
+    configure the bsapply function
   }
   \item{...}{
     optional arguments to 'FUN'.
@@ -63,39 +47,48 @@
 
   ## Count the alphabet frequencies for every chromosome but exclude
   ## mitochrondrial ones:
-  bsapply(Celegans, alphabetFrequency, exclude = "M")
+  params = new("BSParams", X = Celegans, FUN = alphabetFrequency,
+  exclude = "M")
+  bsapply(params)
 
-  ## Or we can do this same function with the simplif option:
-#  bsapply(Celegans, alphabetFrequency, exclude = "M", simplify = TRUE)
+  ## Or we can do this same function with the simplif option: params =
+  params = new("BSParams", X = Celegans, FUN = alphabetFrequency,
+  exclude = "M", simplify = TRUE)
+  bsapply(params)
 
 
   ## Examples to show how we might look for a string (in this case an
-  ## ebox motif) across the whole genome.
-#  Ebox <- DNAStringSet("CACGTG")
-#  pdict0 <- PDict(Ebox)
+  ## ebox motif) across the whole genome.  
+  Ebox <- DNAStringSet("CACGTG")
+  pdict0 <- PDict(Ebox)
 
-#  bsapply(Celegans, countPDict, pdict = pdict0)
-#  bsapply(Celegans, countPDict, simplify = TRUE, pdict = pdict0)
+  params = new("BSParams", X = Celegans, FUN = countPDict, simplify = TRUE)
+  bsapply(params, pdict = pdict0)
 
-#  bsapply(Celegans, matchPDict, pdict = pdict0)
-#  bsapply(Celegans, matchPDict, simplify = TRUE, pdict = pdict0)
+  params@FUN = matchPDict
+  bsapply(params, pdict = pdict0)
 
-#  bsapply(Celegans, matchPattern, pattern = "CACGTG")
-#  bsapply(Celegans, matchPattern, simplify = TRUE, pattern = "CACGTG")
+  ## And since its really overkill to use matchPDict to find a single pattern:
+  params@FUN = matchPattern
+  bsapply(params, pattern = "CACGTG")
 
 
-# library("BSgenome.Hsapiens.UCSC.hg18")
-# #options(verbose=TRUE)
-# #use default masks
-# bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"))
+  ## Examples on how to use the masks
+  library("BSgenome.Hsapiens.UCSC.hg18")
+  ## I can make things verbose if I want to see the chromosomes getting processed.
+  options(verbose=TRUE)
+  ## For the 1st example, lets use default masks
+  params = new("BSParams", X = Hsapiens, FUN = alphabetFrequency,
+  exclude = c(1:8,"random","hap"), simplify = TRUE)
+  bsapply(params)
 
-# #Enable all masks
-# bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
-# maskList = c("RM","TRF"))
+  ##Enable all masks
+  params@maskList = c("RM","TRF")
+  bsapply(params)
 
-# #Disable all masks
-# bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
-# maskList = c("AGAPS","AMB"))
+  ##Disable all masks
+  params@maskList = c("AGAPS","AMB")
+  bsapply(params)
 
 }
 
