@@ -1,0 +1,25 @@
+Package: BSgenome.Ptroglodytes.UCSC.panTro2
+Title: Pan troglodytes (Chimp) full genome (UCSC version panTro2)
+Description: Pan troglodytes (Chimp) full genome as provided by UCSC (panTro2, Mar. 2006) and stored in Biostrings objects.
+Version: 1.3.11
+organism: Pan troglodytes
+species: Chimp
+provider: UCSC
+provider_version: panTro2
+release_date: Mar. 2006
+release_name: CGSC Build 2 Version 1
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
+organism_biocview: Pan_troglodytes
+BSgenomeObjname: Ptroglodytes
+seqnames: paste("chr", c(1, "2a", "2b", 3:22, "X", "Y", "M", "Un", "6_hla_hap1", paste(c(1, "2a", "2b", 3:20, 22, "X", "Y"), "_random", sep="")), sep="")
+mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
+nmask_per_seq: 4
+SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
+	from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
+SrcDataFiles2: masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro2/database/
+	+ chromOut.tar.gz and chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
+PkgExamples: Ptroglodytes
+	seqlengths(Ptroglodytes)
+	Ptroglodytes$chr1  # same as Ptroglodytes[["chr1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/seqs
+masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/masks
