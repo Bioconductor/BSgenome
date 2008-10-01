@@ -80,22 +80,22 @@
 #  bsapply(Celegans, matchPDict, pdict = pdict0)
 #  bsapply(Celegans, matchPDict, simplify = TRUE, pdict = pdict0)
 
-##  bsapply(Celegans, matchPattern, pdict = pdict0)
-##  bsapply(Celegans, matchPattern, simplify = TRUE, pdict = pdict0)
+#  bsapply(Celegans, matchPattern, pattern = "CACGTG")
+#  bsapply(Celegans, matchPattern, simplify = TRUE, pattern = "CACGTG")
 
 
- library("BSgenome.Hsapiens.UCSC.hg18")
- #options(verbose=TRUE)
- #use default masks
- bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"))
+# library("BSgenome.Hsapiens.UCSC.hg18")
+# #options(verbose=TRUE)
+# #use default masks
+# bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"))
 
- #Enable all masks
- bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
- maskList = c("RM","TRF"))
+# #Enable all masks
+# bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
+# maskList = c("RM","TRF"))
 
- #Disable all masks
- bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
- maskList = c("AGAPS","AMB"))
+# #Disable all masks
+# bsapply(Hsapiens, alphabetFrequency, exclude = c(1:8,"random","hap"),
+# maskList = c("AGAPS","AMB"))
 
 }
 
