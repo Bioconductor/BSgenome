@@ -7,7 +7,7 @@ species: Arabidopsis
 provider: TAIR
 provider_version: 04232008
 release_date: NA
-release_name: NA
+release_name: dumped from ADB: Mar/14/08
 source_url: ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/
 organism_biocview: Arabidopsis_thaliana
 BSgenomeObjname: Athaliana
