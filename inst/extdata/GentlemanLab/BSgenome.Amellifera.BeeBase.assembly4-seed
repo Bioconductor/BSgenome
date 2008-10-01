@@ -12,7 +12,7 @@ source_url: NA
 organism_biocview: Apis_mellifera
 BSgenomeObjname: Amellifera
 seqnames: paste("Group", 1:16, sep="")
-mseqname: "GroupUn"
+mseqnames: "GroupUn"
 nmask_per_seq: 0
 PkgExamples: Amellifera
 	seqlengths(Amellifera)
