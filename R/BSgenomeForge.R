@@ -169,45 +169,47 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 ### The "forgeMasksFiles" function.
 ###
 
-## mask1 is the mask of "assembly gaps" (inter-contig Ns).
-## If 'mask1.srctype' is NA, then mask1 is an empty mask.
-## If 'mask1.srctype' is "gap", then mask1 is extracted from UCSC "gap" files.
-## If 'mask1.srctype' is "agp", then mask1 is extracted from NCBI "agp" files.
-## mask1 is active by default.
+## AGAPS is the mask of "assembly gaps" (inter-contig Ns).
+## If 'filetype' is:
+##        NA: then AGAPS is an empty mask;
+##     "gap": then AGAPS is extracted from a UCSC "gap" file;
+##     "agp": then AGAPS is extracted from an NCBI "agp" file.
+## AGAPS is active by default.
 .forge.AGAPS.mask <- function(seqname, mask_width, masks_srcdir,
-                              mask1.srctype, mask1.prefix, mask1.suffix)
+                              filetype, filename,
+                              fileprefix, filesuffix)
 {
-    if (!.isSingleStringOrNA(mask1.srctype))
-        stop("'mask1.srctype' must be a single string or NA")
-    if (!.isSingleStringOrNA(mask1.prefix))
-        stop("'mask1.prefix' must be a single string or NA")
-    if (!.isSingleStringOrNA(mask1.suffix))
-        stop("'mask1.suffix' must be a single string or NA")
-    if (is.na(mask1.srctype)) {
+    if (!.isSingleStringOrNA(filetype))
+        stop("'filetype' must be a single string or NA")
+    if (!.isSingleStringOrNA(filename))
+        stop("'filename' must be a single string or NA")
+    if (!.isSingleStringOrNA(fileprefix))
+        stop("'fileprefix' must be a single string or NA")
+    if (!.isSingleStringOrNA(filesuffix))
+        stop("'filesuffix' must be a single string or NA")
+    if (is.na(filetype)) {
         ans <- Mask(mask_width)
         desc(ans) <- "assembly gaps (empty)"
     } else {
-        if (is.na(mask1.prefix))
-            file <- "gap.txt"
+        if (is.na(filename))
+            filename <- paste(fileprefix, seqname, filesuffix, sep="")
+        filepath <- file.path(masks_srcdir, filename)
+        if (filetype == "gap")
+            ans <- read.gapMask(filepath, mask_width, seqname=seqname)
         else
-            file <- paste(mask1.prefix, seqname, mask1.suffix, sep="")
-        file <- file.path(masks_srcdir, file)
-        if (mask1.srctype == "gap")
-            ans <- read.gapMask(file, mask_width, seqname=seqname)
-        else
-            ans <- read.agpMask(file, mask_width, seqname=seqname)
+            ans <- read.agpMask(filepath, mask_width, seqname=seqname)
     }
     active(ans) <- TRUE
     names(ans) <- "AGAPS"
     ans
 }
 
-## mask2 is the mask of "intra-contig ambiguities".
-## mask2 is active by default.
-.forge.AMB.mask <- function(seq, mask1)
+## AMB is the mask of "intra-contig ambiguities".
+## AMB is active by default.
+.forge.AMB.mask <- function(seq, AGAPS)
 {
-    active(mask1) <- TRUE
-    masks(seq) <- mask1
+    active(AGAPS) <- TRUE
+    masks(seq) <- AGAPS
     amb_letters <- names(IUPAC_CODE_MAP)[nchar(IUPAC_CODE_MAP) > 1]
     for (amb_letter in amb_letters)
         seq <- maskMotif(seq, amb_letter)
@@ -220,8 +222,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     ans
 }
 
-## mask3 is the "RepeatMasker" mask (from the RepeatMasker .out file).
-## mask3 is NOT active by default.
+## RM is the "RepeatMasker" mask (from the RepeatMasker .out file).
+## RM is NOT active by default.
 .forge.RM.mask <- function(seqname, mask_width, masks_srcdir)
 {
     file <- file.path(masks_srcdir, paste(seqname, ".fa.out", sep=""))
@@ -237,9 +239,9 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     ans
 }
 
-## mask4 is the "Tandem Repeats Finder" mask (from the Tandem Repeats Finder
+## TRF is the "Tandem Repeats Finder" mask (from the Tandem Repeats Finder
 ## .bed file).
-## mask4 is NOT active by default.
+## TRF is NOT active by default.
 .forge.TRF.mask <- function(seqname, mask_width, masks_srcdir)
 {
     file <- file.path(masks_srcdir, paste(seqname, ".bed", sep=""))
@@ -257,7 +259,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 .forgeMasksFile <- function(seqname, nmask_per_seq,
                             seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                            mask1.srctype="gap", mask1.prefix="", mask1.suffix="_gap.txt",
+                            AGAPSfiles.type="gap", AGAPSfiles.name=NA,
+                            AGAPSfiles.prefix="", AGAPSfiles.suffix="_gap.txt",
                             verbose=TRUE)
 {
     if (!.isSingleString(seqname))
@@ -285,22 +288,23 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     ## length 0).
     masks <- new("MaskCollection", width=mask_width)
     if (nmask_per_seq >= 1) {
-        mask1 <- .forge.AGAPS.mask(seqname, mask_width, masks_srcdir,
-                             mask1.srctype, mask1.prefix, mask1.suffix)
-        masks <- append(masks, mask1)
+        AGAPS <- .forge.AGAPS.mask(seqname, mask_width, masks_srcdir,
+                                   AGAPSfiles.type, AGAPSfiles.name,
+                                   AGAPSfiles.prefix, AGAPSfiles.suffix)
+        masks <- append(masks, AGAPS)
     }
     if (nmask_per_seq >= 2) {
-        mask2 <- .forge.AMB.mask(seq, mask1)
-        masks <- append(masks, mask2)
+        AMB <- .forge.AMB.mask(seq, AGAPS)
+        masks <- append(masks, AMB)
     }
     remove(seq, list=seqname)
     if (nmask_per_seq >= 3) {
-        mask3 <- .forge.RM.mask(seqname, mask_width, masks_srcdir)
-        masks <- append(masks, mask3)
+        RM <- .forge.RM.mask(seqname, mask_width, masks_srcdir)
+        masks <- append(masks, RM)
     }
     if (nmask_per_seq >= 4) {
-        mask4 <- .forge.TRF.mask(seqname, mask_width, masks_srcdir)
-        masks <- append(masks, mask4)
+        TRF <- .forge.TRF.mask(seqname, mask_width, masks_srcdir)
+        masks <- append(masks, TRF)
     }
     objname <- .getMasksObjname(seqname)
     .saveObject(masks, objname, destdir=masks_destdir, verbose=verbose)
@@ -308,7 +312,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
                             seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                            mask1.srctype="gap", mask1.prefix="", mask1.suffix="_gap.txt",
+                            AGAPSfiles.type="gap", AGAPSfiles.name=NA,
+                            AGAPSfiles.prefix="", AGAPSfiles.suffix="_gap.txt",
                             verbose=TRUE)
 {
     if (length(seqnames) == 0)
@@ -317,8 +322,8 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
         .forgeMasksFile(seqname, nmask_per_seq,
                         seqs_destdir=seqs_destdir,
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
-                        mask1.srctype=mask1.srctype,
-                        mask1.prefix=mask1.prefix, mask1.suffix=mask1.suffix,
+                        AGAPSfiles.type=AGAPSfiles.type, AGAPSfiles.name=AGAPSfiles.name,
+                        AGAPSfiles.prefix=AGAPSfiles.prefix, AGAPSfiles.suffix=AGAPSfiles.suffix,
                         verbose=verbose)
     }
 }
@@ -352,9 +357,10 @@ setClass(
         seqnames="character",         # a single string containing R source code
         mseqnames="character",        # a single string containing R source code
         nmask_per_seq="integer",      # a single integer
-        mask1.srctype="character",
-        mask1.prefix="character",
-        mask1.suffix="character",
+        AGAPSfiles.type="character",
+        AGAPSfiles.name="character",
+        AGAPSfiles.prefix="character",
+        AGAPSfiles.suffix="character",
         PkgDetails="character",
         SrcDataFiles1="character",
         SrcDataFiles2="character",
@@ -370,9 +376,10 @@ setClass(
         seqnames="NULL",              # equivalent to "character(0)"
         mseqnames="NULL",
         nmask_per_seq=0L,
-        mask1.srctype="gap",
-        mask1.prefix="",
-        mask1.suffix="_gap.txt",
+        AGAPSfiles.type="gap",
+        AGAPSfiles.name=as.character(NA),
+        AGAPSfiles.prefix="",
+        AGAPSfiles.suffix="_gap.txt",
         PkgDetails="",
         SrcDataFiles1="-- information not available --",
         SrcDataFiles2="",
@@ -456,8 +463,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             forgeMasksFiles(.seqnames, .nmask_per_seq,
                             seqs_destdir=seqs_destdir,
                             masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
-                            mask1.srctype=x@mask1.srctype,
-                            mask1.prefix=x@mask1.prefix, mask1.suffix=x@mask1.suffix,
+                            AGAPSfiles.type=x@AGAPSfiles.type, AGAPSfiles.name=x@AGAPSfiles.name,
+                            AGAPSfiles.prefix=x@AGAPSfiles.prefix, AGAPSfiles.suffix=x@AGAPSfiles.suffix,
                             verbose=verbose)
         }
     }
