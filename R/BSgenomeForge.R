@@ -227,6 +227,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 .forge.RM.mask <- function(seqname, mask_width, masks_srcdir)
 {
     file <- file.path(masks_srcdir, paste(seqname, ".fa.out", sep=""))
+    if (!file.exists(file))
+        file <- file.path(masks_srcdir, paste(seqname, ".out", sep=""))
     if (file.exists(file)) {
         ans <- read.rmMask(file, mask_width)
         desc(ans) <- "RepeatMasker"
