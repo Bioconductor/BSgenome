@@ -1,0 +1,36 @@
+Got the assembly4_chromosomes.fa file from:
+
+  sftp honeybee@genomes.tamu.edu (password: beehive)
+  cd assembly4_chromosomes
+
+  (information provided by Brian Herb and Rafael Irizarry)
+
+Downloaded the file on March 5, 2008
+
+9260 FASTA records:
+
+o 16 big records (> 7M and < 30M base pairs each)
+            from line -  to line
+    Group1:         1 -   427631
+    Group2:    427632 -   657235
+    Group3:    657236 -   851830
+    Group4:    851831 -  1026927
+    Group5:   1026928 -  1234081
+    Group6:   1234082 -  1487498
+    Group7:   1487499 -  1671056
+    Group8:   1671057 -  1859475
+    Group9:   1859476 -  2017804
+    Group10:  2017805 -  2198414
+    Group11:  2198415 -  2405872
+    Group12:  2405873 -  2567431
+    Group13:  2567432 -  2714100
+    Group14:  2714101 -  2856625
+    Group15:  2856626 -  3001765
+    Group16:  3001766 -  3102808
+
+o 9244 small records (>= 564 and <= 167350 base pairs each)
+    GroupUn.1 to GroupUn.9244:
+              3102809 - bottom (line 3809863)
+
+Use the splitbigfasta.sh script to split assembly4_chromosomes.fa
+
