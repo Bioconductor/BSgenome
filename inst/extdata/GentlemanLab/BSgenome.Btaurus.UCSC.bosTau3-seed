@@ -14,7 +14,6 @@ BSgenomeObjname: Btaurus
 seqnames: paste("chr", c(1:29, "X"), sep="")
 mseqnames: "chrUn.scaffolds"
 nmask_per_seq: 2
-AGAPSfiles.name: gap.txt
 SrcDataFiles1: sequences: all the *.fa.gz files
 	from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 SrcDataFiles2: masks: only gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/database/
@@ -25,3 +24,4 @@ PkgExamples: Btaurus
 	Btaurus$chr1  # same as Btaurus[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/masks
+AGAPSfiles.name: gap.txt

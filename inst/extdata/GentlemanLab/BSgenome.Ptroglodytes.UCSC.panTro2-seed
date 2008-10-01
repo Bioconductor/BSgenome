@@ -14,7 +14,6 @@ BSgenomeObjname: Ptroglodytes
 seqnames: paste("chr", c(1, "2a", "2b", 3:22, "X", "Y", "M", "Un", "6_hla_hap1", paste(c(1, "2a", "2b", 3:20, 22, "X", "Y"), "_random", sep="")), sep="")
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
-AGAPSfiles.name: gap.txt
 SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
 SrcDataFiles2: masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro2/database/
@@ -24,3 +23,4 @@ PkgExamples: Ptroglodytes
 	Ptroglodytes$chr1  # same as Ptroglodytes[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/masks
+AGAPSfiles.name: gap.txt

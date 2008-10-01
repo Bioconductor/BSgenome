@@ -11,7 +11,6 @@ release_name: NA
 source_url: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/
 organism_biocview: Escherichia_coli
 BSgenomeObjname: Ecoli
-seqfiles.suffix: .fna
 seqnames: c(paste("NC_", c("008253", "008563", "010468", "004431", "009801", "009800", "002655", "002695", "010498", "007946", "010473", "000913"), sep=""), "AC_000091")
 nmask_per_seq: 0
 PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequence.
@@ -192,3 +191,4 @@ PkgExamples: ## The names of the sequences are the Refseq numbers:
 	seqlengths(Ecoli)
 	Ecoli$NC_008253  # same as Ecoli[["NC_008253"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ecoli.NCBI.20080805/seqs
+seqfiles.suffix: .fna

@@ -11,7 +11,6 @@ release_name: dumped from ADB: Mar/14/08
 source_url: ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/
 organism_biocview: Arabidopsis_thaliana
 BSgenomeObjname: Athaliana
-seqfiles.suffix: .fas
 seqnames: paste("chr", c(1:5, "C", "M"), sep="")
 nmask_per_seq: 0
 SrcDataFiles1: all the chr*.fas file from ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/
@@ -23,3 +22,4 @@ PkgExamples: Athaliana
 	seqlengths(Athaliana)
 	Athaliana$chr1  # same as Athaliana[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.04232008/seqs
+seqfiles.suffix: .fas

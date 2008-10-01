@@ -352,38 +352,38 @@ setClass(
         source_url="character",
         organism_biocview="character",
         BSgenomeObjname="character",
-        seqfiles.prefix="character",
-        seqfiles.suffix="character",
         seqnames="character",         # a single string containing R source code
         mseqnames="character",        # a single string containing R source code
         nmask_per_seq="integer",      # a single integer
-        AGAPSfiles.type="character",
-        AGAPSfiles.name="character",
-        AGAPSfiles.prefix="character",
-        AGAPSfiles.suffix="character",
         PkgDetails="character",
         SrcDataFiles1="character",
         SrcDataFiles2="character",
-        PkgExamples="character"
+        PkgExamples="character",
+        seqfiles.prefix="character",
+        seqfiles.suffix="character",
+        AGAPSfiles.type="character",
+        AGAPSfiles.name="character",
+        AGAPSfiles.prefix="character",
+        AGAPSfiles.suffix="character"
     ),
     prototype(
         Author="H. Pages",
         Maintainer="Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>",
         License="Artistic-2.0",
         source_url="-- information not available --",
-        seqfiles.prefix="",
-        seqfiles.suffix=".fa",
         seqnames="NULL",              # equivalent to "character(0)"
         mseqnames="NULL",
         nmask_per_seq=0L,
-        AGAPSfiles.type="gap",
-        AGAPSfiles.name=as.character(NA),
-        AGAPSfiles.prefix="",
-        AGAPSfiles.suffix="_gap.txt",
         PkgDetails="",
         SrcDataFiles1="-- information not available --",
         SrcDataFiles2="",
-        PkgExamples=""
+        PkgExamples="",
+        seqfiles.prefix="",
+        seqfiles.suffix=".fa",
+        AGAPSfiles.type="gap",
+        AGAPSfiles.name=as.character(NA),
+        AGAPSfiles.prefix="",
+        AGAPSfiles.suffix="_gap.txt"
     )
 )   
 
