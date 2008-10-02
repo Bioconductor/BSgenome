@@ -46,9 +46,8 @@ if ("AGAPS" \%in\% masknames(@BSGENOMEOBJNAME@)) {
   {
     ## Replace all masks by the inverted AGAPS mask
     masks(seq) <- gaps(masks(seq)["AGAPS"])
-    af <- alphabetFrequency(seq)
-    found_letters <- names(af)[af != 0]
-    if (any(found_letters != "N"))
+    unique_letters <- uniqueLetters(seq)
+    if (any(unique_letters != "N"))
         stop("assembly gaps contain more than just Ns")
   }
 
