@@ -28,8 +28,6 @@ export(
     masknames,
 
     ## BSgenomeForge functions:
-    getSeqSrcpaths,
-    getSeqlengths,
     forgeSeqlengthsFile,
     forgeSeqFiles,
     forgeMasksFiles,
