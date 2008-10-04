@@ -261,7 +261,7 @@ a \term{seed file} are divided in 3 categories:
       package}. This means that the users of the \term{target package} will be
       able to retrieve these values via the accessor methods defined for
       \Rclass{BSgenome} objects. See the man page for the \Rclass{BSgenome}
-      class (\code{?\`BSgenome-class\`}) for a description of these methods.
+      class (\code{?{\`}BSgenome-class{\`}}) for a description of these methods.
 
 \item Additional fields that don't fall in the 2 first categories.
 \end{enumerate}
