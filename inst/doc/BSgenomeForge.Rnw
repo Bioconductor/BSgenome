@@ -1,0 +1,425 @@
+%\VignetteIndexEntry{How to forge a BSgenome data package}
+%\VignetteKeywords{Genome, BSgenome, DNA, Sequence, UCSC, BSgenome data package}
+%\VignettePackage{BSgenome}
+
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+\SweaveOpts{keep.source=TRUE}
+
+\documentclass[10pt]{article}
+
+%\usepackage{amsmath}
+%\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+\usepackage{underscore}
+
+\textwidth=6.5in
+\textheight=8.5in
+\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+\newcommand{\R}{\textsf{R}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\term}[1]{\emph{#1}}
+\newcommand{\Rpackage}[1]{\textsf{#1}}
+\newcommand{\Rfunction}[1]{\texttt{#1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+\newcommand{\Rmethod}[1]{\textit{#1}}
+\newcommand{\Rfunarg}[1]{\textit{#1}}
+
+\bibliographystyle{plainnat}
+
+\begin{document}
+
+\title{How to forge a BSgenome data package}
+
+\author{Herv\'e Pag\`es \\
+  Gentleman Lab \\
+  Fred Hutchinson Cancer Research Center \\
+  Seattle, WA}
+\date{\today}
+\maketitle
+
+\tableofcontents
+
+
+\section{Introduction}
+
+This document describes the process of forging a \term{BSgenome data package}.
+It is intended for users who want to make a new \term{BSgenome data package},
+not for regular users of these packages.
+
+In this document, we call \term{target package} the package that will result
+from this process.
+
+Start {\R} (make sure you are using the latest release version), load the
+\Rpackage{BSgenome} package, and use the \Rfunction{available.genomes}
+function to get the list of \term{BSgenome data packages} available
+in the current release version of Bioconductor.
+So you confirm that none of those genomes suits your needs? And you want to
+make your own package? If your answer was yes to these 2 questions, then you've
+come to the right place.
+
+Requirements:
+\begin{itemize}
+\item Some basic knowledge of the Unix/Linux command line is required. The
+      commands that you will most likely need are: \code{cd}, \code{mkdir},
+      \code{mv}, \code{rmdir}, \code{tar}, \code{gunzip}, \code{unzip},
+      \code{ftp} and \code{wget}. Also you will need to create and edit some
+      text files.
+\item You need access to a good Unix/Linux machine with a decent amount
+      of RAM (>= 4GB), especially if your genome is big. For smaller genomes,
+      2GB or even 1GB of RAM might be enough.
+\item You need the latest release versions of {\R} plus the
+      \Rpackage{Biostrings} and \Rpackage{BSgenome} packages installed on this
+      machine. To check your installation, start {\R} and try to load the
+      \Rpackage{BSgenome} package.
+\item Finally, you need access to the \term{source data files} of the genome
+      that you want to build a package for.
+      There are 2 groups of \term{source data files}: (1) the files containing
+      the sequence data and (2) the files containing the mask data.
+      They can be publicly available like in the case of some genome
+      providers like UCSC or NCBI or you can have a private access to them.
+      This document assumes that you've already downloaded them to the
+      build machine or that you'll be able to do so.
+\end{itemize}
+
+Refer to the \textit{R Installation and Administration} manual
+(\url{http://cran.r-project.org/doc/manuals/R-admin.html}) if you
+need to install {\R} or upgrade your {\R} version, and to this page
+\url{http://bioconductor.org/docs/install/} on the Bioconductor
+website if you need to install or update the \Rpackage{Biostrings}
+or \Rpackage{BSgenome} packages.
+
+Questions, comments or bug reports about this document or the BSgenomeForge
+functions are welcome. Please address them to the author
+(\code{hpages@fhcrc.org}) or post them on The Bioconductor Project Mailing List
+(\code{bioconductor@stat.math.ethz.ch}). Don't forget to visit the
+Bioconductor website and subscribe to this list if you've not already
+done so.
+
+
+\section{Download the source data files}
+
+As mentioned earlier, there are 2 groups of source files: (1) the files
+containing the sequence data and (2) the files containing the mask data.
+
+Group 1 must be FASTA files. You need 1 file per sequence that you
+want to put in the \term{target package}.
+
+What you need from group 2 depends on what built-in masks you want to put
+on each single sequence of the \term{target package}. 
+4 kinds of built-in masks are currently supported by BSgenomeForge:
+\begin{itemize}
+\item the masks of assembly gaps, aka the AGAPS masks;
+\item the mask of intra-contig ambiguities, aka the AMB masks;
+\item the masks of repeat regions that were determined by the RepeatMasker
+      software, aka the RM masks;
+\item the masks of repeat regions that were determined by the Tandem Repeats
+      Finder software (where only repeats with period less than or equal to
+      12 were kept), aka the TRF masks.
+\end{itemize}
+
+For the AGAPS masks, you need UCSC ``gap'' or NCBI ``agp'' files. It can be one
+file per chromosome or a single file containing the assembly gaps information
+for all the chromosomes together.
+
+You don't need any file for the AMB masks.
+
+For the RM masks, you need one RepeatMasker \code{.out} file per chromosome.
+Note that some genome providers like UCSC sometimes provide a single
+\code{.out} file for all the chromosomes. BSgenomeForge doesn't support this
+yet but you can work around it by splitting the big file in 1 file per
+chromosome for now (alternatively, you can request support for this on The
+Bioconductor Project Mailing List).
+
+For the TRF masks, you need one Tandem Repeats Finder \code{.bed} file per
+chromosome.
+
+For example, here are the files that were used for making the
+\Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package:
+
+\begin{itemize}
+\item Group 1:
+      \begin{itemize}
+      \item Single sequences: file \code{chromFa.tar.gz} was downloaded from
+            \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
+            extracted with:
+            \begin{verbatim}
+                tar zxf chromFa.tar.gz
+            \end{verbatim}
+      \item Multiple sequences: files \code{upstream1000.fa.gz},
+            \code{upstream2000.fa.gz} and \code{upstream5000.fa.gz} were
+            downloaded from \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}
+            and uncompressed with:
+            \begin{verbatim}
+                for file in upstream*.fa.gz; do gunzip $file ; done
+            \end{verbatim}
+      \end{itemize}
+\item Group 2:
+      \begin{itemize}
+      \item AGAPS masks: all the \code{chr*\_gap.txt.gz} files were downloaded
+            from \url{ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}.
+            This was done with the standard Unix/Linux \code{ftp} command:
+            \begin{verbatim}
+                ftp hgdownload.cse.ucsc.edu # login as "anonymous"
+                cd goldenPath/rn4/database
+                prompt
+                mget chr*_gap.txt.gz
+            \end{verbatim}
+      \item RM masks: file \code{chromOut.tar.gz} was downloaded from
+            \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
+            extracted with:
+            \begin{verbatim}
+                tar zxf chromOut.tar.gz
+            \end{verbatim}
+      \item TRF masks:file \code{chromTrf.tar.gz} was downloaded from
+            \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
+            extracted with:
+            \begin{verbatim}
+                tar zxf chromTrf.tar.gz
+            \end{verbatim}
+      \end{itemize}
+\end{itemize}
+
+From now we assume that you've downloaded (checking the md5sums is always a
+good idea), extracted, and eventually renamed all the \term{source data files},
+and that they are located in the \code{seqs\_srcdir} folder for group 1 and in
+the \code{masks\_srcdir} folder for group 2.
+
+Note that all the \term{source data files} should be located directly in the
+\code{seqs\_srcdir} or \code{masks\_srcdir} folders and not in subfolders of
+these folders. For example, depending on the genome, UCSC provides either a
+big \code{chromFa.tar.gz} or \code{chromFa.zip} file that contains the sequence
+data for all the chromosomes. But it could be that, after extraction of this
+big file, the individual FASTA files for each chromosome end up being located
+one level down the \code{seqs\_srcdir} folder (granted that you were in this
+folder when you extracted the file). If this is the case, then you will need
+to move them one level up (use \code{mv -i */*.fa .} for this, then remove
+all the empty subfolders with \code{rmdir *}).
+
+
+\section{Prepare the BSgenome data package seed file}
+
+The \term{BSgenome data package seed file} will contain all the information
+needed by the \Rfunction{forgeBSgenomeDataPkg} function to forge the
+\term{target package}.
+
+The format of this file is DCF (Debian Control File), like for the
+\code{DESCRIPTION} file of any {\R} package. The valid fields of a
+\term{seed file} are divided in 3 categories:
+\begin{enumerate}
+\item Standard \code{DESCRIPTION} fields. These fields are actually
+      the mandatory fields found in any \code{DESCRIPTION} file.
+      They will be copied to the \code{DESCRIPTION} file of the \term{target
+      package}.
+
+\item Non-standard \code{DESCRIPTION} fields. These fields are specific
+      to \term{seed files} and they will also be copied to the
+      \code{DESCRIPTION} file of the \term{target package}.
+      In addition, the values of those fields will be stored in the
+      \Rclass{BSgenome} object that will be contained in the \term{target
+      package}. This means that the users of the \term{target package} will be
+      able to retrieve these values via the accessor methods defined for
+      \Rclass{BSgenome} objects. See the man page for the \Rclass{BSgenome}
+      class (\code{?`BSgenome-class`}) for a description of these methods.
+
+\item Additional fields that don't fall in the 2 first categories.
+\end{enumerate}
+
+The 3 following subsections give an extensive descriptions of all the valid
+fields of a \term{seed file}.
+
+Alternatively, the reader in a hurry can look at the \term{seed files} included
+in the \Rpackage{BSgenome} package. Those files were used to forge the packages
+provided by the Bioconductor project.
+<<>>=
+library(BSgenome)
+seed_files <- system.file("extdata", "GentlemanLab", package="BSgenome")
+list.files(seed_files, pattern="-seed$")
+rn4_seed <- list.files(seed_files, pattern="rn4", full.names=TRUE)
+cat(readLines(rn4_seed), sep="\n")
+@
+
+\subsection{Standard \code{DESCRIPTION} fields}
+
+\begin{itemize}
+\item \code{Package}: Name to give to the \term{target package}. The convention
+      used for the packages built by the Bioconductor project is to use names made
+      of 4 parts separated by a dot.
+      Part 1 is always \code{BSgenome}.
+      Part 2 is the abbreviated name of the organism (when the name of
+      the organism is made of 2 words, we put together the first letter of the
+      first word in upper case followed by the entire second word in lower
+      case e.g. \code{Rnorvegicus}).
+      Part 3 is the name of the organisation who provided the genome
+      (e.g. \code{UCSC}).
+      Part 4 is the release string or number used by this organisation
+      to identify this version of the genome (e.g. \code{rn4}).
+
+\item \code{Title}: The title of the package. E.g. \code{Rattus norvegicus full
+      genome (UCSC version rn4)}.
+
+\item \code{Description}, \code{Version}, \code{Author}, \code{Maintainer},
+      \code{License}: like the 2 previous fields, these are mandatory fields
+      found in any \code{DESCRIPTION} file.
+      Please refer to section \code{1.1.1 The DESCRIPTION file} of the
+      \textit{Writing R Extensions} manual
+      (\url{http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file})
+      for more information about these fields.
+      If you plan to distribute the package that you are going to make, please
+      pickup the license carefully and make sure that it is compatible with the
+      license of the \term{source data files} if any.
+\end{itemize}
+
+\subsection{Non-standard \code{DESCRIPTION} fields}
+
+\begin{itemize}
+\item \code{organism}: The full name of the organism (e.g. \code{Rattus
+      norvegicus}).
+
+\item \code{species}: The name of the species.
+      For the packages built by the Bioconductor project from a UCSC genome,
+      this field corresponds to the \code{SPECIES} column of this table:
+      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+
+\item \code{provider}: The provider of the \term{source data files} e.g.
+      \code{UCSC}, \code{NCBI}, \code{BDGP}, \code{FlyBase}, etc...
+      Should preferably match part 3 of the package name (field \code{Package}).
+
+\item \code{provider\_version}: The provider-side version of the genome.
+      Should preferably match part 4 of the package name (field \code{Package}).
+      For the packages built by the Bioconductor project from a UCSC genome,
+      this field corresponds to the \code{UCSC VERSION} field of this table:
+      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+
+\item \code{release\_date}: When this assembly of the genome was released.
+      For the packages built by the Bioconductor project from a UCSC genome,
+      this field corresponds to the \code{RELEASE DATE} field of this table:
+      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+
+\item \code{release\_name}: The release name or build number of this assembly
+      of the genome.
+      For the packages built by the Bioconductor project from a UCSC genome,
+      this field corresponds to the \code{RELEASE NAME} field of this table:
+      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+
+\item \code{source\_url}: The permanent URL where the \term{source data files}
+      used to forge this package can be found.
+
+\item \code{organism\_biocview}: The official biocViews term for this organism.
+      This is generally the same as the \code{organism} field except that spaces
+      should be replaced by underscores. This matters only if the \term{target
+      package} is going to be added to a Bioconductor repository since this
+      field will determine under which of the following subviews the package
+      will appear:
+      \url{http://bioconductor.org/packages/release/Organism.html}.
+      Note that this is the only field in this category that won't be stored
+      in the \Rclass{BSgenome} object that will be contained in the \term{target
+      package}.
+\end{itemize}
+
+\subsection{Other fields}
+
+\begin{itemize}
+\item \code{BSgenomeObjname}: Should match part 2 of the package name (field
+      \code{Package}).
+
+\item \code{seqnames}: An {\R} expression returning the names of the single
+      sequences to forge (in a character vector).
+      E.g. \code{paste("chr", c(1:20, "X", "M", "Un", paste(c(1:20, "X", "Un"),
+      "\_random", sep="")), sep="")}.
+
+\item \code{mseqnames}: [OPTIONAL] An {\R} expression returning the names of
+      the multiple sequences to forge (in a character vector).
+      E.g. \code{paste("upstream", c("1000", "2000", "5000"), sep="")}.
+
+\item \code{nmask\_per\_seq}: [OPTIONAL] The number of masks per sequence (0
+      to 4).
+
+\item \code{PkgDetails}: [OPTIONAL] Some arbitrary text that will be copied
+      to the \code{Details} section of the man page of the \term{target package}.
+
+\item \code{SrcDataFiles1}, \code{SrcDataFiles2}: [OPTIONAL] Some arbitrary
+      text that will be copied to the \code{Note} section of the man pages of
+      the \term{target package}. \code{SrcDataFiles1} should describe briefly
+      where the \term{source data files} for the sequences are coming from.
+      \code{SrcDataFiles2} should do the same for the masks. Permanent URLs are
+      a must.
+
+\item \code{PkgExamples}: [OPTIONAL] Some {\R} code (eventually with comments)
+      that will be added to the \code{Examples} section of the man page of the
+      \term{target package}.
+
+\item \code{seqs\_srcdir}, \code{masks\_srcdir}: The path to the local folders
+      containing the \term{source data files} for the sequences and for the
+      masks, respectively. 
+
+\item \code{seqfiles.prefix}, \code{seqfiles.suffix}: [OPTIONAL]
+
+\item \code{AGAPSfiles.type}: [OPTIONAL]
+
+\item \code{AGAPSfiles.name}: [OPTIONAL]
+
+\item \code{AGAPSfiles.prefix}: [OPTIONAL]
+
+\item \code{AGAPSfiles.suffix}: [OPTIONAL]
+\end{itemize}
+
+From now we assume that you have managed to prepare the \term{seed file} for
+your package.
+
+
+\section{Forge the \term{target package}}
+
+Start \R, load the \Rpackage{BSgenome} package and call the
+\Rfunction{forgeBSgenomeDataPkg} function on your \term{seed file} to forge
+the \term{target package}. For example, if the path to your \term{seed file}
+is \code{"path/to/my/seed"}, just do:
+
+<<eval=false>>=
+library(BSgenome)
+forgeBSgenomeDataPkg("path/to/my/seed")
+@
+
+Depending on the size of the genome and your hardware, this can take between
+2 minutes and 1 or 2 hours. By default \Rfunction{forgeBSgenomeDataPkg} will
+create the source tree of the \term{target package} in the current directory.
+
+Once \Rfunction{forgeBSgenomeDataPkg} is done, ignore the warnings (if any),
+leave \R, and build the source package (tarball) with
+\begin{verbatim}
+    R CMD build <pkgdir>
+\end{verbatim}
+where \code{<pkgdir>} is the path to the source tree of the package.
+
+Then check the package with
+\begin{verbatim}
+    R CMD check <tarball>
+\end{verbatim}
+where \code{<tarball>} is the path to the tarball produced by \code{R CMD build}.
+
+Finally install the package with
+\begin{verbatim}
+    R CMD INSTALL <tarball>
+\end{verbatim}
+and use it!
+
+\section{Session information}
+
+The output in this vignette was produced under the following conditions:
+
+<<>>=
+sessionInfo()
+@
+
+\end{document}
+

@@ -21,7 +21,7 @@
   Set of functions for creating a BSgenome data package.
 
   These functions are intended for users who want to make a new
-  BSgenome data package, not to regular users of these packages.
+  BSgenome data package, not for regular users of these packages.
 
   See the BSgenomeForge vignette in this package
   (\code{vignette("BSgenomeForge")}) for an extensive coverage

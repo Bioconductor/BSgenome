@@ -7,13 +7,14 @@
 % likely to be overwritten.
 %
 \SweaveOpts{keep.source=TRUE}
-\documentclass[11pt]{article}
+\documentclass[10pt]{article}
 
+%\usepackage{amsmath}
 %\usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
 \usepackage{underscore}
 
-\textwidth=6.2in
+\textwidth=6.5in
 \textheight=8.5in
 %\parskip=.3cm
 \oddsidemargin=.1in
@@ -23,15 +24,15 @@
 \newcommand{\scscst}{\scriptscriptstyle}
 \newcommand{\scst}{\scriptstyle}
 
-
-\newcommand{\Rfunction}[1]{{\texttt{#1}}}
-\newcommand{\Robject}[1]{{\texttt{#1}}}
-\newcommand{\Rpackage}[1]{{\textit{#1}}}
-\newcommand{\Rmethod}[1]{{\texttt{#1}}}
-\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
-\newcommand{\Rclass}[1]{{\textit{#1}}}
-
-\textwidth=6.2in
+\newcommand{\R}{\textsf{R}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\term}[1]{\emph{#1}}
+\newcommand{\Rpackage}[1]{\textsf{#1}}
+\newcommand{\Rfunction}[1]{\texttt{#1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+\newcommand{\Rmethod}[1]{\textit{#1}}
+\newcommand{\Rfunarg}[1]{\textit{#1}}
 
 \bibliographystyle{plainnat}
  
