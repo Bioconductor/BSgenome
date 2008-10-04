@@ -79,9 +79,9 @@ Requirements:
       of RAM (>= 4GB), especially if your genome is big. For smaller genomes,
       2GB or even 1GB of RAM might be enough.
 \item You need the latest release versions of {\R} plus the
-      \Rpackage{Biostrings} and \Rpackage{BSgenome} packages installed on this
-      machine. To check your installation, start {\R} and try to load the
-      \Rpackage{BSgenome} package.
+      \Rpackage{Biostrings} and \Rpackage{BSgenome} packages installed on the
+      build machine. To check your installation, start {\R} and try to load
+      the \Rpackage{BSgenome} package.
 \item Finally, you need to obtain the \term{source data files} of the genome
       that you want to build a package for.
       There are 2 groups of \term{source data files}: (1) the files containing
@@ -109,10 +109,10 @@ done so.
 
 \section{Obtain and prepare the source data files}
 
-As mentioned earlier, there are 2 groups of source files: (1) the files
-containing the sequence data and (2) the files containing the mask data.
+As mentioned earlier, there are 2 groups of \term{source data files}: (1) the
+files containing the sequence data and (2) the files containing the mask data.
 
-\subsection{Sequence data (group1)}
+\subsection{Sequence data (group 1)}
 
 Group 1 must be FASTA files. You need 1 file per sequence that you
 want to put in the \term{target package}. The name of each file must be of
@@ -123,23 +123,24 @@ same for all the files.
 You can use the \Rfunction{fasta.info} function from the \Rpackage{Biostrings}
 package to see what's in a FASTA file:
 <<>>=
+library(Biostrings)
 file <- system.file("extdata", "ce2chrM.fa", package="BSgenome")
 fasta.info(file)
 @
 
 \subsection{Mask data (group 2)}
 
-What you need from group 2 depends on what built-in masks you want to put
+What you need for group 2 depends on what built-in masks you want to put
 on each single sequence of the \term{target package}. 
 4 kinds of built-in masks are currently supported by BSgenomeForge:
 \begin{itemize}
-\item the masks of assembly gaps, aka the AGAPS masks;
-\item the mask of intra-contig ambiguities, aka the AMB masks;
+\item the masks of assembly gaps, aka ``the AGAPS masks'';
+\item the mask of intra-contig ambiguities, aka ``the AMB masks'';
 \item the masks of repeat regions that were determined by the RepeatMasker
-      software, aka the RM masks;
+      software, aka ``the RM masks'';
 \item the masks of repeat regions that were determined by the Tandem Repeats
       Finder software (where only repeats with period less than or equal to
-      12 were kept), aka the TRF masks.
+      12 were kept), aka ``the TRF masks''.
 \end{itemize}
 
 For the AGAPS masks, you need UCSC ``gap'' or NCBI ``agp'' files. It can be one
@@ -165,8 +166,8 @@ chromosome. Here the name of each file must be of the form
 
 \subsection{An example}
 
-For example, here are the files that were used for making the
-\Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package:
+Here is how the \term{source data files} for the
+\Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package obtained and prepared:
 
 \begin{itemize}
 \item Group 1:
@@ -189,7 +190,7 @@ For example, here are the files that were used for making the
       \begin{itemize}
       \item AGAPS masks: all the \code{chr*\_gap.txt.gz} files (UCSC ``gap''
             files) were downloaded from
-            \url{ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}.
+            \url{ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}
             with the standard Unix/Linux \code{ftp} command:
             \begin{verbatim}
                 ftp hgdownload.cse.ucsc.edu # login as "anonymous"
@@ -207,7 +208,7 @@ For example, here are the files that were used for making the
             \begin{verbatim}
                 tar zxf chromOut.tar.gz
             \end{verbatim}
-      \item TRF masks:file \code{chromTrf.tar.gz} was downloaded from
+      \item TRF masks: file \code{chromTrf.tar.gz} was downloaded from
             \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
             extracted with:
             \begin{verbatim}
@@ -237,6 +238,8 @@ all the empty subfolders with \code{rmdir *}).
 
 \section{Prepare the BSgenome data package seed file}
 
+\subsection{Overview}
+
 The \term{BSgenome data package seed file} will contain all the information
 needed by the \Rfunction{forgeBSgenomeDataPkg} function to forge the
 \term{target package}.
@@ -258,7 +261,7 @@ a \term{seed file} are divided in 3 categories:
       package}. This means that the users of the \term{target package} will be
       able to retrieve these values via the accessor methods defined for
       \Rclass{BSgenome} objects. See the man page for the \Rclass{BSgenome}
-      class (\code{?`BSgenome-class`}) for a description of these methods.
+      class (\code{?\`BSgenome-class\`}) for a description of these methods.
 
 \item Additional fields that don't fall in the 2 first categories.
 \end{enumerate}
@@ -266,16 +269,8 @@ a \term{seed file} are divided in 3 categories:
 The 3 following subsections give an extensive descriptions of all the valid
 fields of a \term{seed file}.
 
-Alternatively, the reader in a hurry can look at the \term{seed files} included
-in the \Rpackage{BSgenome} package. Those files were used to forge the packages
-provided by the Bioconductor project.
-<<>>=
-library(BSgenome)
-seed_files <- system.file("extdata", "GentlemanLab", package="BSgenome")
-list.files(seed_files, pattern="-seed$")
-rn4_seed <- list.files(seed_files, pattern="rn4", full.names=TRUE)
-cat(readLines(rn4_seed), sep="\n")
-@
+Alternatively, the reader in a hurry can go directly to the last subsection of
+this section for an example of \term{seed file}.
 
 \subsection{Standard \code{DESCRIPTION} fields}
 
@@ -299,7 +294,7 @@ cat(readLines(rn4_seed), sep="\n")
 \item \code{Description}, \code{Version}, \code{Author}, \code{Maintainer},
       \code{License}: Like the 2 previous fields, these are mandatory fields
       found in any \code{DESCRIPTION} file.
-      Please refer to section \code{1.1.1} (The DESCRIPTION file} of the
+      Please refer to the \textit{The DESCRIPTION file} section of the
       \textit{Writing R Extensions} manual
       (\url{http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file})
       for more information about these fields.
@@ -397,6 +392,18 @@ cat(readLines(rn4_seed), sep="\n")
 \item \code{AGAPSfiles.type}, \code{AGAPSfiles.name}, \code{AGAPSfiles.prefix},
       \code{AGAPSfiles.suffix}: [OPTIONAL]
 \end{itemize}
+
+\subsection{An example}
+
+The \term{seed files} used for the packages forged by the Bioconductor project
+are included in the \Rpackage{BSgenome} package:
+<<>>=
+library(BSgenome)
+seed_files <- system.file("extdata", "GentlemanLab", package="BSgenome")
+list.files(seed_files, pattern="-seed$")
+rn4_seed <- list.files(seed_files, pattern="rn4", full.names=TRUE)
+cat(readLines(rn4_seed), sep="\n")
+@
 
 From now we assume that you have managed to prepare the \term{seed file} for
 your package.
