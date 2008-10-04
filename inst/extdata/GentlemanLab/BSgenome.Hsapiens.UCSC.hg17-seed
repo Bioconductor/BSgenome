@@ -16,8 +16,9 @@ mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.zip, upstream1000.zip, upstream2000.zip, upstream5000.zip
 	from http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/
-SrcDataFiles2: masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/hg17/database/
-	+ chromOut.zip and chromTrf.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/
+SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/hg17/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/chromOut.zip
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/chromTrf.zip
 PkgExamples: Hsapiens
 	seqlengths(Hsapiens)
 	Hsapiens$chr1  # same as Hsapiens[["chr1"]]

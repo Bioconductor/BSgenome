@@ -386,11 +386,11 @@ this section for an example of \term{seed file}.
       \textit{<seqs\_srcdir>} and \textit{<masks\_srcdir>} folders,
       respectively.
 
-\item \code{seqfiles.prefix}, \code{seqfiles.suffix}: [OPTIONAL] Default value
-      for \code{seqfiles.suffix} is \code{.fa}.
+\item \code{seqfiles\_prefix}, \code{seqfiles\_suffix}: [OPTIONAL] Default value
+      for \code{seqfiles\_suffix} is \code{.fa}.
 
-\item \code{AGAPSfiles.type}, \code{AGAPSfiles.name}, \code{AGAPSfiles.prefix},
-      \code{AGAPSfiles.suffix}: [OPTIONAL]
+\item \code{AGAPSfiles\_type}, \code{AGAPSfiles\_name}, \code{AGAPSfiles\_prefix},
+      \code{AGAPSfiles\_suffix}: [OPTIONAL]
 \end{itemize}
 
 \subsection{An example}

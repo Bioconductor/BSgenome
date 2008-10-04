@@ -16,11 +16,12 @@ mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
-SrcDataFiles2: masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro2/database/
-	+ chromOut.tar.gz and chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
+SrcDataFiles2: AGAPS masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro2/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/chromTrf.tar.gz
 PkgExamples: Ptroglodytes
 	seqlengths(Ptroglodytes)
 	Ptroglodytes$chr1  # same as Ptroglodytes[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/masks
-AGAPSfiles.name: gap.txt
+AGAPSfiles_name: gap.txt

@@ -16,8 +16,9 @@ mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/mm9/bigZips/
-SrcDataFiles2: masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/
-	+ chromOut.tar.gz and chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/mm9/bigZips/
+SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/mm9/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/mm9/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/mm9/bigZips/chromTrf.tar.gz
 PkgExamples: Mmusculus
 	seqlengths(Mmusculus)
 	Mmusculus$chr1  # same as Mmusculus[["chr1"]]

@@ -191,4 +191,4 @@ PkgExamples: ## The names of the sequences are the Refseq numbers:
 	seqlengths(Ecoli)
 	Ecoli$NC_008253  # same as Ecoli[["NC_008253"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ecoli.NCBI.20080805/seqs
-seqfiles.suffix: .fna
+seqfiles_suffix: .fna

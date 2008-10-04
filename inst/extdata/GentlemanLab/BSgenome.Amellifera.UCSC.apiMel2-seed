@@ -21,4 +21,4 @@ PkgExamples: Amellifera
 	Amellifera$Group1  # same as Amellifera[["Group1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
-AGAPSfiles.name: gap.txt
+AGAPSfiles_name: gap.txt

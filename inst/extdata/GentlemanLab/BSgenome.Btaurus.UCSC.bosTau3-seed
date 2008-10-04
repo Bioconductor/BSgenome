@@ -16,12 +16,12 @@ mseqnames: "chrUn.scaffolds"
 nmask_per_seq: 2
 SrcDataFiles1: sequences: all the *.fa.gz files
 	from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
-SrcDataFiles2: masks: only gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/database/
-	(bosTau3.fa.out.gz and bosTau3.trf.bed.gz from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
-	were not used)
+SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/database/gap.txt.gz
+	RM masks: none (single big bosTau3.fa.out.gz file not supported yet)
+        TRF masks: none (single big bosTau3.trf.bed.gz file not supported yet)
 PkgExamples: Btaurus
 	seqlengths(Btaurus)
 	Btaurus$chr1  # same as Btaurus[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/masks
-AGAPSfiles.name: gap.txt
+AGAPSfiles_name: gap.txt

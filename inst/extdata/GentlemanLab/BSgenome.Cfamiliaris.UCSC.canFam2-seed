@@ -15,8 +15,9 @@ seqnames: paste("chr", c(1:38, "X", "M", "Un"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.tar.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/
-SrcDataFiles2: masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/canFam2/database/
-	+ chromOut.tar.gz and chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/
+SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/canFam2/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/chromTrf.tar.gz
 PkgExamples: Cfamiliaris
 	seqlengths(Cfamiliaris)
 	Cfamiliaris$chr1  # same as Cfamiliaris[["chr1"]]

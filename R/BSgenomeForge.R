@@ -261,8 +261,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 .forgeMasksFile <- function(seqname, nmask_per_seq,
                             seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                            AGAPSfiles.type="gap", AGAPSfiles.name=NA,
-                            AGAPSfiles.prefix="", AGAPSfiles.suffix="_gap.txt",
+                            AGAPSfiles_type="gap", AGAPSfiles_name=NA,
+                            AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
                             verbose=TRUE)
 {
     if (!.isSingleString(seqname))
@@ -291,8 +291,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     masks <- new("MaskCollection", width=mask_width)
     if (nmask_per_seq >= 1) {
         AGAPS <- .forge.AGAPS.mask(seqname, mask_width, masks_srcdir,
-                                   AGAPSfiles.type, AGAPSfiles.name,
-                                   AGAPSfiles.prefix, AGAPSfiles.suffix)
+                                   AGAPSfiles_type, AGAPSfiles_name,
+                                   AGAPSfiles_prefix, AGAPSfiles_suffix)
         masks <- append(masks, AGAPS)
     }
     if (nmask_per_seq >= 2) {
@@ -314,8 +314,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
                             seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                            AGAPSfiles.type="gap", AGAPSfiles.name=NA,
-                            AGAPSfiles.prefix="", AGAPSfiles.suffix="_gap.txt",
+                            AGAPSfiles_type="gap", AGAPSfiles_name=NA,
+                            AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
                             verbose=TRUE)
 {
     if (length(seqnames) == 0)
@@ -324,8 +324,8 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
         .forgeMasksFile(seqname, nmask_per_seq,
                         seqs_destdir=seqs_destdir,
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
-                        AGAPSfiles.type=AGAPSfiles.type, AGAPSfiles.name=AGAPSfiles.name,
-                        AGAPSfiles.prefix=AGAPSfiles.prefix, AGAPSfiles.suffix=AGAPSfiles.suffix,
+                        AGAPSfiles_type=AGAPSfiles_type, AGAPSfiles_name=AGAPSfiles_name,
+                        AGAPSfiles_prefix=AGAPSfiles_prefix, AGAPSfiles_suffix=AGAPSfiles_suffix,
                         verbose=verbose)
     }
 }
@@ -361,12 +361,12 @@ setClass(
         SrcDataFiles1="character",
         SrcDataFiles2="character",
         PkgExamples="character",
-        seqfiles.prefix="character",
-        seqfiles.suffix="character",
-        AGAPSfiles.type="character",
-        AGAPSfiles.name="character",
-        AGAPSfiles.prefix="character",
-        AGAPSfiles.suffix="character"
+        seqfiles_prefix="character",
+        seqfiles_suffix="character",
+        AGAPSfiles_type="character",
+        AGAPSfiles_name="character",
+        AGAPSfiles_prefix="character",
+        AGAPSfiles_suffix="character"
     ),
     prototype(
         Author="H. Pages",
@@ -380,12 +380,12 @@ setClass(
         SrcDataFiles1="-- information not available --",
         SrcDataFiles2="",
         PkgExamples="",
-        seqfiles.prefix="",
-        seqfiles.suffix=".fa",
-        AGAPSfiles.type="gap",
-        AGAPSfiles.name=as.character(NA),
-        AGAPSfiles.prefix="",
-        AGAPSfiles.suffix="_gap.txt"
+        seqfiles_prefix="",
+        seqfiles_suffix=".fa",
+        AGAPSfiles_type="gap",
+        AGAPSfiles_name=as.character(NA),
+        AGAPSfiles_prefix="",
+        AGAPSfiles_suffix="_gap.txt"
     )
 )   
 
@@ -449,13 +449,13 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         ## Forge the "seqlengths.rda" file
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
         forgeSeqlengthsFile(.seqnames,
-                            prefix=x@seqfiles.prefix, suffix=x@seqfiles.suffix,
+                            prefix=x@seqfiles_prefix, suffix=x@seqfiles_suffix,
                             seqs_srcdir=seqs_srcdir,
                             seqs_destdir=seqs_destdir,
                             verbose=verbose)
         ## Forge the sequence "*.rda" files
         forgeSeqFiles(.seqnames, mseqnames=.mseqnames,
-                      prefix=x@seqfiles.prefix, suffix=x@seqfiles.suffix,
+                      prefix=x@seqfiles_prefix, suffix=x@seqfiles_suffix,
                       seqs_srcdir=seqs_srcdir,
                       seqs_destdir=seqs_destdir,
                       verbose=verbose)
@@ -465,8 +465,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             forgeMasksFiles(.seqnames, .nmask_per_seq,
                             seqs_destdir=seqs_destdir,
                             masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
-                            AGAPSfiles.type=x@AGAPSfiles.type, AGAPSfiles.name=x@AGAPSfiles.name,
-                            AGAPSfiles.prefix=x@AGAPSfiles.prefix, AGAPSfiles.suffix=x@AGAPSfiles.suffix,
+                            AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
+                            AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,
                             verbose=verbose)
         }
     }

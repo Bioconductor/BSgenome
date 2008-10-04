@@ -43,8 +43,8 @@
 
   forgeMasksFiles(seqnames, nmask_per_seq,
                   seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                  AGAPSfiles.type="gap", AGAPSfiles.name=NA,
-                  AGAPSfiles.prefix="", AGAPSfiles.suffix="_gap.txt",
+                  AGAPSfiles_type="gap", AGAPSfiles_name=NA,
+                  AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
                   verbose=TRUE)
 }
 
@@ -118,7 +118,7 @@
   \item{nmask_per_seq}{
     [TODO: Document me]
   }
-  \item{AGAPSfiles.type, AGAPSfiles.name, AGAPSfiles.prefix, AGAPSfiles.suffix}{
+  \item{AGAPSfiles_type, AGAPSfiles_name, AGAPSfiles_prefix, AGAPSfiles_suffix}{
     [TODO: Document me]
   }
 }

@@ -16,8 +16,9 @@ mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.zip, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/
-SrcDataFiles2: masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm2/database/
-	+ chromOut.zip and chromTrf.zip from http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/
+SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm2/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromOut.zip
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromTrf.zip
 PkgExamples: Dmelanogaster
 	seqlengths(Dmelanogaster)
 	Dmelanogaster$chr2L  # same as Dmelanogaster[["chr2L"]]

@@ -22,4 +22,4 @@ PkgExamples: Athaliana
 	seqlengths(Athaliana)
 	Athaliana$chr1  # same as Athaliana[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.04232008/seqs
-seqfiles.suffix: .fas
+seqfiles_suffix: .fas
