@@ -269,13 +269,13 @@ cat(readLines(rn4_seed), sep="\n")
       genome (UCSC version rn4)}.
 
 \item \code{Description}, \code{Version}, \code{Author}, \code{Maintainer},
-      \code{License}: like the 2 previous fields, these are mandatory fields
+      \code{License}: Like the 2 previous fields, these are mandatory fields
       found in any \code{DESCRIPTION} file.
-      Please refer to section \code{1.1.1 The DESCRIPTION file} of the
+      Please refer to section \code{1.1.1} (The DESCRIPTION file} of the
       \textit{Writing R Extensions} manual
       (\url{http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file})
       for more information about these fields.
-      If you plan to distribute the package that you are going to make, please
+      If you plan to distribute the package that you are going to forge, please
       pickup the license carefully and make sure that it is compatible with the
       license of the \term{source data files} if any.
 \end{itemize}
@@ -380,11 +380,10 @@ your package.
 
 \section{Forge the \term{target package}}
 
-Start \R, load the \Rpackage{BSgenome} package and call the
-\Rfunction{forgeBSgenomeDataPkg} function on your \term{seed file} to forge
-the \term{target package}. For example, if the path to your \term{seed file}
-is \code{"path/to/my/seed"}, just do:
-
+To forge the package, start \R, load the \Rpackage{BSgenome} package, and call
+the \Rfunction{forgeBSgenomeDataPkg} function on your \term{seed file}.
+For example, if the path to your \term{seed file} is \code{"path/to/my/seed"},
+do:
 <<eval=false>>=
 library(BSgenome)
 forgeBSgenomeDataPkg("path/to/my/seed")
