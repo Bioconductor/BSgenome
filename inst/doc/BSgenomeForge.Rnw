@@ -54,8 +54,8 @@
 \section{Introduction}
 
 This document describes the process of forging a \term{BSgenome data package}.
-It is intended for users who want to make a new \term{BSgenome data package},
-not for regular users of these packages.
+It is intended for Bioconductor users who want to make a new \term{BSgenome
+data package}, not for regular users of these packages.
 
 In this document, we call \term{target package} the package that will result
 from this process.
@@ -75,21 +75,21 @@ Requirements:
       \code{mv}, \code{rmdir}, \code{tar}, \code{gunzip}, \code{unzip},
       \code{ftp} and \code{wget}. Also you will need to create and edit some
       text files.
-\item You need access to a good Unix/Linux machine with a decent amount
+\item You need access to a good Unix/Linux build machine with a decent amount
       of RAM (>= 4GB), especially if your genome is big. For smaller genomes,
       2GB or even 1GB of RAM might be enough.
 \item You need the latest release versions of {\R} plus the
       \Rpackage{Biostrings} and \Rpackage{BSgenome} packages installed on this
       machine. To check your installation, start {\R} and try to load the
       \Rpackage{BSgenome} package.
-\item Finally, you need access to the \term{source data files} of the genome
+\item Finally, you need to obtain the \term{source data files} of the genome
       that you want to build a package for.
       There are 2 groups of \term{source data files}: (1) the files containing
       the sequence data and (2) the files containing the mask data.
-      They can be publicly available like in the case of some genome
-      providers like UCSC or NCBI or you can have a private access to them.
-      This document assumes that you've already downloaded them to the
-      build machine or that you'll be able to do so.
+      For most organisms, these files have been made publicly available on the
+      internet by genome providers like UCSC, NCBI, FlyBase, TAIR, etc.
+      The next section of this document explains how to obtain and prepare
+      these files.
 \end{itemize}
 
 Refer to the \textit{R Installation and Administration} manual
@@ -99,21 +99,35 @@ need to install {\R} or upgrade your {\R} version, and to this page
 website if you need to install or update the \Rpackage{Biostrings}
 or \Rpackage{BSgenome} packages.
 
-Questions, comments or bug reports about this document or the BSgenomeForge
-functions are welcome. Please address them to the author
+Questions, comments or bug reports about this document or about the
+BSgenomeForge functions are welcome. Please address them to the author
 (\code{hpages@fhcrc.org}) or post them on The Bioconductor Project Mailing List
 (\code{bioconductor@stat.math.ethz.ch}). Don't forget to visit the
 Bioconductor website and subscribe to this list if you've not already
 done so.
 
 
-\section{Download the source data files}
+\section{Obtain and prepare the source data files}
 
 As mentioned earlier, there are 2 groups of source files: (1) the files
 containing the sequence data and (2) the files containing the mask data.
 
+\subsection{Sequence data (group1)}
+
 Group 1 must be FASTA files. You need 1 file per sequence that you
-want to put in the \term{target package}.
+want to put in the \term{target package}. The name of each file must be of
+the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>} where
+\textit{<seqname>} is the name of the sequence in it and \textit{<prefix>}
+and \textit{<suffix>} are a prefix and a suffix (eventually empty) that is the
+same for all the files.
+You can use the \Rfunction{fasta.info} function from the \Rpackage{Biostrings}
+package to see what's in a FASTA file:
+<<>>=
+file <- system.file("extdata", "ce2chrM.fa", package="BSgenome")
+fasta.info(file)
+@
+
+\subsection{Mask data (group 2)}
 
 What you need from group 2 depends on what built-in masks you want to put
 on each single sequence of the \term{target package}. 
@@ -129,12 +143,16 @@ on each single sequence of the \term{target package}.
 \end{itemize}
 
 For the AGAPS masks, you need UCSC ``gap'' or NCBI ``agp'' files. It can be one
-file per chromosome or a single file containing the assembly gaps information
-for all the chromosomes together.
+file per chromosome or a single big file containing the assembly gap information
+for all the chromosomes together. In the former case, the name of each file must
+be of the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>}, like for
+the FASTA files in group 1.
 
 You don't need any file for the AMB masks.
 
 For the RM masks, you need one RepeatMasker \code{.out} file per chromosome.
+Here the name of each file must be of the form \textit{<seqname>}\code{.fa.out}
+or \textit{<seqname>}\code{.out}.
 Note that some genome providers like UCSC sometimes provide a single
 \code{.out} file for all the chromosomes. BSgenomeForge doesn't support this
 yet but you can work around it by splitting the big file in 1 file per
@@ -142,7 +160,10 @@ chromosome for now (alternatively, you can request support for this on The
 Bioconductor Project Mailing List).
 
 For the TRF masks, you need one Tandem Repeats Finder \code{.bed} file per
-chromosome.
+chromosome. Here the name of each file must be of the form
+\textit{<seqname>}\code{.bed}.
+
+\subsection{An example}
 
 For example, here are the files that were used for making the
 \Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package:
@@ -166,14 +187,19 @@ For example, here are the files that were used for making the
       \end{itemize}
 \item Group 2:
       \begin{itemize}
-      \item AGAPS masks: all the \code{chr*\_gap.txt.gz} files were downloaded
-            from \url{ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}.
-            This was done with the standard Unix/Linux \code{ftp} command:
+      \item AGAPS masks: all the \code{chr*\_gap.txt.gz} files (UCSC ``gap''
+            files) were downloaded from
+            \url{ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}.
+            with the standard Unix/Linux \code{ftp} command:
             \begin{verbatim}
                 ftp hgdownload.cse.ucsc.edu # login as "anonymous"
                 cd goldenPath/rn4/database
                 prompt
                 mget chr*_gap.txt.gz
+            \end{verbatim}
+            Then all the downloaded files were uncompressed with:
+            \begin{verbatim}
+                for file in chr*_gap.txt.gz; do gunzip $file ; done
             \end{verbatim}
       \item RM masks: file \code{chromOut.tar.gz} was downloaded from
             \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
@@ -190,18 +216,20 @@ For example, here are the files that were used for making the
       \end{itemize}
 \end{itemize}
 
+\subsection{The \textit{<seqs\_srcdir>} and \textit{<masks\_srcdir>} folders}
+
 From now we assume that you've downloaded (checking the md5sums is always a
 good idea), extracted, and eventually renamed all the \term{source data files},
-and that they are located in the \code{seqs\_srcdir} folder for group 1 and in
-the \code{masks\_srcdir} folder for group 2.
+and that they are located in the \textit{<seqs\_srcdir>} folder for group 1
+and in the \textit{<masks\_srcdir>} folder for group 2.
 
 Note that all the \term{source data files} should be located directly in the
-\code{seqs\_srcdir} or \code{masks\_srcdir} folders and not in subfolders of
-these folders. For example, depending on the genome, UCSC provides either a
+\textit{<seqs\_srcdir>} and \textit{<masks\_srcdir>} folders, not in subfolders
+of these folders. For example, depending on the genome, UCSC provides either a
 big \code{chromFa.tar.gz} or \code{chromFa.zip} file that contains the sequence
 data for all the chromosomes. But it could be that, after extraction of this
 big file, the individual FASTA files for each chromosome end up being located
-one level down the \code{seqs\_srcdir} folder (granted that you were in this
+one level down the \textit{<seqs\_srcdir>} folder (granted that you were in this
 folder when you extracted the file). If this is the case, then you will need
 to move them one level up (use \code{mv -i */*.fa .} for this, then remove
 all the empty subfolders with \code{rmdir *}).
@@ -213,9 +241,9 @@ The \term{BSgenome data package seed file} will contain all the information
 needed by the \Rfunction{forgeBSgenomeDataPkg} function to forge the
 \term{target package}.
 
-The format of this file is DCF (Debian Control File), like for the
-\code{DESCRIPTION} file of any {\R} package. The valid fields of a
-\term{seed file} are divided in 3 categories:
+The format of this file is DCF (Debian Control File), which is also the format
+used for the \code{DESCRIPTION} file of any {\R} package. The valid fields of
+a \term{seed file} are divided in 3 categories:
 \begin{enumerate}
 \item Standard \code{DESCRIPTION} fields. These fields are actually
       the mandatory fields found in any \code{DESCRIPTION} file.
@@ -317,10 +345,10 @@ cat(readLines(rn4_seed), sep="\n")
 
 \item \code{organism\_biocview}: The official biocViews term for this organism.
       This is generally the same as the \code{organism} field except that spaces
-      should be replaced by underscores. This matters only if the \term{target
-      package} is going to be added to a Bioconductor repository since this
-      field will determine under which of the following subviews the package
-      will appear:
+      should be replaced by underscores. The value of this field matters only if
+      the \term{target package} is going to be added to a Bioconductor
+      repository since it will determine under which of the following subviews
+      the package will appear:
       \url{http://bioconductor.org/packages/release/Organism.html}.
       Note that this is the only field in this category that won't be stored
       in the \Rclass{BSgenome} object that will be contained in the \term{target
@@ -359,19 +387,15 @@ cat(readLines(rn4_seed), sep="\n")
       that will be added to the \code{Examples} section of the man page of the
       \term{target package}.
 
-\item \code{seqs\_srcdir}, \code{masks\_srcdir}: The path to the local folders
-      containing the \term{source data files} for the sequences and for the
-      masks, respectively. 
+\item \code{seqs\_srcdir}, \code{masks\_srcdir}: The path to the
+      \textit{<seqs\_srcdir>} and \textit{<masks\_srcdir>} folders,
+      respectively.
 
-\item \code{seqfiles.prefix}, \code{seqfiles.suffix}: [OPTIONAL]
+\item \code{seqfiles.prefix}, \code{seqfiles.suffix}: [OPTIONAL] Default value
+      for \code{seqfiles.suffix} is \code{.fa}.
 
-\item \code{AGAPSfiles.type}: [OPTIONAL]
-
-\item \code{AGAPSfiles.name}: [OPTIONAL]
-
-\item \code{AGAPSfiles.prefix}: [OPTIONAL]
-
-\item \code{AGAPSfiles.suffix}: [OPTIONAL]
+\item \code{AGAPSfiles.type}, \code{AGAPSfiles.name}, \code{AGAPSfiles.prefix},
+      \code{AGAPSfiles.suffix}: [OPTIONAL]
 \end{itemize}
 
 From now we assume that you have managed to prepare the \term{seed file} for
@@ -394,7 +418,7 @@ Depending on the size of the genome and your hardware, this can take between
 create the source tree of the \term{target package} in the current directory.
 
 Once \Rfunction{forgeBSgenomeDataPkg} is done, ignore the warnings (if any),
-leave \R, and build the source package (tarball) with
+quit \R, and build the source package (tarball) with
 \begin{verbatim}
     R CMD build <pkgdir>
 \end{verbatim}
