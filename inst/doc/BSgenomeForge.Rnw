@@ -261,7 +261,7 @@ a \term{seed file} are divided in 3 categories:
       package}. This means that the users of the \term{target package} will be
       able to retrieve these values via the accessor methods defined for
       \Rclass{BSgenome} objects. See the man page for the \Rclass{BSgenome}
-      class (\code{?{\`}BSgenome-class{\`}}) for a description of these methods.
+      class (\code{{?}`BSgenome-class`}) for a description of these methods.
 
 \item Additional fields that don't fall in the 2 first categories.
 \end{enumerate}
@@ -386,11 +386,32 @@ this section for an example of \term{seed file}.
       \textit{<seqs\_srcdir>} and \textit{<masks\_srcdir>} folders,
       respectively.
 
-\item \code{seqfiles\_prefix}, \code{seqfiles\_suffix}: [OPTIONAL] Default value
-      for \code{seqfiles\_suffix} is \code{.fa}.
+\item \code{seqfiles\_prefix}, \code{seqfiles\_suffix}: [OPTIONAL] The common
+      prefix and suffix that need to be added to all the sequence names
+      (fields \code{seqnames} and \code{mseqnames}) to get the name of the
+      corresponding FASTA file.
+      Default values are the empty prefix for \code{seqfiles\_prefix} and
+      \code{.fa} for \code{seqfiles\_suffix}.
 
-\item \code{AGAPSfiles\_type}, \code{AGAPSfiles\_name}, \code{AGAPSfiles\_prefix},
-      \code{AGAPSfiles\_suffix}: [OPTIONAL]
+\item \code{AGAPSfiles\_type}: [OPTIONAL] Must be \code{gap} (the default) if
+      the \term{source data files} containing the AGAPS masks information are
+      UCSC ``gap'' files, or \code{agp} if they are NCBI ``agp'' files.
+
+\item \code{AGAPSfiles\_name}: [OPTIONAL] Omit this field if you have one
+      \term{source data file} per single sequence for the AGAPS masks and use
+      the \code{AGAPSfiles\_prefix} and \code{AGAPSfiles\_suffix} fields below
+      instead.
+      Otherwise, use this field to specify the name of the single big file.
+
+\item \code{AGAPSfiles\_prefix}, \code{AGAPSfiles\_suffix}: [OPTIONAL] Omit
+      these fields if you have one single big \term{source data file} for all
+      the AGAPS masks and use the \code{AGAPSfiles\_name} field above instead.
+      Otherwise, use these fields to specify the common prefix and suffix that
+      need to be added to all the single sequence names (field \code{seqnames})
+      to get the name of the file that contains the corresponding AGAPS mask
+      information.
+      Default values are the empty prefix for \code{AGAPSfiles\_prefix} and
+      \code{\_gap.txt} for \code{AGAPSfiles\_suffix}.
 \end{itemize}
 
 \subsection{An example}
