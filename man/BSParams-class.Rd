@@ -31,9 +31,9 @@ Objects can be created by calls of the form \code{new("BSParams", ...)}.
       to simplify the output for you.
     }
     \item{\code{maskList}:}{
-      A list of mask names for the BSGenome object.  For each of these
-      mask names, the active status will be toggled to be something other
-      than the default state.
+      A named logical vector of maskStates preferred when used with a
+      BSGenome object.  When using the bsapply function, the masks will
+      be set to the states in this vector.
     }    
   }
 }

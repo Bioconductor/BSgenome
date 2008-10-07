@@ -47,12 +47,12 @@
 
   ## Count the alphabet frequencies for every chromosome but exclude
   ## mitochrondrial ones:
-  params = new("BSParams", X = Celegans, FUN = alphabetFrequency,
+  params <- new("BSParams", X = Celegans, FUN = alphabetFrequency,
   exclude = "M")
   bsapply(params)
 
-  ## Or we can do this same function with the simplif option: params =
-  params = new("BSParams", X = Celegans, FUN = alphabetFrequency,
+  ## Or we can do this same function with the simplif option:
+  params <- new("BSParams", X = Celegans, FUN = alphabetFrequency,
   exclude = "M", simplify = TRUE)
   bsapply(params)
 
@@ -62,14 +62,14 @@
   Ebox <- DNAStringSet("CACGTG")
   pdict0 <- PDict(Ebox)
 
-  params = new("BSParams", X = Celegans, FUN = countPDict, simplify = TRUE)
+  params <- new("BSParams", X = Celegans, FUN = countPDict, simplify = TRUE)
   bsapply(params, pdict = pdict0)
 
-  params@FUN = matchPDict
+  params@FUN <- matchPDict
   bsapply(params, pdict = pdict0)
 
   ## And since its really overkill to use matchPDict to find a single pattern:
-  params@FUN = matchPattern
+  params@FUN <- matchPattern
   bsapply(params, pattern = "CACGTG")
 
 
@@ -78,16 +78,16 @@
   ## I can make things verbose if I want to see the chromosomes getting processed.
   options(verbose=TRUE)
   ## For the 1st example, lets use default masks
-  params = new("BSParams", X = Hsapiens, FUN = alphabetFrequency,
+  params <- new("BSParams", X = Hsapiens, FUN = alphabetFrequency,
   exclude = c(1:8,"random","hap"), simplify = TRUE)
   bsapply(params)
 
   ##Enable all masks
-  params@maskList = c("RM","TRF")
+  params@maskList <- c("RM"=TRUE,"TRF"=TRUE)
   bsapply(params)
 
   ##Disable all masks
-  params@maskList = c("AGAPS","AMB")
+  params@maskList <- c("AGAPS"=FALSE,"AMB"=FALSE)
   bsapply(params)
 
 }

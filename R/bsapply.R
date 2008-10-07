@@ -1,14 +1,19 @@
+##2 Add a new parameter where someone can specify a function.
+
+
 setClass("BSParams",
          representation=representation(
            X="BSgenome",
            FUN="function",
            exclude = "character",
            simplify="logical",
-           maskList="ANY"),
+           maskList="logical",
+           funList="list"),
          prototype=prototype(
            exclude="",
            simplify=FALSE,
-           maskList=c()
+           maskList=as.logical(c()),
+           funList=list()
            ))
 
 
@@ -22,7 +27,7 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
     ##Argument checking for maskList:
     if(length(BSParams@maskList)>0){ ##if there are masks
         for(i in seq_len(length(BSParams@maskList))){ #loop thru masks and deal with each in turn
-            if( !( BSParams@maskList[i] %in% masknames(BSParams@X)) ){stop("'BSParams@maskList' must be vector of names corresponding to the default BSgenome masks.")}
+            if( !( names(BSParams@maskList)[i] %in% masknames(BSParams@X)) ){stop("'the names of BSParams@maskList' must be vector of names corresponding to the default BSgenome masks.")}
             ##     if( !( BSParams@maskList[i] %in% masknames(BSParams@X) || is.function(BSParams@maskList[i]) || is(BSParams@maskList[i], "IRanges") ) ){stop("'masks' must be an integer corresponding to the default BSgenome masks that are desired, an IRanges object that be used to generate a mask or a function that returns an IRanges object so that the masks can be generated.")}
         }
     }
@@ -30,14 +35,14 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
     
     ##get the seqnames:
     seqnames <- seqnames(BSParams@X)
-    seqLength = length(seqnames)
+    seqLength <- length(seqnames)
 
     ##Restrict the seqnames based on our exclusion factor:
-    pariahIndex = numeric()
+    pariahIndex <- numeric()
     for(i in seq_len(length(BSParams@exclude))){
-        ind = grep(BSParams@exclude[i],seqnames)
+        ind <- grep(BSParams@exclude[i],seqnames)
         ##Catenate the indices together as we go
-        pariahIndex = c(pariahIndex, ind)
+        pariahIndex <- c(pariahIndex, ind)
     }
 
     ##Added precaution in case some indices are found more than once...
@@ -52,15 +57,13 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
     ##Some stuff has to be done for each chromosome
     processSeqname <- function(seqname, ...){
 
-        seq = BSParams@X[[seqname]]
+        seq <- BSParams@X[[seqname]]
         
         if(length(BSParams@maskList)>0){ ##if there are masks
             for(i in seq_len(length(BSParams@maskList))){ #loop thru masks and deal with each in turn
-                if(BSParams@maskList[i] %in% masknames(BSParams@X)){#IF its one of the names, then change its active state to be different from the default...
-                    if(active(masks(seq))[BSParams@maskList[i]] == FALSE){
-                        active(masks(seq))[BSParams@maskList[i]] <- TRUE
-                    }else{active(masks(seq))[BSParams@maskList[i]] <- FALSE}
-                }
+                if(names(BSParams@maskList)[i] %in% masknames(BSParams@X)){#IF its one of the named masks, then set it accordingly
+                        active(masks(seq))[names(BSParams@maskList)[i]] <- BSParams@maskList[[i]]
+                }else{stop("The names of the maskList slot have to match the names of actual BSgenome masks.")}
 ##                 if(is.function(BSParams@maskList[i])){#IF its a function, then lets call it to generate a GENOMIC RANGES object
 ##                     ##
 ##                 }
