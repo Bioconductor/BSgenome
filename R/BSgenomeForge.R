@@ -404,7 +404,6 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     {
         template_path <- system.file("BSgenomeDataPkg-template", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
-        .seqnames <- eval(parse(text=x@seqnames))
         symvals <- list(
             PKGTITLE=x@Title,
             PKGDESCRIPTION=x@Description,
@@ -443,8 +442,11 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         }
         createPackage(x@Package, destdir, template_path, symvals)
         pkgdir <- file.path(destdir, x@Package)
-        ## This sourcing defines the '.seqnames', '.mseqnames'
-        ## and '.nmask_per_seq' variables
+        ## Just to avoid codetools "no visible binding" NOTEs
+        .seqnames <- .mseqnames <- NULL
+        .nmask_per_seq <- 0
+        ## Sourcing this file will set the values of the '.seqnames',
+        ## '.mseqnames' and '.nmask_per_seq' variables
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
         ## Forge the "seqlengths.rda" file
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")

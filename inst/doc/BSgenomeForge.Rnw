@@ -135,7 +135,7 @@ on each single sequence of the \term{target package}.
 4 kinds of built-in masks are currently supported by BSgenomeForge:
 \begin{itemize}
 \item the masks of assembly gaps, aka ``the AGAPS masks'';
-\item the mask of intra-contig ambiguities, aka ``the AMB masks'';
+\item the masks of intra-contig ambiguities, aka ``the AMB masks'';
 \item the masks of repeat regions that were determined by the RepeatMasker
       software, aka ``the RM masks'';
 \item the masks of repeat regions that were determined by the Tandem Repeats

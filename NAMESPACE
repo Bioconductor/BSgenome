@@ -11,9 +11,6 @@ exportClasses(
 )
 
 export(
-    ## Constants:
-    BUILTIN_MASKNAMES,
-
     ## Non-generic functions:
     available.genomes, getSeq,
     BSgenome, injectSNPs,

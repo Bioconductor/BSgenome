@@ -30,6 +30,8 @@
 \alias{mseqnames}
 \alias{mseqnames,BSgenome-method}
 \alias{names,BSgenome-method}
+\alias{masknames}
+\alias{masknames,BSgenome-method}
 
 % Constructor-like functions and generics:
 \alias{BSgenome}
@@ -150,6 +152,33 @@
       Same as \code{x[[name]]} but \code{name} is not evaluated and
       therefore must be a literal character string or a name (possibly
       backtick quoted).
+    }
+    \item{}{
+      \code{masknames(x)}:
+      The names of the built-in masks that are defined for all the single
+      sequences. There can be up to 4 built-in masks per sequence. These will
+      always be (in this order):
+      (1) the mask of assembly gaps, aka "the AGAPS mask";
+      (2) the mask of intra-contig ambiguities, aka "the AMB mask";
+      (3) the mask of repeat regions that were determined by the RepeatMasker
+          software, aka "the RM mask";
+      (4) the mask of repeat regions that were determined by the Tandem Repeats
+          Finder software (where only repeats with period less than or equal to
+          12 were kept), aka "the TRF mask".
+      All the single sequences in a given package are guaranteed to have the
+      same collection of built-in masks (same number of masks and in the same
+      order).
+
+      \code{masknames(x)} gives the names of the masks in this collection.
+      Therefore the value returned by \code{masknames(x)} is a character vector
+      made of the first N elements of \code{c("AGAPS", "AMB", "RM", "TRF")},
+      where N depends only on the BSgenome data package being looked at
+      (0 <= N <= 4).
+      The man page for most BSgenome data packages should provide the exact
+      list and permanent URLs of the source data files that were used to
+      extract the built-in masks.
+      For example see the Note section in
+      \code{?`\link[BSgenome.Hsapiens.UCSC.hg18]{BSgenome.Hsapiens.UCSC.hg18}`}.
     }
   }
 }
