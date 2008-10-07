@@ -193,7 +193,13 @@ setMethod("sourceUrl", "BSgenome", function(x) x@source_url)
 
 setGeneric("SNPlocs_pkg", function(x) standardGeneric("SNPlocs_pkg"))
 setMethod("SNPlocs_pkg", "BSgenome",
-    function(x) if (length(x@SNPlocs_pkg) == 0) NULL else x@SNPlocs_pkg
+    function(x)
+    {
+        if (length(x@SNPlocs_pkg) == 0)
+            return(NULL)
+        library(x@SNPlocs_pkg, character.only=TRUE)
+        x@SNPlocs_pkg
+    }
 )
 
 setGeneric("SNPcount", function(x) standardGeneric("SNPcount"))
@@ -203,7 +209,6 @@ setMethod("SNPcount", "BSgenome",
         pkg <- SNPlocs_pkg(x)
         if (is.null(pkg))
             return(NULL)
-        library(pkg, character.only=TRUE)
         getSNPcount <- get("getSNPcount",
                            envir=as.environment(paste("package", pkg, sep=":")),
                            inherits=FALSE)
@@ -220,7 +225,6 @@ setMethod("SNPlocs", "BSgenome",
         pkg <- SNPlocs_pkg(x)
         if (is.null(pkg))
             return(NULL)
-        library(pkg, character.only=TRUE)
         getSNPlocs <- get("getSNPlocs",
                            envir=as.environment(paste("package", pkg, sep=":")),
                            inherits=FALSE)
@@ -307,30 +311,6 @@ BSgenome <- function(organism, species, provider, provider_version,
         .seqs_cache=new.env(parent=emptyenv()),
         .link_counts=new.env(parent=emptyenv())
     )
-    ans
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The injectSNPs() function.
-###
-
-injectSNPs <- function(bsgenome, SNPlocs_pkg)
-{
-    if (!is(bsgenome, "BSgenome"))
-        stop("'bsgenome' must be a BSgenome object")
-    if (!is.null(SNPlocs_pkg(bsgenome)))
-        stop("SNPs already injected in genome, injecting from more than 1 package is not supported")
-    if (!is.character(SNPlocs_pkg) || length(SNPlocs_pkg) != 1 || is.na(SNPlocs_pkg))
-        stop("'SNPlocs_pkg' must be a single string")
-    ans <- bsgenome
-    ans@SNPlocs_pkg <- SNPlocs_pkg
-    ans@.seqs_cache <- new.env(parent=emptyenv())
-    ans@.link_counts <- new.env(parent=emptyenv())
-    snp_count <- SNPcount(ans)
-    if (!all(names(snp_count) %in% seqnames(ans)))
-        stop("seqnames in package ", SNPlocs_pkg, " are not compatible ",
-             "with the seqnames of this BSgenome object")
     ans
 }
 

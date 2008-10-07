@@ -12,9 +12,10 @@ exportClasses(
 
 export(
     ## Non-generic functions:
-    available.genomes, getSeq,
-    BSgenome, injectSNPs,
+    available.genomes,
+    BSgenome,
     available.SNPs,
+    getSeq,
     bsapply,
 
     ## Generic functions:
@@ -23,6 +24,7 @@ export(
     SNPlocs_pkg, SNPcount, SNPlocs,
     seqnames, seqlengths, mseqnames,
     masknames,
+    injectSNPs,
 
     ## BSgenomeForge functions:
     forgeSeqlengthsFile,
@@ -41,6 +43,7 @@ exportMethods(
     SNPlocs_pkg, SNPcount, SNPlocs,
     seqnames, seqlengths, mseqnames,
     masknames,
+    injectSNPs,
 
     ## BSgenomeForge methods:
     forgeBSgenomeDataPkg
