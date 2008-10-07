@@ -5,8 +5,8 @@
 \title{available.genomes}
 
 \description{
-   Gets the list of Biostrings-based genome data packages
-   (aka the BSgenome data packages) currently available.
+  Get the list of BSgenome data packages that are currently available on the
+  Bioconductor repositories for your version of R/Bioconductor.
 }
 
 \usage{
@@ -45,7 +45,7 @@
 }
 
 \examples{
-  # Look at the BSgenome data packages currently available:
+  # Get the list of BSgenome data packages currently available:
   available.genomes()
 
   # Make your choice and install with:

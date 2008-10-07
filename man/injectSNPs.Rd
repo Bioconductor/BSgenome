@@ -2,8 +2,8 @@
 
 \alias{injectSNPs}
 \alias{injectSNPs,BSgenome-method}
-\alias{SNPlocs_pkg}
-\alias{SNPlocs_pkg,BSgenome-method}
+\alias{SNPlocs_pkgname}
+\alias{SNPlocs_pkgname,BSgenome-method}
 \alias{SNPcount}
 \alias{SNPcount,BSgenome-method}
 \alias{SNPlocs}
@@ -15,28 +15,32 @@
 \title{SNP injection}
 
 \description{
-   Inject SNPs from a package of SNP locations into a genome.
+   Inject SNPs from a SNPlocs data package into a genome.
 }
 
 \usage{
-  available.SNPs()
-  injectSNPs(x, SNPlocs_pkg)
+  available.SNPs(type=getOption("pkgType"))
+  injectSNPs(x, SNPlocs_pkgname)
 
   ## Related utilities
-  SNPlocs_pkg(x)
+  SNPlocs_pkgname(x)
   SNPcount(x)
   SNPlocs(x, seqname)
 }
 
 \arguments{
+  \item{type}{
+    Character string indicating the type of package (\code{"source"},
+    \code{"mac.binary"} or \code{"win.binary"}) to look for.
+  }
   \item{x}{
     A \link{BSgenome} object.
   }
-  \item{SNPlocs_pkg}{
-    The name of a package containing SNP locations for the single
-    sequences contained in \code{x}.
-    This package must have been previously installed by the user,
-    \code{injectSNPs} won't try to install it.
+  \item{SNPlocs_pkgname}{
+    The name of a SNPlocs data package containing SNP information for the
+    single sequences contained in \code{x}.
+    This package must be already installed (\code{injectSNPs} won't try to
+    install it).
   }
   \item{seqname}{
     The name of a single sequence in \code{x}.
@@ -44,30 +48,39 @@
 }
 
 \value{
-  All the functions below have the side effect to load the package
-  containing the SNP locations.
+  \code{available.SNPs} returns a character vector containing the names of the
+  SNPlocs data packages that are currently available on the Bioconductor
+  repositories for your version of R/Bioconductor. A SNPlocs data package
+  contains basic SNP information (location and alleles) for a given organism.
 
-  \code{injectSNPs} returns a copy of the original genome \code{x}
-  where some or all of the single sequences were altered by injecting
-  the SNPs defined in the \code{SNPlocs_pkg} package.
+  \code{injectSNPs} returns a copy of the original genome \code{x} where some
+  or all of the single sequences were altered by injecting the SNPs defined in
+  the \code{SNPlocs_pkgname} package.
 
-  \code{SNPlocs_pkg}, \code{SNPcount} and \code{SNPlocs} return \code{NULL}
+  \code{SNPlocs_pkgname}, \code{SNPcount} and \code{SNPlocs} return \code{NULL}
   if no SNPs were injected in \code{x} (i.e. if \code{x} is not a
   \link{BSgenome} object returned by a previous call to \code{injectSNPs}).
-  Otherwise \code{SNPlocs_pkg} returns the name of the package from which the
+  Otherwise \code{SNPlocs_pkgname} returns the name of the package from which the
   SNPs were injected, \code{SNPcount} the number of SNPs for each altered
   sequence in \code{x}, and \code{SNPlocs} their locations in the sequence
   whose name is specified by \code{seqname}.
 }
 
+\note{
+  \code{injectSNPs}, \code{SNPlocs_pkgname}, \code{SNPcount} and \code{SNPlocs}
+  have the side effect to try to load the SNPlocs data package if it's not
+  already loaded.
+}
+
 \author{H. Pages}
 
 \seealso{
-  \link{BSgenome-class}
+  \link{BSgenome-class},
+  \code{\link[Biostrings]{.inplaceReplaceLetterAt}}
 }
 
 \examples{
-  ## Look at the packages of SNP locations currently available:
+  ## Get the list of SNPlocs data packages currently available:
   available.SNPs()
 
   if (interactive()) {
@@ -79,8 +92,14 @@
   ## Inject SNPs from dbSNP into the Human genome:
   library(BSgenome.Hsapiens.UCSC.hg18)
   Hsapiens
+  SNPlocs_pkgname(Hsapiens)
+
   HsWithSNPs <- injectSNPs(Hsapiens, "SNPlocs.Hsapiens.dbSNP.20071016")
-  HsWithSNPs
+  HsWithSNPs  # note the extra "with SNPs injected from ..." line
+  SNPlocs_pkgname(HsWithSNPs)
+  SNPcount(HsWithSNPs)
+  SNPlocs(HsWithSNPs, "chr1")
+
   alphabetFrequency(Hsapiens$chr1)
   alphabetFrequency(HsWithSNPs$chr1)
 }

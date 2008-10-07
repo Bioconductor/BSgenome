@@ -21,10 +21,10 @@
         source_url="@SOURCEURL@",
         seqnames=.seqnames,
         mseqnames=.mseqnames,
-        seqs_pkg=pkgname,
+        seqs_pkgname=pkgname,
         seqs_dir=extdata_dir,
         nmask_per_seq=.nmask_per_seq,
-        masks_pkg=pkgname,
+        masks_pkgname=pkgname,
         masks_dir=extdata_dir
     )
     objname <- "@BSGENOMEOBJNAME@"
