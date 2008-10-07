@@ -208,7 +208,7 @@ setMethod("SNPcount", "BSgenome",
                            envir=as.environment(paste("package", pkg, sep=":")),
                            inherits=FALSE)
         if (!is.function(getSNPcount))
-            stop(SNPlocs_pkg(bsgenome), ":::getSNPcount() is not a function")
+            stop(SNPlocs_pkg(x), ":::getSNPcount() is not a function")
         getSNPcount()
     }
 )
@@ -225,7 +225,7 @@ setMethod("SNPlocs", "BSgenome",
                            envir=as.environment(paste("package", pkg, sep=":")),
                            inherits=FALSE)
         if (!is.function(getSNPlocs))
-            stop(SNPlocs_pkg(bsgenome), ":::getSNPlocs() is not a function")
+            stop(SNPlocs_pkg(x), ":::getSNPlocs() is not a function")
         getSNPlocs(seqname)
     }
 )
