@@ -18,14 +18,7 @@
 \title{The BSgenomeForge functions}
 
 \description{
-  Set of functions for creating a BSgenome data package.
-
-  These functions are intended for users who want to make a new
-  BSgenome data package, not for regular users of these packages.
-
-  See the BSgenomeForge vignette in this package
-  (\code{vignette("BSgenomeForge")}) for an extensive coverage
-  of this topic.
+  A set of functions for making a BSgenome data package.
 }
 
 \usage{
@@ -54,73 +47,59 @@
     file.
   }
   \item{seqs_srcdir, masks_srcdir}{
-    A single string indicating the path to the source folder i.e.
-    to the folder containing the source files (only read access is
-    needed to this folder).
-
-    There are 2 groups of source files: (1) the source files containing the
-    sequence data and (2) the source files containing the mask data.
-
-    \code{seqs_srcdir} must point to the folder containing the first group.
-    The source files in this folder must be FASTA files. During the forging
-    process, these files will be turned into Biostrings objects.
-
-    \code{masks_srcdir} must point to the folder containing the second group.
-    The source files in this folder must be UCSC "gap" or NCBI "agp" files for
-    the AGAPS masks (assembly gaps), RepeatMasker .out files for the RM masks
-    (RepeatMasker), and Tandem Repeats Finder .bed files for the TRF masks
-    (Tandem Repeats Finder).
+    Single strings indicating the path to the source directories i.e. to the
+    directories containing the source data files.
+    Only read access to these directories is needed.
+    See the BSgenomeForge vignette in this package for more information.
   }
   \item{destdir}{
-    The directory where the BSgenome data package will be created.
+    A single string indicating the path to the directory where the source tree
+    of the target package will be created.
+    This directory must already exist.
+    See the BSgenomeForge vignette in this package for more information.
   }
   \item{verbose}{
     \code{TRUE} or \code{FALSE}.
   }
-  \item{seqnames}{
-    A character vector containing the names of the single sequences to forge.
-  }
-  \item{mseqnames}{
-    A character vector containing the names of the multiple sequences to forge.
+  \item{seqnames, mseqnames}{
+    A character vector containing the names of the single (for \code{seqnames})
+    and multiple (for \code{mseqnames}) sequences to forge.
+    See the BSgenomeForge vignette in this package for more information.
   }
   \item{prefix, suffix}{
-    A single string specifying the prefix or suffix to add to each of the names
-    given in \code{seqnames} and \code{mseqnames} in order to get the name of the
-    corresponding source file.
-    See the \code{seqs_srcdir} argument below for what the source files are.
+    See the BSgenomeForge vignette in this package for more information,
+    in particular the description of the \code{seqfiles_prefix} and
+    \code{seqfiles_suffix} fields of a BSgenome data package seed file.
   }
   \item{seqs_destdir, masks_destdir}{
-    A single string indicating the path to the destination folder i.e.
-    to the folder where the serialized Biostrings objects derived from
-    the source files will be saved (the folder must already exist, and
-    read/write access is required to it).
+    During the forging process the source data files are converted into
+    serialized Biostrings objects. \code{seqs_destdir} and \code{masks_destdir}
+    must be single strings indicating the path to the directories where these
+    serialized objects should be saved.
+    These directories must already exist.
 
     \code{forgeSeqlengthsFile} will produce a single .rda file.
     Both \code{forgeSeqFiles} and \code{forgeMasksFiles} will produce one
     .rda file per sequence.
-
-    For \code{forgeSeqFiles} (\code{seqs_destdir} argument), each .rda file
-    will contain a serialized \link[Biostrings]{DNAString}
-    or \link[Biostrings]{DNAStringSet} object.
-    The standard place for these files is the inst/extdata/ subfolder of the
-    source tree of the BSgenome data packages that is under construction.
-
-    For \code{forgeMasksFiles} (\code{masks_destdir} argument), each .rda file
-    will contain a serialized \link[IRanges]{MaskCOllection} object.
-    The standard place for these files is the data/ subfolder of the
-    source tree of the BSgenome data packages that is under construction.
-
-    In addition to the source files located in \code{masks_srcdir},
-    \code{forgeMasksFiles} also needs read access to the files produced
-    by \code{forgeSeqFiles}. This is specified thru the \code{seqs_destdir}
-    argument of \code{forgeMasksFiles}.
   }
   \item{nmask_per_seq}{
-    [TODO: Document me]
+    A single integer indicating the desired number of masks per sequence.
+    See the BSgenomeForge vignette in this package for more information.
   }
   \item{AGAPSfiles_type, AGAPSfiles_name, AGAPSfiles_prefix, AGAPSfiles_suffix}{
-    [TODO: Document me]
+    These arguments are named accordingly to the corresponding fields of a
+    BSgenome data package seed file.
+    See the BSgenomeForge vignette in this package for more information.
   }
+}
+
+\details{
+  These functions are intended for Bioconductor users who want to make a new
+  BSgenome data package, not for regular users of these packages.
+
+  See the BSgenomeForge vignette in this package
+  (\code{vignette("BSgenomeForge")}) for an extensive coverage
+  of this topic.
 }
 
 \author{H. Pages}
