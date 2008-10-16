@@ -12,6 +12,25 @@
 
 %\usepackage{amsmath}
 %\usepackage[authoryear,round]{natbib}
+
+%
+% NOTE -- There is an obscure issue with the use of \url from the hyperref
+% package that will trigger a MiKTeX-pdflatex error if \url is used like this:
+%   \url{http://some/url}
+% This error is hard to reproduce. It will look like:
+%   ! pdfTeX error (ext4): \pdfendlink ended up in different nesting level than \pd
+%   fstartlink.
+%   \AtBegShi@Output ...ipout \box \AtBeginShipoutBox
+%                                                     \fi \fi
+%   l.96 \end{document}
+%
+%   !  ==> Fatal error occurred, no output PDF file produced!
+%   Transcript written on BSgenomeForge1.log.
+% I've observed this with the following MiKTeX-pdflatex version:
+%   MiKTeX-pdfTeX 2.7.3147 (1.40.9) (MiKTeX 2.7)
+% A work around is to always use \url like this:
+%   {\url{http://some/url}}
+% Without the extra level of braces, this file will trigger the infamous error.
 \usepackage{hyperref}
 \usepackage{underscore}
 
@@ -93,9 +112,9 @@ Requirements:
 \end{itemize}
 
 Refer to the \textit{R Installation and Administration} manual
-(\url{http://cran.r-project.org/doc/manuals/R-admin.html}) if you
+({\url{http://cran.r-project.org/doc/manuals/R-admin.html}}) if you
 need to install {\R} or upgrade your {\R} version, and to this page
-\url{http://bioconductor.org/docs/install/} on the Bioconductor
+{\url{http://bioconductor.org/docs/install/}} on the Bioconductor
 website if you need to install or update the \Rpackage{Biostrings}
 or \Rpackage{BSgenome} packages.
 
@@ -173,14 +192,14 @@ Here is how the \term{source data files} for the
 \item Group 1:
       \begin{itemize}
       \item Single sequences: file \code{chromFa.tar.gz} was downloaded from
-            \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
+            {\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}} and
             extracted with:
             \begin{verbatim}
                 tar zxf chromFa.tar.gz
             \end{verbatim}
       \item Multiple sequences: files \code{upstream1000.fa.gz},
             \code{upstream2000.fa.gz} and \code{upstream5000.fa.gz} were
-            downloaded from \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}
+            downloaded from {\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}}
             and uncompressed with:
             \begin{verbatim}
                 for file in upstream*.fa.gz; do gunzip $file ; done
@@ -190,7 +209,7 @@ Here is how the \term{source data files} for the
       \begin{itemize}
       \item AGAPS masks: all the \code{chr*\_gap.txt.gz} files (UCSC ``gap''
             files) were downloaded from
-            \url{ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}
+            {\url{ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}}
             with the standard Unix/Linux \code{ftp} command:
             \begin{verbatim}
                 ftp hgdownload.cse.ucsc.edu # login as "anonymous"
@@ -203,13 +222,13 @@ Here is how the \term{source data files} for the
                 for file in chr*_gap.txt.gz; do gunzip $file ; done
             \end{verbatim}
       \item RM masks: file \code{chromOut.tar.gz} was downloaded from
-            \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
+            {\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}} and
             extracted with:
             \begin{verbatim}
                 tar zxf chromOut.tar.gz
             \end{verbatim}
       \item TRF masks: file \code{chromTrf.tar.gz} was downloaded from
-            \url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/} and
+            {\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}} and
             extracted with:
             \begin{verbatim}
                 tar zxf chromTrf.tar.gz
@@ -296,7 +315,7 @@ this section for an example of \term{seed file}.
       found in any \code{DESCRIPTION} file.
       Please refer to the \textit{The DESCRIPTION file} section of the
       \textit{Writing R Extensions} manual
-      (\url{http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file})
+      ({\url{http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file}})
       for more information about these fields.
       If you plan to distribute the package that you are going to forge, please
       pickup the license carefully and make sure that it is compatible with the
@@ -312,7 +331,7 @@ this section for an example of \term{seed file}.
 \item \code{species}: The name of the species.
       For the packages built by the Bioconductor project from a UCSC genome,
       this field corresponds to the \code{SPECIES} column of this table:
-      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+      {\url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}}.
 
 \item \code{provider}: The provider of the \term{source data files} e.g.
       \code{UCSC}, \code{NCBI}, \code{BDGP}, \code{FlyBase}, etc...
@@ -322,18 +341,18 @@ this section for an example of \term{seed file}.
       Should preferably match part 4 of the package name (field \code{Package}).
       For the packages built by the Bioconductor project from a UCSC genome,
       this field corresponds to the \code{UCSC VERSION} field of this table:
-      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+      {\url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}}.
 
 \item \code{release\_date}: When this assembly of the genome was released.
       For the packages built by the Bioconductor project from a UCSC genome,
       this field corresponds to the \code{RELEASE DATE} field of this table:
-      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+      {\url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}}.
 
 \item \code{release\_name}: The release name or build number of this assembly
       of the genome.
       For the packages built by the Bioconductor project from a UCSC genome,
       this field corresponds to the \code{RELEASE NAME} field of this table:
-      \url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}.
+      {\url{http://genome.ucsc.edu/FAQ/FAQreleases#release1}}.
 
 \item \code{source\_url}: The permanent URL where the \term{source data files}
       used to forge this package can be found.
@@ -344,7 +363,7 @@ this section for an example of \term{seed file}.
       the \term{target package} is going to be added to a Bioconductor
       repository since it will determine under which of the following subviews
       the package will appear:
-      \url{http://bioconductor.org/packages/release/Organism.html}.
+      {\url{http://bioconductor.org/packages/release/Organism.html}}.
       Note that this is the only field in this category that won't be stored
       in the \Rclass{BSgenome} object that will be contained in the \term{target
       package}.
