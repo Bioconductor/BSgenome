@@ -15,9 +15,7 @@
 
 %
 % NOTE -- There is an obscure issue with the use of \url from the hyperref
-% package that will trigger a MiKTeX-pdflatex error if \url is used like this:
-%   \url{http://some/url}
-% This error is hard to reproduce. It will look like:
+% package that will trigger a MiKTeX/pdflatex error:
 %   ! pdfTeX error (ext4): \pdfendlink ended up in different nesting level than \pd
 %   fstartlink.
 %   \AtBegShi@Output ...ipout \box \AtBeginShipoutBox
@@ -26,12 +24,14 @@
 %
 %   !  ==> Fatal error occurred, no output PDF file produced!
 %   Transcript written on BSgenomeForge1.log.
-% I've observed this with the following MiKTeX-pdflatex version:
+% The error is hard to reproduce. I've observed it on this vignette and with the
+% following version of the MiKTeX/pdflatex command:
 %   MiKTeX-pdfTeX 2.7.3147 (1.40.9) (MiKTeX 2.7)
-% A work around is to always use \url like this:
-%   {\url{http://some/url}}
-% Without the extra level of braces, this file will trigger the infamous error.
-\usepackage{hyperref}
+% Until this problem is fixed, I'm commenting out the use of hyperref and
+% redefining the \url command.
+%\usepackage{hyperref}
+\newcommand{\url}[1]{\texttt{#1}}
+
 \usepackage{underscore}
 
 \textwidth=6.5in
