@@ -24,13 +24,10 @@
 %
 %   !  ==> Fatal error occurred, no output PDF file produced!
 %   Transcript written on BSgenomeForge1.log.
-% The error is hard to reproduce. I've observed it on this vignette and with the
-% following version of the MiKTeX/pdflatex command:
+% The error is hard to reproduce. I've observed it on the r34270 version of this
+% vignette and with the following version of the MiKTeX/pdflatex command:
 %   MiKTeX-pdfTeX 2.7.3147 (1.40.9) (MiKTeX 2.7)
-% Until this problem is fixed, I'm commenting out the use of hyperref and
-% redefining the \url command.
-%\usepackage{hyperref}
-\newcommand{\url}[1]{\texttt{#1}}
+\usepackage{hyperref}
 
 \usepackage{underscore}
 
