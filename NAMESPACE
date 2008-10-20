@@ -1,5 +1,5 @@
 import(methods)
-import(Biobase) # just for the "biocReposList" function
+importFrom(Biobase, "biocReposList")
 import(IRanges)
 import(Biostrings)
 
