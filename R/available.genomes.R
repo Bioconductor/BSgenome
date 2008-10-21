@@ -1,10 +1,10 @@
 ## Not exported
-getDataAnnotationContribUrl <- function(type)
+getDataAnnotationContribUrl <- function(type=getOption("pkgType"))
 {
     ## Just to avoid codetools "no visible binding" NOTE
     biocinstallRepos <- NULL
     ## Sourcing this file will define the 'biocinstallRepos' function
-    source("http://bioconductor.org/biocLite.R", local=TRUE)
+    suppressWarnings(source("http://bioconductor.org/biocLite.R", local=TRUE))
     contrib.url(biocinstallRepos()[2], type=type)
 }
 
