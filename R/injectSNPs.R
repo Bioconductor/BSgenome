@@ -5,7 +5,7 @@
 
 available.SNPs <- function(type=getOption("pkgType"))
 {
-    url <- contrib.url(biocReposList()["aData"], type=type)
+    url <- getDataAnnotationContribUrl(type)
     pkgs <- available.packages(url)[, "Package"]
     pkgs <- pkgs[substr(pkgs, 1, 8) == "SNPlocs."]
     names(pkgs) <- NULL
