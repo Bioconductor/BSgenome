@@ -21,7 +21,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli 536
 	  \preformatted{
 	  Taxonomy ID: 362663
-	  Other names: Escherichia coli strain 536, Escherichia coli str. 536
+	  Other names: "Escherichia coli strain 536", "Escherichia coli str. 536"
 	  Refseq: NC_008253
 	  Length: 4,938,920 nt
 	  Seq.Status: Completed
@@ -33,7 +33,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli APEC O1
 	  \preformatted{
 	  Taxonomy ID: 405955
-	  Other names: Escherichia coli strain APEC O1, Escherichia coli str. APEC O1
+	  Other names: "Escherichia coli strain APEC O1", "Escherichia coli str. APEC O1"
 	  Refseq: NC_008563
 	  Length: 5,082,025 nt
 	  Seq.Status: Completed
@@ -45,7 +45,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli ATCC 8739
 	  \preformatted{
 	  Taxonomy ID: 481805
-	  Other names: Escherichia coli C (ATCC 8739), Escherichia coli C str. ATCC 8739, Escherichia coli strain ATCC 8739, Escherichia coli str. ATCC 8739
+	  Other names: "Escherichia coli C (ATCC 8739)", "Escherichia coli C str. ATCC 8739", "Escherichia coli strain ATCC 8739", "Escherichia coli str. ATCC 8739"
 	  Refseq: NC_010468
 	  Length: 4,746,218 nt
 	  Seq.Status: Completed
@@ -57,8 +57,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli CFT073
 	  \preformatted{
 	  Taxonomy ID: 199310
-	  Other names: Escherichia coli strain CFT073,
-	               Escherichia coli str. CFT073
+	  Other names: "Escherichia coli strain CFT073", "Escherichia coli str. CFT073"
 	  Refseq: NC_004431
 	  Length: 5,231,428 nt
 	  Seq.Status: Completed
@@ -103,7 +102,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli O157:H7 str. Sakai
 	  \preformatted{
 	  Taxonomy ID: 386585
-	  Other names: Escherichia coli O157:H7 strain Sakai
+	  Other names: "Escherichia coli O157:H7 strain Sakai"
 	  Refseq: NC_002695
 	  Length: 5,498,450 nt
 	  Seq.Status: Completed
@@ -115,7 +114,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli SMS-3-5
 	  \preformatted{
 	  Taxonomy ID: 439855
-	  Other names: Escherichia coli strain SMS-3-5, Escherichia coli str. SMS-3-5
+	  Other names: "Escherichia coli strain SMS-3-5", "Escherichia coli str. SMS-3-5"
 	  Refseq: NC_010498
 	  Length: 5,068,389 nt
 	  Seq.Status: Completed
@@ -127,7 +126,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli UTI89
 	  \preformatted{
 	  Taxonomy ID: 364106
-	  Other names: Escherichia coli strain UTI89, Escherichia coli str. UTI89
+	  Other names: "Escherichia coli strain UTI89", "Escherichia coli str. UTI89"
 	  Refseq: NC_007946
 	  Length: 5,065,741 nt
 	  Seq.Status: Completed
@@ -139,7 +138,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli str. K12 substr. DH10B
 	  \preformatted{
 	  Taxonomy ID: 316385
-	  Other names: Escherichia coli DH10B, Escherichia coli strain K12 substrain DH10B
+	  Other names: "Escherichia coli DH10B", "Escherichia coli strain K12 substrain DH10B"
 	  Refseq: NC_010473
 	  Length: 4,686,137 nt
 	  Seq.Status: Completed
@@ -151,7 +150,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli str. K12 substr. MG1655
 	  \preformatted{
 	  Taxonomy ID: 511145
-	  Other names: Escherichia coli MG1655, Escherichia coli strain MG1655, Escherichia coli str. MG1655
+	  Other names: "Escherichia coli MG1655", "Escherichia coli strain MG1655", "Escherichia coli str. MG1655"
 	  Refseq: NC_000913
 	  Length: 4,639,675 nt
 	  Seq.Status: Completed
@@ -163,7 +162,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  Escherichia coli str. K12 substr. W3110
 	  \preformatted{
 	  Taxonomy ID: 316407
-	  Other names: Escherichia coli W3110, Escherichia coli strain W3110, Escherichia coli str. W3110
+	  Other names: "Escherichia coli W3110", "Escherichia coli strain W3110", "Escherichia coli str. W3110"
 	  Refseq: AC_000091
 	  Length: 4,646,332 nt
 	  Seq.Status: Completed
