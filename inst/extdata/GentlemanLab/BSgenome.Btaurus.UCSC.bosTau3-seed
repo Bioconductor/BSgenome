@@ -15,7 +15,6 @@ seqnames: paste("chr", c(1:29, "X"), sep="")
 mseqnames: c("chrUn.scaffolds", "upstream1000", "upstream2000", "upstream5000")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: all the *.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/chromosomes/
-	+ the upstream*.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/database/gap.txt.gz
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/bosTau3.fa.out.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/bosTau3.trf.bed.gz
