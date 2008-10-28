@@ -12,7 +12,7 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 organism_biocview: Bos_taurus
 BSgenomeObjname: Btaurus
 seqnames: paste("chr", c(1:29, "X"), sep="")
-mseqnames: c("chrUn.scaffolds", "upstream1000", "upstream2000", "upstream5000")
+mseqnames: "chrUn.scaffolds"
 nmask_per_seq: 4
 SrcDataFiles1: sequences: all the *.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/chromosomes/
 SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/database/gap.txt.gz
