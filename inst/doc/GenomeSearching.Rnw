@@ -416,13 +416,8 @@ And finally a function that can be used to plot the hits:
 <<c9>>=
 plotGenomeHits <- function(bsgenome, seqnames, hits)
 {
-    ## Retrieve the sequence lengths
-    seqlengths <- integer(length(seqnames))
-    for (i in seq_len(length(seqnames))) {
-        seqname <- seqnames[i]
-        seqlengths[i] <- length(bsgenome[[seqname]])
-    }
-    XMAX <- max(seqlengths)
+    chrlengths <- seqlengths(bsgenome)[seqnames]
+    XMAX <- max(chrlengths)
     YMAX <- length(seqnames)
     plot.new()
     plot.window(c(1, XMAX), c(0, YMAX))
@@ -430,7 +425,7 @@ plotGenomeHits <- function(bsgenome, seqnames, hits)
     axis(2, at=seq_len(length(seqnames)), labels=rev(seqnames), tick=FALSE, las=1)
     ## Plot the chromosomes
     for (i in seq_len(length(seqnames)))
-        lines(c(1, seqlengths[i]), c(YMAX + 1 - i, YMAX + 1 - i), type="l")
+        lines(c(1, chrlengths[i]), c(YMAX + 1 - i, YMAX + 1 - i), type="l")
     ## Plot the hits
     for (i in seq_len(nrow(hits))) {
         seqname <- hits$seqname[i]
