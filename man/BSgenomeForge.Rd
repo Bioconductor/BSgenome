@@ -38,6 +38,8 @@
                   seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
                   AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                   AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
+                  RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
+                  TRFfiles_name=NA, TRFfiles_prefix="", TRFfiles_suffix=".bed",
                   verbose=TRUE)
 }
 
@@ -86,7 +88,9 @@
     A single integer indicating the desired number of masks per sequence.
     See the BSgenomeForge vignette in this package for more information.
   }
-  \item{AGAPSfiles_type, AGAPSfiles_name, AGAPSfiles_prefix, AGAPSfiles_suffix}{
+  \item{AGAPSfiles_type, AGAPSfiles_name, AGAPSfiles_prefix, AGAPSfiles_suffix,
+        RMfiles_name, RMfiles_prefix, RMfiles_suffix,
+        TRFfiles_name, TRFfiles_prefix, TRFfiles_suffix}{
     These arguments are named accordingly to the corresponding fields of a
     BSgenome data package seed file.
     See the BSgenomeForge vignette in this package for more information.

@@ -1,7 +1,7 @@
 Package: BSgenome.Btaurus.UCSC.bosTau3
 Title: Bos taurus (Cow) full genome (UCSC version bosTau3)
 Description: Bos taurus (Cow) full genome as provided by UCSC (bosTau3, Aug. 2006) and stored in Biostrings objects.
-Version: 1.3.11
+Version: 1.3.12
 organism: Bos taurus
 species: Cow
 provider: UCSC
@@ -12,16 +12,18 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 organism_biocview: Bos_taurus
 BSgenomeObjname: Btaurus
 seqnames: paste("chr", c(1:29, "X"), sep="")
-mseqnames: "chrUn.scaffolds"
-nmask_per_seq: 2
-SrcDataFiles1: sequences: all the *.fa.gz files
-	from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
+mseqnames: c("chrUn.scaffolds", "upstream1000", "upstream2000", "upstream5000")
+nmask_per_seq: 4
+SrcDataFiles1: sequences: all the *.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/chromosomes/
+	+ the upstream*.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/database/gap.txt.gz
-	RM masks: none (single big bosTau3.fa.out.gz file not supported yet)
-        TRF masks: none (single big bosTau3.trf.bed.gz file not supported yet)
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/bosTau3.fa.out.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/bosTau3.trf.bed.gz
 PkgExamples: Btaurus
 	seqlengths(Btaurus)
 	Btaurus$chr1  # same as Btaurus[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/masks
 AGAPSfiles_name: gap.txt
+RMfiles_name: bosTau3.fa.out
+TRFfiles_name: bosTau3.trf.bed

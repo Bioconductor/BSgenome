@@ -168,18 +168,15 @@ the FASTA files in group 1.
 
 You don't need any file for the AMB masks.
 
-For the RM masks, you need one RepeatMasker \code{.out} file per chromosome.
-Here the name of each file must be of the form \textit{<seqname>}\code{.fa.out}
-or \textit{<seqname>}\code{.out}.
-Note that some genome providers like UCSC sometimes provide a single
-\code{.out} file for all the chromosomes. BSgenomeForge doesn't support this
-yet but you can work around it by splitting the big file in 1 file per
-chromosome for now (alternatively, you can request support for this on The
-Bioconductor Project Mailing List).
+For the RM masks, you need RepeatMasker \code{.out} files. Like for the AGAPS
+masks, it can be one file per chromosome or a single big file containing the
+RepeatMasker information for all the chromosomes together.
+In the former case, the name of each file must also be of the form
+\textit{<prefix>}\textit{<seqname>}\textit{<suffix>}.
 
-For the TRF masks, you need one Tandem Repeats Finder \code{.bed} file per
-chromosome. Here the name of each file must be of the form
-\textit{<seqname>}\code{.bed}.
+For the TRF masks, you need Tandem Repeats Finder \code{.bed} files.
+Again, it can be one file per chromosome (named
+\textit{<prefix>}\textit{<seqname>}\textit{<suffix>}) or a single big file.
 
 \subsection{An example}
 
@@ -431,6 +428,19 @@ this section for an example of \term{seed file}.
       information.
       Default values are the empty prefix for \code{AGAPSfiles\_prefix} and
       \code{\_gap.txt} for \code{AGAPSfiles\_suffix}.
+
+\item \code{RMfiles\_name}, \code{RMfiles\_prefix}, \code{RMfiles\_suffix}:
+      [OPTIONAL] Those fields work like the \code{AGAPSfiles*} fields above
+      but for the RM masks.
+      Default values are the empty prefix for \code{RMfiles\_prefix} and
+      \code{.fa.out} for \code{RMfiles\_suffix}.
+
+\item \code{TRFfiles\_name}, \code{TRFfiles\_prefix}, \code{TRFfiles\_suffix}:
+      [OPTIONAL] Those fields work like the \code{AGAPSfiles*} fields above
+      but for the TRF masks.
+      Default values are the empty prefix for \code{TRFfiles\_prefix} and
+      \code{.bed} for \code{TRFfiles\_suffix}.
+
 \end{itemize}
 
 \subsection{An example}

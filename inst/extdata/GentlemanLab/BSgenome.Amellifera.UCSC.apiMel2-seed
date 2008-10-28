@@ -22,3 +22,4 @@ PkgExamples: Amellifera
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
 AGAPSfiles_name: gap.txt
+RMfiles_suffix: .out

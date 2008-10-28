@@ -175,9 +175,9 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 ##     "gap": then AGAPS is extracted from a UCSC "gap" file;
 ##     "agp": then AGAPS is extracted from an NCBI "agp" file.
 ## AGAPS is active by default.
-.forge.AGAPS.mask <- function(seqname, mask_width, masks_srcdir,
-                              filetype, filename,
-                              fileprefix, filesuffix)
+.forge.AGAPSmask <- function(seqname, mask_width, masks_srcdir,
+                             filetype, filename,
+                             fileprefix, filesuffix)
 {
     if (!.isSingleStringOrNA(filetype))
         stop("'filetype' must be a single string or NA")
@@ -195,9 +195,9 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
             filename <- paste(fileprefix, seqname, filesuffix, sep="")
         filepath <- file.path(masks_srcdir, filename)
         if (filetype == "gap")
-            ans <- read.gapMask(filepath, mask_width, seqname=seqname)
+            ans <- read.gapMask(filepath, seqname=seqname, mask.width=mask_width)
         else
-            ans <- read.agpMask(filepath, mask_width, seqname=seqname)
+            ans <- read.agpMask(filepath, seqname=seqname, mask.width=mask_width)
     }
     active(ans) <- TRUE
     names(ans) <- "AGAPS"
@@ -206,10 +206,10 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 ## AMB is the mask of "intra-contig ambiguities".
 ## AMB is active by default.
-.forge.AMB.mask <- function(seq, AGAPS)
+.forge.AMBmask <- function(seq, AGAPSmask)
 {
-    active(AGAPS) <- TRUE
-    masks(seq) <- AGAPS
+    active(AGAPSmask) <- TRUE
+    masks(seq) <- AGAPSmask
     amb_letters <- names(IUPAC_CODE_MAP)[nchar(IUPAC_CODE_MAP) > 1]
     for (amb_letter in amb_letters)
         seq <- maskMotif(seq, amb_letter)
@@ -224,13 +224,20 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 ## RM is the "RepeatMasker" mask (from the RepeatMasker .out file).
 ## RM is NOT active by default.
-.forge.RM.mask <- function(seqname, mask_width, masks_srcdir)
+.forge.RMmask <- function(seqname, mask_width, masks_srcdir,
+                          filename, fileprefix, filesuffix)
 {
-    file <- file.path(masks_srcdir, paste(seqname, ".fa.out", sep=""))
-    if (!file.exists(file))
-        file <- file.path(masks_srcdir, paste(seqname, ".out", sep=""))
-    if (file.exists(file)) {
-        ans <- read.rmMask(file, mask_width)
+    if (!.isSingleStringOrNA(filename))
+        stop("'filename' must be a single string or NA")
+    if (!.isSingleStringOrNA(fileprefix))
+        stop("'fileprefix' must be a single string or NA")
+    if (!.isSingleStringOrNA(filesuffix))
+        stop("'filesuffix' must be a single string or NA")
+    if (is.na(filename))
+        filename <- paste(fileprefix, seqname, filesuffix, sep="")
+    filepath <- file.path(masks_srcdir, filename)
+    if (file.exists(filepath)) {
+        ans <- read.rmMask(filepath, seqname=seqname, mask.width=mask_width)
         desc(ans) <- "RepeatMasker"
     } else {
         ans <- Mask(mask_width)
@@ -244,11 +251,20 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 ## TRF is the "Tandem Repeats Finder" mask (from the Tandem Repeats Finder
 ## .bed file).
 ## TRF is NOT active by default.
-.forge.TRF.mask <- function(seqname, mask_width, masks_srcdir)
+.forge.TRFmask <- function(seqname, mask_width, masks_srcdir,
+                           filename, fileprefix, filesuffix)
 {
-    file <- file.path(masks_srcdir, paste(seqname, ".bed", sep=""))
-    if (file.exists(file)) {
-        ans <- read.trfMask(file, mask_width)
+    if (!.isSingleStringOrNA(filename))
+        stop("'filename' must be a single string or NA")
+    if (!.isSingleStringOrNA(fileprefix))
+        stop("'fileprefix' must be a single string or NA")
+    if (!.isSingleStringOrNA(filesuffix))
+        stop("'filesuffix' must be a single string or NA")
+    if (is.na(filename))
+        filename <- paste(fileprefix, seqname, filesuffix, sep="")
+    filepath <- file.path(masks_srcdir, filename)
+    if (file.exists(filepath)) {
+        ans <- read.trfMask(filepath, seqname=seqname, mask.width=mask_width)
         desc(ans) <- "Tandem Repeats Finder [period<=12]"
     } else {
         ans <- Mask(mask_width)
@@ -263,6 +279,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                             seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
+                            RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
+                            TRFfiles_name=NA, TRFfiles_prefix="", TRFfiles_suffix=".bed",
                             verbose=TRUE)
 {
     if (!.isSingleString(seqname))
@@ -290,23 +308,25 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     ## length 0).
     masks <- new("MaskCollection", width=mask_width)
     if (nmask_per_seq >= 1) {
-        AGAPS <- .forge.AGAPS.mask(seqname, mask_width, masks_srcdir,
-                                   AGAPSfiles_type, AGAPSfiles_name,
-                                   AGAPSfiles_prefix, AGAPSfiles_suffix)
-        masks <- append(masks, AGAPS)
+        AGAPSmask <- .forge.AGAPSmask(seqname, mask_width, masks_srcdir,
+                                      AGAPSfiles_type, AGAPSfiles_name,
+                                      AGAPSfiles_prefix, AGAPSfiles_suffix)
+        masks <- append(masks, AGAPSmask)
     }
     if (nmask_per_seq >= 2) {
-        AMB <- .forge.AMB.mask(seq, AGAPS)
-        masks <- append(masks, AMB)
+        AMBmask <- .forge.AMBmask(seq, AGAPSmask)
+        masks <- append(masks, AMBmask)
     }
     remove(seq, list=seqname)
     if (nmask_per_seq >= 3) {
-        RM <- .forge.RM.mask(seqname, mask_width, masks_srcdir)
-        masks <- append(masks, RM)
+        RMmask <- .forge.RMmask(seqname, mask_width, masks_srcdir,
+                                RMfiles_name, RMfiles_prefix, RMfiles_suffix)
+        masks <- append(masks, RMmask)
     }
     if (nmask_per_seq >= 4) {
-        TRF <- .forge.TRF.mask(seqname, mask_width, masks_srcdir)
-        masks <- append(masks, TRF)
+        TRFmask <- .forge.TRFmask(seqname, mask_width, masks_srcdir,
+                                  TRFfiles_name, TRFfiles_prefix, TRFfiles_suffix)
+        masks <- append(masks, TRFmask)
     }
     objname <- .getMasksObjname(seqname)
     .saveObject(masks, objname, destdir=masks_destdir, verbose=verbose)
@@ -316,6 +336,8 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
                             seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
+                            RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
+                            TRFfiles_name=NA, TRFfiles_prefix="", TRFfiles_suffix=".bed",
                             verbose=TRUE)
 {
     if (length(seqnames) == 0)
@@ -326,6 +348,8 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                         AGAPSfiles_type=AGAPSfiles_type, AGAPSfiles_name=AGAPSfiles_name,
                         AGAPSfiles_prefix=AGAPSfiles_prefix, AGAPSfiles_suffix=AGAPSfiles_suffix,
+                        RMfiles_name=RMfiles_name, RMfiles_prefix=RMfiles_prefix, RMfiles_suffix=RMfiles_suffix,
+                        TRFfiles_name=TRFfiles_name, TRFfiles_prefix=TRFfiles_prefix, TRFfiles_suffix=TRFfiles_suffix,
                         verbose=verbose)
     }
 }
@@ -366,7 +390,13 @@ setClass(
         AGAPSfiles_type="character",
         AGAPSfiles_name="character",
         AGAPSfiles_prefix="character",
-        AGAPSfiles_suffix="character"
+        AGAPSfiles_suffix="character",
+        RMfiles_name="character",
+        RMfiles_prefix="character",
+        RMfiles_suffix="character",
+        TRFfiles_name="character",
+        TRFfiles_prefix="character",
+        TRFfiles_suffix="character"
     ),
     prototype(
         Author="H. Pages",
@@ -385,7 +415,13 @@ setClass(
         AGAPSfiles_type="gap",
         AGAPSfiles_name=as.character(NA),
         AGAPSfiles_prefix="",
-        AGAPSfiles_suffix="_gap.txt"
+        AGAPSfiles_suffix="_gap.txt",
+        RMfiles_name=as.character(NA),
+        RMfiles_prefix="",
+        RMfiles_suffix=".fa.out",
+        TRFfiles_name=as.character(NA),
+        TRFfiles_prefix="",
+        TRFfiles_suffix=".fa.out"
     )
 )   
 
@@ -402,6 +438,7 @@ setGeneric("forgeBSgenomeDataPkg", signature="x",
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
     {
+        require(Biobase) || stop("the Biobase package is required")
         template_path <- system.file("BSgenomeDataPkg-template", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
         symvals <- list(
@@ -469,6 +506,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                             masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                             AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
                             AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,
+                            RMfiles_name=x@RMfiles_name, RMfiles_prefix=x@RMfiles_prefix, RMfiles_suffix=x@RMfiles_suffix,
+                            TRFfiles_name=x@TRFfiles_name, TRFfiles_prefix=x@TRFfiles_prefix, TRFfiles_suffix=x@TRFfiles_suffix,
                             verbose=verbose)
         }
     }
