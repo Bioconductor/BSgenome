@@ -35,14 +35,12 @@ Objects can be created by calls of the form \code{new("BSParams", ...)}.
       BSGenome object.  When using the bsapply function, the masks will
       be set to the states in this vector.
     }    
+    \item{\code{motifList}:}{
+      A character vector which should contain motifs that the user
+      wishes to mask from the sequence.
+    }
   }
 }
-% It seems quite likely that this class will become one of many used by
-% bsapply, but for now we don't know what those will be yet so one
-% class is fine for now
-% \section{Extends}{
-% Class \code{"BSBaseParams"}, directly.
-% }
 \section{Methods}{
   \describe{
     \item{\code{bsapply(p)}}{Performs the function FUN using the

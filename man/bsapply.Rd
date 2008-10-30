@@ -79,17 +79,27 @@
   options(verbose=TRUE)
   ## For the 1st example, lets use default masks
   params <- new("BSParams", X = Hsapiens, FUN = alphabetFrequency,
-  exclude = c(1:8,"random","hap"), simplify = TRUE)
+  exclude = c(1:8,"M","X","random","hap"), simplify = TRUE)
   bsapply(params)
 
-  ##Enable all masks
+  ## Set up the motifList to filter out all double T's and all double C's
+  params@motifList <-c("TT","CC")
+  bsapply(params)
+
+  ## Get rid of the motifList
+  params@motifList=as.character()
+
+
+  ##Enable all standard masks
   params@maskList <- c("RM"=TRUE,"TRF"=TRUE)
   bsapply(params)
 
-  ##Disable all masks
+  ##Disable all standard masks
   params@maskList <- c("AGAPS"=FALSE,"AMB"=FALSE)
   bsapply(params)
 
+
 }
+
 
 \keyword{manip}

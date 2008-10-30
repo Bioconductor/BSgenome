@@ -1,6 +1,3 @@
-##2 Add a new parameter where someone can specify a function.
-
-
 setClass("BSParams",
          representation=representation(
            X="BSgenome",
@@ -8,12 +5,12 @@ setClass("BSParams",
            exclude = "character",
            simplify="logical",
            maskList="logical",
-           funList="list"),
+           motifList="character"),
          prototype=prototype(
            exclude="",
            simplify=FALSE,
-           maskList=as.logical(c()),
-           funList=list()
+           maskList=as.logical(vector()),
+           motifList=as.character(vector())
            ))
 
 
@@ -27,11 +24,9 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
     ##Argument checking for maskList:
     if(length(BSParams@maskList)>0){ ##if there are masks
         for(i in seq_len(length(BSParams@maskList))){ #loop thru masks and deal with each in turn
-            if( !( names(BSParams@maskList)[i] %in% masknames(BSParams@X)) ){stop("'the names of BSParams@maskList' must be vector of names corresponding to the default BSgenome masks.")}
-            ##     if( !( BSParams@maskList[i] %in% masknames(BSParams@X) || is.function(BSParams@maskList[i]) || is(BSParams@maskList[i], "IRanges") ) ){stop("'masks' must be an integer corresponding to the default BSgenome masks that are desired, an IRanges object that be used to generate a mask or a function that returns an IRanges object so that the masks can be generated.")}
+            if( !( names(BSParams@maskList)[i] %in% masknames(BSParams@X)) ){stop("the names of 'BSParams@maskList' must be vector of names corresponding to the default BSgenome masks.")}
         }
     }
-    
     
     ##get the seqnames:
     seqnames <- seqnames(BSParams@X)
@@ -60,20 +55,21 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
         seq <- BSParams@X[[seqname]]
         
         if(length(BSParams@maskList)>0){ ##if there are masks
-            for(i in seq_len(length(BSParams@maskList))){ #loop thru masks and deal with each in turn
+            for(i in seq_len(length(BSParams@maskList))){ ##loop thru masks and deal with each in turn
                 if(names(BSParams@maskList)[i] %in% masknames(BSParams@X)){#IF its one of the named masks, then set it accordingly
                         active(masks(seq))[names(BSParams@maskList)[i]] <- BSParams@maskList[[i]]
-                }else{stop("The names of the maskList slot have to match the names of actual BSgenome masks.")}
-##                 if(is.function(BSParams@maskList[i])){#IF its a function, then lets call it to generate a GENOMIC RANGES object
-##                     ##
-##                 }
+                }
+            }
+        }
+
+        if(length(BSParams@motifList)>0){ ##if there are motifs
+            for(i in seq_len(length(BSParams@motifList))){ ##loop thru motifs 
+                seq <- maskMotif(seq, BSParams@motifList[i]) ##mask off each motif
             }
         }
 
 
-        
-
-        ## This is where we finally get run the function that was passed in
+        ## This is where we finally get to run the MAIN function (FUN) that was passed in
         result <- BSParams@FUN(seq, ...)
         return(result)
     }
