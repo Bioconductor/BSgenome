@@ -106,6 +106,16 @@
     \item{}{
       \code{seqlengths(x)}:
       Return the lengths of the single sequences contained in \code{x}.
+
+      See \code{?`\link[Biostrings]{length,XString-method}`} and
+      \code{?`\link[Biostrings]{length,MaskedXString-method}`} for
+      the definition of the length of an \link[Biostrings]{XString}
+      or \link[Biostrings]{MaskedXString} object.
+      Note that the length of a masked sequence (\link[Biostrings]{MaskedXString}
+      object) is not affected by the current set of active masks
+      but the \code{nchar} method for \link[Biostrings]{MaskedXString}
+      is.
+
       \code{names(seqlengths(x))} is guaranteed to be identical to
       \code{seqnames(x)}.
     }
