@@ -1,39 +1,46 @@
-## If length(seqname) == 1:
-##   o 'start' and 'end' are recycled to the length of the longest
-##   o the result is a character vector (when 'as.XStringViews=FALSE')
-##     or an XStringViews object (when 'as.XStringViews=TRUE')
-##   o the length of the result is the length of the longest of 'start' and 'end'
-##
-## If length(seqname) != 1:
-##   o 'start' and 'end' can't have more elements than 'seqname'
-##   o 'start' and 'end' are recycled to the length of 'seqname' if necessary
-##   o the result is a character vector ('as.XStringViews' arg is ignored)
-
-getSeq <- function(bsgenome, seqname, start=NA, end=NA, as.XStringViews=FALSE)
+.getOneSeq <- function(bsgenome, name)
 {
-    if (length(seqname) == 1) {
-        ans <- Views(bsgenome[[seqname]], start=start, end=end)
-        if (!as.XStringViews)
-            ans <- as.character(ans)
-        return(ans)
+    if (name %in% seqnames(bsgenome))
+        return(bsgenome[[name]])
+    nhits <- 0L
+    for (mseqname in mseqnames(bsgenome)) {
+        mseq <- bsgenome[[mseqname]]
+        ii <- grep(name, names(mseq))
+        nhits <- nhits + length(ii)
+        if (length(ii) == 1)
+            ans <- mseq[[ii]]
     }
-    lseqname <- length(seqname)
-    # Adjust length(start)
-    lstart <- length(start)
-    if (lstart > lseqname)
-        stop("'start' has more elements than 'seqname'")
-    if (lstart < lseqname)
-        start <- rep(start, length.out=lseqname)
-    # Adjust length(end)
-    lend <- length(end)
-    if (lend > lseqname)
-        stop("'end' has more elements than 'seqname'")
-    if (lend < lseqname)
-        end <- rep(end, length.out=lseqname)
-    ans <- character(0)
-    if (lseqname >= 1)
-        for (i in 1:lseqname)
-            ans <- append(ans, getSeq(bsgenome, seqname[i], start[i], end[i],
-                                      as.XStringViews=FALSE))
+    if (nhits == 0)
+        stop("sequence ", name, " not found")
+    if (nhits > 1)
+        stop("sequence ", name, " found more than once, ",
+             "please use a non-ambiguous name")
     ans
 }
+
+getSeq <- function(bsgenome, names, start=NA, end=NA, width=NA, as.character=TRUE)
+{
+    if (!is(bsgenome, "BSgenome"))
+        stop("'bsgenome' must be a BSgenome object")
+    if (missing(names))
+        names <- seqnames(bsgenome)
+    else if (!is.character(names) || any(is.na(names)))
+        stop("'names' must be a character vector (with no NAs)")
+    if (length(names) == 0) {
+        ans <- character(0)
+        if (!as.character)
+            ans <- DNAStringSet(ans)
+        return(ans)
+    }
+    ans <- lapply(names, function(name)
+                    subseq(.getOneSeq(bsgenome, name), start=start, end=end, width=width))
+    ## length(ans) == length(names) >= 1
+    if (as.character)
+        ## masks are removed before coercion to character vector
+        return(sapply(ans, function(seq) {masks(seq) <- NULL; as.character(seq)}))
+    if (length(names) > 1)
+        stop("'as.character=FALSE' is not supported when 'length(names) > 1'")
+    ## length(ans) == length(names) == 1
+    ans[[1]]
+}
+

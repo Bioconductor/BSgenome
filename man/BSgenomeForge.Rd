@@ -47,6 +47,7 @@
   \item{x}{
     A BSgenomeDataPkgSeed object or the name of a BSgenome data package seed
     file.
+    See the BSgenomeForge vignette in this package for more information.
   }
   \item{seqs_srcdir, masks_srcdir}{
     Single strings indicating the path to the source directories i.e. to the
@@ -56,7 +57,7 @@
   }
   \item{destdir}{
     A single string indicating the path to the directory where the source tree
-    of the target package will be created.
+    of the target package should be created.
     This directory must already exist.
     See the BSgenomeForge vignette in this package for more information.
   }
@@ -100,7 +101,6 @@
 \details{
   These functions are intended for Bioconductor users who want to make a new
   BSgenome data package, not for regular users of these packages.
-
   See the BSgenomeForge vignette in this package
   (\code{vignette("BSgenomeForge")}) for an extensive coverage
   of this topic.
