@@ -1,6 +1,8 @@
 \name{BSParams-class}
 \docType{class}
+\alias{class:BSParams}
 \alias{BSParams-class}
+\alias{BSParams}
 
 \title{Class "BSParams"}
 
