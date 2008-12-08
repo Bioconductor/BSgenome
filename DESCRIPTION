@@ -16,6 +16,7 @@ License: Artistic-2.0
 LazyLoad: yes
 Collate: available.genomes.R
 	BSgenome-class.R
+	container-classes.R
 	injectSNPs.R
 	getSeq.R
 	bsapply.R
