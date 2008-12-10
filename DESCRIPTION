@@ -21,5 +21,4 @@ Collate: available.genomes.R
 	getSeq.R
 	bsapply.R
 	BSgenomeForge.R
-        container-classes.R
         RangedData-methods.R
