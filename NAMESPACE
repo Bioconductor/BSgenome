@@ -16,7 +16,8 @@ export(
     available.SNPs,
     getSeq,
     bsapply,
-
+    GenomicData, GenomicRanges,
+       
     ## Generic functions:
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
@@ -24,6 +25,7 @@ export(
     seqnames, seqlengths, mseqnames,
     masknames,
     injectSNPs,
+    chrom, genome, "genome<-", score, "score<-", strand,
 
     ## BSgenomeForge functions:
     forgeSeqlengthsFile,
