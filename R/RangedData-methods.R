@@ -48,7 +48,7 @@ setGeneric("score<-", function(x, ..., value) standardGeneric("score<-"))
 
 setMethod("score", "RangedData", function(x) {
   score <- x[["score"]]
-  if (is.null(score) && ncol(x) > 0)
+  if (is.null(score) && ncol(x) > 0 && is.numeric(x[[1]]))
     score <- x[[1]]
   score
 })
@@ -71,15 +71,18 @@ GenomicData <- function(ranges, ..., strand = NULL, chrom = NULL, genome = NULL)
     stop("length of 'chrom' greater than length of 'ranges'")
   if (length(chrom) > 0 && (length(ranges) %% length(chrom) != 0))
     stop("length of 'ranges' not a multiple of 'chrom' length")
-  if (!is.null(genome) && (length(genome) != 1) || !is.character(genome))
+  if (!is.null(genome) && (length(genome) != 1 || !is.character(genome)))
     stop("'genome' must be a single string")
   rd <- RangedData(ranges, ..., space = chrom, universe = genome)
   if (!is.null(strand)) {
+    if (length(strand) && length(ranges) > length(strand) &&
+        length(ranges) %% length(strand) == 0)
+      strand <- strand[rep(seq_along(strand), length=length(ranges))]
     if (length(strand) != length(ranges))
       stop("length of 'strand' (if non-NULL) must match length of 'ranges'")
     if (!all(strand[!is.na(strand)] %in% levels(strand())))
       stop("strand values should be 'NA', '-', '+' or '*'")
-    rd[["strand"]] <- as.integer(factor(strand, levels(strand())))
+    rd[["strand"]] <- factor(strand, levels(strand()))
   }
   rd
 }
