@@ -18,12 +18,13 @@
     ans
 }
 
-getSeq <- function(bsgenome, names, start=NA, end=NA, width=NA, as.character=TRUE)
+setGeneric("getSeq", function(x, ...) standardGeneric("getSeq"))
+
+setMethod("getSeq", "BSgenome",
+          function(x, names, start=NA, end=NA, width=NA, as.character=TRUE)
 {
-    if (!is(bsgenome, "BSgenome"))
-        stop("'bsgenome' must be a BSgenome object")
     if (missing(names))
-        names <- seqnames(bsgenome)
+        names <- seqnames(x)
     else if (!is.character(names) || any(is.na(names)))
         stop("'names' must be a character vector (with no NAs)")
     if (length(names) == 0) {
@@ -33,7 +34,7 @@ getSeq <- function(bsgenome, names, start=NA, end=NA, width=NA, as.character=TRU
         return(ans)
     }
     ans <- lapply(names, function(name)
-                    subseq(.getOneSeq(bsgenome, name), start=start, end=end, width=width))
+                    subseq(.getOneSeq(x, name), start=start, end=end, width=width))
     ## length(ans) == length(names) >= 1
     if (as.character)
         ## masks are removed before coercion to character vector
@@ -42,5 +43,5 @@ getSeq <- function(bsgenome, names, start=NA, end=NA, width=NA, as.character=TRU
         stop("'as.character=FALSE' is not supported when 'length(names) > 1'")
     ## length(ans) == length(names) == 1
     ans[[1]]
-}
+})
 

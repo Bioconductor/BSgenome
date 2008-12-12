@@ -1,16 +1,18 @@
 \name{getSeq}
 
 \alias{getSeq}
+\alias{getSeq,BSgenome-method}
 
 \title{getSeq}
 
 \description{
    A convenience function for extracting a set of sequences (or
-   subsequences) from a \link{BSgenome} object.
+   subsequences) from a \link{BSgenome} or other object. This man page
+   specifically documents the \link{BSgenome} method.
 }
 
 \usage{
-  getSeq(bsgenome, names, start=NA, end=NA, width=NA, as.character=TRUE)
+  \S4method{getSeq}{BSgenome}(bsgenome, names, start=NA, end=NA, width=NA, as.character=TRUE)
 }
 
 \arguments{

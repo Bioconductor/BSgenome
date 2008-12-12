@@ -6,6 +6,9 @@
 \alias{GenomicData}
 
 % accessors
+\alias{score<-}
+\alias{score<-,RangedData-method}
+\alias{score,RangedData-method}
 \alias{chrom}
 \alias{chrom,RangedData-method}
 \alias{genome}
@@ -50,6 +53,16 @@ and there is formal treatment of an optional \code{strand} variable.}
       \code{strand(x)} where \code{x} is a \code{character} vector
       constructs an appropriate factor.
     }
+    \item{}{\code{score(x)}: gets the column representing a "score" in
+      \code{x}, as a vector. This is the column named
+      \code{score}, or, if this does
+      not exist, the first column, if it is numeric. Otherwise,
+      \code{NULL} is returned.
+    }
+    \item{}{\code{score(x) <- value}: sets the column named \code{score}
+      to \code{value}, which should be a numeric vector of length equal
+      to the number of rows.
+    }
   }
 }
 
@@ -76,12 +89,7 @@ and there is formal treatment of an optional \code{strand} variable.}
 }
 
 \author{ Michael Lawrence }
-\note{This may move to another package in the future, as it is not
-  quite general enough for IRanges.}
 
-\seealso{
-  \code{\linkS4class{RangedData}}, on which this class is based.
-}
 \examples{
   range1 <- IRanges(start=c(1,2,3), end=c(5,2,8))
 
@@ -111,6 +119,7 @@ and there is formal treatment of an optional \code{strand} variable.}
   gr <- GenomicData(ranges, score, chrom = chrom, genome = "hg18")
   chrom(gr) # equal to 'chrom'
   gr[["score"]] # unlists over the chromosomes
+  score(gr)
   gr[1][["score"]] # equal to score[1:3]
 }
 \keyword{classes}
