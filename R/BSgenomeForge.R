@@ -518,7 +518,7 @@ setMethod("forgeBSgenomeDataPkg", "list",
     {
         storage.mode(x$nmask_per_seq) <- "integer"
         x$Class <- "BSgenomeDataPkgSeed"
-        y <- do.call("new", x)
+        y <- do.call(new, x)
         forgeBSgenomeDataPkg(y,
             seqs_srcdir=seqs_srcdir,
             masks_srcdir=masks_srcdir,
