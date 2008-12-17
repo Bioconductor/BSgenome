@@ -102,7 +102,7 @@ setReplaceMethod("genome", "RangesList",
 setMethod("chrom", "RangesList", function(x) {
   chrom <- names(x)
   if (!is.null(chrom))
-    chrom <- rep(factor(chrom, chrom), sapply(elements(x), length))
+    chrom <- rep(factor(chrom, chrom), unlist(lapply(x, length)))
   chrom
 })
 
