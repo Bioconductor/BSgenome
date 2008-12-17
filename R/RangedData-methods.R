@@ -110,8 +110,11 @@ setMethod("chrom", "RangesList", function(x) {
 ### Constructor
 ###
 
-GenomicRanges <- function(start, end, chrom, genome) {
-  rl <- split(IRanges(start, end), chrom)
+GenomicRanges <- function(start, end, chrom = NULL, genome = NULL) {
+  ir <- IRanges(start, end)
+  if (!is.null(chrom))
+    rl <- split(ir, chrom)
+  else rl <- RangesList(ir)
   universe(rl) <- genome
   rl
 }
