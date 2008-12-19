@@ -13,13 +13,12 @@
 \alias{chrom,RangedData-method}
 \alias{genome}
 \alias{genome,RangedData-method}
+\alias{genome<-}
+\alias{genome<-,RangedData-method}
 \alias{strand}
 \alias{strand,RangedData-method}
 \alias{strand,missing-method}
 \alias{strand,character-method}
-
-% hidden workaround
-\alias{c,RangedData-method}
 
 \title{Data on a Genome} \description{The \code{BSgenome} package adds
 convenience methods on top of \code{RangedData} manipulate data on
@@ -37,8 +36,11 @@ and there is formal treatment of an optional \code{strand} variable.}
       ranges in \code{x}.
     }
     \item{}{
-      \code{genome(x)}: Gets the genome for the ranges in \code{x}; a simple
-      wrapper around \code{universe(x)}.
+      \code{genome(x)}, \code{genome(x) <- value}: Gets or sets the
+      genome (a single string or \code{NULL}) for
+      the ranges in \code{x}; simple wrappers around
+      \code{\link[IRanges]{universe}} and
+      \code{\link[IRanges]{universe<-}}, respectively.
     }
     \item{}{
       \code{strand(x)}: Gets the strand factor in \code{x}, or,
@@ -72,13 +74,13 @@ and there is formal treatment of an optional \code{strand} variable.}
       \code{GenomicData(ranges, ..., strand = NULL, chrom = NULL,
         genome = NULL)}: Constructs a \code{RangedData} instance with
       the given \code{ranges} and variables in \code{...} (see the
-      \code{\link{RangedData}} constructor). If
+      \code{\link[IRanges]{RangedData}} constructor). If
       non-\code{NULL}, \code{strand} specifies the strand of each
       range. It should be a character vector or factor of length equal to
       that of \code{ranges}. All values should be either \code{-}, \code{+},
       \code{*} or \code{NA}. To get these levels, call
       \code{levels(strand())}. \code{chrom} is analogous to
-      \code{splitter} in \code{\link{RangedData}}; if non-\code{NULL} it
+      \code{splitter} in \code{RangedData}; if non-\code{NULL} it
       should be coercible to a factor indicating how the ranges,
       variables and strand should be split up 
       across the chromosomes. The \code{genome} argument should be a
