@@ -5,7 +5,7 @@
 ## sub-element can be anything
 
 setClass("ChromosomeData",
-         representation(genome="character"),
+         representation(genome="character", pData="data.frame"),
          contains = "TypedList")
 
 ## > showClass("ChromosomeData")
@@ -25,6 +25,10 @@ setValidity("ChromosomeData",
                 if (!all(validElements))
                     return(sprintf("Not all elements are of class '%s'",
                                    elementClass(object)))
+              
+                if( !all.equal(names(elements(object)), rownames(object@pData)) )
+                    return("names mismatch between elements and pData")
+                TRUE
             })
             
             
