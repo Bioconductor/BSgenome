@@ -12,9 +12,12 @@ setClass("ChromosomeData",
 ## Class “ChromosomeData”
 
 ## Slots:
-                                                                      
-## Name:           genome        elements           NAMES    elementClass
-## Class:       character            list characterORNULL       character
+
+## Name:             genome          elements             NAMES      elementClass
+## Class:         character              list   characterORNULL         character
+
+## Name:  elementCumLengths compressedIndices      compressible
+## Class:           integer           integer           logical
 
 ## Extends: "TypedList"
 
