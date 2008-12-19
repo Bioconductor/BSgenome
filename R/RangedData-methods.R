@@ -21,9 +21,8 @@ setMethod("strand", "RangedData", function(x) {
   strand <- x[["strand"]]
   if (is.null(strand))
     strand <- rep(NA, nrow(x))
-### FIXME: just necessary because we have no XFactor
   levs <- levels(strand())
-  factor(levs[strand], levs)
+  factor(strand, levs)
 })
 
 setMethod("strand", "missing", function(x) {
