@@ -1,0 +1,2 @@
+- RangesList
+  - Make GenomicRanges() accept IRanges as 'start' parameter
