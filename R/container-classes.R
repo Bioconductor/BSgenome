@@ -1,54 +1,60 @@
-
-
-
 ## A container for data in the form of a list of chromosomes.  Each
 ## sub-element can be anything
 
-setClass("ChromosomeData",
-         representation(genome="character", pData="data.frame"),
-         contains = "TypedList")
+## AnnotatedList provides "annotation" slot, which should be provider-version
+## (e.g. hg18). AnnotatedList also provides elementMetadata (formerly pData).
+## We add organism (e.g. Mus musculus) and provider (e.g. UCSC)
+## From this, it should be possible to uniquely lookup a BSgenome genome
+setClass("GenomeData",
+         representation(organism = "characterORNULL",
+                        provider = "characterORNULL"),
+         contains = "AnnotatedList")
 
-## > showClass("ChromosomeData")
-## Class “ChromosomeData”
+setMethod("providerVersion", "GenomeData", function(x) x@annotation)
+setMethod("organism", "GenomeData", function(x) x@organism)
+setMethod("provider", "GenomeData", function(x) x@provider)
+
+## > showClass("GenomeData")
+## Class "GenomeData"
 
 ## Slots:
+  
+## Name:         organism          provider        annotation   elementMetadata
+## Class: characterORNULL   characterORNULL   characterORNULL  XDataFrameORNULL
 
-## Name:             genome          elements             NAMES      elementClass
-## Class:         character              list   characterORNULL         character
+## Name:         elements             NAMES      elementClass elementCumLengths
+## Class:            list   characterORNULL         character           integer
 
-## Name:  elementCumLengths compressedIndices      compressible
-## Class:           integer           integer           logical
+## Name:  compressedIndices      compressible
+## Class:           integer           logical
 
-## Extends: "TypedList"
+## Extends: 
+## Class "AnnotatedList", directly
+## Class "TypedList", by class "AnnotatedList", distance 2
 
+isSingleString <- function(x)
+{
+  is.character(x) && length(x) == 1 && !is.na(x)
+}
 
-setValidity("ChromosomeData",
+setValidity("GenomeData",
             function(object) {
-                validElements <- lapply(elements(object), function(x) is(x, elementClass(object)))
-                if (!all(validElements))
-                    return(sprintf("Not all elements are of class '%s'",
-                                   elementClass(object)))
-              
-                if( !all.equal(names(elements(object)), rownames(object@pData)) )
-                    return("names mismatch between elements and pData")
-                TRUE
-            })
-            
-            
-setClass("SampleChromosomeData",
-         contains = "TypedList")
-
-
-setValidity("SampleChromosomeData",
-            function(object) {
-                if (!identical(elementClass(object), "ChromosomeData"))
-                    return("The elementClass(object) is not 'ChromosomeData'")
-                ## each element must be a "ChromosomeData"
-                validElements <- lapply(elements(object), function(x) is(x, elementClass(object)))
-                if (!all(validElements))
-                    return(sprintf("Not all elements are of class '%s'",
-                                   elementClass(object)))
-                TRUE
+              org <- organism(object)
+              prov <- provider(object)
+              if (!is.null(org) && !isSingleString(org))
+                "organism must be a single string or NULL"
+              else if (!is.null(prov) && !isSingleString(prov))
+                "provider must be a single string or NULL"
+              else NULL
             })
 
+setClass("GenomeDataList", prototype = prototype(elementClass = "GenomeData"),
+         contains = "AnnotatedList")
 
+setValidity("GenomeDataList",
+            function(object) {
+              ## each element must be a "GenomeData"
+                if (!identical(elementClass(object), "GenomeData"))
+                    return("The elementClass(object) is not 'GenomeData'")
+                TRUE
+            })
