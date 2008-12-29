@@ -1,10 +1,13 @@
 ## A container for data in the form of a list of chromosomes.  Each
 ## sub-element can be anything
 
-## AnnotatedList provides "annotation" slot, which should be provider-version
-## (e.g. hg18). AnnotatedList also provides elementMetadata (formerly pData).
-## We add organism (e.g. Mus musculus) and provider (e.g. UCSC)
-## From this, it should be possible to uniquely lookup a BSgenome genome
+## AnnotatedList provides "annotation" slot, which should be
+## provider-version (e.g. hg18). AnnotatedList also provides
+## elementMetadata (formerly pData).  We add organism (e.g. Mus
+## musculus) and provider (e.g. UCSC). From this, it should be possible
+## to uniquely lookup a BSgenome genome. But it might be simpler in the
+## long-run to have some unique "BSgenome ID" that we could stick
+## into the 'annotation' slot and look everything up with that.
 setClass("GenomeData",
          representation(organism = "characterORNULL",
                         provider = "characterORNULL"),

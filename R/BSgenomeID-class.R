@@ -16,4 +16,9 @@ setMethod("provider", "BSgenomeID", function(x) .BSgenomeID.tokens(x)[2])
 setMethod("providerVersion", "BSgenomeID", function(x) .BSgenomeID.tokens(x)[3])
 
 setMethod("genome", "AnnotatedList",
-          function(x) new("BSgenomeID", annotation(x)))
+          function(x) {
+            ann <- annotation(x)
+            if (!is.null(ann))
+              ann <- new("BSgenomeID", ann)
+            ann
+          })
