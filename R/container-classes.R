@@ -5,9 +5,7 @@
 ## provider-version (e.g. hg18). AnnotatedList also provides
 ## elementMetadata (formerly pData).  We add organism (e.g. Mus
 ## musculus) and provider (e.g. UCSC). From this, it should be possible
-## to uniquely lookup a BSgenome genome. But it might be simpler in the
-## long-run to have some unique "BSgenome ID" that we could stick
-## into the 'annotation' slot and look everything up with that.
+## to uniquely lookup a BSgenome genome.
 setClass("GenomeData",
          representation(organism = "characterORNULL",
                         provider = "characterORNULL"),
@@ -16,6 +14,18 @@ setClass("GenomeData",
 setMethod("providerVersion", "GenomeData", function(x) x@annotation)
 setMethod("organism", "GenomeData", function(x) x@organism)
 setMethod("provider", "GenomeData", function(x) x@provider)
+
+GenomeData <- function(elements = list(), providerVersion = NULL,
+                       organism = NULL, provider = NULL,
+                       elementMetadata = NULL, ...)
+{
+  al <- AnnotatedList(elements, annotation = providerVersion,
+                      elementMetadata = elementMetadata, ...)
+  gd <- as(al, "GenomeData")
+  organism(gd) <- organism
+  provider(gd) <- provider
+  gd
+}
 
 ## > showClass("GenomeData")
 ## Class "GenomeData"
@@ -61,3 +71,9 @@ setValidity("GenomeDataList",
                     return("The elementClass(object) is not 'GenomeData'")
                 TRUE
             })
+
+GenomeDataList <- function(elements = list(), annotation = NULL,
+                           elementMetadata = NULL, ...) {
+  al <- AnnotatedList(elements, annotation, elementMetadata, ...)
+  as(al, "GenomeDataList")
+}
