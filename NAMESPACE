@@ -3,7 +3,7 @@ import(IRanges)
 import(Biostrings)
 
 exportClasses(
-    BSgenome,
+    BSgenome, GenomeData, GenomeDataList,
 
     ## BSgenomeForge classes:
     BSgenomeDataPkgSeed
@@ -16,6 +16,7 @@ export(
     available.SNPs,
     bsapply,
     GenomicData, GenomicRanges,
+    GenomeData, GenomeDataList,
        
     ## Generic functions:
     organism, species, provider, providerVersion,
