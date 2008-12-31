@@ -19,12 +19,9 @@ GenomeData <- function(elements = list(), providerVersion = NULL,
                        organism = NULL, provider = NULL,
                        elementMetadata = NULL, ...)
 {
-  al <- AnnotatedList(elements, annotation = providerVersion,
-                      elementMetadata = elementMetadata, ...)
-  gd <- as(al, "GenomeData")
-  organism(gd) <- organism
-  provider(gd) <- provider
-  gd
+  new("GenomeData", elements = elements, annotation = providerVersion,
+      elementMetadata = elementMetadata, organism = organism,
+      provider = provider)
 }
 
 ## > showClass("GenomeData")
@@ -73,7 +70,8 @@ setValidity("GenomeDataList",
             })
 
 GenomeDataList <- function(elements = list(), annotation = NULL,
-                           elementMetadata = NULL, ...) {
-  al <- AnnotatedList(elements, annotation, elementMetadata, ...)
-  as(al, "GenomeDataList")
+                           elementMetadata = NULL)
+{
+  new("GenomeDataList", elements = elements, annotation = annotation,
+      elementMetadata = elementMetadata)
 }
