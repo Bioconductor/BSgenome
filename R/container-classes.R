@@ -32,7 +32,7 @@ GenomeData <- function(elements = list(), providerVersion = NULL,
 ## Name:         organism          provider        annotation   elementMetadata
 ## Class: characterORNULL   characterORNULL   characterORNULL  XDataFrameORNULL
 
-## Name:         elements             NAMES      elementClass elementCumLengths
+## Name:         elements             NAMES      elementClass    elementLengths
 ## Class:            list   characterORNULL         character           integer
 
 ## Name:  compressedIndices      compressible
