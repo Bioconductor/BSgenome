@@ -35,8 +35,8 @@ GenomeData <- function(elements = list(), providerVersion = NULL,
 ## Name:         elements             NAMES      elementClass    elementLengths
 ## Class:            list   characterORNULL         character           integer
 
-## Name:  compressedIndices        compress
-## Class:           integer         logical
+## Name:         compress
+## Class:         logical
 
 ## Extends: 
 ## Class "AnnotatedList", directly
