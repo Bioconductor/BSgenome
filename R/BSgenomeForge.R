@@ -3,16 +3,6 @@
 ### -------------------------------------------------------------------------
 
 
-.isSingleString <- function(x)
-{
-    is.character(x) && length(x) == 1 && !is.na(x)
-}
-
-.isSingleStringOrNA <- function(x)
-{
-    is.vector(x) && is.atomic(x) && length(x) == 1 && (is.character(x) || is.na(x))
-}
-
 .getMasksObjname <- function(seqnames)
 {
     if (length(seqnames) == 0)
@@ -46,11 +36,11 @@ getSeqSrcpaths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
         warning("'seqnames' is empty")
         return(character(0))
     }
-    if (!.isSingleString(prefix))
+    if (!isSingleString(prefix))
         stop("'prefix' must be a single string")
-    if (!.isSingleString(suffix))
+    if (!isSingleString(suffix))
         stop("'suffix' must be a single string")
-    if (!.isSingleString(seqs_srcdir))
+    if (!isSingleString(seqs_srcdir))
         stop("'seqs_srcdir' must be a single string")
     srcfiles <- paste(prefix, seqnames, suffix, sep="")
     ans <- file.path(seqs_srcdir, srcfiles)
@@ -101,7 +91,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 {
     seqlengths <- getSeqlengths(seqnames, prefix=prefix, suffix=suffix,
                                 seqs_srcdir=seqs_srcdir)
-    if (!.isSingleString(seqs_destdir))
+    if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
     .saveObject(seqlengths, "seqlengths", destdir=seqs_destdir,
                 verbose=verbose)
@@ -115,7 +105,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 .forgeSeqFile <- function(name, prefix, suffix, seqs_srcdir, seqs_destdir,
                           is.single.seq=TRUE, verbose=TRUE)
 {
-    if (!.isSingleString(name))
+    if (!isSingleString(name))
         stop("'name' must be a single string")
     srcpath <- getSeqSrcpaths(name, prefix=prefix, suffix=suffix,
                               seqs_srcdir=seqs_srcdir)
@@ -152,7 +142,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         getSeqSrcpaths(mseqnames, prefix=prefix, suffix=suffix,
                        seqs_srcdir=seqs_srcdir)
     }
-    if (!.isSingleString(seqs_destdir))
+    if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
     for (name in seqnames) {
         .forgeSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
@@ -179,13 +169,13 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                              filetype, filename,
                              fileprefix, filesuffix)
 {
-    if (!.isSingleStringOrNA(filetype))
+    if (!isSingleStringOrNA(filetype))
         stop("'filetype' must be a single string or NA")
-    if (!.isSingleStringOrNA(filename))
+    if (!isSingleStringOrNA(filename))
         stop("'filename' must be a single string or NA")
-    if (!.isSingleStringOrNA(fileprefix))
+    if (!isSingleStringOrNA(fileprefix))
         stop("'fileprefix' must be a single string or NA")
-    if (!.isSingleStringOrNA(filesuffix))
+    if (!isSingleStringOrNA(filesuffix))
         stop("'filesuffix' must be a single string or NA")
     if (is.na(filetype)) {
         ans <- Mask(mask_width)
@@ -227,11 +217,11 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 .forge.RMmask <- function(seqname, mask_width, masks_srcdir,
                           filename, fileprefix, filesuffix)
 {
-    if (!.isSingleStringOrNA(filename))
+    if (!isSingleStringOrNA(filename))
         stop("'filename' must be a single string or NA")
-    if (!.isSingleStringOrNA(fileprefix))
+    if (!isSingleStringOrNA(fileprefix))
         stop("'fileprefix' must be a single string or NA")
-    if (!.isSingleStringOrNA(filesuffix))
+    if (!isSingleStringOrNA(filesuffix))
         stop("'filesuffix' must be a single string or NA")
     if (is.na(filename))
         filename <- paste(fileprefix, seqname, filesuffix, sep="")
@@ -254,11 +244,11 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 .forge.TRFmask <- function(seqname, mask_width, masks_srcdir,
                            filename, fileprefix, filesuffix)
 {
-    if (!.isSingleStringOrNA(filename))
+    if (!isSingleStringOrNA(filename))
         stop("'filename' must be a single string or NA")
-    if (!.isSingleStringOrNA(fileprefix))
+    if (!isSingleStringOrNA(fileprefix))
         stop("'fileprefix' must be a single string or NA")
-    if (!.isSingleStringOrNA(filesuffix))
+    if (!isSingleStringOrNA(filesuffix))
         stop("'filesuffix' must be a single string or NA")
     if (is.na(filename))
         filename <- paste(fileprefix, seqname, filesuffix, sep="")
@@ -283,7 +273,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                             TRFfiles_name=NA, TRFfiles_prefix="", TRFfiles_suffix=".bed",
                             verbose=TRUE)
 {
-    if (!.isSingleString(seqname))
+    if (!isSingleString(seqname))
         stop("'seqname' must be a single string")
     if (!is.numeric(nmask_per_seq)
      || length(nmask_per_seq) != 1
@@ -291,11 +281,11 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         stop("'nmask_per_seq' must be 0, 1, 2, 3 or 4")
     if (nmask_per_seq == 0)
         warning("forging an empty mask collection ('nmask_per_seq' is set to 0)")
-    if (!.isSingleString(seqs_destdir))
+    if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
-    if (!.isSingleString(masks_srcdir))
+    if (!isSingleString(masks_srcdir))
         stop("'masks_srcdir' must be a single string")
-    if (!.isSingleString(masks_destdir))
+    if (!isSingleString(masks_destdir))
         stop("'masks_destdir' must be a single string")
 
     ## Get the length of the sequence.
@@ -472,7 +462,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             stop("'symvals' contains duplicated symbols")
         }
         ## All symvals should by single strings (non-NA)
-        is_OK <- sapply(symvals, function(val) {.isSingleString(val)})
+        is_OK <- sapply(symvals, function(val) {isSingleString(val)})
         if (!all(is_OK)) {
             bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
             stop("values for symbols ", bad_syms, " are not single strings")
@@ -528,9 +518,9 @@ setMethod("forgeBSgenomeDataPkg", "list",
 
 .removeCommentsFromFile <- function(infile, outfile)
 {
-    if (!.isSingleString(infile))
+    if (!isSingleString(infile))
         stop("'infile' must be a single string")
-    if (!.isSingleString(outfile))
+    if (!isSingleString(outfile))
         stop("'outfile' must be a single string")
     if (file.exists(outfile))
         stop("file '", outfile, "' already exists")
@@ -552,7 +542,7 @@ setMethod("forgeBSgenomeDataPkg", "list",
 ### Return a named character vector.
 .readSeedFile <- function(file, verbose=TRUE)
 {
-    if (!.isSingleString(file))
+    if (!isSingleString(file))
         stop("'file' must be a single string")
     if (file.exists(file)) {
         ## Using 'x["isdir"][[1]]' is safer than using 'x$isdir' or

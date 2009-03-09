@@ -42,11 +42,6 @@ GenomeData <- function(elements = list(), providerVersion = NULL,
 ## Class "AnnotatedList", directly
 ## Class "TypedList", by class "AnnotatedList", distance 2
 
-isSingleString <- function(x)
-{
-  is.character(x) && length(x) == 1 && !is.na(x)
-}
-
 setValidity("GenomeData",
             function(object) {
               org <- organism(object)
