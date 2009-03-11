@@ -768,8 +768,7 @@ ce2dict0cw15 <- DNAStringSet(ce2dict0, end=15)
 
 Now we can run this 2nd analysis and put the results in the
 \Robject{"ce2dict0cw15_ana2.txt"} file:
-%%FIXME: this is not working
-<<e3, eval=FALSE>>=
+<<e3>>=
 runAnalysis2(ce2dict0cw15, outfile="ce2dict0cw15_ana2.txt")
 @
 
