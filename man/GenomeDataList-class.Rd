@@ -6,6 +6,9 @@
 % Constructor:
 \alias{GenomeDataList}
 
+% Coercion:
+\alias{coerce,GenomeDataList,data.frame-method}
+
 \title{List of GenomeData objects}
 \description{\code{GenomeDataList} is a list of
   \code{\linkS4class{GenomeData}} objects. It could be useful for
@@ -33,6 +36,16 @@
     }
   }
 }
+
+\section{Coercion}{
+  \describe{
+    \item{}{\code{as(from, "data.frame")}: Coerces each subelement to a
+      data frame, and binds them into a single data frame with an
+      additional column indicating chromosome
+    }
+  }
+}
+
 
 \author{ Michael Lawrence }
 

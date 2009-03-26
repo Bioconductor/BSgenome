@@ -3,6 +3,8 @@
 
 \alias{GenomeData-class}
 
+
+
 % Accessors:
 \alias{provider,GenomeData-method}
 \alias{organism,GenomeData-method}
@@ -13,6 +15,9 @@
 
 % Show:
 \alias{show,GenomeData-method}
+
+% Coercion:
+\alias{coerce,GenomeData,data.frame-method}
 
 \title{Data on the genome}
 \description{\code{GenomeData} formally represents genomic data as a
@@ -63,6 +68,15 @@
       should all be either single strings or \code{NULL} (unspecified).
       \code{elementMetadata} should be an \code{\linkS4class{XDataFrame}}
       or \code{NULL}.
+    }
+  }
+}
+
+\section{Coercion}{
+  \describe{
+    \item{}{\code{as(from, "data.frame")}: Coerces each subelement to a
+      data frame, and binds them into a single data frame with an
+      additional column indicating chromosome
     }
   }
 }

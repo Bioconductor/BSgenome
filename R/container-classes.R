@@ -70,3 +70,71 @@ GenomeDataList <- function(elements = list(), annotation = NULL,
   new("GenomeDataList", elements = elements, annotation = annotation,
       elementMetadata = elementMetadata)
 }
+
+## An apply-type function for working with GenomeData and GenomeDataList objects:
+
+
+setGeneric("gdApply",
+           function(X, FUN, ...) {
+               standardGeneric("gdApply")
+           })
+
+setMethod("gdApply",
+          signature(X = "GenomeDataList", FUN = "function"),
+          function(X, FUN, ...) {
+              NX <- length(X)
+              new.elements <- vector(mode = "list", length = NX)
+              names(new.elements) <- names(X)
+              for (i in seq_len(NX))
+              {
+                  new.elements[[i]] <- gdApply(X[[i]], FUN, ...)
+              }
+              cls <- lapply(new.elements, class)
+              ucl <- unique(unlist(cls))
+              if (identical(ucl, "GenomeData"))
+                  GenomeDataList(new.elements)
+              else new.elements
+          })
+
+setMethod("gdApply",
+          signature(X = "GenomeData", FUN = "function"),
+          function(X, FUN, ...) {
+              NX <- length(X)
+              new.elements <- vector(mode = "list", length = NX)
+              names(new.elements) <- names(X)
+              for (i in seq_len(NX))
+              {
+                  new.elements[[i]] <- FUN(X[[i]], ...)
+              }
+              cls <- lapply(new.elements, class)
+              ucl <- unique(unlist(cls))
+              if (length(ucl) = = 1)
+                  GenomeData(new.elements, organism = X@organism)
+              else new.elements
+          })
+
+setAs("GenomeData", "data.frame",
+      function(from) {
+          ans <- 
+              do.call(rbind, 
+                      sapply(names(from),
+                             function(chr) {
+                                 cbind(as(from[[chr]], "data.frame"), chromosome = chr)
+                             }, simplify = FALSE))
+          row.names(ans) <- NULL
+          ans
+      })
+
+setAs("GenomeDataList", "data.frame",
+      function(from) {
+          ans <- 
+              do.call(rbind, 
+                      sapply(names(from),
+                             function(sample) {
+                                 cbind(as(from[[sample]], "data.frame"), sample = sample)
+                             }, simplify = FALSE))
+          row.names(ans) <- NULL
+          ans
+      })
+
+
