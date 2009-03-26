@@ -1,28 +1,28 @@
 ## A container for data in the form of a list of chromosomes.  Each
 ## sub-element can be anything
 
-setClass("GenomeData",
-         representation(organism = "characterORNULL",
-                        provider = "characterORNULL"),
-         contains = "AnnotatedList")
+setClass("GenomeData", contains = "AnnotatedList")
 
 ### FIXME: ideally there would be some sort of GenomeDescription
-### object that encapsulates this information. For historical reasons,
-### the 'providerVersion' is stored in the metadata, while organism
-### and provider are explicit slots.
+### object that encapsulates this information. For now, we store all
+### the metadata fields in the AnnotatedList metadata list. At least
+### that way, all the metadata is in one place.
 setMethod("providerVersion", "GenomeData",
           function(x) metadata(x)$providerVersion)
-setMethod("organism", "GenomeData", function(x) x@organism)
-setMethod("provider", "GenomeData", function(x) x@provider)
+setMethod("organism", "GenomeData", function(x) metadata(x)$organism)
+setMethod("provider", "GenomeData", function(x) metadata(x)$provider)
 
 GenomeData <- function(elements = list(), providerVersion = NULL,
-                       organism = NULL, provider = NULL,
+                       organism = NULL, provider = NULL, metadata = list(),
                        elementMetadata = NULL, ...)
 {
-  new("GenomeData", elements = elements,
-      metadata = list(providerVersion = providerVersion),
-      elementMetadata = elementMetadata, organism = organism,
-      provider = provider)
+  if (!is.list(metadata))
+    stop("'metadata' must be a list")
+  md <- list(organism = organism, provider = provider,
+             providerVersion = providerVersion, ...)
+  metadata[names(md)] <- md
+  new("GenomeData", elements = elements, annotation = metadata,
+      elementMetadata = elementMetadata)
 }
 
 ### This stuff copy/pasted from IRanges, should go in utils package
@@ -87,10 +87,13 @@ setValidity("GenomeData",
             function(object) {
               org <- organism(object)
               prov <- provider(object)
+              provVer <- providerVersion(object)
               if (!is.null(org) && !isSingleString(org))
                 "organism must be a single string or NULL"
               else if (!is.null(prov) && !isSingleString(prov))
                 "provider must be a single string or NULL"
+              else if (!is.null(provVer) && !isSingleString(provVer))
+                "providerVersion must be a single string or NULL"
               else NULL
             })
 
@@ -105,10 +108,10 @@ setValidity("GenomeDataList",
                 TRUE
             })
 
-GenomeDataList <- function(elements = list(), annotation = NULL,
+GenomeDataList <- function(elements = list(), metadata = list(),
                            elementMetadata = NULL)
 {
-  new("GenomeDataList", elements = elements, annotation = annotation,
+  new("GenomeDataList", elements = elements, annotation = metadata,
       elementMetadata = elementMetadata)
 }
 
@@ -133,7 +136,7 @@ setMethod("gdApply",
               cls <- lapply(new.elements, class)
               ucl <- unique(unlist(cls))
               if (identical(ucl, "GenomeData"))
-                  GenomeDataList(new.elements)
+                  GenomeDataList(new.elements, metadata(X))
               else new.elements
           })
 
@@ -149,8 +152,8 @@ setMethod("gdApply",
               }
               cls <- lapply(new.elements, class)
               ucl <- unique(unlist(cls))
-              if (length(ucl) = = 1)
-                  GenomeData(new.elements, organism = X@organism)
+              if (length(ucl) == 1)
+                  GenomeData(new.elements, metadata = metadata(X))
               else new.elements
           })
 

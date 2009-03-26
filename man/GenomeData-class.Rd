@@ -24,9 +24,9 @@
   list, with one element per chromosome in the genome.} 
 
 \details{
-  This class facilitates storing data on the genome by providing
-  metadata slots for storing the organism (e.g. Mmusculus), genome build
-  provider (e.g. UCSC), and genome build version (e.g. mm9).
+  This class facilitates storing data on the genome by formalizing a set
+  of metadata fields for storing the organism (e.g. Mmusculus), genome
+  build provider (e.g. UCSC), and genome build version (e.g. mm9).
 
   The data is represented as a list, with one element per chromosome (or
   really any sequence, like a gene). There are no constraints as to the
@@ -34,7 +34,10 @@
 
   Note that as an \code{\linkS4class{AnnotatedList}}, it is possible to
   store chromosome-level data (e.g. the lengths) in the
-  \code{elementMetadata} slot.
+  \code{elementMetadata} slot. The \code{organism}, \code{provider} and
+  \code{providerVersion} are all stored in the the \code{AnnotatedList}
+  \code{metadata}, so they may be retrieved in list form by calling
+  \code{metadata(x)}.
 }
 
 \section{Accesor methods}{
@@ -60,14 +63,18 @@
   \describe{
     \item{}{
       \code{GenomeData(elements = list(), providerVersion = NULL,
-        organism = NULL, provider = NULL,
+        organism = NULL, provider = NULL, metadata = list(),
         elementMetadata = NULL, ...)}:
       Creates a \code{GenomeData} with the elements from the
       \code{elements} parameter, a list. The other arguments correspond to
-      the metadata slots, and, with the exception of \code{elementMetadata},
+      the metadata fields, and, with the exception of \code{elementMetadata},
       should all be either single strings or \code{NULL} (unspecified).
+      Additional global metadata elements may be
+      passed in \code{metadata}, in list-form, and via \code{...}. The
+      elements in \code{metadata} are always overridden by the explicit
+      arguments, like \code{organism} and those in \code{...}. 
       \code{elementMetadata} should be an \code{\linkS4class{XDataFrame}}
-      or \code{NULL}.
+      or \code{NULL}. 
     }
   }
 }

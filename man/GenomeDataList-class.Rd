@@ -21,13 +21,13 @@
   One should try to take advantage of the metadata storage facilities
   provided by \code{AnnotatedList}. The \code{elementMetadata} field,
   for example, could be used to store the experimental design, while the
-  \code{annotation} field could identify the experimental platform.
+  \code{metadata} field could store the experimental platform.
 }
 
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomeDataList(elements = list(), annotation = NULL,
+      \code{GenomeDataList(elements = list(), metadata = list(),
                            elementMetadata = NULL)}:
       Creates a \code{GenomeDataList} with the elements from the
       \code{elements} parameter, a list of \code{GenomeData}
