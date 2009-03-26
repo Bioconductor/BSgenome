@@ -1,17 +1,17 @@
 ## A container for data in the form of a list of chromosomes.  Each
 ## sub-element can be anything
 
-## AnnotatedList provides "annotation" slot, which should be
-## provider-version (e.g. hg18). AnnotatedList also provides
-## elementMetadata (formerly pData).  We add organism (e.g. Mus
-## musculus) and provider (e.g. UCSC). From this, it should be possible
-## to uniquely lookup a BSgenome genome.
 setClass("GenomeData",
          representation(organism = "characterORNULL",
                         provider = "characterORNULL"),
          contains = "AnnotatedList")
 
-setMethod("providerVersion", "GenomeData", function(x) x@annotation)
+### FIXME: ideally there would be some sort of GenomeDescription
+### object that encapsulates this information. For historical reasons,
+### the 'providerVersion' is stored in the metadata, while organism
+### and provider are explicit slots.
+setMethod("providerVersion", "GenomeData",
+          function(x) metadata(x)$providerVersion)
 setMethod("organism", "GenomeData", function(x) x@organism)
 setMethod("provider", "GenomeData", function(x) x@provider)
 
@@ -19,28 +19,69 @@ GenomeData <- function(elements = list(), providerVersion = NULL,
                        organism = NULL, provider = NULL,
                        elementMetadata = NULL, ...)
 {
-  new("GenomeData", elements = elements, annotation = providerVersion,
+  new("GenomeData", elements = elements,
+      metadata = list(providerVersion = providerVersion),
       elementMetadata = elementMetadata, organism = organism,
       provider = provider)
 }
 
-## > showClass("GenomeData")
-## Class "GenomeData"
+### This stuff copy/pasted from IRanges, should go in utils package
+ellipsize <- function(obj, width = getOption("width"), sep = " ",
+                      ellipsis = "...")
+{
+  str <- encodeString(obj)
+  ## get order selectSome() would print
+  half <- seq_len(ceiling(length(obj) / 2))
+  ind <- t(cbind(half, length(obj) - half + 1))[seq_along(obj)]
+  nc <- cumsum(nchar(str[ind]) + nchar(sep)) - nchar(sep)
+  last <- findInterval(width, nc)
+  if (length(obj) > last) {
+    ## make sure ellipsis fits
+    while (last && (nc[last] + nchar(sep)*2^(last>1) + nchar(ellipsis)) > width)
+      last <- last - 1
+    if (last == 0) ## have to truncate the first element
+      str <- paste(substring(str[1], 1, width - nchar(ellipsis)), ellipsis,
+                   sep = "")
+    else if (last == 1) ## can only show the first
+      str <- c(str[1], "...")
+    else str <- selectSome(str, last+1)
+  }
+  paste(str, collapse = sep)
+}
 
-## Slots:
-  
-## Name:         organism          provider        annotation   elementMetadata
-## Class: characterORNULL   characterORNULL   characterORNULL  XDataFrameORNULL
+labeledLine <- function(label, els, count = TRUE, sep = " ", ellipsis = "...") {
+  if (count)
+    label <- paste(label, "(", length(els), ")", sep = "")
+  label <- paste(label, ": ", sep = "")
+  width <- getOption("width") - nchar(label)
+  line <- ellipsize(els, width, sep, ellipsis)
+  paste(label, line, "\n", sep = "")
+}
+
+### End copy/paste
 
 ## Name:         elements             NAMES      elementClass    elementLengths
 ## Class:            list   characterORNULL         character           integer
-
 ## Name:         compress
 ## Class:         logical
 
-## Extends: 
-## Class "AnnotatedList", directly
-## Class "TypedList", by class "AnnotatedList", distance 2
+setMethod("show", "GenomeData", function(object) {
+  cat("A GenomeData instance")
+  if (!is.null(organism(object)))
+    cat(" for", organism(object))
+  if (!is.null(provider(object)) || !is.null(providerVersion(object))) {
+    cat("\nbuild: ")
+    if (!is.null(provider(object)))
+      cat(provider(object), " ", sep = "")
+    if (!is.null(providerVersion(object)))
+      cat(providerVersion(object))
+  }
+  cat("\n")
+  nms <- names(object)
+  if (is.null(nms))
+    nms <- seq_len(length(object))
+  cat(labeledLine("chromsomes", nms))
+})
 
 setValidity("GenomeData",
             function(object) {
