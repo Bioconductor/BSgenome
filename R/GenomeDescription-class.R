@@ -56,19 +56,16 @@ setMethod("releaseName", "GenomeDescription", function(x) x@release_name)
 setValidity("GenomeDescription",
     function(object)
     {
-        unlist(
-            lapply(slotNames("GenomeDescription"),
-                function(slotname)
-                {
-                    slotval <- slot(object, slotname)
-                    if (isSingleStringOrNA(slotval))
-                        return(NULL)
-                    problem <- paste("slot '", slotname, "' must be a ",
-                                     "single string (or NA)", sep="")
-                    return(problem)
-                }
-            )
-        )
+        .validSlot <- function(slotname)
+        {
+            slotval <- slot(object, slotname)
+            if (isSingleStringOrNA(slotval))
+                return(NULL)
+            problem <- paste("slot '", slotname, "' must be a ",
+                             "single string (or NA)", sep="")
+            return(problem)
+        }
+        unlist(lapply(slotNames("GenomeDescription"), .validSlot))
     }
 )
 
