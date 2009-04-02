@@ -2,28 +2,9 @@
 ### The "BSgenome" class
 ### -------------------------------------------------------------------------
 
-setClass(
-    "BSgenome",
+setClass("BSgenome",
+    contains="GenomeDescription",
     representation(
-        ## organism: "Homo sapiens", "Mus musculus", etc...
-        organism="character",
-
-        ## species: "Human", "Mouse", etc...
-        species="character",
-
-        ## provider: "UCSC", "BDGP", etc...
-        provider="character",
-
-        ## provider_version: "hg18", "mm8", "sacCer1", etc...
-        provider_version="character",
-
-        ## release_date: "Mar. 2006", "Feb. 2006", "Oct. 2003", etc...
-        release_date="character",
-
-        ## release_name: "NCBI Build 36.1", "NCBI Build 36",
-        ## "SGD 1 Oct 2003 sequence", etc...
-        release_name="character",
-
         ## source_url: permanent URL to the place where the FASTA files used
         ## to produce the sequences below can be found (and downloaded)
         source_url="character",
@@ -170,24 +151,6 @@ BUILTIN_MASKNAMES <- c("AGAPS", "AMB", "RM", "TRF")
 
 setMethod("length", "BSgenome", function(x) length(names(x)))
 
-setGeneric("organism", function(x) standardGeneric("organism"))
-setMethod("organism", "BSgenome", function(x) x@organism)
-
-setGeneric("species", function(x) standardGeneric("species"))
-setMethod("species", "BSgenome", function(x) x@species)
-
-setGeneric("provider", function(x) standardGeneric("provider"))
-setMethod("provider", "BSgenome", function(x) x@provider)
-
-setGeneric("providerVersion", function(x) standardGeneric("providerVersion"))
-setMethod("providerVersion", "BSgenome", function(x) x@provider_version)
-
-setGeneric("releaseDate", function(x) standardGeneric("releaseDate"))
-setMethod("releaseDate", "BSgenome", function(x) x@release_date)
-
-setGeneric("releaseName", function(x) standardGeneric("releaseName"))
-setMethod("releaseName", "BSgenome", function(x) x@release_name)
-
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
 setMethod("sourceUrl", "BSgenome", function(x) x@source_url)
 
@@ -297,12 +260,9 @@ BSgenome <- function(organism, species, provider, provider_version,
     if (is.null(mseqnames))
         mseqnames <- character(0)
     ans <- new("BSgenome",
-        organism=organism,
-        species=species,
-        provider=provider,
-        provider_version=provider_version,
-        release_date=release_date,
-        release_name=release_name,
+        GenomeDescription(organism, species,
+                          provider, provider_version,
+                          release_date, release_name),
         source_url=source_url,
         seqnames=seqnames,
         seqlengths=as.integer(NA),
@@ -323,7 +283,7 @@ BSgenome <- function(organism, species, provider, provider_version,
 ### The 'show' method
 ###
 
-.SHOW_PREFIX <- "| "
+.SHOW_BSGENOME_PREFIX <- "| "
 .SHOW_SEQSECTION_PREFIX <- "|   "
 
 setMethod("show", "BSgenome",
@@ -331,7 +291,7 @@ setMethod("show", "BSgenome",
     {
         mystrwrap <- function(line)
             writeLines(strwrap(line, width=getOption("width")+1,
-                               exdent=0, prefix=.SHOW_PREFIX))
+                               exdent=0, prefix=.SHOW_BSGENOME_PREFIX))
         showSequenceIndex <- function(names, prefix)
         {
             index_width <- getOption("width") + 2 - nchar(prefix)
@@ -352,15 +312,11 @@ setMethod("show", "BSgenome",
             if (col != 1) cat("\n")
         }
         cat(object@species, "genome\n")
-        cat(.SHOW_PREFIX, "\n", sep="")
-        cat(.SHOW_PREFIX, "organism: ", object@organism, "\n", sep="")
-        cat(.SHOW_PREFIX, "provider: ", object@provider, "\n", sep="")
-        cat(.SHOW_PREFIX, "provider version: ", object@provider_version, "\n", sep="")
-        cat(.SHOW_PREFIX, "release date: ", object@release_date, "\n", sep="")
-        cat(.SHOW_PREFIX, "release name: ", object@release_name, "\n", sep="")
+        cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
+        callNextMethod()
         if (!is.null(SNPlocs_pkgname(object)))
-            cat(.SHOW_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
-        cat(.SHOW_PREFIX, "\n", sep="")
+            cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
+        cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0)
             mystrwrap("single sequences (see '?seqnames'):")
         else
@@ -369,11 +325,11 @@ setMethod("show", "BSgenome",
             showSequenceIndex(seqnames(object), .SHOW_SEQSECTION_PREFIX)
         else
             cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
-        cat(.SHOW_PREFIX, "\n", sep="")
+        cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0) {
             mystrwrap("multiple sequences (see '?mseqnames'):")
             showSequenceIndex(mseqnames(object), .SHOW_SEQSECTION_PREFIX)
-            cat(.SHOW_PREFIX, "\n", sep="")
+            cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         }
         mystrwrap("(use the '$' or '[[' operator to access a given sequence)")
     }

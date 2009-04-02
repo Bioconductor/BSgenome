@@ -6,19 +6,7 @@
 \alias{BSgenome-class}
 \alias{BSgenome}
 
-% Accesor methods:
-\alias{organism}
-\alias{organism,BSgenome-method}
-\alias{species}
-\alias{species,BSgenome-method}
-\alias{provider}
-\alias{provider,BSgenome-method}
-\alias{providerVersion}
-\alias{providerVersion,BSgenome-method}
-\alias{releaseDate}
-\alias{releaseDate,BSgenome-method}
-\alias{releaseName}
-\alias{releaseName,BSgenome-method}
+% Accessor methods:
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
 \alias{seqnames}
@@ -42,51 +30,22 @@
 \alias{$,BSgenome-method}
 
 
-\title{The BSgenome class}
+\title{BSgenome objects}
 
 \description{
-  A container for the complete genome sequence of a given species.
+  The BSgenome class is a container for the complete genome sequence
+  of a given organism.
 }
 
-\section{Accesor methods}{
+\section{Accessor methods}{
   In the code snippets below,
   \code{x} is a BSgenome object
   and \code{name} is the name of a sequence (character-string).
+  Note that, because the BSgenome class contains the \link{GenomeDescription}
+  class, then all the accessor methods for \link{GenomeDescription} objects
+  can also be used on \code{x}.
 
   \describe{
-    \item{}{
-      \code{organism(x)}:
-      Return the target organism for this genome e.g. \code{"Homo sapiens"},
-      \code{"Mus musculus"}, \code{"Caenorhabditis elegans"}, etc...
-    }
-    \item{}{
-      \code{species(x)}:
-      Return the target species for this genome e.g. \code{"Human"},
-      \code{"Mouse"}, \code{"C. elegans"}, etc...
-    }
-    \item{}{
-      \code{provider(x)}:
-      Return the provider of this genome e.g. \code{"UCSC"}, \code{"BDGP"},
-      \code{"FlyBase"}, etc...
-    }
-    \item{}{
-      \code{providerVersion(x)}:
-      Return the provider-side version of this genome.
-      For example UCSC uses versions \code{"hg18"}, \code{"hg17"}, etc...
-      for the different Builds of the Human genome.
-    }
-    \item{}{
-      \code{releaseDate(x)}:
-      Return the release date of this genome e.g. \code{"Mar. 2006"}.
-    }
-    \item{}{
-      \code{releaseName(x)}:
-      Return the release name of this genome, which is generally made of the
-      name of the organization who assembled it plus its Build version.
-      For example, UCSC uses \code{"hg18"} for the version of the
-      Human genome corresponding to the Build 36.1 from NCBI hence
-      the release name for this genome is \code{"NCBI Build 36.1"}.
-    }
     \item{}{
       \code{sourceUrl(x)}:
       Return the source URL i.e. the permanent URL to the place where the
@@ -191,6 +150,7 @@
 
 \seealso{
   \code{\link{available.genomes}},
+  \link{GenomeDescription-class},
   \link[Biostrings]{XString-class},
   \link[Biostrings]{MaskedXString-class},
   \link[Biostrings]{XStringSet-class},

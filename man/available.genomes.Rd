@@ -27,9 +27,10 @@
   (abbreviated), the 3rd part is the name of the organisation who assembled
   the genome and the 4th part is the release string or number used by this
   organisation for this genome.
-  A BSgenome data package contains a single \link{BSgenome} object named like
-  the second part of the package name (e.g. Celegans in the case of
-  BSgenome.Celegans.UCSC.ce2) where all the sequences for this genome are stored.
+  A BSgenome data package contains a single top-level object (a
+  \link{BSgenome} object) named like the second part of the package name
+  (e.g. Celegans in the case of BSgenome.Celegans.UCSC.ce2) where all the
+  sequences for this genome are stored.
 }
 
 \value{

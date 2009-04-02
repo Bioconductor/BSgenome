@@ -3,7 +3,9 @@ import(IRanges)
 import(Biostrings)
 
 exportClasses(
-    BSgenome, GenomeData, GenomeDataList,
+    GenomeDescription,
+    BSgenome,
+    GenomeData, GenomeDataList,
 
     ## BSgenomeForge classes:
     BSgenomeDataPkgSeed
@@ -18,8 +20,10 @@ export(
     GenomeData, GenomeDataList,
        
     ## Generic functions:
-    organism, species, provider, providerVersion,
-    releaseDate, releaseName, sourceUrl,
+    organism, species,
+    provider, providerVersion,
+    releaseDate, releaseName,
+    sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
     seqnames, seqlengths, mseqnames,
     masknames,

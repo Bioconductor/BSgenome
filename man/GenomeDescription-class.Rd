@@ -1,0 +1,100 @@
+\name{GenomeDescription-class}
+\docType{class}
+
+% Classes
+\alias{class:GenomeDescription}
+\alias{GenomeDescription-class}
+\alias{GenomeDescription}
+
+% Accessor methods:
+\alias{organism}
+\alias{organism,GenomeDescription-method}
+\alias{species}
+\alias{species,GenomeDescription-method}
+\alias{provider}
+\alias{provider,GenomeDescription-method}
+\alias{providerVersion}
+\alias{providerVersion,GenomeDescription-method}
+\alias{releaseDate}
+\alias{releaseDate,GenomeDescription-method}
+\alias{releaseName}
+\alias{releaseName,GenomeDescription-method}
+
+% Standard generic methods:
+\alias{show,GenomeDescription-method}
+
+
+\title{GenomeDescription objects}
+
+\description{
+  A GenomeDescription object holds the meta information describing
+  a given genome.
+}
+
+\details{
+  In general the user will not need to manipulate directly a
+  GenomeDescription instance but will manipulate instead a higher-level
+  object that belongs to a class containing the GenomeDescription class.
+  For example the top-level object defined in any BSgenome data package
+  is a \link{BSgenome} object. But because the \link{BSgenome} class
+  contains the GenomeDescription class, it is also a GenomeDescription
+  object and can therefore be treated as such. In other words all the
+  methods described below will work on it.
+}
+
+\section{Accessor methods}{
+  In the code snippets below,
+  \code{x} is a GenomeDescription object.
+
+  \describe{
+    \item{}{
+      \code{organism(x)}:
+      Return the target organism for this genome e.g. \code{"Homo sapiens"},
+      \code{"Mus musculus"}, \code{"Caenorhabditis elegans"}, etc...
+    }
+    \item{}{
+      \code{species(x)}:
+      Return the target species for this genome e.g. \code{"Human"},
+      \code{"Mouse"}, \code{"Worm"}, etc...
+    }
+    \item{}{
+      \code{provider(x)}:
+      Return the provider of this genome e.g. \code{"UCSC"}, \code{"BDGP"},
+      \code{"FlyBase"}, etc...
+    }
+    \item{}{
+      \code{providerVersion(x)}:
+      Return the provider-side version of this genome.
+      For example UCSC uses versions \code{"hg18"}, \code{"hg17"}, etc...
+      for the different Builds of the Human genome.
+    }
+    \item{}{
+      \code{releaseDate(x)}:
+      Return the release date of this genome e.g. \code{"Mar. 2006"}.
+    }
+    \item{}{
+      \code{releaseName(x)}:
+      Return the release name of this genome, which is generally made of the
+      name of the organization who assembled it plus its Build version.
+      For example, UCSC uses \code{"hg18"} for the version of the
+      Human genome corresponding to the Build 36.1 from NCBI hence
+      the release name for this genome is \code{"NCBI Build 36.1"}.
+    }
+  }
+}
+
+\author{H. Pages}
+
+\seealso{
+  \code{\link{available.genomes}},
+  \link{BSgenome-class}
+}
+
+\examples{
+  library(BSgenome.Celegans.UCSC.ce2)
+  provider(Celegans)
+  as(Celegans, "GenomeDescription")
+}
+
+\keyword{methods}
+\keyword{classes}
