@@ -13,8 +13,6 @@
 }
 \usage{
 gdApply(X, FUN, ...)
-
-
 }
 \arguments{
   \item{X}{
