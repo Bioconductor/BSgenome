@@ -77,8 +77,11 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
     
     ##Then apply the above function to each
     if(BSParams@simplify == FALSE){
-        ans <- lapply(seqnames, processSeqname, ...)
-        names(ans) <- seqnames
+        ans <-
+          GenomeData(lapply(structure(seqnames, names = seqnames), processSeqname, ...),
+                     providerVersion = providerVersion(BSParams@X),
+                     organism = organism(BSParams@X),
+                     provider = provider(BSParams@X))
         return(ans)
     }else{
         ans <- sapply(seqnames, processSeqname, ...)

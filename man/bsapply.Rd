@@ -29,16 +29,16 @@
 }
 
 \value{
-  A named list is returned where each element is whatever was returned by the
-  function FUN.  The names of the list correspond to the names of the
-  chromosomes as they were labeled by the BSgenome obect in the slot
-  accessed by seqnames().
+  If \code{BSParams} sets \code{simplify = FALSE}, a GenomeData object is returned
+  containing the results generated using the remaining BSParams specifications.
+  If \code{BSParams} sets \code{simplify = TRUE}, an \code{sapply}-like
+  simplification is used on the results.
 }
 
 \author{Marc Carlson}
 
 \seealso{
-  \link{BSgenome-class}
+  \link{BSParams-class}, \link{BSgenome-class}, \link{GenomeData-class}
 }
 
 \examples{
@@ -51,7 +51,7 @@
   exclude = "M")
   bsapply(params)
 
-  ## Or we can do this same function with the simplif option:
+  ## Or we can do this same function with simplify = TRUE:
   params <- new("BSParams", X = Celegans, FUN = alphabetFrequency,
   exclude = "M", simplify = TRUE)
   bsapply(params)
