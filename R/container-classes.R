@@ -25,6 +25,10 @@ GenomeData <- function(elements = list(), providerVersion = NULL,
       elementMetadata = elementMetadata)
 }
 
+if (FALSE)
+{
+    ## instead of copying, just use IRanges:::labeledLine() for now
+
 ### This stuff copy/pasted from IRanges, should go in utils package
 ellipsize <- function(obj, width = getOption("width"), sep = " ",
                       ellipsis = "...")
@@ -60,6 +64,9 @@ labeledLine <- function(label, els, count = TRUE, sep = " ", ellipsis = "...") {
 
 ### End copy/paste
 
+}
+
+
 ## Name:         elements             NAMES      elementClass    elementLengths
 ## Class:            list   characterORNULL         character           integer
 ## Name:         compress
@@ -80,7 +87,7 @@ setMethod("show", "GenomeData", function(object) {
   nms <- names(object)
   if (is.null(nms))
     nms <- seq_len(length(object))
-  cat(labeledLine("chromsomes", nms))
+  cat(IRanges:::labeledLine("chromsomes", nms))
 })
 
 setValidity("GenomeData",
