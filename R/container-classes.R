@@ -117,13 +117,19 @@ GenomeDataList <- function(elements = list(), metadata = list(),
 
 ## An apply-type function for working with GenomeData and GenomeDataList objects:
 
+gdApply <- function(...) 
+{
+    .Deprecated("gdapply", msg = "gdApply() is deprecated. Use gdapply() instead [all lowercase].")
+    gdapply(...)
+}
 
-setGeneric("gdApply",
+
+setGeneric("gdapply",
            function(X, FUN, ...) {
-               standardGeneric("gdApply")
+               standardGeneric("gdapply")
            })
 
-setMethod("gdApply",
+setMethod("gdapply",
           signature(X = "GenomeDataList", FUN = "function"),
           function(X, FUN, ...) {
               NX <- length(X)
@@ -131,7 +137,7 @@ setMethod("gdApply",
               names(new.elements) <- names(X)
               for (i in seq_len(NX))
               {
-                  new.elements[[i]] <- gdApply(X[[i]], FUN, ...)
+                  new.elements[[i]] <- gdapply(X[[i]], FUN, ...)
               }
               cls <- lapply(new.elements, class)
               ucl <- unique(unlist(cls))
@@ -140,7 +146,7 @@ setMethod("gdApply",
               else new.elements
           })
 
-setMethod("gdApply",
+setMethod("gdapply",
           signature(X = "GenomeData", FUN = "function"),
           function(X, FUN, ...) {
               NX <- length(X)

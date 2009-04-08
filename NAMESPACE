@@ -30,7 +30,7 @@ export(
     injectSNPs,
     strand,
     getSeq,
-    gdApply,
+    gdapply, gdApply,
 
     ## BSgenomeForge functions:
     forgeSeqlengthsFile,
@@ -50,7 +50,7 @@ exportMethods(
     seqnames, seqlengths, mseqnames,
     masknames,
     injectSNPs,
-              gdApply,
+              gdapply,
 
     ## BSgenomeForge methods:
     forgeBSgenomeDataPkg
