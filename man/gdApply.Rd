@@ -1,5 +1,9 @@
-\name{gdApply}
+\name{gdapply}
 \Rdversion{1.1}
+\alias{gdapply}
+\alias{gdapply,GenomeData,function-method}
+\alias{gdapply,GenomeDataList,function-method}
+
 \alias{gdApply}
 \alias{gdApply,GenomeData,function-method}
 \alias{gdApply,GenomeDataList,function-method}
@@ -12,7 +16,7 @@
   of a GenomeData or GenomeDataList object.
 }
 \usage{
-gdApply(X, FUN, ...)
+gdapply(X, FUN, ...)
 }
 \arguments{
   \item{X}{
