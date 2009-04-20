@@ -87,7 +87,7 @@ setMethod("show", "GenomeData", function(object) {
   nms <- names(object)
   if (is.null(nms))
     nms <- seq_len(length(object))
-  cat(IRanges:::labeledLine("chromsomes", nms))
+  cat(IRanges:::labeledLine("chromosomes", nms))
 })
 
 setValidity("GenomeData",
