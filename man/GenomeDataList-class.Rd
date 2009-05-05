@@ -15,11 +15,11 @@
   storing data on multiple experiments or samples.} 
 
 \details{
-  This is simply an \code{\linkS4class{AnnotatedList}} that requires all of its
-  elements to be instances of \code{GenomeData}.
+  This is simply an \code{\linkS4class{SimpleTypedList}} that requires all
+  of its elements to be instances of \code{GenomeData}.
 
   One should try to take advantage of the metadata storage facilities
-  provided by \code{AnnotatedList}. The \code{elementMetadata} field,
+  provided by \code{SimpleTypedList}. The \code{elementMetadata} field,
   for example, could be used to store the experimental design, while the
   \code{metadata} field could store the experimental platform.
 }
@@ -27,12 +27,12 @@
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomeDataList(elements = list(), metadata = list(),
+      \code{GenomeDataList(listData = list(), metadata = list(),
                            elementMetadata = NULL)}:
       Creates a \code{GenomeDataList} with the elements from the
-      \code{elements} parameter, a list of \code{GenomeData}
+      \code{listData} parameter, a list of \code{GenomeData}
       instances. The other arguments correspond to the optional metadata
-      stored in \code{\linkS4class{AnnotatedList}}. 
+      stored in \code{\linkS4class{SimpleTypedList}}. 
     }
   }
 }
@@ -51,7 +51,7 @@
 
 \seealso{
   \linkS4class{GenomeData}, the type of elements stored in this class.
-  \linkS4class{AnnotatedList}, the base of this class.
+  \linkS4class{SimpleTypedList}, the base of this class.
 }
 
 \examples{

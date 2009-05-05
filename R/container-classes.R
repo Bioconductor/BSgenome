@@ -1,18 +1,18 @@
 ## A container for data in the form of a list of chromosomes.  Each
 ## sub-element can be anything
 
-setClass("GenomeData", contains = "AnnotatedList")
+setClass("GenomeData", contains = "SimpleTypedList")
 
 ### FIXME: ideally there would be some sort of GenomeDescription
 ### object that encapsulates this information. For now, we store all
-### the metadata fields in the AnnotatedList metadata list. At least
+### the metadata fields in the SimpleTypedList metadata list. At least
 ### that way, all the metadata is in one place.
 setMethod("providerVersion", "GenomeData",
           function(x) metadata(x)$providerVersion)
 setMethod("organism", "GenomeData", function(x) metadata(x)$organism)
 setMethod("provider", "GenomeData", function(x) metadata(x)$provider)
 
-GenomeData <- function(elements = list(), providerVersion = NULL,
+GenomeData <- function(listData = list(), providerVersion = NULL,
                        organism = NULL, provider = NULL, metadata = list(),
                        elementMetadata = NULL, ...)
 {
@@ -21,7 +21,7 @@ GenomeData <- function(elements = list(), providerVersion = NULL,
   md <- list(organism = organism, provider = provider,
              providerVersion = providerVersion, ...)
   metadata[names(md)] <- md
-  new("GenomeData", elements = elements, annotation = metadata,
+  new("GenomeData", listData = listData, metadata = metadata,
       elementMetadata = elementMetadata)
 }
 
@@ -67,11 +67,6 @@ labeledLine <- function(label, els, count = TRUE, sep = " ", ellipsis = "...") {
 }
 
 
-## Name:         elements             NAMES      elementClass    elementLengths
-## Class:            list   characterORNULL         character           integer
-## Name:         compress
-## Class:         logical
-
 setMethod("show", "GenomeData", function(object) {
   cat("A GenomeData instance")
   if (!is.null(organism(object)))
@@ -104,21 +99,21 @@ setValidity("GenomeData",
               else NULL
             })
 
-setClass("GenomeDataList", prototype = prototype(elementClass = "GenomeData"),
-         contains = "AnnotatedList")
+setClass("GenomeDataList", prototype = prototype(elementType = "GenomeData"),
+         contains = "SimpleTypedList")
 
 setValidity("GenomeDataList",
             function(object) {
               ## each element must be a "GenomeData"
-                if (!identical(elementClass(object), "GenomeData"))
-                    return("The elementClass(object) is not 'GenomeData'")
+                if (!identical(elementType(object), "GenomeData"))
+                    return("The elementType(object) is not 'GenomeData'")
                 TRUE
             })
 
-GenomeDataList <- function(elements = list(), metadata = list(),
+GenomeDataList <- function(listData = list(), metadata = list(),
                            elementMetadata = NULL)
 {
-  new("GenomeDataList", elements = elements, annotation = metadata,
+  new("GenomeDataList", listData = listData, metadata = metadata,
       elementMetadata = elementMetadata)
 }
 
@@ -126,7 +121,8 @@ GenomeDataList <- function(elements = list(), metadata = list(),
 
 gdApply <- function(...) 
 {
-    .Deprecated("gdapply", msg = "gdApply() is deprecated. Use gdapply() instead [all lowercase].")
+    .Deprecated("gdapply",
+                msg = "gdApply() is deprecated. Use gdapply() instead [all lowercase].")
     gdapply(...)
 }
 

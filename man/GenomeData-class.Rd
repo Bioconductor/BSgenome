@@ -32,10 +32,10 @@
   really any sequence, like a gene). There are no constraints as to the
   data type of the elements.
 
-  Note that as an \code{\linkS4class{AnnotatedList}}, it is possible to
+  Note that as an \code{\linkS4class{SimpleTypedList}}, it is possible to
   store chromosome-level data (e.g. the lengths) in the
   \code{elementMetadata} slot. The \code{organism}, \code{provider} and
-  \code{providerVersion} are all stored in the the \code{AnnotatedList}
+  \code{providerVersion} are all stored in the the \code{SimpleTypedList}
   \code{metadata}, so they may be retrieved in list form by calling
   \code{metadata(x)}.
 }
@@ -62,11 +62,11 @@
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomeData(elements = list(), providerVersion = NULL,
+      \code{GenomeData(listData = list(), providerVersion = NULL,
         organism = NULL, provider = NULL, metadata = list(),
         elementMetadata = NULL, ...)}:
       Creates a \code{GenomeData} with the elements from the
-      \code{elements} parameter, a list. The other arguments correspond to
+      \code{listData} parameter, a list. The other arguments correspond to
       the metadata fields, and, with the exception of \code{elementMetadata},
       should all be either single strings or \code{NULL} (unspecified).
       Additional global metadata elements may be
@@ -94,7 +94,7 @@
   \linkS4class{GenomeDataList}, a container of this class and useful for
   storing data on multiple samples.
 
-  \linkS4class{AnnotatedList}, the base of this class.
+  \linkS4class{SimpleTypedList}, the base of this class.
 }
 
 \examples{
