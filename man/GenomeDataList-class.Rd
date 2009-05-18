@@ -15,12 +15,13 @@
   storing data on multiple experiments or samples.} 
 
 \details{
-  This is simply an \code{\linkS4class{SimpleTypedList}} that requires all
-  of its elements to be instances of \code{GenomeData}.
+  This class inherits from \code{\linkS4class{AnnotatedSimpleTypedListLike}}
+  and \code{\linkS4class{Sequence}} that requires all of its elements to be
+  instances of \code{GenomeData}.
 
   One should try to take advantage of the metadata storage facilities
-  provided by \code{SimpleTypedList}. The \code{elementMetadata} field,
-  for example, could be used to store the experimental design, while the
+  provided by \code{AnnotatedSimpleTypedListLike}. The \code{elementMetadata}
+  field, for example, could be used to store the experimental design, while the
   \code{metadata} field could store the experimental platform.
 }
 
@@ -32,7 +33,7 @@
       Creates a \code{GenomeDataList} with the elements from the
       \code{listData} parameter, a list of \code{GenomeData}
       instances. The other arguments correspond to the optional metadata
-      stored in \code{\linkS4class{SimpleTypedList}}. 
+      stored in \code{\linkS4class{AnnotatedSimpleTypedListLike}}. 
     }
   }
 }
@@ -51,7 +52,7 @@
 
 \seealso{
   \linkS4class{GenomeData}, the type of elements stored in this class.
-  \linkS4class{SimpleTypedList}, the base of this class.
+  \linkS4class{AnnotatedSimpleTypedListLike}, \linkS4class{Sequence} 
 }
 
 \examples{

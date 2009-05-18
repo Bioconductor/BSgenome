@@ -1,12 +1,12 @@
 ## A container for data in the form of a list of chromosomes.  Each
 ## sub-element can be anything
 
-setClass("GenomeData", contains = "SimpleTypedList")
+setClass("GenomeData", contains = "AnnotatedSimpleTypedListLike")
 
 ### FIXME: ideally there would be some sort of GenomeDescription
 ### object that encapsulates this information. For now, we store all
-### the metadata fields in the SimpleTypedList metadata list. At least
-### that way, all the metadata is in one place.
+### the metadata fields in the AnnotatedSimpleTypedListLike metadata list.
+### At least that way, all the metadata is in one place.
 setMethod("providerVersion", "GenomeData",
           function(x) metadata(x)$providerVersion)
 setMethod("organism", "GenomeData", function(x) metadata(x)$organism)
@@ -100,7 +100,7 @@ setValidity("GenomeData",
             })
 
 setClass("GenomeDataList", prototype = prototype(elementType = "GenomeData"),
-         contains = "SimpleTypedList")
+         contains = c("AnnotatedSimpleTypedListLike", "Sequence"))
 
 setValidity("GenomeDataList",
             function(object) {

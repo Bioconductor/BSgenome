@@ -32,12 +32,12 @@
   really any sequence, like a gene). There are no constraints as to the
   data type of the elements.
 
-  Note that as an \code{\linkS4class{SimpleTypedList}}, it is possible to
-  store chromosome-level data (e.g. the lengths) in the
+  Note that as an \code{\linkS4class{AnnotatedSimpleTypedListLike}}, it is
+  possible to store chromosome-level data (e.g. the lengths) in the
   \code{elementMetadata} slot. The \code{organism}, \code{provider} and
-  \code{providerVersion} are all stored in the the \code{SimpleTypedList}
-  \code{metadata}, so they may be retrieved in list form by calling
-  \code{metadata(x)}.
+  \code{providerVersion} are all stored in the the
+  \code{AnnotatedSimpleTypedListLike} \code{metadata}, so they may be retrieved
+  in list form by calling \code{metadata(x)}.
 }
 
 \section{Accessor methods}{
@@ -94,7 +94,7 @@
   \linkS4class{GenomeDataList}, a container of this class and useful for
   storing data on multiple samples.
 
-  \linkS4class{SimpleTypedList}, the base of this class.
+  \linkS4class{AnnotatedSimpleTypedListLike}, the base of this class.
 }
 
 \examples{
