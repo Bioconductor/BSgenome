@@ -58,7 +58,7 @@
 gd <- GenomeData(list(chr1 = IRanges(1, 10), chrX = IRanges(2, 5)),
                  organism = "Mmusculus", provider = "UCSC",
                  providerVersion = "mm9")
-gdl <- GenomeDataList(list(gd), elementMetadata = XDataFrame(induced = TRUE))
+gdl <- GenomeDataList(list(gd), elementMetadata = DataFrame(induced = TRUE))
 gdl[[1]] # get first element
 }
 

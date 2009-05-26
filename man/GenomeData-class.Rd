@@ -72,7 +72,7 @@
       passed in \code{metadata}, in list-form, and via \code{...}. The
       elements in \code{metadata} are always overridden by the explicit
       arguments, like \code{organism} and those in \code{...}. 
-      \code{elementMetadata} should be an \code{\linkS4class{XDataFrame}}
+      \code{elementMetadata} should be an \code{\linkS4class{DataTable}}
       or \code{NULL}. 
     }
   }
