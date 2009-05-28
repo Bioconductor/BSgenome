@@ -41,12 +41,7 @@
     error is raised.
   }
   \item{start, end, width}{
-    Specify these arguments only if you don't want to extract the
-    entire sequences.
-    Then the subsequences specified by \code{start}, \code{end}
-    and \code{width} (single integers or NAs) will be extracted
-    by a call to \code{\link[IRanges]{subseq}} before they are
-    returned by \code{getSeq}.
+    Vector of integers (eventually with NAs).
   }
   \item{as.character}{
     \code{TRUE} or \code{FALSE}. Should the extracted sequences
@@ -54,17 +49,23 @@
   }
 }
 
+\details{
+  The \code{names}, \code{start}, \code{end} and \code{width} arguments
+  are expanded cyclically to the length of the longest provided none
+  are of zero length.
+}
+
 \value{
   A standard character vector when \code{as.character=TRUE}.
   Note that when \code{as.character=TRUE}, then the masks that
-  are defined on top of the sequences to extract are ignored if
-  any (see \code{?`\link[Biostrings]{MaskedXString-class}`}
+  are defined on top of the sequences to extract are ignored
+  (i.e. dropped) if any (see \code{?`\link[Biostrings]{MaskedXString-class}`}
   for more information about masked sequences).
 
   A \link[Biostrings]{DNAString} or \link[Biostrings]{MaskedDNAString}
   object when \code{as.character=FALSE}.
-  Note that \code{as.character=FALSE} is not supported when more
-  than one sequence name is supplied.
+  Note that \code{as.character=FALSE} is not supported yet when extracting
+  more than one sequence.
 }
 
 \note{
@@ -113,6 +114,14 @@
 
   # Get the last 20 bases of each chromosome:
   getSeq(Celegans, start=-20)
+
+  # Extracting small sequences from different chromosomes:
+  myseqs <- data.frame(
+    chr=c("chrI", "chrX", "chrM", "chrM", "chrX", "chrI", "chrM", "chrI"),
+    start=c(NA, -40, 8510, 301, 30001, 9220500, -2804, -30),
+    end=c(50, NA, 8522, 324, 30011, 9220555, -2801, -11)
+  )
+  getSeq(Celegans, myseqs$chr, myseqs$start, myseqs$end)
 
   # Get the "NM_058280_up_1000" sequence (belongs to the upstream1000
   # multiple sequence) as a character string:
