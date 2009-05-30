@@ -29,7 +29,8 @@
 setGeneric("getSeq", function(x, ...) standardGeneric("getSeq"))
 
 setMethod("getSeq", "BSgenome",
-          function(x, names, start=NA, end=NA, width=NA, as.character=TRUE)
+          function(x, names, start=NA, end=NA, width=NA, strand="+",
+                   as.character=TRUE)
 {
     if (missing(names)) {
         names <- seqnames(x)
@@ -39,12 +40,17 @@ setMethod("getSeq", "BSgenome",
         if (!is.character(names) || any(is.na(names)))
             stop("'names' must be a character vector (with no NAs)")
     }
+    if (is.factor(strand))
+        strand <- as.vector(strand)
+    if (!is.character(strand) || !all(strand %in% c("+", "-")))
+        stop("values in 'strand' must be \"+\"s or \"-\"s")
     if (!isTRUEorFALSE(as.character))
         stop("'as.character' must be TRUE or FALSE")
     l1 <- length(start)
     l2 <- length(end)
     l3 <- length(width)
-    if (l1 == 1L && l2 == 1L && l3 == 1L) {
+    l4 <- length(strand)
+    if (all(c(l1, l2, l3, l4) == 1L)) {
         if (length(names) == 0L) {
             if (as.character)
                 ans <- character()
@@ -55,10 +61,12 @@ setMethod("getSeq", "BSgenome",
         ans <- lapply(names, function(name)
                              subseq(.getOneSeq(x, name), start=start, end=end, width=width))
         ## length(ans) == length(names) >= 1L
+        if (strand == "-")
+            ans <- lapply(ans, reverseComplement)
         if (as.character)
             ## masks are removed before coercion to character vector
             return(sapply(ans, function(seq) {masks(seq) <- NULL; as.character(seq)}))
-        if (length(names) > 1L)
+        if (length(ans) > 1L)
             stop("'as.character=FALSE' is not supported yet when extracting more than one sequence")
         ## length(ans) == length(names) == 1L
         return(ans[[1L]])
@@ -67,8 +75,8 @@ setMethod("getSeq", "BSgenome",
     end <- IRanges:::.normargSEW(end, "end")
     width <- IRanges:::.normargSEW(width, "width")
     l0 <- length(names)
-    max0123 <- max(l0, l1, l2, l3)
-    if (max0123 == 0L) {
+    max01234 <- max(l0, l1, l2, l3, l4)
+    if (max01234 == 0L) {
         if (as.character)
             ans <- character()
         else
@@ -76,20 +84,23 @@ setMethod("getSeq", "BSgenome",
         return(ans)
     }
     ## Recycling will fail for vectors of length 0
-    if (l0 < max0123)
-        names <- IRanges:::recycleVector(names, max0123)
-    if (l1 < max0123)
-        start <- IRanges:::recycleVector(start, max0123)
-    if (l2 < max0123)
-        end <- IRanges:::recycleVector(end, max0123)
-    if (l3 < max0123)
-        width <- IRanges:::recycleVector(width, max0123)
+    if (l0 < max01234)
+        names <- IRanges:::recycleVector(names, max01234)
+    if (l1 < max01234)
+        start <- IRanges:::recycleVector(start, max01234)
+    if (l2 < max01234)
+        end <- IRanges:::recycleVector(end, max01234)
+    if (l3 < max01234)
+        width <- IRanges:::recycleVector(width, max01234)
+    if (l4 < max01234)
+        strand <- IRanges:::recycleVector(strand, max01234)
     if (!as.character)
         stop("'as.character=FALSE' is not supported yet when extracting more than one sequence")
-    ## The 3 lists belows have identical names (the REFSEQnames)
+    ## The 4 lists belows have identical names (the REFSEQnames)
     REFSEQnames2start <- split(start, names, drop=TRUE)
     REFSEQnames2end <- split(end, names, drop=TRUE)
     REFSEQnames2width <- split(width, names, drop=TRUE)
+    REFSEQnames2strand <- split(strand, names, drop=TRUE)
     REFSEQnames <- names(REFSEQnames2start)  # REFSEQnames has no duplicates
     if (!all(REFSEQnames %in% seqnames(x)))
         stop("the sequence names in 'names' must belong to 'seqnames(x)'")
@@ -99,6 +110,7 @@ setMethod("getSeq", "BSgenome",
         REFSEQ_start <- REFSEQnames2start[[REFSEQname]]
         REFSEQ_end <- REFSEQnames2end[[REFSEQname]]
         REFSEQ_width <- REFSEQnames2width[[REFSEQname]]
+        REFSEQ_strand <- REFSEQnames2strand[[REFSEQname]]
         nseq <- length(REFSEQ_start)
         solved_SEW <- try(solveUserSEW(rep.int(REFSEQ_length, nseq),
                                        start=REFSEQ_start,
@@ -112,7 +124,12 @@ setMethod("getSeq", "BSgenome",
         subject <- x[[REFSEQname]]
         masks(subject) <- NULL
         ## All the views are guaranteed to be within the limits of the subject
-        as.character(Views(subject, solved_SEW))
+        seqs <- as.character(Views(subject, solved_SEW))
+        ## Very inefficient, sorry! (when we have an efficient "[<-" for
+        ## XStringSet objects, we'll be able to do a much better job...)
+        ii <- REFSEQ_strand == "-"
+        seqs[ii] <- as.character(reverseComplement(DNAStringSet(seqs[ii])))
+        seqs
     }
     REFSEQnames2seqs <- lapply(REFSEQnames, extractSeqsFromREFSEQ)
     unsplit(REFSEQnames2seqs, names, drop=TRUE)

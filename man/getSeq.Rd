@@ -12,7 +12,7 @@
 }
 
 \usage{
-  \S4method{getSeq}{BSgenome}(bsgenome, names, start=NA, end=NA, width=NA, as.character=TRUE)
+  \S4method{getSeq}{BSgenome}(bsgenome, names, start=NA, end=NA, width=NA, strand="+", as.character=TRUE)
 }
 
 \arguments{
@@ -43,6 +43,9 @@
   \item{start, end, width}{
     Vector of integers (eventually with NAs).
   }
+  \item{strand}{
+    A vector containing \code{+}s or/and \code{-}s.
+  }
   \item{as.character}{
     \code{TRUE} or \code{FALSE}. Should the extracted sequences
     be returned in a standard character vector?
@@ -50,9 +53,9 @@
 }
 
 \details{
-  The \code{names}, \code{start}, \code{end} and \code{width} arguments
-  are expanded cyclically to the length of the longest provided none
-  are of zero length.
+  The \code{names}, \code{start}, \code{end}, \code{width} and \code{strand}
+  arguments are expanded cyclically to the length of the longest provided
+  none are of zero length.
 }
 
 \value{
@@ -119,9 +122,13 @@
   myseqs <- data.frame(
     chr=c("chrI", "chrX", "chrM", "chrM", "chrX", "chrI", "chrM", "chrI"),
     start=c(NA, -40, 8510, 301, 30001, 9220500, -2804, -30),
-    end=c(50, NA, 8522, 324, 30011, 9220555, -2801, -11)
+    end=c(50, NA, 8522, 324, 30011, 9220555, -2801, -11),
+    strand=c("+", "-", "+", "+", "-", "-", "+", "-")
   )
-  getSeq(Celegans, myseqs$chr, myseqs$start, myseqs$end)
+  getSeq(Celegans, myseqs$chr,
+         start=myseqs$start, end=myseqs$end)
+  getSeq(Celegans, myseqs$chr,
+         start=myseqs$start, end=myseqs$end, strand=myseqs$strand)
 
   # Get the "NM_058280_up_1000" sequence (belongs to the upstream1000
   # multiple sequence) as a character string:
