@@ -25,48 +25,6 @@ GenomeData <- function(listData = list(), providerVersion = NULL,
       elementMetadata = elementMetadata)
 }
 
-if (FALSE)
-{
-    ## instead of copying, just use IRanges:::labeledLine() for now
-
-### This stuff copy/pasted from IRanges, should go in utils package
-ellipsize <- function(obj, width = getOption("width"), sep = " ",
-                      ellipsis = "...")
-{
-  str <- encodeString(obj)
-  ## get order selectSome() would print
-  half <- seq_len(ceiling(length(obj) / 2))
-  ind <- t(cbind(half, length(obj) - half + 1))[seq_along(obj)]
-  nc <- cumsum(nchar(str[ind]) + nchar(sep)) - nchar(sep)
-  last <- findInterval(width, nc)
-  if (length(obj) > last) {
-    ## make sure ellipsis fits
-    while (last && (nc[last] + nchar(sep)*2^(last>1) + nchar(ellipsis)) > width)
-      last <- last - 1
-    if (last == 0) ## have to truncate the first element
-      str <- paste(substring(str[1], 1, width - nchar(ellipsis)), ellipsis,
-                   sep = "")
-    else if (last == 1) ## can only show the first
-      str <- c(str[1], "...")
-    else str <- selectSome(str, last+1)
-  }
-  paste(str, collapse = sep)
-}
-
-labeledLine <- function(label, els, count = TRUE, sep = " ", ellipsis = "...") {
-  if (count)
-    label <- paste(label, "(", length(els), ")", sep = "")
-  label <- paste(label, ": ", sep = "")
-  width <- getOption("width") - nchar(label)
-  line <- ellipsize(els, width, sep, ellipsis)
-  paste(label, line, "\n", sep = "")
-}
-
-### End copy/paste
-
-}
-
-
 setMethod("show", "GenomeData", function(object) {
   cat("A GenomeData instance")
   if (!is.null(organism(object)))
@@ -190,4 +148,13 @@ setAs("GenomeDataList", "data.frame",
           ans
       })
 
-
+## seems common to store Ranges inside GenomeData, so tie into IRanges here
+setAs("GenomeData", "RangesList", function(from) {
+  do.call("RangesList",
+          c(lapply(from, as, "Ranges"), universe = providerVersion(from)))
+})
+setAs("GenomeData", "RangedData", function(from) {
+  ans <- do.call("c", lapply(from, as, "RangedData"))
+  universe(ans) <- providerVersion(from)
+  ans
+})
