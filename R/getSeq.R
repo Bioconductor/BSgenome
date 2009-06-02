@@ -37,6 +37,22 @@ setMethod("getSeq", "BSgenome",
     } else {
         if (is.factor(names))
             names <- as.vector(names)
+        if (is(names, "RangedData")) {
+            if (!missing(strand))
+                warning("'strand' ignored when 'names' is a RangedData")
+            tmp_strand <- names$strand
+            if (!is.null(tmp_strand))
+                strand <- tmp_strand
+            names <- ranges(names)
+        }
+        if (is(names, "RangesList")) {
+            if (!missing(start) || !missing(end) || !missing(width))
+                warning("'start', 'end', and 'width' ignored when ",
+                        "'names' is a RangesList or RangedData object")
+            start <- start(names)
+            width <- width(names)
+            names <- space(names)
+        }
         if (!is.character(names) || any(is.na(names)))
             stop("'names' must be a character vector (with no NAs)")
     }

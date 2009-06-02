@@ -22,9 +22,10 @@
     a genome.
   }
   \item{names}{
-    The names of the sequences to extract from \code{bsgenome}.
+    The names of the sequences to extract from \code{bsgenome}, or a
+    \code{RangedData} or \code{RangesList} object.
     If missing, then \code{seqnames(bsgenome)} is used.
-
+    
     See \code{?\link{seqnames}} and \code{?\link{mseqnames}} to get
     the list of single sequences and multiple sequences (respectively)
     contained in \code{bsgenome}.
@@ -39,12 +40,24 @@
     expression and \code{\link[base]{grep}} is used for this search.
     If exactly one sequence is found, then it's returned, otherwise an
     error is raised.
+
+    If \code{names} is a \code{RangedData} or \code{RangesList}, the
+    \code{space}, \code{start}, and \code{width} are extracted and
+    treated as the \code{names}, \code{start} and \code{width}
+    arguments, respectively. In the case of a \code{RangedData}, the
+    \dQuote{strand} column, if any, is extracted and overrides the
+    \code{strand} argument. If there is no \dQuote{strand} column, all
+    features are assumed to be on the positive strand. A warning is
+    emitted if any of the overridden arguments is passed to the
+    function.
   }
   \item{start, end, width}{
-    Vector of integers (eventually with NAs).
+    Vector of integers (eventually with NAs). Overridden if \code{names}
+    is a \code{RangedData} or \code{RangesList}.
   }
   \item{strand}{
-    A vector containing \code{+}s or/and \code{-}s.
+    A vector containing \code{+}s or/and \code{-}s. Overridden if
+    \code{names} is a \code{RangedData}.
   }
   \item{as.character}{
     \code{TRUE} or \code{FALSE}. Should the extracted sequences
@@ -81,7 +94,7 @@
   one sequence at a time for now.
 }
 
-\author{H. Pages; improvements suggested by Matt Settles}
+\author{H. Pages; improvements suggested by Matt Settles and others}
 
 \seealso{
   \code{\link{available.genomes}},
