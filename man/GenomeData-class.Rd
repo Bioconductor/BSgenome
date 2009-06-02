@@ -18,6 +18,8 @@
 
 % Coercion:
 \alias{coerce,GenomeData,data.frame-method}
+\alias{coerce,GenomeData,RangesList-method}
+\alias{coerce,GenomeData,RangedData-method}
 
 \title{Data on the genome}
 \description{\code{GenomeData} formally represents genomic data as a
@@ -83,6 +85,18 @@
     \item{}{\code{as(from, "data.frame")}: Coerces each subelement to a
       data frame, and binds them into a single data frame with an
       additional column indicating chromosome
+    }
+    \item{}{\code{as(from, "RangesList")}: Coerces each subelement to a
+      \code{\linkS4class{Ranges}} and combines them into a
+      \code{\linkS4class{RangesList}} with the same names. The
+      \dQuote{universe} metadata property is set to the
+      \code{providerVersion} of \code{from}.
+    }
+    \item{}{\code{as(from, "RangedData")}: Coerces each subelement to a
+      \code{\linkS4class{RangedData}} and combines them into a single
+      \code{RangedData} with the same names. The
+      \dQuote{universe} metadata property is set to the
+      \code{providerVersion} of \code{from}.
     }
   }
 }
