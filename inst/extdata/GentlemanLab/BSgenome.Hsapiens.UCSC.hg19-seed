@@ -1,0 +1,26 @@
+Package: BSgenome.Hsapiens.UCSC.hg19
+Title: Homo sapiens full genome (UCSC version hg19)
+Description: Homo sapiens full genome as provided by UCSC (hg19, Feb. 2009) and stored in Biostrings objects.
+Version: 1.3.13
+organism: Homo sapiens
+species: Human
+provider: UCSC
+provider_version: hg19
+release_date: Feb. 2009
+release_name: Genome Reference Consortium GRCh37
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/
+organism_biocview: Homo_sapiens
+BSgenomeObjname: Hsapiens
+seqnames: paste("chr", c(1:22, "X", "Y", "M", "1_gl000191_random", "1_gl000192_random", "4_ctg9_hap1", "4_gl000193_random", "4_gl000194_random", "6_apd_hap1", "6_cox_hap2", "6_dbb_hap3", "6_mann_hap4", "6_mcf_hap5", "6_qbl_hap6", "6_ssto_hap7", "7_gl000195_random" , "8_gl000196_random", "8_gl000197_random", "9_gl000198_random", "9_gl000199_random", "9_gl000200_random", "9_gl000201_random", "11_gl000202_random", "17_ctg5_hap1", "17_gl000203_random", "17_gl000204_random", "17_gl000205_random", "17_gl000206_random", "18_gl000207_random", "19_gl000208_random", "19_gl000209_random", "21_gl000210_random", paste("Un_gl000", 211:249, sep="")), sep="")
+mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
+nmask_per_seq: 4
+SrcDataFiles1: sequences: chromFa.zip, upstream1000.zip, upstream2000.zip, upstream5000.zip
+	from http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/
+SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromTrf.tar.gz
+PkgExamples: Hsapiens
+	seqlengths(Hsapiens)
+	Hsapiens$chr1  # same as Hsapiens[["chr1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg19/seqs
+masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg19/masks

@@ -19,6 +19,7 @@ pkgs <- c(
   "BSgenome.Ggallus.UCSC.galGal3",
   "BSgenome.Hsapiens.UCSC.hg17",
   "BSgenome.Hsapiens.UCSC.hg18",
+  "BSgenome.Hsapiens.UCSC.hg19",
   "BSgenome.Mmusculus.UCSC.mm8",
   "BSgenome.Mmusculus.UCSC.mm9",
   "BSgenome.Ptroglodytes.UCSC.panTro2",
