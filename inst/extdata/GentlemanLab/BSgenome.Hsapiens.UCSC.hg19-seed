@@ -24,3 +24,4 @@ PkgExamples: Hsapiens
 	Hsapiens$chr1  # same as Hsapiens[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg19/seqs
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg19/masks
+AGAPSfiles_name: gap.txt
