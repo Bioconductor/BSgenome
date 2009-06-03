@@ -1,7 +1,7 @@
 Package: BSgenome.Ggallus.UCSC.galGal3
 Title: Gallus gallus (Chicken) full genome (UCSC version galGal3)
 Description: Gallus gallus (Chicken) full genome as provided by UCSC (galGal3, May 2006) and stored in Biostrings objects.
-Version: 1.3.11
+Version: 1.3.13
 organism: Gallus gallus
 species: Chicken
 provider: UCSC

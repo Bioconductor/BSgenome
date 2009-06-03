@@ -1,7 +1,7 @@
 Package: BSgenome.Btaurus.UCSC.bosTau3
 Title: Bos taurus (Cow) full genome (UCSC version bosTau3)
 Description: Bos taurus (Cow) full genome as provided by UCSC (bosTau3, Aug. 2006) and stored in Biostrings objects.
-Version: 1.3.12
+Version: 1.3.13
 organism: Bos taurus
 species: Cow
 provider: UCSC

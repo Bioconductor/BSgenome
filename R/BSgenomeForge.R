@@ -411,7 +411,7 @@ setClass(
         RMfiles_suffix=".fa.out",
         TRFfiles_name=as.character(NA),
         TRFfiles_prefix="",
-        TRFfiles_suffix=".fa.out"
+        TRFfiles_suffix=".bed"
     )
 )   
 

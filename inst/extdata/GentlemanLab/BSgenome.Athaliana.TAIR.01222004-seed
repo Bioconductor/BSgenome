@@ -1,7 +1,7 @@
 Package: BSgenome.Athaliana.TAIR.01222004
 Title: Arabidopsis thaliana full genome (TAIR version from January 22, 2004)
 Description: Arabidopsis thaliana full genome as provided by TAIR (snapshot from January 22, 2004) and stored in Biostrings objects.
-Version: 1.3.11
+Version: 1.3.13
 organism: Arabidopsis thaliana
 species: Arabidopsis
 provider: TAIR
