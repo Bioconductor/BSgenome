@@ -12,28 +12,30 @@
 }
 
 \usage{
-  \S4method{getSeq}{BSgenome}(bsgenome, names, start=NA, end=NA, width=NA, strand="+", as.character=TRUE)
+  getSeq(x, ...)
+
+  \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA, strand="+", as.character=TRUE)
 }
 
 \arguments{
-  \item{bsgenome}{
+  \item{x}{
     A \link{BSgenome} object.
     See the \code{\link{available.genomes}} function for how to install
     a genome.
   }
   \item{names}{
-    The names of the sequences to extract from \code{bsgenome}, or a
+    The names of the sequences to extract from \code{x}, or a
     \code{RangedData} or \code{RangesList} object.
-    If missing, then \code{seqnames(bsgenome)} is used.
+    If missing, then \code{seqnames(x)} is used.
     
     See \code{?\link{seqnames}} and \code{?\link{mseqnames}} to get
     the list of single sequences and multiple sequences (respectively)
-    contained in \code{bsgenome}.
+    contained in \code{x}.
 
     Here is how the lookup between the names passed to the \code{names}
-    argument and the sequences in \code{bsgenome} is performed.
+    argument and the sequences in \code{x} is performed.
     For each \code{name} in \code{names}:
-    (1) if \code{bsgenome} contains a single sequence with that name
+    (1) if \code{x} contains a single sequence with that name
     then this sequence is returned;
     (2) otherwise the names of all the elements in all the multiple
     sequences are searched: \code{name} is treated as a regular
