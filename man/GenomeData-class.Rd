@@ -21,6 +21,9 @@
 \alias{coerce,GenomeData,RangesList-method}
 \alias{coerce,GenomeData,RangedData-method}
 
+% Reduction
+\alias{gdreduce,GenomeData-method}
+
 \title{Data on the genome}
 \description{\code{GenomeData} formally represents genomic data as a
   list, with one element per chromosome in the genome.} 
@@ -98,6 +101,25 @@
       \dQuote{universe} metadata property is set to the
       \code{providerVersion} of \code{from}.
     }
+  }
+}
+
+\section{Reduction}{
+  \describe{
+	\item{}{\code{gdreduce(f, ..., init, right=FALSE, accumulate=FALSE, gdArgs=list())}:
+
+	  Successively combine \code{\linkS4class{GenomeData}} elements of
+	  \code{...} using \code{f}; all arguments assigned to \code{...}
+	  must be of class \code{GenomeData}. \code{f} is a function
+	  accepting two objects returned by \code{"[["} applied to the
+	  succesive elements of \code{...}, returning a single
+	  \code{GenomeData} object to be used in subsequent calls to
+	  \code{f}. \code{init}, \code{right}, and \code{accumulate} are as
+	  described for \code{\link{Reduce}}.
+	  \code{gdArgs} can be used to provide metadata information to the
+	  contructor used to create the final \code{GenomeData} object.
+
+	}
   }
 }
 

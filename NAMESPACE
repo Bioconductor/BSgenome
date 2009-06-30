@@ -17,7 +17,7 @@ export(
     BSgenome,
     available.SNPs,
     bsapply,
-    GenomeData, GenomeDataList,
+    GenomeData, GenomeDataList, gdreduce,
        
     ## Generic functions:
     organism, species,

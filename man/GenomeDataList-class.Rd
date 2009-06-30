@@ -9,6 +9,9 @@
 % Coercion:
 \alias{coerce,GenomeDataList,data.frame-method}
 
+% Reduction
+\alias{gdreduce,GenomeDataList-method}
+
 \title{List of GenomeData objects}
 \description{\code{GenomeDataList} is a list of
   \code{\linkS4class{GenomeData}} objects. It could be useful for
@@ -46,6 +49,25 @@
   }
 }
 
+\section{Reduction}{
+  \describe{
+	\item{}{\code{gdreduce(f, ..., init, right=FALSE, accumulate=FALSE, gdArgs=list())}:
+	  
+	  Currently this method works when a single \code{GenomeDataList} is
+	  provided as \code{...}. It successively combines the
+	  \code{\linkS4class{GenomeData}} elements in the
+	  \code{GenomeDataList} using \code{f}. \code{f} is a function
+	  accepting two objects returned by \code{"[["} applied to the
+	  succesive \code{GenomeData} elements of \code{...}, returning a
+	  single \code{GenomeData} object to be used in subsequent calls to
+	  \code{f}. \code{init}, \code{right}, and \code{accumulate} are as
+	  described for \code{\link{Reduce}}.  \code{gdArgs} can be used to
+	  provide metadata information to the contructor used to create the
+	  final \code{GenomeData} object.
+  
+	}
+  }
+}
 
 \author{ Michael Lawrence }
 
@@ -60,6 +82,13 @@ gd <- GenomeData(list(chr1 = IRanges(1, 10), chrX = IRanges(2, 5)),
                  providerVersion = "mm9")
 gdl <- GenomeDataList(list(gd), elementMetadata = DataFrame(induced = TRUE))
 gdl[[1]] # get first element
+
+gdr <- gdreduce(function(x, y) {
+    ## "[[" returns IRanges instances, construct a synthetic version
+    IRanges(c(start(x), start(y)), c(end(x), end(y)))
+}, GenomeDataList(list(gd, gd[2])))
+gdr[["chr1"]]
+gdr[["chrX"]]
 }
 
 \keyword{methods}
