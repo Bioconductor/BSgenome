@@ -12,8 +12,11 @@ setMethod("providerVersion", "GenomeData",
 setMethod("organism", "GenomeData", function(x) metadata(x)$organism)
 setMethod("provider", "GenomeData", function(x) metadata(x)$provider)
 
-GenomeData <- function(listData = list(), providerVersion = NULL,
-                       organism = NULL, provider = NULL, metadata = list(),
+GenomeData <- function(listData = list(),
+                       providerVersion = metadata[["providerVersion"]],
+                       organism = metadata[["organism"]],
+                       provider = metadata[["provider"]],
+                       metadata = list(),
                        elementMetadata = NULL, ...)
 {
   if (!is.list(metadata))

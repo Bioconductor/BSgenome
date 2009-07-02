@@ -3,8 +3,6 @@
 
 \alias{GenomeData-class}
 
-
-
 % Accessors:
 \alias{provider,GenomeData-method}
 \alias{organism,GenomeData-method}
@@ -66,9 +64,12 @@
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomeData(listData = list(), providerVersion = NULL,
-        organism = NULL, provider = NULL, metadata = list(),
-        elementMetadata = NULL, ...)}:
+      \code{GenomeData(listData = list(),
+                       providerVersion = metadata[["providerVersion"]],
+                       organism = metadata[["organism"]],
+                       provider = metadata[["provider"]],
+                       metadata = list(),
+                       elementMetadata = NULL, ...)}:
       Creates a \code{GenomeData} with the elements from the
       \code{listData} parameter, a list. The other arguments correspond to
       the metadata fields, and, with the exception of \code{elementMetadata},
