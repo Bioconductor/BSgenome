@@ -24,7 +24,7 @@ gdreduce(f, ..., init, right = FALSE, accumulate = FALSE, gdArgs = list())
   }
   \item{\dots}{
 	Objects to be reduced. All objects should be of the same class, as
-	dicteated by methods defined on \code{gdreduce}
+	dictated by methods defined on \code{gdreduce}
     A function to be applied to each chromosome-level sub-element of
     \code{X}.
   }
