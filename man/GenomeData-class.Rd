@@ -113,12 +113,12 @@
 	  \code{...} using \code{f}; all arguments assigned to \code{...}
 	  must be of class \code{GenomeData}. \code{f} is a function
 	  accepting two objects returned by \code{"[["} applied to the
-	  succesive elements of \code{...}, returning a single
+	  successive elements of \code{...}, returning a single
 	  \code{GenomeData} object to be used in subsequent calls to
 	  \code{f}. \code{init}, \code{right}, and \code{accumulate} are as
 	  described for \code{\link{Reduce}}.
 	  \code{gdArgs} can be used to provide metadata information to the
-	  contructor used to create the final \code{GenomeData} object.
+	  constructor used to create the final \code{GenomeData} object.
 
 	}
   }
