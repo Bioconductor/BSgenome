@@ -79,7 +79,6 @@ GenomeDataList <- function(listData = list(), metadata = list(),
 }
 
 ## An apply-type function for working with GenomeData and GenomeDataList objects:
-
 gdApply <- function(...) 
 {
     .Deprecated("gdapply",
@@ -96,13 +95,7 @@ setGeneric("gdapply",
 setMethod("gdapply",
           signature(X = "GenomeDataList", FUN = "function"),
           function(X, FUN, ...) {
-              NX <- length(X)
-              new.elements <- vector(mode = "list", length = NX)
-              names(new.elements) <- names(X)
-              for (i in seq_len(NX))
-              {
-                  new.elements[[i]] <- gdapply(X[[i]], FUN, ...)
-              }
+              new.elements <- lapply(X, gdapply, FUN, ...)
               cls <- lapply(new.elements, class)
               ucl <- unique(unlist(cls))
               if (identical(ucl, "GenomeData"))
@@ -113,13 +106,7 @@ setMethod("gdapply",
 setMethod("gdapply",
           signature(X = "GenomeData", FUN = "function"),
           function(X, FUN, ...) {
-              NX <- length(X)
-              new.elements <- vector(mode = "list", length = NX)
-              names(new.elements) <- names(X)
-              for (i in seq_len(NX))
-              {
-                  new.elements[[i]] <- FUN(X[[i]], ...)
-              }
+              new.elements <- lapply(X, FUN, ...)
               cls <- lapply(new.elements, class)
               ucl <- unique(unlist(cls))
               if (length(ucl) == 1)
@@ -127,6 +114,7 @@ setMethod("gdapply",
               else new.elements
           })
 
+## coersion to data.frame methods
 setAs("GenomeData", "data.frame",
       function(from) {
           ans <- 
@@ -156,6 +144,7 @@ setAs("GenomeData", "RangesList", function(from) {
   do.call("RangesList",
           c(lapply(from, as, "Ranges"), universe = providerVersion(from)))
 })
+
 setAs("GenomeData", "RangedData", function(from) {
   ans <- do.call("c", lapply(from, as, "RangedData"))
   universe(ans) <- providerVersion(from)
