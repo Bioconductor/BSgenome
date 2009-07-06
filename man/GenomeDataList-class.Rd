@@ -58,11 +58,11 @@
 	  \code{\linkS4class{GenomeData}} elements in the
 	  \code{GenomeDataList} using \code{f}. \code{f} is a function
 	  accepting two objects returned by \code{"[["} applied to the
-	  succesive \code{GenomeData} elements of \code{...}, returning a
+	  successive \code{GenomeData} elements of \code{...}, returning a
 	  single \code{GenomeData} object to be used in subsequent calls to
 	  \code{f}. \code{init}, \code{right}, and \code{accumulate} are as
 	  described for \code{\link{Reduce}}.  \code{gdArgs} can be used to
-	  provide metadata information to the contructor used to create the
+	  provide metadata information to the constructor used to create the
 	  final \code{GenomeData} object.
   
 	}
