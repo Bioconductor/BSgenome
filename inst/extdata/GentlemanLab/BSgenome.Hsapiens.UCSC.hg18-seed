@@ -1,6 +1,6 @@
 Package: BSgenome.Hsapiens.UCSC.hg18
-Title: Homo sapiens full genome (UCSC version hg18)
-Description: Homo sapiens full genome as provided by UCSC (hg18, Mar. 2006) and stored in Biostrings objects.
+Title: Homo sapiens (Human) full genome (UCSC version hg18)
+Description: Homo sapiens (Human) full genome as provided by UCSC (hg18, Mar. 2006) and stored in Biostrings objects.
 Version: 1.3.13
 organism: Homo sapiens
 species: Human
