@@ -65,6 +65,8 @@
     \code{TRUE} or \code{FALSE}. Should the extracted sequences
     be returned in a standard character vector?
   }
+
+  \item{...}{Additional arguments. (Currently ignored.)}
 }
 
 \details{
