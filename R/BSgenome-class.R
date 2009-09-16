@@ -69,7 +69,14 @@ setClass("BSgenome",
         stop("the serialized object in file '", filepath, "' ",
              "doesn't have the expected name. ",
              "May be the ", objpkgname, " package is corrupted?")
-    get(objname, envir=tmp_env)
+    ans <- get(objname, envir=tmp_env)
+    ## TODO: This is temporary code to make temporarily broken BSgenome
+    ## data packages work despite the big internal renaming I made in
+    ## IRanges >= 1.3.76. Remove it after all the BSgenome data packages
+    ## have been reforged.
+    if (is(ans, "XString") || is(ans, "XStringSet"))
+        ans <- Biostrings:::replace.xdata.with.shared(ans)
+    return(ans)
 }
 
 ### Return a new link to a cached object.
@@ -105,7 +112,7 @@ setGeneric(".linkToCachedObject<-", signature="x",
     function(x, value) standardGeneric(".linkToCachedObject<-")
 )
 
-setReplaceMethod(".linkToCachedObject", "SequencePtr",
+setReplaceMethod(".linkToCachedObject", "SharedVector",
     function(x, value)
     {
         x@.link_to_cached_object <- value
@@ -116,7 +123,7 @@ setReplaceMethod(".linkToCachedObject", "SequencePtr",
 setReplaceMethod(".linkToCachedObject", "XString",
     function(x, value)
     {
-        .linkToCachedObject(x@xdata) <- value
+        .linkToCachedObject(x@shared) <- value
         x
     }
 )
