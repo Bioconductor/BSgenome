@@ -7,28 +7,31 @@
 
 \description{
    A convenience function for extracting a set of sequences (or
-   subsequences) from a \link{BSgenome} or other object. This man page
-   specifically documents the \link{BSgenome} method.
+   subsequences) from a \link[BSgenome:BSgenome-class]{BSgenome} or
+   other object. This man page 
+   specifically documents the \link[BSgenome:BSgenome-class]{BSgenome} method.
 }
 
 \usage{
   getSeq(x, ...)
 
-  \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA, strand="+", as.character=TRUE)
+  \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA,
+                strand="+", as.character=TRUE) 
 }
 
 \arguments{
   \item{x}{
-    A \link{BSgenome} object.
-    See the \code{\link{available.genomes}} function for how to install
-    a genome.
+    A \code{\link[BSgenome:BSgenome-class]{BSgenome}} object.
+    See the \code{\link[BSgenome]{available.genomes}} function for how
+    to install a genome.
   }
   \item{names}{
     The names of the sequences to extract from \code{x}, or a
     \code{RangedData} or \code{RangesList} object.
     If missing, then \code{seqnames(x)} is used.
     
-    See \code{?\link{seqnames}} and \code{?\link{mseqnames}} to get
+    See \code{?\link[BSgenome:BSgenome-class]{seqnames}} and
+    \code{?\link[BSgenome:BSgenome-class]{mseqnames}} to get 
     the list of single sequences and multiple sequences (respectively)
     contained in \code{x}.
 
@@ -82,7 +85,8 @@
   (i.e. dropped) if any (see \code{?`\link[Biostrings]{MaskedXString-class}`}
   for more information about masked sequences).
 
-  A \link[Biostrings]{DNAString} or \link[Biostrings]{MaskedDNAString}
+  A \link[Biostrings:DNAString-class]{DNAString} or
+  \link[Biostrings:MaskedXString-class]{MaskedDNAString} 
   object when \code{as.character=FALSE}.
   Note that \code{as.character=FALSE} is not supported yet when extracting
   more than one sequence.
@@ -101,15 +105,16 @@
 \author{H. Pages; improvements suggested by Matt Settles and others}
 
 \seealso{
-  \code{\link{available.genomes}},
-  \link{BSgenome-class},
-  \code{\link{seqnames}},
-  \code{\link{mseqnames}},
+  \code{\link[BSgenome]{available.genomes}},
+  \code{\link[BSgenome]{BSgenome-class}},
+  \code{\link[BSgenome:BSgenome-class]{seqnames}},
+  \code{\link[BSgenome:BSgenome-class]{mseqnames}},
   \code{\link[base]{grep}},
-  \code{\link[IRanges]{subseq}},
-  \code{\link[Biostrings]{DNAString}},
-  \code{\link[Biostrings]{MaskedDNAString}},
-  \code{\link{[[,BSgenome-method}}
+  \code{\link[IRanges:DataTable-class]{subseq,DataTable}},
+  \code{\link[IRanges:Sequence-class]{subseq,Sequence}},
+  \code{\link[Biostrings:DNAString-class]{DNAString}},
+  \code{\link[Biostrings:MaskedXString-class]{MaskedDNAString}},
+  \code{\link[BSgenome:BSgenome-class]{[[,BSgenome-method}}
 }
 
 \examples{

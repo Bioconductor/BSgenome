@@ -127,8 +127,8 @@
 \author{ Michael Lawrence }
 
 \seealso{
-  \linkS4class{GenomeDataList}, a container of this class and useful for
-  storing data on multiple samples.
+  \link[BSgenome:GenomeDataList-class]{GenomeDataList}, a container of
+  this class and useful for storing data on multiple samples.
 
   \linkS4class{SimpleList}, the base of this class.
 }

@@ -53,7 +53,7 @@ Objects can be created by calls of the form \code{new("BSParams", ...)}.
 \author{Marc Carlson}
 
 \seealso{
-  \code{\link{bsapply}}
+  \code{\link[BSgenome]{bsapply}}
 }
 
 \keyword{classes}

@@ -34,7 +34,7 @@
     \code{"mac.binary"} or \code{"win.binary"}) to look for.
   }
   \item{x}{
-    A \link{BSgenome} object.
+    A \link[BSgenome:BSgenome-class]{BSgenome} object.
   }
   \item{SNPlocs_pkgname}{
     The name of a SNPlocs data package containing SNP information for the
@@ -59,8 +59,9 @@
 
   \code{SNPlocs_pkgname}, \code{SNPcount} and \code{SNPlocs} return \code{NULL}
   if no SNPs were injected in \code{x} (i.e. if \code{x} is not a
-  \link{BSgenome} object returned by a previous call to \code{injectSNPs}).
-  Otherwise \code{SNPlocs_pkgname} returns the name of the package from which the
+  \link[BSgenome:BSgenome-class]{BSgenome} object returned by a previous
+  call to \code{injectSNPs}). Otherwise \code{SNPlocs_pkgname} returns
+  the name of the package from  which the 
   SNPs were injected, \code{SNPcount} the number of SNPs for each altered
   sequence in \code{x}, and \code{SNPlocs} their locations in the sequence
   whose name is specified by \code{seqname}.
@@ -75,8 +76,8 @@
 \author{H. Pages}
 
 \seealso{
-  \link{BSgenome-class},
-  \code{\link[Biostrings]{.inplaceReplaceLetterAt}}
+  \link[BSgenome]{BSgenome-class},
+  \code{\link[Biostrings:replaceLetterAt]{.inplaceReplaceLetterAt}}
 }
 
 \examples{

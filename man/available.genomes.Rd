@@ -28,7 +28,8 @@
   the genome and the 4th part is the release string or number used by this
   organisation for this genome.
   A BSgenome data package contains a single top-level object (a
-  \link{BSgenome} object) named like the second part of the package name
+  \link[BSgenome:BSgenome-class]{BSgenome} object) named like the second
+  part of the package name 
   (e.g. Celegans in the case of BSgenome.Celegans.UCSC.ce2) where all the
   sequences for this genome are stored.
 }
@@ -41,8 +42,8 @@
 \author{H. Pages}
 
 \seealso{
-  \link{BSgenome-class},
-  \code{\link[utils]{available.packages}}
+  \link[BSgenome]{BSgenome-class},
+  \code{\link[utils:update.packages]{available.packages}}
 }
 
 \examples{

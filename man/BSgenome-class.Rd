@@ -41,65 +41,65 @@
   In the code snippets below,
   \code{x} is a BSgenome object
   and \code{name} is the name of a sequence (character-string).
-  Note that, because the BSgenome class contains the \link{GenomeDescription}
-  class, then all the accessor methods for \link{GenomeDescription} objects
-  can also be used on \code{x}.
+  Note that, because the BSgenome class contains the
+  \code{\link[BSgenome:GenomeDescription-class]{GenomeDescription}} class, then
+  all the accessor methods for
+  \code{\link[BSgenome:GenomeDescription-class]{GenomeDescription}} 
+  objects can also be used on \code{x}.
 
   \describe{
-    \item{}{
-      \code{sourceUrl(x)}:
+    \item{\code{sourceUrl(x)}}{
       Return the source URL i.e. the permanent URL to the place where the
       FASTA files used to produce the sequences contained in \code{x} can
       be found (and downloaded).
     }
-    \item{}{
-      \code{seqnames(x)}:
+    \item{\code{seqnames(x)}}{
       Return the index of the single sequences contained in \code{x}.
-      Each single sequence is stored in an \link[Biostrings]{XString}
-      or \link[Biostrings]{MaskedXString} object and typically comes
+      Each single sequence is stored in an
+      \code{\link[Biostrings:XString-class]{XString}} 
+      or \code{\link[Biostrings:MaskedXString-class]{MaskedXString}} object and
+      typically comes 
       from a source file (FASTA) with a single record.
       The names returned by \code{seqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
       removed in order to keep them as short as possible.
     }
-    \item{}{
-      \code{seqlengths(x)}:
+    \item{\code{seqlengths(x)}}{
       Return the lengths of the single sequences contained in \code{x}.
 
-      See \code{?`\link[Biostrings]{length,XString-method}`} and
-      \code{?`\link[Biostrings]{length,MaskedXString-method}`} for
-      the definition of the length of an \link[Biostrings]{XString}
-      or \link[Biostrings]{MaskedXString} object.
-      Note that the length of a masked sequence (\link[Biostrings]{MaskedXString}
-      object) is not affected by the current set of active masks
-      but the \code{nchar} method for \link[Biostrings]{MaskedXString}
-      is.
+      See \code{?`\link[Biostrings:XString-class]{length}`} and
+      \code{?`\link[Biostrings:MaskedXString-class]{length}`} for
+      the definition of the length of an
+      \code{\link[Biostrings:XString-class]{XString}} 
+      or \code{\link[Biostrings:MaskedXString-class]{MaskedXString}} object.
+      Note that the length of a masked sequence
+      (\code{\link[Biostrings]{MaskedXString-class}} object) is not
+      affected by the 
+      current set of active masks but the \code{nchar} method for
+      \code{\link[Biostrings]{MaskedXString-class}} is.
 
       \code{names(seqlengths(x))} is guaranteed to be identical to
       \code{seqnames(x)}.
     }
-    \item{}{
-      \code{mseqnames(x)}:
+    \item{\code{mseqnames(x)}}{
       Return the index of the multiple sequences contained in \code{x}.
-      Each multiple sequence is stored in an \link[Biostrings]{XStringSet}
+      Each multiple sequence is stored in an
+      \code{\link[Biostrings]{XStringSet-class}}
       object and typically comes from a source file (FASTA) with multiple
       records.
       The names returned by \code{mseqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
       removed in order to keep them as short as possible.
     }
-    \item{}{
-      \code{names(x)}:
+    \item{\code{names(x)}}{
       Return the index of all sequences contained in \code{x}.
       This is the same as \code{c(seqnames(x), mseqnames(x))}.
     }
-    \item{}{
-      \code{length(x)}:
+    \item{\code{length(x)}}{
       Return the length of \code{x}, i.e., the number of all sequences
       that it contains. This is the same as \code{length(names(x))}.
     }
-    \item{}{
-      \code{x[[name]]}:
+    \item{\code{x[[name]]}}{
       Return sequence (single or multiple) named \code{name}.
       No sequence is actually loaded into memory until this is explicitely
       requested with a call to \code{x[[name]]} or \code{x$name}.
@@ -109,24 +109,26 @@
       in the cache). With \code{options(verbose=TRUE)}, a message is printed
       each time a sequence is removed from the cache. 
     }
-    \item{}{
-      \code{x$name}:
+    \item{\code{x$name}}{
       Same as \code{x[[name]]} but \code{name} is not evaluated and
       therefore must be a literal character string or a name (possibly
       backtick quoted).
     }
-    \item{}{
-      \code{masknames(x)}:
+    \item{\code{masknames(x)}}{
       The names of the built-in masks that are defined for all the single
       sequences. There can be up to 4 built-in masks per sequence. These will
       always be (in this order):
       (1) the mask of assembly gaps, aka "the AGAPS mask";
+      
       (2) the mask of intra-contig ambiguities, aka "the AMB mask";
+      
       (3) the mask of repeat regions that were determined by the RepeatMasker
-          software, aka "the RM mask";
+      software, aka "the RM mask";
+      
       (4) the mask of repeat regions that were determined by the Tandem Repeats
           Finder software (where only repeats with period less than or equal to
           12 were kept), aka "the TRF mask".
+	  
       All the single sequences in a given package are guaranteed to have the
       same collection of built-in masks (same number of masks and in the same
       order).
@@ -141,7 +143,7 @@
       extract the built-in masks.
       For example, if you've installed the BSgenome.Hsapiens.UCSC.hg18 package,
       load it and see the Note section in
-      \code{?`\link[BSgenome.Hsapiens.UCSC.hg18]{BSgenome.Hsapiens.UCSC.hg18}`}.
+      \code{?`\link[BSgenome.Hsapiens.UCSC.hg18:package]{BSgenome.Hsapiens.UCSC.hg18}`}.
     }
   }
 }
@@ -149,17 +151,18 @@
 \author{H. Pages}
 
 \seealso{
-  \code{\link{available.genomes}},
-  \link{GenomeDescription-class},
-  \link[Biostrings]{XString-class},
-  \link[Biostrings]{MaskedXString-class},
-  \link[Biostrings]{XStringSet-class},
-  \code{\link{injectSNPs}},
-  \code{\link[IRanges]{subseq}},
-  \code{\link{getSeq}},
+  \code{\link[BSgenome]{available.genomes}},
+  \code{\link[BSgenome]{GenomeDescription-class}},
+  \code{\link[Biostrings]{XString-class}},
+  \code{\link[Biostrings]{MaskedXString-class}},
+  \code{\link[Biostrings]{XStringSet-class}},
+  \code{\link[BSgenome]{injectSNPs}},
+  \code{\link[IRanges:DataTable-class]{subseq,DataTable}},
+  \code{\link[IRanges:Sequence-class]{subseq,Sequence}},
+  \code{\link[BSgenome]{getSeq}},
   \code{\link[Biostrings]{matchPattern}},
-  \code{\link{rm}},
-  \code{\link{gc}}
+  \code{\link[base]{rm}},
+  \code{\link[base]{gc}}
 }
 
 \examples{
