@@ -75,7 +75,7 @@ setClass("BSgenome",
     ## IRanges >= 1.3.76. Remove it after all the BSgenome data packages
     ## have been reforged.
     if (is(ans, "XString") || is(ans, "XStringSet"))
-        ans <- Biostrings:::replace.xdata.with.shared(ans)
+        ans <- updateObject(ans)
     return(ans)
 }
 
@@ -139,7 +139,10 @@ setReplaceMethod(".linkToCachedObject", "MaskedXString",
 setReplaceMethod(".linkToCachedObject", "XStringSet",
     function(x, value)
     {
-        .linkToCachedObject(x@super) <- value
+        ### This means that an XStringSet object with a "pool" slot of
+        ### length != 1 will be permanently cached.
+        if (length(x@pool) == 1L)
+            x@pool@.link_to_cached_object_list[[1L]] <- value
         x
     }
 )
@@ -409,8 +412,10 @@ setMethod("show", "BSgenome",
         assign(name, ans, envir=seqs_cache)
     }
     ans <- get(name, envir=seqs_cache)
-    .linkToCachedObject(ans) <- .newLinkToCachedObject(name, seqs_cache,
-                                                       bsgenome@.link_counts)
+    .linkToCachedObject(ans) <- .newLinkToCachedObject(
+                                    name,
+                                    seqs_cache,
+                                    bsgenome@.link_counts)
     ans
 }
 
