@@ -1,3 +1,11 @@
+installed.genomes <- function()
+{
+    pkgs <- installed.packages()[ , "Package"]
+    pkgs <- pkgs[substr(pkgs, 1, 9) == "BSgenome."]
+    names(pkgs) <- NULL
+    return(pkgs)
+}
+
 ## Not exported
 getDataAnnotationContribUrl <- function(type=getOption("pkgType"))
 {
@@ -14,6 +22,6 @@ available.genomes <- function(type=getOption("pkgType"))
     pkgs <- available.packages(url)[, "Package"]
     pkgs <- pkgs[substr(pkgs, 1, 9) == "BSgenome."]
     names(pkgs) <- NULL
-    pkgs
+    return(pkgs)
 }
 

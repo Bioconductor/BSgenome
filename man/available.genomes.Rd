@@ -1,16 +1,21 @@
 \name{available.genomes}
 
 \alias{available.genomes}
+\alias{installed.genomes}
 
-\title{available.genomes}
+\title{Find available/installed genomes}
 
 \description{
-  Get the list of BSgenome data packages that are currently available on the
-  Bioconductor repositories for your version of R/Bioconductor.
+  \code{available.genomes} gets the list of BSgenome data packages that
+  are currently available on the Bioconductor repositories for your
+  version of R/Bioconductor.
+  \code{installed.genomes} gets the list of BSgenome data packages that
+  are already installed on your machine.
 }
 
 \usage{
   available.genomes(type=getOption("pkgType"))
+  installed.genomes()
 }
 
 \arguments{
@@ -36,7 +41,8 @@
 
 \value{
   A character vector containing the names of the BSgenome data packages
-  currently available.  
+  that are currently available (for \code{available.genomes}),
+  or already installed (for \code{installed.genomes}).
 }
 
 \author{H. Pages}
@@ -47,18 +53,21 @@
 }
 
 \examples{
-  # Get the list of BSgenome data packages currently available:
+  # What genomes are already installed:
+  installed.genomes()
+
+  # What genomes are available:
   available.genomes()
 
   # Make your choice and install with:
   source("http://bioconductor.org/biocLite.R")
-  biocLite("BSgenome.Celegans.UCSC.ce2")
+  biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
 
   # Have a coffee ;-)
 
   # Load the package and display the index of sequences for this genome:
-  library(BSgenome.Celegans.UCSC.ce2)
-  Celegans
+  library(BSgenome.Scerevisiae.UCSC.sacCer1)
+  Scerevisiae
 }
 
 \keyword{manip}

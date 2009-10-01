@@ -13,6 +13,7 @@ exportClasses(
 
 export(
     ## Non-generic functions:
+    installed.genomes,
     available.genomes,
     BSgenome,
     available.SNPs,
