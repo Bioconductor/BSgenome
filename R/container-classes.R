@@ -141,12 +141,23 @@ setAs("GenomeDataList", "data.frame",
 
 ## seems common to store Ranges inside GenomeData, so tie into IRanges here
 setAs("GenomeData", "RangesList", function(from) {
-  do.call("RangesList",
-          c(lapply(from, as, "Ranges"), universe = providerVersion(from)))
+  ans <- do.call("RangesList", lapply(from, as, "Ranges"))
+  metadata(ans) <- metadata(from)
+  universe(ans) <- providerVersion(from)
+  ans
 })
 
 setAs("GenomeData", "RangedData", function(from) {
   ans <- do.call("c", lapply(from, as, "RangedData"))
+  names(ans) <- names(from)
+  metadata(ans) <- metadata(from)
   universe(ans) <- providerVersion(from)
+  ans
+})
+
+setAs("GenomeDataList", "RangedDataList", function(from) {
+  ans <- do.call(RangedDataList, lapply(from, as, "RangedData"))
+  metadata(ans) <- metadata(from)
+  elementMetadata(ans) <- elementMetadata(from)
   ans
 })
