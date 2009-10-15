@@ -1,7 +1,7 @@
 Package: BSgenome.Hsapiens.UCSC.hg18
 Title: Homo sapiens (Human) full genome (UCSC version hg18)
 Description: Homo sapiens (Human) full genome as provided by UCSC (hg18, Mar. 2006) and stored in Biostrings objects.
-Version: 1.3.13
+Version: 1.3.14
 organism: Homo sapiens
 species: Human
 provider: UCSC
@@ -11,7 +11,7 @@ release_name: NCBI Build 36.1
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/hg18/bigZips/
 organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
-seqnames: paste("chr", c(1:22, "X", "Y", "M", "5_h2_hap1", "6_cox_hap1", "6_qbl_hap2", paste(c((1:22)[-c(12, 14, 20)], "X"), "_random", sep="")), sep="")
+seqnames: paste("chr", c(1:22, "X", "Y", "M", "5_h2_hap1", "6_cox_hap1", "6_qbl_hap2", "22_h2_hap1", paste(c((1:22)[-c(12, 14, 20)], "X"), "_random", sep="")), sep="")
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.zip, upstream1000.zip, upstream2000.zip, upstream5000.zip
