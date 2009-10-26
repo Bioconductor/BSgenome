@@ -203,7 +203,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     amb_letters <- names(IUPAC_CODE_MAP)[nchar(IUPAC_CODE_MAP) > 1]
     for (amb_letter in amb_letters)
         seq <- maskMotif(seq, amb_letter)
-    ans <- reduce(masks(seq)[-1])
+    ans <- collapse(masks(seq)[-1])
     desc(ans) <- "intra-contig ambiguities"
     if (isEmpty(ans))
         desc(ans) <- paste(desc(ans), "(empty)")
