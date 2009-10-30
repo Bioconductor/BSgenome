@@ -38,7 +38,8 @@
 \author{Marc Carlson}
 
 \seealso{
-  \link{BSParams-class}, \link{BSgenome-class}, \link{GenomeData-class}
+  \link{BSParams-class}, \link{BSgenome-class}, \link{BSgenome-utils},
+  \link{GenomeData-class}
 }
 
 \examples{

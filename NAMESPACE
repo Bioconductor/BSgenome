@@ -19,7 +19,7 @@ export(
     available.SNPs,
     bsapply,
     GenomeData, GenomeDataList, gdreduce,
-       
+
     ## Generic functions:
     organism, species,
     provider, providerVersion,
@@ -42,7 +42,8 @@ export(
 
 exportMethods(
     ## Methods for generics defined elsewhere:
-    names, show, length, "[[", "$", score, 
+    names, show, length, "[[", "$", score,
+    matchPWM, countPWM, vmatchPattern, vcountPattern,
 
     ## Methods for generics defined in this package:
     organism, species, provider, providerVersion,
@@ -51,9 +52,8 @@ exportMethods(
     seqnames, seqlengths, mseqnames,
     masknames,
     injectSNPs,
-              gdapply,
+    gdapply,
 
     ## BSgenomeForge methods:
     forgeBSgenomeDataPkg
 )
-

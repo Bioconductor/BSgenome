@@ -153,6 +153,7 @@
 \seealso{
   \code{\link[BSgenome]{available.genomes}},
   \code{\link[BSgenome]{GenomeDescription-class}},
+  \code{\link[BSgenome]{BSgenome-utils}},
   \code{\link[Biostrings]{XString-class}},
   \code{\link[Biostrings]{MaskedXString-class}},
   \code{\link[Biostrings]{XStringSet-class}},
