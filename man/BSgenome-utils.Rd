@@ -87,7 +87,9 @@
   A \link[IRanges]{RangedData} object for \code{matchPWM} and
   \code{vmatchPattern}.
 
-  A data.frame object for \code{countPWM} and \code{vcountPattern}.
+  A data.frame object for \code{countPWM} and \code{vcountPattern}
+  with columns three columns: seqname (factor), strand (factor),
+  and count (integer).
 }
 
 \author{P. Aboyoun}
