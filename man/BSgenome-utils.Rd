@@ -85,7 +85,8 @@
 
 \value{
   A \link[IRanges]{RangedData} object for \code{matchPWM} and
-  \code{vmatchPattern}.
+  \code{vmatchPattern} with two values columns: strand (factor) and
+  string (DNAStringSet).
 
   A data.frame object for \code{countPWM} and \code{vcountPattern}
   with columns three columns: seqname (factor), strand (factor),
