@@ -13,10 +13,9 @@ exportClasses(
 
 export(
     ## Non-generic functions:
-    installed.genomes,
-    available.genomes,
+    installed.genomes, available.genomes,
     BSgenome,
-    available.SNPs,
+    installed.SNPs, available.SNPs,
     bsapply,
     GenomeData, GenomeDataList, gdreduce,
 

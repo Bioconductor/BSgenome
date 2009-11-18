@@ -2,6 +2,13 @@
 ### SNP injection
 ### -------------------------------------------------------------------------
 
+installed.SNPs <- function()
+{
+    pkgs <- installed.packages()[ , "Package"]
+    pkgs <- pkgs[substr(pkgs, 1, 8) == "SNPlocs."]
+    names(pkgs) <- NULL
+    return(pkgs)
+}
 
 available.SNPs <- function(type=getOption("pkgType"))
 {
@@ -9,7 +16,7 @@ available.SNPs <- function(type=getOption("pkgType"))
     pkgs <- available.packages(url)[, "Package"]
     pkgs <- pkgs[substr(pkgs, 1, 8) == "SNPlocs."]
     names(pkgs) <- NULL
-    pkgs
+    return(pkgs)
 }
 
 setGeneric("injectSNPs", signature="x",

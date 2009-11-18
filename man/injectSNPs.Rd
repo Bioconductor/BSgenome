@@ -10,29 +10,28 @@
 \alias{SNPlocs,BSgenome-method}
 
 \alias{available.SNPs}
+\alias{installed.SNPs}
 
 
 \title{SNP injection}
 
 \description{
-   Inject SNPs from a SNPlocs data package into a genome.
+  Inject SNPs from a SNPlocs data package into a genome.
 }
 
 \usage{
-  available.SNPs(type=getOption("pkgType"))
   injectSNPs(x, SNPlocs_pkgname)
 
-  ## Related utilities
   SNPlocs_pkgname(x)
   SNPcount(x)
   SNPlocs(x, seqname)
+
+  ## Related utilities
+  available.SNPs(type=getOption("pkgType"))
+  installed.SNPs()
 }
 
 \arguments{
-  \item{type}{
-    Character string indicating the type of package (\code{"source"},
-    \code{"mac.binary"} or \code{"win.binary"}) to look for.
-  }
   \item{x}{
     A \link[BSgenome:BSgenome-class]{BSgenome} object.
   }
@@ -45,14 +44,13 @@
   \item{seqname}{
     The name of a single sequence in \code{x}.
   }
+  \item{type}{
+    Character string indicating the type of package (\code{"source"},
+    \code{"mac.binary"} or \code{"win.binary"}) to look for.
+  }
 }
 
 \value{
-  \code{available.SNPs} returns a character vector containing the names of the
-  SNPlocs data packages that are currently available on the Bioconductor
-  repositories for your version of R/Bioconductor. A SNPlocs data package
-  contains basic SNP information (location and alleles) for a given organism.
-
   \code{injectSNPs} returns a copy of the original genome \code{x} where some
   or all of the single sequences were altered by injecting the SNPs defined in
   the \code{SNPlocs_pkgname} package.
@@ -65,6 +63,14 @@
   SNPs were injected, \code{SNPcount} the number of SNPs for each altered
   sequence in \code{x}, and \code{SNPlocs} their locations in the sequence
   whose name is specified by \code{seqname}.
+
+  \code{available.SNPs} returns a character vector containing the names of the
+  SNPlocs data packages that are currently available on the Bioconductor
+  repositories for your version of R/Bioconductor. A SNPlocs data package
+  contains basic SNP information (location and alleles) for a given organism.
+
+  \code{installed.SNPs} returns a character vector containing the names of the
+  SNPlocs data packages that are already installed.
 }
 
 \note{
@@ -81,7 +87,10 @@
 }
 
 \examples{
-  ## Get the list of SNPlocs data packages currently available:
+  # What SNPlocs data packages are already installed:
+  installed.SNPs()
+
+  # What SNPlocs data packages are available:
   available.SNPs()
 
   if (interactive()) {
