@@ -48,8 +48,8 @@ setMethod("getSeq", "BSgenome",
                 if (!missing(start) || !missing(end) || !missing(width))
                     warning("'start', 'end', and 'width' ignored when ",
                             "'names' is a RangesList or RangedData object")
-                start <- start(names)
-                width <- width(names)
+                start <- unlist(start(names), use.names=FALSE)
+                width <- unlist(width(names), use.names=FALSE)
                 names <- space(names)
             }
             if (!is.character(names) || any(is.na(names)))
