@@ -10,8 +10,6 @@ setMethod("vmatchPattern", "BSgenome",
                              min.mismatch = min.mismatch,
                              with.indels = with.indels,
                              fixed = fixed) {
-            if (is(chr, "MaskedXString"))
-                active(masks(chr)) <- FALSE
             posMatches <-
               matchPattern(pattern = posPattern, subject = chr,
                            algorithm = algorithm,
@@ -19,19 +17,23 @@ setMethod("vmatchPattern", "BSgenome",
                            min.mismatch = min.mismatch,
                            with.indels = with.indels,
                            fixed = fixed)
-            negMatches <-
-              matchPattern(pattern = negPattern, subject = chr,
-                           algorithm = algorithm,
-                           max.mismatch = max.mismatch,
-                           min.mismatch = min.mismatch,
-                           with.indels = with.indels,
-                           fixed = fixed)
-            list("ranges" =
-                 IRangesList("+" = as(posMatches, "IRanges"),
-                             "-" = as(negMatches, "IRanges")),
-                 "string" =
-                 CharacterList("+" = as.character(posMatches),
-                               "-" = as.character(negMatches)))
+            negMatches <- IRanges()
+            if (posPattern != negPattern) {
+              negMatches <-
+                matchPattern(pattern = negPattern, subject = chr,
+                             algorithm = algorithm,
+                             max.mismatch = max.mismatch,
+                             min.mismatch = min.mismatch,
+                             with.indels = with.indels,
+                             fixed = fixed)
+            }
+            strings <- c(as.character(posMatches), as.character(negMatches))
+            strand <- rep(c("+", "-"),
+                          c(length(posMatches), length(negMatches)))
+            ord <- order(strand, strings)
+            rngs <- c(as(posMatches, "IRanges"), as(negMatches, "IRanges"))
+            RangedData(rngs[ord], string = Rle(strings[ord]),
+                       strand = Rle(strand[ord]))
         }
 
         if (!is(pattern, "DNAString"))
@@ -42,39 +44,24 @@ setMethod("vmatchPattern", "BSgenome",
                  "for this algorithm")
         pattern <- Biostrings:::normargPattern(pattern, DNAStringSet())
         max.mismatch <- Biostrings:::normargMaxMismatch(max.mismatch)
-        min.mismatch <- Biostrings:::normargMinMismatch(min.mismatch, max.mismatch)
+        min.mismatch <-
+          Biostrings:::normargMinMismatch(min.mismatch, max.mismatch)
         with.indels <- Biostrings:::normargWithIndels(with.indels)
         fixed <- Biostrings:::normargFixed(fixed, DNAStringSet())
-
         posPattern <- pattern
         negPattern <- reverseComplement(posPattern)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = FALSE)
+              simplify = TRUE)
         matches <-
          bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
                  algorithm = algorithm,
                  max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                  with.indels = with.indels, fixed = fixed)
-        ans <-
-          do.call(c,
-                  lapply(seq_len(length(matches)),
-                         function(i) {
-                             RangedData(ranges =
-                                        unlist(matches[[i]][["ranges"]],
-                                               use.names = FALSE),
-                                        strand =
-                                          strand(rep(c("+", "-"),
-                                    elementLengths(matches[[i]][["ranges"]]))),
-                                        space = names(matches)[i])
-                         }))
-        string <-
-          factor(do.call(c,
-                         unname(lapply(matches, function(x)
-                                       unlist(x[["string"]],
-                                              use.names = FALSE)))))
-        ans$string <- DNAStringSet(levels(string))[as.integer(string)]
-        ans
+        nms <- names(matches)
+        matches <- do.call(c, matches)
+        names(matches) <- nms
+        matches
     }
 )
 
@@ -90,8 +77,6 @@ setMethod("vcountPattern", "BSgenome",
                              with.indels = with.indels,
                              fixed = fixed,
                              exclude = exclude) {
-            if (is(chr, "MaskedXString"))
-                active(masks(chr)) <- FALSE
             data.frame(strand = strand(c("+", "-")),
                        count =
                             c(countPattern(pattern = posPattern, subject = chr,
@@ -143,8 +128,6 @@ setMethod("matchPWM", "BSgenome",
     function(pwm, subject, min.score = "80%", exclude = "")
     {
         matchFUN <- function(posPWM, negPWM, chr, min.score) {
-            if (is(chr, "MaskedXString"))
-                active(masks(chr)) <- FALSE
             posMatches <-
               matchPWM(pwm = posPWM, subject = chr, min.score = min.score)
             negMatches <-
@@ -196,8 +179,6 @@ setMethod("countPWM", "BSgenome",
     function(pwm, subject, min.score = "80%", exclude = "")
     {
         countFUN <- function(posPWM, negPWM, chr, min.score) {
-            if (is(chr, "MaskedXString"))
-                active(masks(chr)) <- FALSE
             data.frame(strand = strand(c("+", "-")),
                        count =
                        c(countPWM(pwm = posPWM, subject = chr,
