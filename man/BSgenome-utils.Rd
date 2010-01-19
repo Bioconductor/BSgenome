@@ -27,10 +27,10 @@
                                      max.mismatch=0, min.mismatch=0,
                                      with.indels=FALSE, fixed=TRUE,
                                      algorithm="auto", exclude = "")
-  \S4method{vmatchPDict}{BSgenome"}(pdict, subject,
-                                    max.mismatch=0, min.mismatch=0,
-                                    fixed=TRUE, algorithm="auto",
-                                    verbose=FALSE, exclude="")
+  \S4method{vmatchPDict}{BSgenome}(pdict, subject,
+                                   max.mismatch=0, min.mismatch=0,
+                                   fixed=TRUE, algorithm="auto",
+                                   verbose=FALSE, exclude="")
   \S4method{vcountPDict}{BSgenome}(pdict, subject,
                                    max.mismatch=0, min.mismatch=0,
                                    fixed=TRUE, algorithm="auto",
