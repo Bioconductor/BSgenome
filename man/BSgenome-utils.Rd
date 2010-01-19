@@ -109,17 +109,25 @@
 
 \value{
   A \link[IRanges]{RangedData} object for \code{matchPWM} with
-  two values columns: strand ('factor' Rle) and string (DNAStringSet).
+  two values columns: "strand" ('factor' Rle) and "string" (DNAStringSet).
 
-  A \link[IRanges]{RangedData} object for \code{matchPattern} with
-  one values column: strand ('factor' Rle).
+  A \link[IRanges]{RangedData} object for \code{vmatchPattern} with
+  one values column: "strand" ('factor' Rle).
 
-  A \link[IRanges]{RangedData} object for \code{matchPDict} with
-  two values column: strand ('factor' Rle) and index ('integer' Rle).
+  A \link[IRanges]{RangedData} object for \code{vmatchPDict} with
+  two values column: "strand" ('factor' Rle) and "index" ('integer' Rle).
+  The index column represents a mapping to a position in the original
+  pattern dictionary.
 
-  A data.frame object for \code{countPWM}, \code{vcountPattern},
-  and \code{vcountPDict} with columns three columns: seqname (factor),
-  strand (factor), and count (integer).
+  A data.frame object for \code{countPWM} and \code{vcountPattern}
+  with three columns: "seqname" (factor), "strand" (factor), and
+  "count" (integer).
+
+  A \link[IRanges]{DataFrame} object for \code{vcountPDict} with four
+  columns: "seqname" ('factor' Rle), "strand" ('factor' Rle), 
+  "index" (integer) and "count" ('integer' Rle). As with \code{vmatchPDict}
+  the index column represents a mapping to a position in the original
+  pattern dictionary.
 }
 
 \author{P. Aboyoun}
