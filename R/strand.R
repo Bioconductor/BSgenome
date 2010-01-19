@@ -2,7 +2,7 @@
 
 setGeneric("strand", function(x) standardGeneric("strand"))
 
-setMethod("strand", "missing", function(x) factor(levels=c("-","+","*")))
+setMethod("strand", "missing", function(x) factor(levels=c("+","-","*")))
 
 setMethod("strand", "character",
     function(x) {
@@ -16,8 +16,10 @@ setMethod("strand", "DataTable",
     function(x) {
         ans <- x[["strand"]]
         if (is.null(ans))
-            ans <- rep(NA_character_, nrow(x))
-        if (is.character(ans))
+            ans <- strand(rep(NA_character_, nrow(x)))
+        else if (is.character(ans))
             ans <- strand(ans)
+        else if (is(ans, "Rle"))
+            ans <- as.vector(ans)
         ans
     })
