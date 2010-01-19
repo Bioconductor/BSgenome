@@ -6,6 +6,8 @@
 \alias{countPWM,BSgenome-method}
 \alias{vmatchPattern,BSgenome-method}
 \alias{vcountPattern,BSgenome-method}
+\alias{vmatchPDict,BSgenome-method}
+\alias{vcountPDict,BSgenome-method}
 
 
 \title{BSgenome utilities}
@@ -17,14 +19,23 @@
 \usage{
   \S4method{matchPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "")
   \S4method{countPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "")
-  \S4method{vmatchPattern}{BSgenome}(pattern, subject, algorithm="auto",
+  \S4method{vmatchPattern}{BSgenome}(pattern, subject,
                                      max.mismatch=0, min.mismatch=0,
                                      with.indels=FALSE, fixed=TRUE,
-                                     exclude = "")
-  \S4method{vcountPattern}{BSgenome}(pattern, subject, algorithm="auto",
+                                     algorithm="auto", exclude = "")
+  \S4method{vcountPattern}{BSgenome}(pattern, subject,
                                      max.mismatch=0, min.mismatch=0,
                                      with.indels=FALSE, fixed=TRUE,
-                                     exclude = "")
+                                     algorithm="auto", exclude = "")
+  \S4method{vmatchPDict}{BSgenome"}(pdict, subject,
+                                    max.mismatch=0, min.mismatch=0,
+                                    fixed=TRUE, algorithm="auto",
+                                    verbose=FALSE, exclude="")
+  \S4method{vcountPDict}{BSgenome}(pdict, subject,
+                                   max.mismatch=0, min.mismatch=0,
+                                   fixed=TRUE, algorithm="auto",
+                                   collapse=FALSE, weight=1L,
+                                   verbose=FALSE, exclude="")
 }
 
 \arguments{
@@ -33,7 +44,10 @@
     Weight Matrix.
   }
   \item{pattern}{
-    The pattern string.
+    A \link[Biostrings]{DNAString} object containing the pattern sequence.
+  }
+  \item{pdict}{
+    A \link[Biostrings]{DNAStringSet} object containing the pattern sequences.
   }
   \item{subject}{
     A \link{BSgenome} object containing the subject sequences.
@@ -42,11 +56,6 @@
     The minimum score for counting a match.
     Can be given as a character string containing a percentage (e.g.
     \code{"85\%"}) of the highest possible score or as a single number.
-  }
-  \item{algorithm}{
-    One of the following: \code{"auto"}, \code{"naive-exact"},
-    \code{"naive-inexact"}, \code{"boyer-moore"}, \code{"shift-or"}
-    or \code{"indels"}.
   }
   \item{max.mismatch, min.mismatch}{
     The maximum and minimum number of mismatching letters allowed (see
@@ -77,6 +86,21 @@
     If \code{FALSE} then IUPAC extended letters are interpreted as ambiguities
     (see \code{?`\link[Biostrings]{lowlevel-matching}`} for the details).
   }
+  \item{algorithm}{
+    For \code{vmatchPattern} and \code{vcountPattern} one of the following:
+    \code{"auto"}, \code{"naive-exact"}, \code{"naive-inexact"},
+    \code{"boyer-moore"}, \code{"shift-or"}, or \code{"indels"}.
+
+    For \code{vmatchPDict} and \code{vcountPDict} one of the following:
+    \code{"auto"}, \code{"naive-exact"}, \code{"naive-inexact"},
+    \code{"boyer-moore"}, or \code{"shift-or"}.
+  }
+  \item{collapse, weight}{
+    ignored arguments.
+  }
+  \item{verbose}{
+    \code{TRUE} or \code{FALSE}.
+  }
   \item{exclude}{
     A character vector with strings that will be used to filter out
     chromosomes whose names match these strings.
@@ -84,13 +108,18 @@
 }
 
 \value{
-  A \link[IRanges]{RangedData} object for \code{matchPWM} and
-  \code{vmatchPattern} with two values columns: strand (factor) and
-  string (DNAStringSet).
+  A \link[IRanges]{RangedData} object for \code{matchPWM} with
+  two values columns: strand ('factor' Rle) and string (DNAStringSet).
 
-  A data.frame object for \code{countPWM} and \code{vcountPattern}
-  with columns three columns: seqname (factor), strand (factor),
-  and count (integer).
+  A \link[IRanges]{RangedData} object for \code{matchPattern} with
+  one values column: strand ('factor' Rle).
+
+  A \link[IRanges]{RangedData} object for \code{matchPDict} with
+  two values column: strand ('factor' Rle) and index ('integer' Rle).
+
+  A data.frame object for \code{countPWM}, \code{vcountPattern},
+  and \code{vcountPDict} with columns three columns: seqname (factor),
+  strand (factor), and count (integer).
 }
 
 \author{P. Aboyoun}
@@ -98,6 +127,7 @@
 \seealso{
   \code{\link[Biostrings]{matchPWM}},
   \code{\link[Biostrings]{matchPattern}},
+  \code{\link[Biostrings]{matchPDict}},
   \code{\link[BSgenome]{bsapply}}
 }
 
@@ -112,6 +142,9 @@
   pattern <- consensusString(HNF4alpha)
   vmatchPattern(pattern, Celegans, fixed = "subject")
   vcountPattern(pattern, Celegans, fixed = "subject")
+
+  vmatchPDict(HNF4alpha[1:10], Celegans)
+  vcountPDict(HNF4alpha[1:10], Celegans)
 }
 
 \keyword{methods}
