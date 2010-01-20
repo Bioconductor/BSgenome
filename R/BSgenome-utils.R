@@ -266,13 +266,20 @@ setMethod("matchPWM", "BSgenome",
         matchFUN <- function(posPWM, negPWM, chr, min.score) {
             posMatches <-
               matchPWM(pwm = posPWM, subject = chr, min.score = min.score)
+            posScores <-
+              PWMscoreStartingAt(pwm = posPWM, subject = chr,
+                                 starting.at = start(posMatches))
             negMatches <-
               matchPWM(pwm = negPWM, subject = chr, min.score = min.score)
+            negScores <-
+              PWMscoreStartingAt(pwm = negPWM, subject = chr,
+                                 starting.at = start(negMatches))
             RangedData(ranges =
                        c(as(posMatches, "IRanges"), as(negMatches, "IRanges")),
                        strand =
                        Rle(strand(c("+", "-")),
                            c(length(posMatches), length(negMatches))),
+                       score = c(posScores, negScores),
                        string =
                        c(as.character(posMatches),
                          as.character(reverseComplement(DNAStringSet(negMatches)))))

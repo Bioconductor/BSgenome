@@ -111,7 +111,8 @@
 
 \value{
   A \link[IRanges]{RangedData} object for \code{matchPWM} with
-  two values columns: "strand" ('factor' Rle) and "string" (DNAStringSet).
+  three values columns: "strand" ('factor' Rle), "score" (numeric), and
+  "string" (DNAStringSet).
 
   A \link[IRanges]{RangedData} object for \code{vmatchPattern} with
   one values column: "strand" ('factor' Rle).
