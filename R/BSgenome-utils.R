@@ -2,7 +2,7 @@
 setMethod("vmatchPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
-             algorithm="auto", exclude="")
+             algorithm="auto", exclude="", maskList=logical(0))
     {
         matchFUN <- function(posPattern, negPattern, chr,
                              max.mismatch = max.mismatch,
@@ -48,7 +48,7 @@ setMethod("vmatchPattern", "BSgenome",
         negPattern <- reverseComplement(posPattern)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = TRUE)
+              simplify = TRUE, maskList = logical(0))
         matches <-
          bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
                  max.mismatch = max.mismatch, min.mismatch = min.mismatch,
@@ -64,7 +64,7 @@ setMethod("vmatchPattern", "BSgenome",
 setMethod("vcountPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
-             algorithm="auto", exclude="")
+             algorithm="auto", exclude="", maskList=logical(0))
     {
         countFUN <- function(posPattern, negPattern, chr,
                              max.mismatch = max.mismatch,
@@ -104,7 +104,7 @@ setMethod("vcountPattern", "BSgenome",
         negPattern <- reverseComplement(posPattern)
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
-              simplify = FALSE)
+              simplify = FALSE, maskList = logical(0))
         counts <-
           bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
@@ -122,7 +122,8 @@ setMethod("vcountPattern", "BSgenome",
 setMethod("vmatchPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
-             algorithm="auto", verbose=FALSE, exclude="")
+             algorithm="auto", verbose=FALSE, exclude="",
+             maskList=logical(0))
     {
         matchFUN <- function(posPDict, negPDict, chr,
                              max.mismatch = max.mismatch,
@@ -174,7 +175,7 @@ setMethod("vmatchPDict", "BSgenome",
         negPDict <- reverseComplement(posPDict)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = TRUE)
+              simplify = TRUE, maskList = logical(0))
         matches <-
           bsapply(bsParams, posPDict = posPDict, negPDict = negPDict,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
@@ -191,7 +192,7 @@ setMethod("vcountPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
              algorithm="auto", collapse=FALSE, weight=1L, verbose=FALSE,
-             exclude="")
+             exclude="", maskList=logical(0))
     {
         countFUN <- function(posPDict, negPDict, chr,
                              max.mismatch = max.mismatch,
@@ -245,7 +246,7 @@ setMethod("vcountPDict", "BSgenome",
         negPDict <- reverseComplement(posPDict)
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
-              simplify = FALSE)
+              simplify = FALSE, maskList = logical(0))
         counts <-
           bsapply(bsParams, posPDict = posPDict, negPDict = negPDict,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
@@ -260,7 +261,7 @@ setMethod("vcountPDict", "BSgenome",
 
 ## matchPWM/countPWM for BSgenome
 setMethod("matchPWM", "BSgenome",
-    function(pwm, subject, min.score="80%", exclude="")
+    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
     {
         matchFUN <- function(posPWM, negPWM, chr, min.score) {
             posMatches <-
@@ -286,7 +287,7 @@ setMethod("matchPWM", "BSgenome",
         negPWM <- reverseComplement(posPWM)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = TRUE)
+              simplify = TRUE, maskList = logical(0))
         matches <-
           bsapply(bsParams, posPWM = posPWM, negPWM = negPWM,
                   min.score = min.score)
@@ -301,7 +302,7 @@ setMethod("matchPWM", "BSgenome",
 )
 
 setMethod("countPWM", "BSgenome",
-    function(pwm, subject, min.score="80%", exclude="")
+    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
     {
         countFUN <- function(posPWM, negPWM, chr, min.score) {
             data.frame(strand = strand(c("+", "-")),
@@ -321,7 +322,7 @@ setMethod("countPWM", "BSgenome",
         negPWM <- reverseComplement(posPWM)
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
-              simplify = FALSE)
+              simplify = FALSE, maskList = logical(0))
         counts <-
           bsapply(bsParams, posPWM = posPWM, negPWM = negPWM,
                   min.score = min.score)
