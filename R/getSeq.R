@@ -56,7 +56,7 @@ setMethod("getSeq", "BSgenome",
                 stop("'names' must be a character vector (with no NAs)")
         }
         if (is.factor(strand) || is(strand, "Rle"))
-            strand <- as.vector(strand)
+            strand <- as.character(strand)
         if (!is.character(strand) || !all(strand %in% c("+", "-")))
             stop("values in 'strand' must be \"+\"s or \"-\"s")
         if (!isTRUEorFALSE(as.character))
