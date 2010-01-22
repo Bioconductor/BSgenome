@@ -5,12 +5,16 @@ setClass("BSParams",
            exclude = "character",
            simplify="logical",
            maskList="logical",
-           motifList="character"),
+           motifList="character",
+           userMask="RangesList",
+           invertUserMask="logical"),
          prototype=prototype(
            exclude="",
            simplify=FALSE,
            maskList=as.logical(vector()),
-           motifList=as.character(vector())
+           motifList=as.character(vector()),
+           invertUserMask=FALSE,
+           userMask=RangesList()
            ))
 
 
@@ -47,7 +51,17 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
     if(length(pariahIndex) > 0 && length(pariahIndex) != seqLength){
         seqnames <- seqnames[-pariahIndex]
     }
-    
+
+    masks <- BSParams@userMask
+    masks <- masks[intersect(seqnames, names(masks))]
+    unmasked <- setdiff(seqnames, names(masks))
+    masks <- reduce(masks)
+    masks <- c(masks, RangesList(sapply(unmasked, function(x) IRanges())))
+    masks <- mapply(Mask,
+                    as(seqlengths(BSParams@X)[names(masks)], "AtomicList"),
+                    start(masks), end(masks))
+    if (BSParams@invertUserMask)
+      masks <- lapply(masks, gaps)
 
     ##Some stuff has to be done for each chromosome
     processSeqname <- function(seqname, ...){
@@ -68,7 +82,10 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
             }
         }
 
-
+        if(!is.null(BSParams@userMask)) {
+         masks(seq) <- append(masks(seq), masks[[seqname]])
+        }
+        
         ## This is where we finally get to run the MAIN function (FUN) that was passed in
         result <- BSParams@FUN(seq, ...)
         return(result)

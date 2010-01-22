@@ -1,8 +1,10 @@
 ## vmatchPattern/vcountPattern for BSgenome
+
 setMethod("vmatchPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
-             algorithm="auto", exclude="", maskList=logical(0))
+             algorithm="auto", exclude="", maskList=logical(0),
+             userMask = RangesList(), invertUserMask = FALSE)
     {
         matchFUN <- function(posPattern, negPattern, chr,
                              max.mismatch = max.mismatch,
@@ -48,7 +50,8 @@ setMethod("vmatchPattern", "BSgenome",
         negPattern <- reverseComplement(posPattern)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = TRUE, maskList = logical(0))
+              simplify = TRUE, maskList = logical(0), userMask = userMask,
+              invertUserMask = invertUserMask)
         matches <-
          bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
                  max.mismatch = max.mismatch, min.mismatch = min.mismatch,
@@ -105,6 +108,22 @@ setMethod("vcountPattern", "BSgenome",
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
               simplify = FALSE, maskList = logical(0))
+        if (!is.null(masks)) {
+          masks <- try(as(masks, "RangesList"), silent = TRUE)
+          if (is.character(masks))
+            stop("'masks' must be coercible to 'RangesList'")
+          chrs <- seqnames(subject)
+          if (nchar(exclude))
+            chrs <- grep(exclude, chrs, value = TRUE, invert = TRUE)
+          masks <- masks[intersect(chrs, names(masks))]
+          unmasked <- setdiff(chrs, names(masks))
+          masks <- c(masks, RangesList(sapply(unmasked, function(x) IRanges())))
+          masks <- mapply(Mask,
+                          as(seqlengths(subject)[names(masks)], "AtomicList"),
+                          start(masks), end(masks))
+          if (invert) masks <- lapply(masks, gaps)
+          maskIndex <- 1
+        }
         counts <-
           bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
@@ -339,3 +358,121 @@ setMethod("countPWM", "BSgenome",
               do.call(rbind, unname(as.list(counts))))
     }
 )
+
+setGeneric("vmatchLRPatterns", signature = "subject",
+           function(Lpattern, Rpattern, max.ngaps, subject,
+                    max.Lmismatch=0, max.Rmismatch=0,
+                    with.Lindels=FALSE, with.Rindels=FALSE,
+                    Lfixed=TRUE, Rfixed=TRUE, ...)
+           standardGeneric("vmatchLRPatterns"))
+
+setMethod("vmatchLRPatterns", "BSgenome",
+          function(Lpattern, Rpattern, max.ngaps, subject,
+                   max.Lmismatch=0, max.Rmismatch=0,
+                   with.Lindels=FALSE, with.Rindels=FALSE,
+                   Lfixed=TRUE, Rfixed=TRUE,
+                   exclude = "", userMask = RangesList(),
+                   invertUserMask = FALSE)
+          {
+            matchFUN <- function(posLPattern, negLPattern,
+                                 posRPattern, negRPattern, chr,
+                                 max.ngaps, subject,
+                                 max.Lmismatch, max.Rmismatch,
+                                 with.Lindels, with.Rindels,
+                                 Lfixed, Rfixed) {
+              print("searching chromosome")
+              posMatches <-
+                matchLRPatterns(posLPattern, posRPattern,
+                               max.ngaps, chr,
+                               max.Lmismatch, max.Rmismatch,
+                               with.Lindels, with.Rindels,
+                               Lfixed, Rfixed)
+              negMatches <- IRanges()
+              if (append(posLPattern, posRPattern) !=
+                  append(negRPattern, negLPattern))
+               negMatches <-
+                matchLRPatterns(negLPattern, negRPattern,
+                               max.ngaps, chr,
+                               max.Lmismatch, max.Rmismatch,
+                               with.Lindels, with.Rindels,
+                               Lfixed, Rfixed)
+              strings <- c(as.character(posMatches), as.character(negMatches))
+              strand <- rep(c("+", "-"),
+                            c(length(posMatches), length(negMatches)))
+              ord <- order(strand, strings)
+              rngs <- c(as(posMatches, "IRanges"), as(negMatches, "IRanges"))
+              RangedData(rngs[ord], string = Rle(strings[ord]),
+                         strand = Rle(strand[ord]))
+            }
+
+            if (!is(Lpattern, "DNAString"))
+              pattern <- DNAString(Lpattern)
+            if (!is(Rpattern, "DNAString"))
+              pattern <- DNAString(Rpattern)
+            
+            Lpattern <- Biostrings:::normargPattern(Lpattern, DNAStringSet())
+            Rpattern <- Biostrings:::normargPattern(Rpattern, DNAStringSet())
+            max.ngaps <- Biostrings:::normargMaxMismatch(max.ngaps)
+            max.Lmismatch <- Biostrings:::normargMaxMismatch(max.Lmismatch)
+            max.Rmismatch <- Biostrings:::normargMaxMismatch(max.Rmismatch)
+            with.Lindels <- Biostrings:::normargWithIndels(with.Lindels)
+            with.Rindels <- Biostrings:::normargWithIndels(with.Rindels)
+            Lfixed <- Biostrings:::normargFixed(Lfixed, DNAStringSet())
+            Rfixed <- Biostrings:::normargFixed(Rfixed, DNAStringSet())
+            
+            posLPattern <- Lpattern
+            negLPattern <- reverseComplement(posLPattern)
+            posRPattern <- Rpattern
+            negRPattern <- reverseComplement(posRPattern)
+            
+            bsParams <-
+              new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
+                  simplify = TRUE, userMask = userMask,
+                  invertUserMask = invertUserMask 
+                  )
+            matches <-
+              bsapply(bsParams,
+                      posLPattern = posLPattern, negLPattern = negLPattern,
+                      posRPattern = posRPattern, negRPattern = negRPattern,
+                      max.ngaps = max.ngaps,
+                      max.Lmismatch = max.Lmismatch,
+                      max.Rmismatch = max.Rmismatch, 
+                      with.Lindels = with.Lindels, with.Rindels = with.Rindels,
+                      Lfixed = Lfixed, Rfixed = Rfixed)
+            nms <- names(matches)
+            matches <- do.call(c, matches)
+            names(matches) <- nms
+            matches
+          }
+          )
+
+setMethod("matchLRPatterns", "XStringViews",
+          function (Lpattern, Rpattern, max.ngaps, subject,
+                    max.Lmismatch = 0, max.Rmismatch = 0,
+                    with.Lindels = FALSE, with.Rindels = FALSE, 
+                    Lfixed = TRUE, Rfixed = TRUE) 
+          {
+            ans_start <- ans_width <- integer(0)
+            Lmatches <- matchPattern(Lpattern, subject,
+                                     max.mismatch = max.Lmismatch, 
+                                     with.indels = with.Lindels, fixed = Lfixed)
+            if (length(Lmatches) != 0L) {
+              ## Figure out sequence to which each Lmatch might have an Rmatch
+              Rranges <- IRanges(end(Lmatches) + 1,
+                                 width = max.ngaps + nchar(Rpattern))
+### FIXME: complicated because vmatchPattern does not support XStringViews
+              Rranges <- restrict(Rranges, start = 1L,
+                                  end = nchar(subject(subject)))
+              Rsubject <- as(Views(subject(subject), Rranges), "XStringSet")
+              Rmatches <- vmatchPattern(Rpattern, Rsubject,
+                                       max.mismatch = max.Rmismatch, 
+                                       with.indels = with.Rindels,
+                                       fixed = Rfixed)
+              Rcounts <- countIndex(Rmatches)
+              ans_start <- rep(start(Lmatches), Rcounts)
+              ans_width <- rep(width(Lmatches), Rcounts) +
+                unlist(endIndex(Rmatches))
+            }
+            Biostrings:::unsafe.newXStringViews(subject(subject), ans_start,
+                                                ans_width)
+          })

@@ -467,4 +467,3 @@ setReplaceMethod("[[", "BSgenome",
 setMethod("$", "BSgenome",
     function(x, name) x[[name]]
 )
-
