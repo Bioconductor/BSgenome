@@ -380,7 +380,6 @@ setMethod("vmatchLRPatterns", "BSgenome",
                                  max.Lmismatch, max.Rmismatch,
                                  with.Lindels, with.Rindels,
                                  Lfixed, Rfixed) {
-              print("searching chromosome")
               posMatches <-
                 matchLRPatterns(posLPattern, posRPattern,
                                max.ngaps, chr,
