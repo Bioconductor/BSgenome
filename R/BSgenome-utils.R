@@ -360,14 +360,14 @@ setMethod("countPWM", "BSgenome",
 )
 
 setGeneric("vmatchLRPatterns", signature = "subject",
-           function(Lpattern, Rpattern, max.ngaps, subject,
+           function(Lpattern, Rpattern, max.gaplength, subject,
                     max.Lmismatch=0, max.Rmismatch=0,
                     with.Lindels=FALSE, with.Rindels=FALSE,
                     Lfixed=TRUE, Rfixed=TRUE, ...)
            standardGeneric("vmatchLRPatterns"))
 
 setMethod("vmatchLRPatterns", "BSgenome",
-          function(Lpattern, Rpattern, max.ngaps, subject,
+          function(Lpattern, Rpattern, max.gaplength, subject,
                    max.Lmismatch=0, max.Rmismatch=0,
                    with.Lindels=FALSE, with.Rindels=FALSE,
                    Lfixed=TRUE, Rfixed=TRUE,
@@ -376,13 +376,13 @@ setMethod("vmatchLRPatterns", "BSgenome",
           {
             matchFUN <- function(posLPattern, negLPattern,
                                  posRPattern, negRPattern, chr,
-                                 max.ngaps, subject,
+                                 max.gaplength, subject,
                                  max.Lmismatch, max.Rmismatch,
                                  with.Lindels, with.Rindels,
                                  Lfixed, Rfixed) {
               posMatches <-
                 matchLRPatterns(posLPattern, posRPattern,
-                               max.ngaps, chr,
+                               max.gaplength, chr,
                                max.Lmismatch, max.Rmismatch,
                                with.Lindels, with.Rindels,
                                Lfixed, Rfixed)
@@ -391,7 +391,7 @@ setMethod("vmatchLRPatterns", "BSgenome",
                   append(negRPattern, negLPattern))
                negMatches <-
                 matchLRPatterns(negLPattern, negRPattern,
-                               max.ngaps, chr,
+                               max.gaplength, chr,
                                max.Lmismatch, max.Rmismatch,
                                with.Lindels, with.Rindels,
                                Lfixed, Rfixed)
@@ -411,7 +411,7 @@ setMethod("vmatchLRPatterns", "BSgenome",
             
             Lpattern <- Biostrings:::normargPattern(Lpattern, DNAStringSet())
             Rpattern <- Biostrings:::normargPattern(Rpattern, DNAStringSet())
-            max.ngaps <- Biostrings:::normargMaxMismatch(max.ngaps)
+            max.gaplength <- Biostrings:::normargMaxMismatch(max.gaplength)
             max.Lmismatch <- Biostrings:::normargMaxMismatch(max.Lmismatch)
             max.Rmismatch <- Biostrings:::normargMaxMismatch(max.Rmismatch)
             with.Lindels <- Biostrings:::normargWithIndels(with.Lindels)
@@ -433,7 +433,7 @@ setMethod("vmatchLRPatterns", "BSgenome",
               bsapply(bsParams,
                       posLPattern = posLPattern, negLPattern = negLPattern,
                       posRPattern = posRPattern, negRPattern = negRPattern,
-                      max.ngaps = max.ngaps,
+                      max.gaplength = max.gaplength,
                       max.Lmismatch = max.Lmismatch,
                       max.Rmismatch = max.Rmismatch, 
                       with.Lindels = with.Lindels, with.Rindels = with.Rindels,
@@ -446,7 +446,7 @@ setMethod("vmatchLRPatterns", "BSgenome",
           )
 
 setMethod("matchLRPatterns", "XStringViews",
-          function (Lpattern, Rpattern, max.ngaps, subject,
+          function (Lpattern, Rpattern, max.gaplength, subject,
                     max.Lmismatch = 0, max.Rmismatch = 0,
                     with.Lindels = FALSE, with.Rindels = FALSE, 
                     Lfixed = TRUE, Rfixed = TRUE) 
@@ -458,7 +458,7 @@ setMethod("matchLRPatterns", "XStringViews",
             if (length(Lmatches) != 0L) {
               ## Figure out sequence to which each Lmatch might have an Rmatch
               Rranges <- IRanges(end(Lmatches) + 1,
-                                 width = max.ngaps + nchar(Rpattern))
+                                 width = max.gaplength + nchar(Rpattern))
 ### FIXME: complicated because vmatchPattern does not support XStringViews
               Rranges <- restrict(Rranges, start = 1L,
                                   end = nchar(subject(subject)))
