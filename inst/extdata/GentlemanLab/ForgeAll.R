@@ -25,7 +25,8 @@ pkgs <- c(
   "BSgenome.Mmusculus.UCSC.mm9",
   "BSgenome.Ptroglodytes.UCSC.panTro2",
   "BSgenome.Rnorvegicus.UCSC.rn4",
-  "BSgenome.Scerevisiae.UCSC.sacCer1"
+  "BSgenome.Scerevisiae.UCSC.sacCer1",
+  "BSgenome.Scerevisiae.UCSC.sacCer2"
 )
 
 for (pkg in pkgs) {
