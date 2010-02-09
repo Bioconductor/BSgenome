@@ -1,0 +1,508 @@
+### =========================================================================
+### GenomicRanges objects
+### -------------------------------------------------------------------------
+###
+### Class definition
+
+setClass("GenomicRanges", contains = "Sequence",
+         representation(seqnames = "Rle",
+                        ranges = "IRanges",
+                        strand = "Rle",
+                        values = "DataFrame"))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Validity.
+###
+
+.valid.GenomicRanges.slots <- function(x)
+{
+    n <- length(x@seqnames)
+    if ((length(x@ranges) != n) || (length(x@strand) != n) ||
+        (nrow(x@values) != n))
+        "slot lengths are not all equal"
+    else
+        NULL
+}
+
+.valid.GenomicRanges.seqnames <- function(x)
+{
+    if (!is.character(runValue(x@seqnames)))
+        "slot 'seqnames' should be a 'character' Rle"
+    else
+        NULL
+}
+
+.valid.GenomicRanges.strand <- function(x)
+{
+    if (!is.factor(runValue(x@strand)) ||
+        !identical(levels(runValue(x@strand)), levels(strand())))
+        paste("slot 'strand' should be a 'factor' Rle with levels c(",
+              paste('"', levels(strand()), '"', sep = "", collapse = ", "),
+                    ")", sep = "")
+    else
+        NULL
+}
+
+
+.valid.GenomicRanges.values <- function(x)
+{
+    msg <- NULL
+    if (any(c("seqnames", "ranges", "strand", "start", "end", "width") %in%
+            colnames(x@values)))
+        msg <-
+          paste("slot 'values' cannot use c(\"seqnames\", \"ranges\",",
+                "\"strand\", \"start\", \"end\", \"width\") as column names")
+    if (!is.null(rownames(x@values)))
+        msg <- c(msg, "slot 'values' cannot contain row names")
+    msg
+}
+
+.valid.GenomicRanges <- function(x)
+{
+    c(.valid.GenomicRanges.slots(x),
+      .valid.GenomicRanges.seqnames(x),
+      .valid.GenomicRanges.strand(x),
+      .valid.GenomicRanges.values(x))
+}
+
+setValidity2("GenomicRanges", .valid.GenomicRanges)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Constructor.
+###
+
+GenomicRanges <-
+function(seqnames = Rle(), ranges = IRanges(),
+         strand = Rle(NA_character_, length(seqnames)), ...)
+{
+    if (!is(seqnames, "Rle"))
+        seqnames <- Rle(seqnames)
+    if (!is.character(runValue(seqnames)))
+        runValue(seqnames) <- as.character(runValue(seqnames))
+
+    if (!is(ranges, "IRanges"))
+        ranges <- as(ranges, "IRanges")
+
+    if (!is(strand, "Rle"))
+        strand <- Rle(strand)
+    if (!is.factor(runValue(strand)))
+        runValue(strand) <- strand(runValue(strand))
+
+    values <- DataFrame(...)
+    if (ncol(values) == 0)
+        values <- new("DataFrame", nrows = length(seqnames))
+    if (!is.null(rownames(values))) {
+        if (!is.null(names(ranges)))
+            names(ranges) <- rownames(values)
+        rownames(values) <- NULL
+    }
+
+    new("GenomicRanges", seqnames = seqnames, ranges = ranges, strand = strand,
+        values = values)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Coercion.
+###
+
+setAs("RangedData", "GenomicRanges",
+    function(from)
+    {
+        ranges <- unlist(ranges(from), use.names=FALSE)
+        values <- unlist(values(from), use.names=FALSE)
+        names(ranges) <- rownames(from)
+        rownames(values) <- NULL
+        whichStrand <- which(colnames(values) == "strand")
+        if (length(whichStrand) > 0)
+            values <- values[-whichStrand]
+        GenomicRanges(seqnames = space(from),
+                      ranges = ranges,
+                      strand = Rle(strand(from)),
+                      values)
+    }
+)
+
+setMethod("as.data.frame", "GenomicRanges",
+    function(x, row.names=NULL, optional=FALSE, ...)
+    {
+        ranges <- ranges(x)
+        if (missing(row.names))
+            row.names <- names(x)
+        if (!is.null(names(x)))
+            names(x) <- NULL
+        data.frame(seqnames = as.vector(seqnames(x)),
+                   start = start(x),
+                   end = end(x),
+                   width = width(x),
+                   strand = as.vector(strand(x)),
+                   as.data.frame(values(x)),
+                   row.names = row.names,
+                   stringsAsFactors = FALSE)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Accessor methods.
+###
+
+setMethod("seqnames", "GenomicRanges", function(x) x@seqnames)
+setMethod("ranges", "GenomicRanges", function(x, ...) x@ranges)
+setMethod("strand", "GenomicRanges", function(x) x@strand)
+setMethod("values", "GenomicRanges",
+    function(x, ...)
+    {
+        ans <- x@values
+        if (!is.null(names(x)))
+            rownames(ans) <- names(x)
+        ans
+    }
+)
+
+setReplaceMethod("seqnames", "GenomicRanges",
+    function(x, value) 
+    {
+        if (!is(value, "Rle"))
+            value <- Rle(value)
+        n <- length(x)
+        k <- length(value)
+        if (k != n) {
+            if ((k == 0) || (k > n) || (n %% k != 0))
+                stop(k, " elements in value to replace ", n, "elements")
+            value <- rep(value, length.out = n)
+        }
+        initialize(x, seqnames = value)
+    }
+)
+setReplaceMethod("ranges", "GenomicRanges",
+    function(x, value) 
+    {
+        if (!is(value, "IRanges"))
+            value <- as(value, "IRanges")
+        n <- length(x)
+        k <- length(value)
+        if (k != n) {
+            if ((k == 0) || (k > n) || (n %% k != 0))
+                stop(k, " elements in value to replace ", n, "elements")
+            value <- rep(value, length.out = n)
+        }
+        initialize(x, ranges = value)
+    }
+)
+setReplaceMethod("strand", "GenomicRanges",
+    function(x, value) 
+    {
+        if (!is(value, "Rle"))
+            value <- Rle(value)
+        if (!is.factor(runValue(value)))
+            runValue(value) <- strand(runValue(value))
+        n <- length(x)
+        k <- length(value)
+        if (k != n) {
+            if ((k == 0) || (k > n) || (n %% k != 0))
+                stop(k, " elements in value to replace ", n, "elements")
+            value <- rep(value, length.out = n)
+        }
+        initialize(x, strand = value)
+    }
+)
+setReplaceMethod("values", "GenomicRanges",
+    function(x, value)
+    {
+        if (is.null(value))
+            value <- new("DataFrame", nrows = length(x))
+        else if (!is(value, "DataFrame"))
+            value <- DataFrame(value)
+        if (!is.null(rownames(value)))
+            rownames(value) <- NULL
+        n <- length(x)
+        k <- nrow(value)
+        if (k != n) {
+            if ((k == 0) || (k > n) || (n %% k != 0))
+                stop(k, " rows in value to replace ", n, "rows")
+            value <- value[rep(seq_len(k), length.out = n), , drop=FALSE]
+        }
+        initialize(x, values = value)
+    }
+)
+
+setMethod("names", "GenomicRanges", function(x) names(x@ranges))
+setReplaceMethod("names", "GenomicRanges",
+    function(x, value)
+    {
+        names(x@ranges) <- value
+        x
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Ranges methods.
+###
+
+setMethod("start", "GenomicRanges", function(x, ...) start(x@ranges))
+setMethod("end", "GenomicRanges", function(x, ...) end(x@ranges))
+setMethod("width", "GenomicRanges", function(x) width(x@ranges))
+
+setReplaceMethod("start", "GenomicRanges",
+    function(x, value)
+    {
+        start(x@ranges) <- value
+        x
+    }
+)
+
+setReplaceMethod("end", "GenomicRanges",
+    function(x, value)
+    {
+        end(x@ranges) <- value
+        x
+    }
+)
+
+setReplaceMethod("width", "GenomicRanges",
+    function(x, value)
+    {
+        width(x@ranges) <- value
+        x
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### DataTable methods.
+###
+
+setMethod("ncol", "GenomicRanges", function(x) ncol(x@values))
+
+setMethod("colnames", "GenomicRanges",
+    function(x, do.NULL = TRUE, prefix = "col") 
+        colnames(x@values, do.NULL = do.NULL, prefix = prefix))
+setReplaceMethod("colnames", "GenomicRanges",
+    function(x, value)
+    {
+        colnames(x@values) <- value
+        x
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Sequence methods.
+###
+
+setMethod("[", "GenomicRanges",
+    function(x, i, j, ..., drop)
+    {
+        if (!missing(i)) {
+            iInfo <- IRanges:::.bracket.Index(i, names(x), length(x))
+            if (!is.null(iInfo[["msg"]]))
+                stop(iInfo[["msg"]])
+            i <- iInfo[["idx"]]
+        }
+        ans <-
+          initialize(x, seqnames = x@seqnames[i], ranges = x@ranges[i],
+                     strand = x@strand[i], values = x@values[i, j, drop=FALSE])
+        nms <- names(ans)
+        if (!is.null(nms)) {
+            whichEmpty <- which(nms == "")
+            nms[whichEmpty] <- as.character(whichEmpty)
+            nms2 <- make.unique(nms)
+            if (length(whichEmpty) > 0 || !identical(nms, nms2))
+                names(ans) <- nms2
+        }
+        ans
+    }
+)
+
+setReplaceMethod("[", "GenomicRanges",
+    function(x, i, j, ..., value)
+    {
+        if (!is(value, "GenomicRanges"))
+            stop("replacement value must be a GenomicRanges object")
+        seqnames <- as.vector(x@seqnames)
+        ranges <- x@ranges
+        strand <- as.vector(x@strand)
+        values <- x@values
+        if (missing(i)) {
+            seqnames[] <- as.vector(value@seqnames)
+            ranges[] <- value@ranges
+            strand[] <- as.vector(value@strand)
+            values[,j] <- value@values
+        } else {
+            iInfo <- IRanges:::.bracket.Index(i, names(x), length(x))
+            if (!is.null(iInfo[["msg"]]))
+                stop(iInfo[["msg"]])
+            i <- iInfo[["idx"]]
+            seqnames[i] <- as.vector(value@seqnames)
+            ranges[i] <- value@ranges
+            strand[i] <- as.vector(value@strand)
+            values[i,j] <- value@values
+        }
+        initialize(x, seqnames = Rle(seqnames), ranges = ranges,
+                   strand = Rle(strand), values = values)
+    }
+)
+
+setMethod("c", "GenomicRanges",
+    function(x, ..., recursive = FALSE)
+    {
+        if (recursive)
+            stop("'recursive' mode not supported")
+        args <- list(x, ...)
+        ans <-
+          initialize(x,
+                     seqnames = do.call(c, lapply(args, slot, "seqnames")),
+                     ranges = do.call(c, lapply(args, slot, "ranges")),
+                     strand = do.call(c, lapply(args, slot, "strand")),
+                     values = do.call(rbind, lapply(args, slot, "values")))
+        nms <- names(ans)
+        if (!is.null(nms)) {
+            whichEmpty <- which(nms == "")
+            nms[whichEmpty] <- as.character(whichEmpty)
+            nms2 <- make.unique(nms)
+            if (length(whichEmpty) > 0 || !identical(nms, nms2))
+                names(ans) <- nms2
+        }
+        ans
+    }
+)
+
+setMethod("length", "GenomicRanges", function(x) length(x@seqnames))
+
+setMethod("rev", "GenomicRanges",
+    function(x)
+    {
+        if (length(x) == 0)
+            x
+        else
+            initialize(x, seqnames = rev(x@seqnames), ranges = rev(x@ranges),
+                       strand = rev(x@strand),
+                       values = x@values[length(x):1, , drop=FALSE])
+    }
+)
+
+setMethod("seqselect", "GenomicRanges",
+    function(x, start = NULL, end = NULL, width = NULL)
+    {
+        ans <-
+          initialize(x,
+                     seqnames =
+                     seqselect(x@seqnames, start = start, end = end, width = width),
+                     ranges =
+                     seqselect(x@ranges, start = start, end = end, width = width),
+                     strand =
+                     seqselect(x@strand, start = start, end = end, width = width),
+                     values =
+                     seqselect(x@values, start = start, end = end, width = width))
+        nms <- names(ans)
+        if (!is.null(nms)) {
+            whichEmpty <- which(nms == "")
+            nms[whichEmpty] <- as.character(whichEmpty)
+            nms2 <- make.unique(nms)
+            if (length(whichEmpty) > 0 || !identical(nms, nms2))
+                names(ans) <- nms2
+        }
+        ans
+    }
+)
+
+setReplaceMethod("seqselect", "GenomicRanges",
+    function(x, start = NULL, end = NULL, width = NULL, value)
+    {
+        if (!is(value, "GenomicRanges"))
+            stop("replacement value must be a GenomicRanges object")
+        seqnames <- as.vector(x@seqnames)
+        ranges <- x@ranges
+        strand <- as.vector(x@strand)
+        values <- x@values
+        seqselect(seqnames, start = start, end = end, width = width) <- value@seqnames
+        seqselect(ranges, start = start, end = end, width = width) <- value@ranges
+        seqselect(strand, start = start, end = end, width = width) <- value@strand
+        seqselect(values, start = start, end = end, width = width) <- value@values
+        initialize(x, seqnames = Rle(seqnames), ranges = ranges, 
+                   strand = Rle(strand), values = values)
+    }
+)
+
+setMethod("split", "GenomicRanges",
+    function(x, f, drop=FALSE)
+    {
+        if (missing(f))
+            f <- seqnames(x)
+        IRanges:::newCompressedList("GenomicRangesList", x, splitFactor = f,
+                                    drop = drop)
+    }
+)
+
+setMethod("window", "GenomicRanges",
+    function(x, start = NA, end = NA, width = NA,
+             frequency = NULL, delta = NULL, ...)
+    {
+        initialize(x,
+                   seqnames =
+                   window(x@seqnames, start = start, end = end, width = width,
+                          frequency = frequency, delta = delta),
+                   ranges =
+                   window(x@ranges, start = start, end = end, width = width,
+                          frequency = frequency, delta = delta),
+                   strand =
+                   window(x@strand, start = start, end = end, width = width,
+                          frequency = frequency, delta = delta),
+                   values =
+                   window(x@values, start = start, end = end, width = width,
+                          frequency = frequency, delta = delta))
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### show method.
+###
+
+setMethod("show", "GenomicRanges",
+    function(object)
+    {
+        lo <- length(object)
+        nc <- ncol(object)
+        cat(class(object), " with ",
+            lo, ifelse(lo == 1, " range and ", " ranges and "),
+            nc, ifelse(nc == 1, " values column\n", " values columns\n"),
+            sep = "")
+        if (lo > 0) {
+            k <- ifelse(lo <= 12L, lo, min(lo, 10L))
+            subset  <- object[seq_len(k)]
+            out <-
+              cbind(seqnames = IRanges:::showAsCell(seqnames(subset)),
+                    ranges = IRanges:::showAsCell(ranges(subset)),
+                    strand = as.character(strand(subset)),
+                    "|" = rep.int("|", k))
+            if (nc > 0)
+                out <-
+                  cbind(out,
+                        as.matrix(format.data.frame(do.call(data.frame,
+                                                            lapply(values(subset),
+                                                                    IRanges:::showAsCell)))))
+            if (is.null(names(subset)))
+                rownames(out) <- seq_len(k)
+            else
+                rownames(out) <- names(subset)
+            classinfo <-
+              matrix(c("<Rle>", "<IRanges>", "<Rle>", "|",
+                       unlist(lapply(values(subset), function(x)
+                                     paste("<", class(x), ">", sep = "")),
+                              use.names = FALSE)), nrow = 1,
+                     dimnames = list("", colnames(out)))
+            out <- rbind(classinfo, out)
+            print(out, quote = FALSE, right = TRUE)
+            diffK <- lo - k
+            if (diffK > 0)
+                cat("...\n<", diffK,
+                    ifelse(diffK == 1, " more range>\n", " more ranges>\n"),
+                    sep="")
+        }
+    }
+)

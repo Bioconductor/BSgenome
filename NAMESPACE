@@ -48,7 +48,7 @@ exportMethods(
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
-    seqnames, seqlengths, mseqnames,
+    seqnames, "seqnames<-", seqlengths, mseqnames,
     masknames,
     injectSNPs,
     gdapply,
@@ -56,3 +56,22 @@ exportMethods(
     ## BSgenomeForge methods:
     forgeBSgenomeDataPkg
 )
+
+
+### ==========================================================================
+### GenomicRanges
+### --------------------------------------------------------------------------
+
+exportClasses(GenomicRanges, GenomicRangesList)
+
+export(GenomicRanges, GenomicRangesList)
+
+exportMethods("coerce", "as.data.frame",
+              "seqnames", "ranges", "strand", "values",
+              "seqnames<-", "ranges<-", "strand<-", "values<-",
+              "names", "names<-",
+              "start", "end", "width", "start<-", "end<-", "width<-",
+              "ncol", "colnames", "colnames<-",
+              "[", "[<-", "c", "length", "rev", "seqselect", "seqselect<-",
+              "split", "window",
+              "show")

@@ -6,6 +6,7 @@
 \alias{strand,missing-method}
 \alias{strand,character-method}
 \alias{strand,DataTable-method}
+\alias{strand<-}
 
 \title{Accessing strand information}
 

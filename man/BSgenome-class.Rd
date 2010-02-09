@@ -11,6 +11,7 @@
 \alias{sourceUrl,BSgenome-method}
 \alias{seqnames}
 \alias{seqnames,BSgenome-method}
+\alias{seqnames<-}
 \alias{seqlengths}
 \alias{seqlengths,BSgenome-method}
 \alias{mseqnames}
