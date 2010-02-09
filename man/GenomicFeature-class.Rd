@@ -74,7 +74,9 @@
     \item{\code{strand}}{a 'factor' \link[IRanges]{Rle} object containing
       the \link{strand} information.}
     \item{\code{values}}{a \link[IRanges]{DataFrame} object containing
-      the annotation columns.}
+      the annotation columns. Columns cannot be named \code{"seqnames"},
+      \code{"ranges"}, \code{"strand"}, \code{"start"}, \code{"end"},
+      \code{"width"}, or \code{"feature"}.}
   }
 }
 
@@ -91,7 +93,8 @@
         \item{\code{strand}}{Rle object, character vector, or factor
           containing the strand information.}
         \item{\code{\ldots}}{Optional annotation columns for the \code{values}
-          slot.}
+          slot. These columns cannot be named \code{"start"}, \code{"end"},
+          \code{"width"}, or \code{"feature"}.}
       }
     }
   }

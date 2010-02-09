@@ -48,11 +48,12 @@ setClass("GenomicFeature", contains = "Sequence",
 .valid.GenomicFeature.values <- function(x)
 {
     msg <- NULL
-    if (any(c("seqnames", "ranges", "strand", "start", "end", "width") %in%
-            colnames(x@values)))
+    if (any(c("seqnames", "ranges", "strand", "start", "end", "width",
+              "feature") %in% colnames(x@values)))
         msg <-
-          paste("slot 'values' cannot use c(\"seqnames\", \"ranges\",",
-                "\"strand\", \"start\", \"end\", \"width\") as column names")
+          paste("slot 'values' cannot use \"seqnames\", \"ranges\",",
+                "\"strand\", \"start\", \"end\", \"width\", or \"feature\"",
+                "as column names")
     if (!is.null(rownames(x@values)))
         msg <- c(msg, "slot 'values' cannot contain row names")
     msg
@@ -415,7 +416,7 @@ setMethod("split", "GenomicFeature",
     function(x, f, drop=FALSE)
     {
         if (missing(f))
-            f <- seqnames(x)
+            f <- seq_len(length(x))
         IRanges:::newCompressedList("GenomicFeatureList", x, splitFactor = f,
                                     drop = drop)
     }
@@ -459,7 +460,7 @@ setMethod("show", "GenomicFeature",
             k <- ifelse(lo <= 12L, lo, min(lo, 10L))
             subset  <- object[seq_len(k)]
             out <-
-              cbind(seqnames = IRanges:::showAsCell(seqnames(subset)),
+              cbind(seqnames = as.character(seqnames(subset)),
                     ranges = IRanges:::showAsCell(ranges(subset)),
                     strand = as.character(strand(subset)),
                     "|" = rep.int("|", k))

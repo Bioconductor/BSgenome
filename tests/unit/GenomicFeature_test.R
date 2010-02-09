@@ -21,6 +21,8 @@ test_GenomicFeature_construction <- function() {
                    silent = TRUE)
     checkException(GenomicFeature(letters, IRanges(1:26, 1:26), width = 1:26),
                    silent = TRUE)
+    checkException(GenomicFeature(letters, IRanges(1:26, 1:26),
+                                  feature = letters), silent = TRUE)
 
     checkTrue(validObject(GenomicFeature()))
     checkTrue(validObject(GenomicFeature(letters, IRanges(1:26, 1:26))))
