@@ -10,7 +10,6 @@
 \alias{GenomicFeature}
 
 % Coercion methods:
-\alias{coerce,RangedData,GenomicFeature-method}
 \alias{as.data.frame,GenomicFeature-method}
 
 % Accessor methods:
@@ -57,16 +56,16 @@
 \title{GenomicFeature objects}
 
 \description{
-  The GenomicFeature class is a container for genomic locations and
-  their associated annotations.
+  The GenomicFeature class is a container for the genomic locations and
+  their associated annotations for a single feature.
 }
 
 \details{
-  The GenomicFeature class stores sequences of genomic locations and
-  associated annotations. Each element in the sequence is comprised of a
-  sequence name, an interval, a \link{strand}, and optional data values
-  (e.g. score, GC content, etc.). This information is stored in four
-  slots:
+  The GenomicFeature class stores the sequences of genomic locations and
+  associated annotations for a single feature. Each element in the sequence
+  is comprised of a sequence name, an interval, a \link{strand}, and optional
+  data values (e.g. score, GC content, etc.). This information is stored in
+  four slots:
   \describe{
     \item{\code{seqnames}}{a 'character' \link[IRanges]{Rle} object
       containing the sequence names.}
@@ -102,10 +101,6 @@
   In the code snippets below, \code{x} is a GenomicFeature object.
 
   \describe{
-    \item{}{
-      \code{as(from, "GenomicFeature")}:
-      Creates a GenomicFeature object from a RangedData object.
-    }
     \item{}{
       \code{as.data.frame(x, row.names = NULL, optional = FALSE)}:
       Creates a data.frame with columns \code{seqnames} (character), 

@@ -108,23 +108,6 @@ function(seqnames = Rle(), ranges = IRanges(),
 ### Coercion.
 ###
 
-setAs("RangedData", "GenomicFeature",
-    function(from)
-    {
-        ranges <- unlist(ranges(from), use.names=FALSE)
-        values <- unlist(values(from), use.names=FALSE)
-        names(ranges) <- rownames(from)
-        rownames(values) <- NULL
-        whichStrand <- which(colnames(values) == "strand")
-        if (length(whichStrand) > 0)
-            values <- values[-whichStrand]
-        GenomicFeature(seqnames = space(from),
-                      ranges = ranges,
-                      strand = Rle(strand(from)),
-                      values)
-    }
-)
-
 setMethod("as.data.frame", "GenomicFeature",
     function(x, row.names=NULL, optional=FALSE, ...)
     {

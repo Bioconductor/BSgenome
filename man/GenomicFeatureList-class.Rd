@@ -10,7 +10,7 @@
 \alias{GenomicFeatureList}
 
 % Coercion methods:
-\alias{coerce,RangedDataList,GenomicFeatureList-method}
+\alias{coerce,RangedData,GenomicFeatureList-method}
 \alias{as.data.frame,GenomicFeatureList-method}
 
 % Accessor methods:
@@ -65,7 +65,7 @@
   \describe{
     \item{}{
       \code{as(from, "GenomicFeatureList")}:
-      Creates a GenomicFeatureList object from a RangedDataList object.
+      Creates a GenomicFeatureList object from a RangedData object.
     }
     \item{}{
       \code{as.data.frame(x, row.names = NULL, optional = FALSE)}:

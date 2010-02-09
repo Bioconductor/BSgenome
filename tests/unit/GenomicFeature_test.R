@@ -39,8 +39,6 @@ test_GenomicFeature_construction <- function() {
 
 test_GenomicFeature_coercion <- function() {
     ## score, no strand
-    rd <- RangedData(IRanges(1:3,4:6), score = c(10L,2L,NA), space = c(1,1,2))
-    rownames(rd) <- head(letters,3)
     gr <-
       GenomicFeature(seqnames = c(1,1,2),
                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
@@ -52,15 +50,9 @@ test_GenomicFeature_coercion <- function() {
                  score = c(10L,2L,NA),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as(rd, "GenomicFeature"), gr)
     checkIdentical(as.data.frame(gr), df)
 
     ## strand, no score
-    rd <-
-      RangedData(IRanges(1:3,4:6),
-                 strand = strand(c("+", "-", "*")), 
-                 space = c(1,1,2))
-    rownames(rd) <- head(letters,3)
     gr <-
       GenomicFeature(seqnames = c(1,1,2),
                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
@@ -71,16 +63,9 @@ test_GenomicFeature_coercion <- function() {
                  strand = strand(c("+", "-", "*")),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as(rd, "GenomicFeature"), gr)
     checkIdentical(as.data.frame(gr), df)
 
     ## strand & score
-    rd <-
-      RangedData(IRanges(1:3,4:6),
-                 strand = strand(c("+", "-", "*")), 
-                 score = c(10L,2L,NA), 
-                 space = c(1,1,2))
-    rownames(rd) <- head(letters,3)
     gr <-
       GenomicFeature(seqnames = c(1,1,2),
                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
@@ -93,7 +78,6 @@ test_GenomicFeature_coercion <- function() {
                  score = c(10L,2L,NA),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as(rd, "GenomicFeature"), gr)
     checkIdentical(as.data.frame(gr), df)
 }
 
