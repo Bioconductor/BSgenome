@@ -110,7 +110,7 @@ setMethod("[", "GenomicFeatureList",
     function(x, i, j, ..., drop)
     {
         if (!missing(i))
-            x <- x[i]
+            x <- callNextMethod(x = x, i = i)
         if (!missing(j))
             values(x) <- values(x)[, j, drop=FALSE]
         x
