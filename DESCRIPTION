@@ -27,5 +27,5 @@ Collate: available.genomes.R
 	BSgenome-utils.R
 	BSgenomeForge.R
 	strand.R
-    GenomicRanges-class.R
-    GenomicRangesList-class.R
+    GenomicFeature-class.R
+    GenomicFeatureList-class.R

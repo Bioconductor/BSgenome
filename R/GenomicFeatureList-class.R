@@ -1,26 +1,26 @@
 ### =========================================================================
-### GenomicRangesList objects
+### GenomicFeatureList objects
 ### -------------------------------------------------------------------------
 ###
 ### Class definition
 
-setClass("GenomicRangesList", contains = "CompressedList",
-         prototype = prototype(elementType = "GenomicRanges",
-                               unlistData = new("GenomicRanges")))
+setClass("GenomicFeatureList", contains = "CompressedList",
+         prototype = prototype(elementType = "GenomicFeature",
+                               unlistData = new("GenomicFeature")))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Constructor.
 ###
 
-GenomicRangesList <- function(...)
+GenomicFeatureList <- function(...)
 {
     listData <- list(...)
     if (length(listData) == 1 && is.list(listData[[1L]]))
         listData <- listData[[1L]]
-    if (!all(sapply(listData, is, "GenomicRanges")))
-        stop("all elements in '...' must be GenomicRanges objects")
-    IRanges:::newCompressedList("GenomicRangesList", listData)
+    if (!all(sapply(listData, is, "GenomicFeature")))
+        stop("all elements in '...' must be GenomicFeature objects")
+    IRanges:::newCompressedList("GenomicFeatureList", listData)
 }
 
 
@@ -28,25 +28,25 @@ GenomicRangesList <- function(...)
 ### Accessor methods.
 ###
 
-setMethod("seqnames", "GenomicRangesList",
+setMethod("seqnames", "GenomicFeatureList",
     function(x)
         new2("CompressedRleList",
              unlistData = x@unlistData@seqnames, partitioning = x@partitioning,
              check=FALSE))
 
-setMethod("ranges", "GenomicRangesList",
+setMethod("ranges", "GenomicFeatureList",
     function(x, ...)
         new2("CompressedIRangesList",
              unlistData = x@unlistData@ranges, partitioning = x@partitioning,
              check=FALSE))
 
-setMethod("strand", "GenomicRangesList",
+setMethod("strand", "GenomicFeatureList",
     function(x)
         new2("CompressedRleList",
              unlistData = x@unlistData@strand, partitioning = x@partitioning,
              check=FALSE))
 
-setMethod("values", "GenomicRangesList",
+setMethod("values", "GenomicFeatureList",
     function(x, ...)
         new2("CompressedSplitDataFrameList",
              unlistData = x@unlistData@values, partitioning = x@partitioning,
@@ -57,19 +57,19 @@ setMethod("values", "GenomicRangesList",
 ### RangesList methods.
 ###
 
-setMethod("start", "GenomicRangesList",
+setMethod("start", "GenomicFeatureList",
     function(x, ...)
         new2("CompressedIntegerList",
              unlistData = start(x@unlistData@ranges),
              partitioning = x@partitioning, check=FALSE))
 
-setMethod("end", "GenomicRangesList",
+setMethod("end", "GenomicFeatureList",
     function(x, ...)
         new2("CompressedIntegerList",
              unlistData = end(x@unlistData@ranges),
              partitioning = x@partitioning, check=FALSE))
 
-setMethod("width", "GenomicRangesList",
+setMethod("width", "GenomicFeatureList",
     function(x)
         new2("CompressedIntegerList",
              unlistData = width(x@unlistData@ranges),
@@ -80,7 +80,7 @@ setMethod("width", "GenomicRangesList",
 ### SplitDataFrameList methods.
 ###
 
-setMethod("[", "GenomicRangesList",
+setMethod("[", "GenomicFeatureList",
     function(x, i, j, ..., drop)
     {
         if (!missing(i))
@@ -91,12 +91,12 @@ setMethod("[", "GenomicRangesList",
     }
 )
 
-setMethod("ncol", "GenomicRangesList", function(x) ncol(x@unlistData@values))
+setMethod("ncol", "GenomicFeatureList", function(x) ncol(x@unlistData@values))
 
-setMethod("colnames", "GenomicRangesList",
+setMethod("colnames", "GenomicFeatureList",
     function(x, do.NULL = TRUE, prefix = "col") 
         colnames(x@unlistData@values, do.NULL = do.NULL, prefix = prefix))
-setReplaceMethod("colnames", "GenomicRangesList",
+setReplaceMethod("colnames", "GenomicFeatureList",
     function(x, value)
     {
         colnames(x@unlistData@values) <- value
@@ -109,7 +109,7 @@ setReplaceMethod("colnames", "GenomicRangesList",
 ### show method.
 ###
 
-setMethod("show", "GenomicRangesList",
+setMethod("show", "GenomicFeatureList",
     function(object)
     {
         k <- length(object)

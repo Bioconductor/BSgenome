@@ -1,68 +1,68 @@
-\name{GenomicRanges-class}
+\name{GenomicFeature-class}
 \docType{class}
 
 % Class
-\alias{class:GenomicRanges}
-\alias{GenomicRanges-class}
-\alias{GenomicRanges}
+\alias{class:GenomicFeature}
+\alias{GenomicFeature-class}
+\alias{GenomicFeature}
 
 % Constructor-like function:
-\alias{GenomicRanges}
+\alias{GenomicFeature}
 
 % Coercion methods:
-\alias{coerce,RangedData,GenomicRanges-method}
-\alias{as.data.frame,GenomicRanges-method}
+\alias{coerce,RangedData,GenomicFeature-method}
+\alias{as.data.frame,GenomicFeature-method}
 
 % Accessor methods:
-\alias{seqnames,GenomicRanges-method}
-\alias{seqnames<-,GenomicRanges-method}
-\alias{ranges,GenomicRanges-method}
-\alias{ranges<-,GenomicRanges-method}
-\alias{strand,GenomicRanges-method}
-\alias{strand<-,GenomicRanges-method}
-\alias{values,GenomicRanges-method}
-\alias{values<-,GenomicRanges-method}
-\alias{names,GenomicRanges-method}
-\alias{names<-,GenomicRanges-method}
+\alias{seqnames,GenomicFeature-method}
+\alias{seqnames<-,GenomicFeature-method}
+\alias{ranges,GenomicFeature-method}
+\alias{ranges<-,GenomicFeature-method}
+\alias{strand,GenomicFeature-method}
+\alias{strand<-,GenomicFeature-method}
+\alias{values,GenomicFeature-method}
+\alias{values<-,GenomicFeature-method}
+\alias{names,GenomicFeature-method}
+\alias{names<-,GenomicFeature-method}
 
 % Ranges methods:
-\alias{start,GenomicRanges-method}
-\alias{start<-,GenomicRanges-method}
-\alias{end,GenomicRanges-method}
-\alias{end<-,GenomicRanges-method}
-\alias{width,GenomicRanges-method}
-\alias{width<-,GenomicRanges-method}
+\alias{start,GenomicFeature-method}
+\alias{start<-,GenomicFeature-method}
+\alias{end,GenomicFeature-method}
+\alias{end<-,GenomicFeature-method}
+\alias{width,GenomicFeature-method}
+\alias{width<-,GenomicFeature-method}
 
 % DataTable methods:
-\alias{[,GenomicRanges-method}
-\alias{[<-,GenomicRanges-method}
-\alias{ncol,GenomicRanges-method}
-\alias{colnames,GenomicRanges-method}
-\alias{colnames<-,GenomicRanges-method}
+\alias{[,GenomicFeature-method}
+\alias{[<-,GenomicFeature-method}
+\alias{ncol,GenomicFeature-method}
+\alias{colnames,GenomicFeature-method}
+\alias{colnames<-,GenomicFeature-method}
 
 % Sequence methods:
-\alias{[,GenomicRanges-method}
-\alias{c,GenomicRanges-method}
-\alias{length,GenomicRanges-method}
-\alias{rev,GenomicRanges-method}
-\alias{seqselect,GenomicRanges-method}
-\alias{seqselect<-,GenomicRanges-method}
-\alias{split,GenomicRanges-method}
-\alias{window,GenomicRanges-method}
+\alias{[,GenomicFeature-method}
+\alias{c,GenomicFeature-method}
+\alias{length,GenomicFeature-method}
+\alias{rev,GenomicFeature-method}
+\alias{seqselect,GenomicFeature-method}
+\alias{seqselect<-,GenomicFeature-method}
+\alias{split,GenomicFeature-method}
+\alias{window,GenomicFeature-method}
 
 % show method:
-\alias{show,GenomicRanges-method}
+\alias{show,GenomicFeature-method}
 
 
-\title{GenomicRanges objects}
+\title{GenomicFeature objects}
 
 \description{
-  The GenomicRanges class is a container for genomic locations and
+  The GenomicFeature class is a container for genomic locations and
   their associated annotations.
 }
 
 \details{
-  The GenomicRanges class stores sequences of genomic locations and
+  The GenomicFeature class stores sequences of genomic locations and
   associated annotations. Each element in the sequence is comprised of a
   sequence name, an interval, a \link{strand}, and optional data values
   (e.g. score, GC content, etc.). This information is stored in four
@@ -82,9 +82,9 @@
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomicRanges(seqnames = Rle(), ranges = IRanges(),
+      \code{GenomicFeature(seqnames = Rle(), ranges = IRanges(),
                           strand = Rle(NA_character_, length(seqnames)), ...)}:
-      Creates a GenomicRanges object.
+      Creates a GenomicFeature object.
       \describe{
         \item{\code{seqnames}}{Rle object or character vector containing the
           sequence names.}
@@ -99,12 +99,12 @@
 }
 
 \section{Coercion}{
-  In the code snippets below, \code{x} is a GenomicRanges object.
+  In the code snippets below, \code{x} is a GenomicFeature object.
 
   \describe{
     \item{}{
-      \code{as(from, "GenomicRanges")}:
-      Creates a GenomicRanges object from a RangedData object.
+      \code{as(from, "GenomicFeature")}:
+      Creates a GenomicFeature object from a RangedData object.
     }
     \item{}{
       \code{as.data.frame(x, row.names = NULL, optional = FALSE)}:
@@ -117,7 +117,7 @@
 }
 
 \section{Accessors}{
-  In the following code snippets, \code{x} is a GenomicRanges object.
+  In the following code snippets, \code{x} is a GenomicFeature object.
 
   \describe{
     \item{}{
@@ -151,7 +151,7 @@
 }
 
 \section{Ranges methods}{
-  In the following code snippets, \code{x} is a GenomicRanges object.
+  In the following code snippets, \code{x} is a GenomicFeature object.
 
   \describe{
     \item{}{
@@ -170,7 +170,7 @@
 }
 
 \section{DataTable methods}{
-  In the following code snippets, \code{x} is a GenomicRanges object.
+  In the following code snippets, \code{x} is a GenomicFeature object.
 
   \describe{
     \item{}{
@@ -186,7 +186,7 @@
 }
 
 \section{Splitting and Combining}{
-  In the code snippets below, \code{x} is a GenomicRanges object.
+  In the code snippets below, \code{x} is a GenomicFeature object.
 
   \describe{
     \item{}{
@@ -197,14 +197,14 @@
     }
     \item{}{
       \code{c(x, ...)}:
-      Combine \code{x} and the GenomicRanges objects in \code{...} together.
+      Combine \code{x} and the GenomicFeature objects in \code{...} together.
       Any object in \code{...} must belong to the same class as \code{x},
       or to one of its subclasses, or must be \code{NULL}.
       The result is an object of the same class as \code{x}.
     }
     \item{}{
       \code{split(x, f, drop = FALSE)}:
-      Splits \code{x} into a \link{GenomicRangesList}, according to \code{f},
+      Splits \code{x} into a \link{GenomicFeatureList}, according to \code{f},
       dropping elements corresponding to unrepresented levels if \code{drop}
       is \code{TRUE}.
     }
@@ -212,7 +212,7 @@
 }
 
 \section{Subsetting}{
-  In the code snippets below, \code{x} is a GenomicRanges object.
+  In the code snippets below, \code{x} is a GenomicFeature object.
 
   \describe{
     \item{}{
@@ -229,9 +229,9 @@
     \item{}{
       \code{head(x, n = 6L)}:
       If \code{n} is non-negative, returns the first n elements of the
-      GenomicRanges object.
+      GenomicFeature object.
       If \code{n} is negative, returns all but the last \code{abs(n)} elements
-      of the GenomicRanges object.
+      of the GenomicFeature object.
     }
     \item{}{
       \code{rep(x, times, length.out, each)}:
@@ -281,13 +281,13 @@
     \item{}{
       \code{tail(x, n = 6L)}:
       If \code{n} is non-negative, returns the last n elements of the
-      GenomicRanges object.
+      GenomicFeature object.
       If \code{n} is negative, returns all but the first \code{abs(n)} elements
-      of the GenomicRanges object.
+      of the GenomicFeature object.
     }
     \item{}{
       \code{window(x, start = NA, end = NA, width = NA, frequency = NULL, delta = NULL, ...)}:
-      Extract the subsequence window from the GenomicRanges object using:
+      Extract the subsequence window from the GenomicFeature object using:
       \describe{
         \item{\code{start}, \code{end}, \code{width}}{The start, end, or width
           of the window. Two of the three are required.}
@@ -304,7 +304,7 @@
       \code{value} must either be of class \code{class(x)}, belong to a subclass
       of \code{class(x)}, be coercible to \code{class(x)}, or be \code{NULL}.
       If \code{keepLength} is \code{TRUE}, the elements of \code{value} are
-      repeated to create a GenomicRanges object with the same number of elements
+      repeated to create a GenomicFeature object with the same number of elements
       as the width of the subsequence window it is replacing.
       If \code{keepLength} is \code{FALSE}, this replacement method can modify
       the length of \code{x}, depending on how the length of the left
@@ -316,7 +316,7 @@
 \author{P. Aboyoun}
 
 \seealso{
-  \link{GenomicRangesList},
+  \link{GenomicFeatureList},
   \link[IRanges]{Sequence},
   \link[IRanges]{Ranges},
   \link[IRanges]{Rle},

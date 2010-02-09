@@ -59,12 +59,12 @@ exportMethods(
 
 
 ### ==========================================================================
-### GenomicRanges
+### GenomicFeature
 ### --------------------------------------------------------------------------
 
-exportClasses(GenomicRanges, GenomicRangesList)
+exportClasses(GenomicFeature, GenomicFeatureList)
 
-export(GenomicRanges, GenomicRangesList)
+export(GenomicFeature, GenomicFeatureList)
 
 exportMethods("coerce", "as.data.frame",
               "seqnames", "ranges", "strand", "values",

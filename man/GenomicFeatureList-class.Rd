@@ -1,71 +1,71 @@
-\name{GenomicRangesList-class}
+\name{GenomicFeatureList-class}
 \docType{class}
 
 % Class
-\alias{class:GenomicRangesList}
-\alias{GenomicRangesList-class}
-\alias{GenomicRangesList}
+\alias{class:GenomicFeatureList}
+\alias{GenomicFeatureList-class}
+\alias{GenomicFeatureList}
 
 % Constructor-like function:
-\alias{GenomicRangesList}
+\alias{GenomicFeatureList}
 
 % Coercion methods:
-\alias{coerce,RangedDataList,GenomicRangesList-method}
-\alias{as.data.frame,GenomicRangesList-method}
+\alias{coerce,RangedDataList,GenomicFeatureList-method}
+\alias{as.data.frame,GenomicFeatureList-method}
 
 % Accessor methods:
-\alias{seqnames,GenomicRangesList-method}
-\alias{seqnames<-,GenomicRangesList-method}
-\alias{ranges,GenomicRangesList-method}
-\alias{ranges<-,GenomicRangesList-method}
-\alias{strand,GenomicRangesList-method}
-\alias{strand<-,GenomicRangesList-method}
-\alias{values,GenomicRangesList-method}
-\alias{values<-,GenomicRangesList-method}
+\alias{seqnames,GenomicFeatureList-method}
+\alias{seqnames<-,GenomicFeatureList-method}
+\alias{ranges,GenomicFeatureList-method}
+\alias{ranges<-,GenomicFeatureList-method}
+\alias{strand,GenomicFeatureList-method}
+\alias{strand<-,GenomicFeatureList-method}
+\alias{values,GenomicFeatureList-method}
+\alias{values<-,GenomicFeatureList-method}
 
 % RangesList methods:
-\alias{start,GenomicRangesList-method}
-\alias{start<-,GenomicRangesList-method}
-\alias{end,GenomicRangesList-method}
-\alias{end<-,GenomicRangesList-method}
-\alias{width,GenomicRangesList-method}
-\alias{width<-,GenomicRangesList-method}
+\alias{start,GenomicFeatureList-method}
+\alias{start<-,GenomicFeatureList-method}
+\alias{end,GenomicFeatureList-method}
+\alias{end<-,GenomicFeatureList-method}
+\alias{width,GenomicFeatureList-method}
+\alias{width<-,GenomicFeatureList-method}
 
 % SplitDataFrameList methods:
-\alias{[,GenomicRangesList-method}
-\alias{[<-,GenomicRangesList-method}
-\alias{ncol,GenomicRangesList-method}
-\alias{colnames,GenomicRangesList-method}
-\alias{colnames<-,GenomicRangesList-method}
+\alias{[,GenomicFeatureList-method}
+\alias{[<-,GenomicFeatureList-method}
+\alias{ncol,GenomicFeatureList-method}
+\alias{colnames,GenomicFeatureList-method}
+\alias{colnames<-,GenomicFeatureList-method}
 
 % show method:
-\alias{show,GenomicRangesList-method}
+\alias{show,GenomicFeatureList-method}
 
 
-\title{GenomicRangesList objects}
+\title{GenomicFeatureList objects}
 
 \description{
-  The GenomicRangesList class is a container for storing a collection
-  of GenomicRanges objects.
+  The GenomicFeatureList class is a container for storing a collection
+  of GenomicFeature objects.
 }
 
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomicRangesList(...)}:
-      Creates a GenomicRangesList object using GenomicRanges objects
+      \code{GenomicFeatureList(...)}:
+      Creates a GenomicFeatureList object using GenomicFeature objects
       supplied in \code{\ldots}.
     }
   }
 }
 
 \section{Coercion}{
-  In the code snippets below, \code{x} is a GenomicRangesList object.
+  In the code snippets below, \code{x} is a GenomicFeatureList object.
 
   \describe{
     \item{}{
-      \code{as(from, "GenomicRangesList")}:
-      Creates a GenomicRangesList object from a RangedDataList object.
+      \code{as(from, "GenomicFeatureList")}:
+      Creates a GenomicFeatureList object from a RangedDataList object.
     }
     \item{}{
       \code{as.data.frame(x, row.names = NULL, optional = FALSE)}:
@@ -81,7 +81,7 @@
 }
 
 \section{Accessors}{
-  In the following code snippets, \code{x} is a GenomicRanges object.
+  In the following code snippets, \code{x} is a GenomicFeature object.
   
   \describe{
     \item{}{
@@ -109,7 +109,7 @@
 }
 
 \section{List methods}{
-  In the following code snippets, \code{x} is a GenomicRangesList object.
+  In the following code snippets, \code{x} is a GenomicFeatureList object.
 
   \describe{
     \item{}{
@@ -126,14 +126,14 @@
     }
     \item{}{
       \code{isEmpty(x)}:
-      Returns a logical indicating either if the GenomicRangesList has no
+      Returns a logical indicating either if the GenomicFeatureList has no
       elements or if all its elements are empty.
     }
   }
 }
 
 \section{RangesList methods}{
-  In the following code snippets, \code{x} is a GenomicRangesList object.
+  In the following code snippets, \code{x} is a GenomicFeatureList object.
 
   \describe{
     \item{}{
@@ -152,7 +152,7 @@
 }
 
 \section{SplitDataFrameList methods}{
-  In the following code snippets, \code{x} is a GenomicRangesList object.
+  In the following code snippets, \code{x} is a GenomicFeatureList object.
 
   \describe{
     \item{}{
@@ -168,7 +168,7 @@
 }
 
 \section{Combining}{
-  In the code snippets below, \code{x} is a GenomicRangesList object.
+  In the code snippets below, \code{x} is a GenomicFeatureList object.
 
   \describe{
     \item{}{\code{append(x, values, after = length(x))}:
@@ -178,20 +178,20 @@
     }
     \item{}{
       \code{c(x, ...)}:
-      Combine \code{x} and the GenomicRangesList objects in \code{...}
+      Combine \code{x} and the GenomicFeatureList objects in \code{...}
       together. Any object in \code{...} must belong to the same class
       as \code{x}, or to one of its subclasses, or must be \code{NULL}.
       The result is an object of the same class as \code{x}.
     }
     \item{}{\code{unlist(x, recursive = TRUE, use.names = TRUE)}:
-      Concatenates the elements of \code{x} into a single GenomicRanges
+      Concatenates the elements of \code{x} into a single GenomicFeature
       object.
     }
   }
 }
 
 \section{Subsetting}{
-  In the following code snippets, \code{x} is a GenomicRangesList object.
+  In the following code snippets, \code{x} is a GenomicFeatureList object.
 
   \describe{
     \item{}{
@@ -214,9 +214,9 @@
     \item{}{
       \code{head(x, n = 6L)}:
       If \code{n} is non-negative, returns the first n elements of the
-      GenomicRangesList object.
+      GenomicFeatureList object.
       If \code{n} is negative, returns all but the last \code{abs(n)} elements
-      of the GenomicRangesList object.
+      of the GenomicFeatureList object.
     }
     \item{}{
       \code{rep(x, times, length.out, each)}:
@@ -266,13 +266,13 @@
     \item{}{
       \code{tail(x, n = 6L)}:
       If \code{n} is non-negative, returns the last n elements of the
-      GenomicRanges object.
+      GenomicFeature object.
       If \code{n} is negative, returns all but the first \code{abs(n)} elements
-      of the GenomicRanges object.
+      of the GenomicFeature object.
     }
     \item{}{
       \code{window(x, start = NA, end = NA, width = NA, frequency = NULL, delta = NULL, ...)}:
-      Extract the subsequence window from the GenomicRanges object using:
+      Extract the subsequence window from the GenomicFeature object using:
       \describe{
         \item{\code{start}, \code{end}, \code{width}}{The start, end, or width
           of the window. Two of the three are required.}
@@ -289,7 +289,7 @@
       \code{value} must either be of class \code{class(x)}, belong to a subclass
       of \code{class(x)}, be coercible to \code{class(x)}, or be \code{NULL}.
       If \code{keepLength} is \code{TRUE}, the elements of \code{value} are
-      repeated to create a GenomicRanges object with the same number of elements
+      repeated to create a GenomicFeature object with the same number of elements
       as the width of the subsequence window it is replacing.
       If \code{keepLength} is \code{FALSE}, this replacement method can modify
       the length of \code{x}, depending on how the length of the left
@@ -299,7 +299,7 @@
 }
 
 \section{Looping}{
-  In the code snippets below, \code{x} is a GenomicRangesList object.
+  In the code snippets below, \code{x} is a GenomicFeatureList object.
 
   \describe{
     \item{}{
@@ -310,7 +310,7 @@
     \item{}{
       \code{lapply(X, FUN, ...)}:
       Like the standard \code{\link[base]{lapply}} function defined in the
-      base package, the \code{lapply} method for GenomicRangesList objects
+      base package, the \code{lapply} method for GenomicFeatureList objects
       returns a list of the same length as \code{X}, with each element being
       the result of applying \code{FUN} to the corresponding element of
       \code{X}.
@@ -318,12 +318,12 @@
     \item{}{
       \code{Map(f, ...)}:
       Applies a function to the corresponding elements of given
-      GenomicRangesList objects.
+      GenomicFeatureList objects.
     }
     \item{}{
       \code{mapply(FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)}:
       Like the standard \code{\link[base]{mapply}} function defined in the
-      base package, the \code{mapply} method for GenomicRangesList objects is a
+      base package, the \code{mapply} method for GenomicFeatureList objects is a
       multivariate version of \code{sapply}.
     }
     \item{}{
@@ -348,7 +348,7 @@
     \item{}{
       \code{sapply(X, FUN, ..., simplify=TRUE, USE.NAMES=TRUE)}:
       Like the standard \code{\link[base:lapply]{sapply}} function defined in
-      the base package, the \code{sapply} method for GenomicRangesList objects
+      the base package, the \code{sapply} method for GenomicFeatureList objects
       is a user-friendly version of \code{lapply} by default returning a vector
       or matrix if appropriate.
     }
@@ -358,7 +358,7 @@
 \author{P. Aboyoun}
 
 \seealso{
-  \link{GenomicRanges},
+  \link{GenomicFeature},
   \link[IRanges]{Sequence},
   \link[IRanges]{RangesList},
   \link[IRanges]{RleList},

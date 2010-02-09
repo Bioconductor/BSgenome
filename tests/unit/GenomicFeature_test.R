@@ -1,5 +1,5 @@
-make_test_GenomicRanges <- function() {
-    new("GenomicRanges",
+make_test_GenomicFeature <- function() {
+    new("GenomicFeature",
         seqnames = Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
         ranges = IRanges(1:10, width = 10:1, names = head(letters, 10)),
         strand = Rle(factor(strand(c("-", "+", "*", NA, "+", "-"))),
@@ -7,42 +7,42 @@ make_test_GenomicRanges <- function() {
         values = DataFrame(score = 1:10, GC = seq(1, 0, length=10)))
 }
 
-test_GenomicRanges_construction <- function() {
-    checkException(GenomicRanges(letters), silent = TRUE)
-    checkException(GenomicRanges(ranges = IRanges(1:10, 1:10)), silent = TRUE)
-    checkException(GenomicRanges(letters, IRanges(1:10, 1:10)), silent = TRUE)
-    checkException(GenomicRanges(letters, IRanges(1:26, 1:26),
+test_GenomicFeature_construction <- function() {
+    checkException(GenomicFeature(letters), silent = TRUE)
+    checkException(GenomicFeature(ranges = IRanges(1:10, 1:10)), silent = TRUE)
+    checkException(GenomicFeature(letters, IRanges(1:10, 1:10)), silent = TRUE)
+    checkException(GenomicFeature(letters, IRanges(1:26, 1:26),
                                  strand = letters), silent = TRUE)
-    checkException(GenomicRanges(letters, IRanges(1:26, 1:26), score = 1:10),
+    checkException(GenomicFeature(letters, IRanges(1:26, 1:26), score = 1:10),
                    silent = TRUE)
-    checkException(GenomicRanges(letters, IRanges(1:26, 1:26), start = 1:26),
+    checkException(GenomicFeature(letters, IRanges(1:26, 1:26), start = 1:26),
                    silent = TRUE)
-    checkException(GenomicRanges(letters, IRanges(1:26, 1:26), end = 1:26),
+    checkException(GenomicFeature(letters, IRanges(1:26, 1:26), end = 1:26),
                    silent = TRUE)
-    checkException(GenomicRanges(letters, IRanges(1:26, 1:26), width = 1:26),
+    checkException(GenomicFeature(letters, IRanges(1:26, 1:26), width = 1:26),
                    silent = TRUE)
 
-    checkTrue(validObject(GenomicRanges()))
-    checkTrue(validObject(GenomicRanges(letters, IRanges(1:26, 1:26))))
-    checkTrue(validObject(GenomicRanges(letters, IRanges(1:26, 1:26),
+    checkTrue(validObject(GenomicFeature()))
+    checkTrue(validObject(GenomicFeature(letters, IRanges(1:26, 1:26))))
+    checkTrue(validObject(GenomicFeature(letters, IRanges(1:26, 1:26),
                                         score = 1:26)))
-    checkTrue(validObject(GenomicRanges(factor(letters), IRanges(1:26, 1:26))))
-    checkTrue(validObject(GenomicRanges(1:10, IRanges(1:10, 1:10))))
+    checkTrue(validObject(GenomicFeature(factor(letters), IRanges(1:26, 1:26))))
+    checkTrue(validObject(GenomicFeature(1:10, IRanges(1:10, 1:10))))
 
-    checkIdentical(GenomicRanges(seqnames = Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
+    checkIdentical(GenomicFeature(seqnames = Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
                                  ranges = IRanges(1:10, width = 10:1, names = head(letters,10)),
                                  strand = Rle(factor(strand(c("-", "+", "*", NA, "+", "-"))),
                                               c(1, 2, 1, 1, 3, 2)),
                                  score = 1:10, GC = seq(1, 0, length=10)),
-                   make_test_GenomicRanges())
+                   make_test_GenomicFeature())
 }
 
-test_GenomicRanges_coercion <- function() {
+test_GenomicFeature_coercion <- function() {
     ## score, no strand
     rd <- RangedData(IRanges(1:3,4:6), score = c(10L,2L,NA), space = c(1,1,2))
     rownames(rd) <- head(letters,3)
     gr <-
-      GenomicRanges(seqnames = c(1,1,2),
+      GenomicFeature(seqnames = c(1,1,2),
                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
                     score = c(10L,2L,NA))
     df <-
@@ -52,7 +52,7 @@ test_GenomicRanges_coercion <- function() {
                  score = c(10L,2L,NA),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as(rd, "GenomicRanges"), gr)
+    checkIdentical(as(rd, "GenomicFeature"), gr)
     checkIdentical(as.data.frame(gr), df)
 
     ## strand, no score
@@ -62,7 +62,7 @@ test_GenomicRanges_coercion <- function() {
                  space = c(1,1,2))
     rownames(rd) <- head(letters,3)
     gr <-
-      GenomicRanges(seqnames = c(1,1,2),
+      GenomicFeature(seqnames = c(1,1,2),
                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
                     strand = strand(c("+", "-", "*")))
     df <-
@@ -71,7 +71,7 @@ test_GenomicRanges_coercion <- function() {
                  strand = strand(c("+", "-", "*")),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as(rd, "GenomicRanges"), gr)
+    checkIdentical(as(rd, "GenomicFeature"), gr)
     checkIdentical(as.data.frame(gr), df)
 
     ## strand & score
@@ -82,7 +82,7 @@ test_GenomicRanges_coercion <- function() {
                  space = c(1,1,2))
     rownames(rd) <- head(letters,3)
     gr <-
-      GenomicRanges(seqnames = c(1,1,2),
+      GenomicFeature(seqnames = c(1,1,2),
                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
                     strand = strand(c("+", "-", "*")),
                     score = c(10L,2L,NA))
@@ -93,50 +93,50 @@ test_GenomicRanges_coercion <- function() {
                  score = c(10L,2L,NA),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as(rd, "GenomicRanges"), gr)
+    checkIdentical(as(rd, "GenomicFeature"), gr)
     checkIdentical(as.data.frame(gr), df)
 }
 
-test_GenomicRanges_accessors <- function() {
+test_GenomicFeature_accessors <- function() {
     ## seqnames
-    checkException(seqnames(GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(seqnames(make_test_GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(seqnames(make_test_GenomicRanges()) <- letters,
+    checkException(seqnames(GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(seqnames(make_test_GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(seqnames(make_test_GenomicFeature()) <- letters,
                    silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     val <- seqnames(gr)
     runValue(val) <- paste(runValue(val), ".new", sep="")
     seqnames(gr) <- val
     checkIdentical(seqnames(gr), val)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     val <- head(letters, length(gr))
     seqnames(gr) <- val
     checkIdentical(seqnames(gr), Rle(val))
 
     ## ranges
-    checkException(ranges(GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(ranges(make_test_GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(seqnames(make_test_GenomicRanges()) <- IRanges(1:26, 1:26),
+    checkException(ranges(GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(ranges(make_test_GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(seqnames(make_test_GenomicFeature()) <- IRanges(1:26, 1:26),
                    silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     val <- IRanges(1:length(gr), width = 10)
     ranges(gr) <- val
     checkIdentical(ranges(gr), val)
 
     ## strand
-    checkException(strand(GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(strand(make_test_GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(strand(make_test_GenomicRanges()) <- letters, silent = TRUE)
+    checkException(strand(GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(strand(make_test_GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(strand(make_test_GenomicFeature()) <- letters, silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     val <- Rle(strand("+"), length(gr))
     strand(gr) <- val
     checkIdentical(strand(gr), val)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     val <- rep(strand("+"), length(gr))
     strand(gr) <- val
     checkIdentical(strand(gr), Rle(val))
@@ -146,12 +146,12 @@ test_GenomicRanges_accessors <- function() {
                    silent = TRUE)
     checkException(values(gr) <- DataFrame(score = letters), silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     values(gr) <- NULL
     checkIdentical(values(gr),
                    new("DataFrame", nrows = length(gr), rownames = names(gr)))
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     val <- DataFrame(x = 1:length(gr), y = head(letters, length(gr)))
     rownames(val) <- names(gr)
     values(gr) <- val
@@ -161,60 +161,60 @@ test_GenomicRanges_accessors <- function() {
     ## names
     checkException(names(gr) <- letters, silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     names(gr) <- NULL
     checkIdentical(names(gr), NULL)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     names(gr) <- head(letters, length(gr))
     checkIdentical(names(gr), head(letters, length(gr)))
 }
 
-test_GenomicRanges_Ranges <- function() {
+test_GenomicFeature_Ranges <- function() {
     ## start
-    checkException(start(GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(start(make_test_GenomicRanges()) <- letters, silent = TRUE)
-    checkException(start(make_test_GenomicRanges()) <- 1:26, silent = TRUE)
+    checkException(start(GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(start(make_test_GenomicFeature()) <- letters, silent = TRUE)
+    checkException(start(make_test_GenomicFeature()) <- 1:26, silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     start(gr) <- as.numeric(seq_len(length(gr)))
     checkIdentical(start(gr), seq_len(length(gr)))
 
     ## end
-    checkException(end(GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(end(make_test_GenomicRanges()) <- letters, silent = TRUE)
-    checkException(end(make_test_GenomicRanges()) <- 1:26, silent = TRUE)
+    checkException(end(GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(end(make_test_GenomicFeature()) <- letters, silent = TRUE)
+    checkException(end(make_test_GenomicFeature()) <- 1:26, silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     end(gr) <- as.numeric(10L + seq_len(length(gr)))
     checkIdentical(end(gr), 10L + seq_len(length(gr)))
 
     ## width
-    checkException(width(GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(width(make_test_GenomicRanges()) <- letters, silent = TRUE)
-    checkException(width(make_test_GenomicRanges()) <- 1:26, silent = TRUE)
+    checkException(width(GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(width(make_test_GenomicFeature()) <- letters, silent = TRUE)
+    checkException(width(make_test_GenomicFeature()) <- 1:26, silent = TRUE)
 
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     width(gr) <- as.numeric(10L + seq_len(length(gr)))
     checkIdentical(width(gr), 10L + seq_len(length(gr)))
 }
 
-test_GenomicRanges_DataTable <- function() {
-    checkIdentical(ncol(GenomicRanges()), 0L)
-    checkIdentical(ncol(make_test_GenomicRanges()), 2L)
+test_GenomicFeature_DataTable <- function() {
+    checkIdentical(ncol(GenomicFeature()), 0L)
+    checkIdentical(ncol(make_test_GenomicFeature()), 2L)
 
-    checkException(colnames(GenomicRanges()) <- NULL, silent = TRUE)
-    checkException(colnames(make_test_GenomicRanges()) <- "a", silent = TRUE)
-    checkException(colnames(make_test_GenomicRanges()) <- letters,
+    checkException(colnames(GenomicFeature()) <- NULL, silent = TRUE)
+    checkException(colnames(make_test_GenomicFeature()) <- "a", silent = TRUE)
+    checkException(colnames(make_test_GenomicFeature()) <- letters,
                    silent = TRUE)
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     colnames(gr) <- c("a", "b")
     checkIdentical(colnames(gr), c("a", "b"))
 }
 
-test_GenomicRanges_Sequence <- function() {
+test_GenomicFeature_Sequence <- function() {
     ## [
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     checkException(gr[1000], silent = TRUE)
     checkException(gr["bad"], silent = TRUE)
     checkIdentical(gr, gr[])
@@ -225,17 +225,17 @@ test_GenomicRanges_Sequence <- function() {
                    as.data.frame(gr[c(1,3,5),1]))
 
     ## [<-
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     gr[] <- rev(gr)
-    revgr <- rev(make_test_GenomicRanges())
+    revgr <- rev(make_test_GenomicFeature())
     names(revgr) <- rev(names(revgr))
     checkIdentical(gr, revgr)
 
     ## c
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     gr2 <- gr
     names(gr2) <- NULL
-    checkException(c(GenomicRanges(), RangedData()), silent = TRUE)
+    checkException(c(GenomicFeature(), RangedData()), silent = TRUE)
     checkException(c(gr, gr[,-1]), silent = TRUE)
     checkIdentical(as.data.frame(c(gr, gr)),
                    as.data.frame(gr)[rep(seq_len(length(gr)), 2),])
@@ -248,18 +248,18 @@ test_GenomicRanges_Sequence <- function() {
     checkIdentical(length(gr), length(gr@seqnames))
 
     ## seqselect
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     checkIdentical(gr[1:3], seqselect(gr, 1, 3))
     checkIdentical(gr[c(1:3, 1:3)], seqselect(gr, c(1,1), c(3,3)))
 
     ## seqselect<-
-    gr1 <- make_test_GenomicRanges()
-    gr1[1:3] <- make_test_GenomicRanges()[4:6]
-    gr2 <- make_test_GenomicRanges()
-    seqselect(gr2, 1, 3) <- make_test_GenomicRanges()[4:6]
+    gr1 <- make_test_GenomicFeature()
+    gr1[1:3] <- make_test_GenomicFeature()[4:6]
+    gr2 <- make_test_GenomicFeature()
+    seqselect(gr2, 1, 3) <- make_test_GenomicFeature()[4:6]
     checkIdentical(gr1, gr2)
 
     ## window
-    gr <- make_test_GenomicRanges()
+    gr <- make_test_GenomicFeature()
     checkIdentical(gr[1:3], window(gr, 1, 3))
 }
