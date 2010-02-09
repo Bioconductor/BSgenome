@@ -82,10 +82,12 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
             }
         }
 
-        if(!is.null(BSParams@userMask)) {
-         masks(seq) <- append(masks(seq), masks[[seqname]])
-        }
-        
+        ## apply user mask
+        seqMask <- masks(seq)
+        if (!is.null(masks(seq)))
+          seqMask <- append(masks(seq), seqMask)
+        masks(seq) <- seqMask
+       
         ## This is where we finally get to run the MAIN function (FUN) that was passed in
         result <- BSParams@FUN(seq, ...)
         return(result)
