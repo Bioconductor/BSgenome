@@ -49,6 +49,20 @@ setAs("RangedData", "GenomicFeatureList",
     }
 )
 
+setMethod("as.data.frame", "GenomicFeatureList",
+    function(x, row.names=NULL, optional=FALSE, ...)
+    {
+        if (is.null(names(x)))
+            feature <- rep(seq_len(length(x)), elementLengths(x))
+        else
+            feature <- rep(names(x), elementLengths(x))
+        data.frame(feature = feature,
+                   as.data.frame(unlist(x, use.names = FALSE),
+                                 row.names = row.names),
+                   stringsAsFactors = FALSE)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Accessor methods.
@@ -78,6 +92,66 @@ setMethod("values", "GenomicFeatureList",
              unlistData = x@unlistData@values, partitioning = x@partitioning,
              check=FALSE))
 
+setReplaceMethod("seqnames", "GenomicFeatureList",
+    function(x, value) 
+    {
+        if (!is(value, "AtomicList") ||
+            !identical(elementLengths(x), elementLengths(value)))
+            stop("replacement 'value' is not an AtomicList with the same ",
+                 "elementLengths as 'x'")
+        value <- unlist(value, use.names = FALSE)
+        if (!is(value, "Rle"))
+            value <- Rle(as.character(value))
+        else if (!is.character(runValue(value)))
+            runValue(value) <- as.character(runValue)
+        x@unlistData@seqnames <- value
+        x
+    }
+)
+
+setReplaceMethod("ranges", "GenomicFeatureList",
+    function(x, value) 
+    {
+        if (!is(value, "RangesList") ||
+            !identical(elementLengths(x), elementLengths(value)))
+            stop("replacement 'value' is not a RangesList with the same ",
+                 "elementLengths as 'x'")
+        x@unlistData@ranges <- as(unlist(value, use.names = FALSE), "IRanges")
+        x
+    }
+)
+
+setReplaceMethod("strand", "GenomicFeatureList",
+    function(x, value) 
+    {
+        if (!is(value, "AtomicList") ||
+            !identical(elementLengths(x), elementLengths(value)))
+            stop("replacement 'value' is not an AtomicList with the same ",
+                 "elementLengths as 'x'")
+        value <- unlist(value, use.names = FALSE)
+        if (!is(value, "Rle"))
+            value <- Rle(strand(value))
+        else if (!is.factor(runValue(value)) ||
+                 !identical(levels(runValue(value)), levels(strand())))
+            runValue(value) <- strand(runValue)
+        x@unlistData@strand <- value
+        x
+    }
+)
+
+setReplaceMethod("values", "GenomicFeatureList",
+    function(x, value) 
+    {
+        if (!is(value, "SplitDataFrameList") ||
+            !identical(elementLengths(x), elementLengths(value)))
+            stop("replacement 'value' is not a SplitDataFrameList with the ",
+                 "same elementLengths as 'x'")
+        value <- unlist(value, use.names = FALSE)
+        x@unlistData@values <- value
+        x
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### RangesList methods.
@@ -101,6 +175,45 @@ setMethod("width", "GenomicFeatureList",
              unlistData = width(x@unlistData@ranges),
              partitioning = x@partitioning, check=FALSE))
 
+setReplaceMethod("start", "GenomicFeatureList",
+    function(x, value)
+    {
+        if (!is(value, "IntegerList") ||
+            !identical(elementLengths(x), elementLengths(value)))
+            stop("replacement 'value' is not an IntegerList with the same ",
+                 "elementLengths as 'x'")
+        value <- unlist(value, use.names = FALSE)
+        start(x@unlistData@ranges) <- value
+        x
+    }
+)
+
+setReplaceMethod("end", "GenomicFeatureList",
+    function(x, value)
+    {
+        if (!is(value, "IntegerList") ||
+            !identical(elementLengths(x), elementLengths(value)))
+            stop("replacement 'value' is not an IntegerList with the same ",
+                 "elementLengths as 'x'")
+        value <- unlist(value, use.names = FALSE)
+        end(x@unlistData@ranges) <- value
+        x
+    }
+)
+
+setReplaceMethod("width", "GenomicFeatureList",
+    function(x, value)
+    {
+        if (!is(value, "IntegerList") ||
+            !identical(elementLengths(x), elementLengths(value)))
+            stop("replacement 'value' is not an IntegerList with the same ",
+                 "elementLengths as 'x'")
+        value <- unlist(value, use.names = FALSE)
+        width(x@unlistData@ranges) <- value
+        x
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SplitDataFrameList methods.
@@ -114,6 +227,20 @@ setMethod("[", "GenomicFeatureList",
         if (!missing(j))
             values(x) <- values(x)[, j, drop=FALSE]
         x
+    }
+)
+
+setReplaceMethod("[", "GenomicFeatureList",
+    function(x, i, j, ..., value)
+    {
+        if (!is(value, "GenomicFeatureList"))
+            stop("replacement value must be a GenomicFeatureList object")
+        if (!missing(j)) {
+            subvalues <- values(x)[i,,drop=FALSE]
+            subvalues[,j] <- values(value)
+            values(value) <- subvalues
+        }
+        callNextMethod(x = x, i = i, value = value)
     }
 )
 
