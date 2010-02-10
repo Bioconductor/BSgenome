@@ -413,10 +413,15 @@ setReplaceMethod("seqselect", "GenomicFeature",
 )
 
 setMethod("split", "GenomicFeature",
-    function(x, f, drop=FALSE)
+    function(x, f, drop = FALSE)
     {
-        if (missing(f))
-            f <- seq_len(length(x))
+        if (missing(f)) {
+            nms <- names(x)
+            if (is.null(nms))
+                f <- seq_len(length(x))
+            else
+                f <- factor(nms, levels = nms)
+        }
         IRanges:::newCompressedList("GenomicFeatureList", x, splitFactor = f,
                                     drop = drop)
     }

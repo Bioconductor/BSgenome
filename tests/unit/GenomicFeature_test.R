@@ -245,6 +245,20 @@ test_GenomicFeature_Sequence <- function() {
     seqselect(gr2, 1, 3) <- make_test_GenomicFeature()[4:6]
     checkIdentical(gr1, gr2)
 
+    ## split
+    gr <- make_test_GenomicFeature()
+    checkException(split(gr, NULL), silent = TRUE)
+    checkIdentical(split(unname(gr)),
+                   GenomicFeatureList(lapply(structure(seq_len(length(gr)),
+                                names = as.character(seq_len(length(gr)))),
+                                             function(i) unname(gr)[i])))
+    checkIdentical(split(gr),
+                   GenomicFeatureList(lapply(structure(seq_len(length(gr)),
+                                                       names = names(gr)),
+                                             function(i) gr[i])))
+    checkIdentical(split(gr, rep(c("a", "b"), each=5)),
+                   GenomicFeatureList(a = head(gr, 5), b = tail(gr, 5)))
+
     ## window
     gr <- make_test_GenomicFeature()
     checkIdentical(gr[1:3], window(gr, 1, 3))

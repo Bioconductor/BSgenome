@@ -201,10 +201,12 @@
       The result is an object of the same class as \code{x}.
     }
     \item{}{
-      \code{split(x, f, drop = FALSE)}:
+      \code{split(x, f = seq_len(length(x)), drop = FALSE)}:
       Splits \code{x} into a \link{GenomicFeatureList}, according to \code{f},
       dropping elements corresponding to unrepresented levels if \code{drop}
-      is \code{TRUE}.
+      is \code{TRUE}. Split factor \code{f} defaults to splitting each
+      element of \code{x} into a separate element in the resulting
+      \link{GenomicFeatureList} object.
     }
   }
 }
