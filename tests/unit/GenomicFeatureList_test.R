@@ -73,6 +73,33 @@ test_GenomicFeatureList_RangesList <- function() {
     checkIdentical(start(gfl), IntegerList(lapply(gfl, start)))
     checkIdentical(end(gfl), IntegerList(lapply(gfl, end)))
     checkIdentical(width(gfl), IntegerList(lapply(gfl, width)))
+
+    ## start
+    checkException(start(GenomicFeatureList()) <- NULL, silent = TRUE)
+    checkException(start(make_test_GenomicFeatureList()) <- 1:26, silent = TRUE)
+
+    gfl <- make_test_GenomicFeatureList()
+    orig <- start(gfl)
+    start(gfl) <- orig + 1L
+    checkIdentical(start(gfl), orig + 1L)
+
+    ## end
+    checkException(end(GenomicFeatureList()) <- NULL, silent = TRUE)
+    checkException(end(make_test_GenomicFeatureList()) <- 1:26, silent = TRUE)
+
+    gfl <- make_test_GenomicFeatureList()
+    orig <- end(gfl)
+    end(gfl) <- orig + 1L
+    checkIdentical(end(gfl), orig + 1L)
+
+    ## width
+    checkException(width(GenomicFeatureList()) <- NULL, silent = TRUE)
+    checkException(width(make_test_GenomicFeatureList()) <- 1:26, silent = TRUE)
+
+    gfl <- make_test_GenomicFeatureList()
+    orig <- width(gfl)
+    width(gfl) <- orig + 1L
+    checkIdentical(width(gfl), orig + 1L)
 }
 
 test_GenomicFeatureList_SplitDataFrameList <- function() {
