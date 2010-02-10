@@ -113,4 +113,15 @@ test_GenomicFeatureList_SplitDataFrameList <- function() {
     gfl <- make_test_GenomicFeatureList()
     colnames(gfl) <- c("a", "b")
     checkIdentical(colnames(gfl), c("a", "b"))
+
+    gfl <- make_test_GenomicFeatureList()
+    checkIdentical(gfl, gfl[])
+    checkIdentical(gfl[,"score"],
+                   GenomicFeatureList(lapply(gfl, function(x) x[,"score"])))
+    checkIdentical(gfl[seqnames(gfl) == "chr2",],
+                   GenomicFeatureList(lapply(gfl, function(x) 
+                                      x[seqnames(x) == "chr2",])))
+    checkIdentical(gfl[seqnames(gfl) == "chr2", "score"],
+                   GenomicFeatureList(lapply(gfl, function(x) 
+                                      x[seqnames(x) == "chr2", "score"])))
 }
