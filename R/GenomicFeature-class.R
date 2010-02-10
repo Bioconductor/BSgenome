@@ -307,27 +307,27 @@ setReplaceMethod("[", "GenomicFeature",
     {
         if (!is(value, "GenomicFeature"))
             stop("replacement value must be a GenomicFeature object")
-        seqnames <- as.vector(x@seqnames)
+        seqnames <- x@seqnames
         ranges <- x@ranges
-        strand <- as.vector(x@strand)
+        strand <- x@strand
         values <- x@values
         if (missing(i)) {
-            seqnames[] <- as.vector(value@seqnames)
+            seqnames[] <- value@seqnames
             ranges[] <- value@ranges
-            strand[] <- as.vector(value@strand)
+            strand[] <- value@strand
             values[,j] <- value@values
         } else {
             iInfo <- IRanges:::.bracket.Index(i, names(x), length(x))
             if (!is.null(iInfo[["msg"]]))
                 stop(iInfo[["msg"]])
             i <- iInfo[["idx"]]
-            seqnames[i] <- as.vector(value@seqnames)
+            seqnames[i] <- value@seqnames
             ranges[i] <- value@ranges
-            strand[i] <- as.vector(value@strand)
+            strand[i] <- value@strand
             values[i,j] <- value@values
         }
-        initialize(x, seqnames = Rle(seqnames), ranges = ranges,
-                   strand = Rle(strand), values = values)
+        initialize(x, seqnames = seqnames, ranges = ranges,
+                   strand = strand, values = values)
     }
 )
 
