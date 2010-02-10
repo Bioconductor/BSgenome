@@ -52,6 +52,8 @@ setAs("RangedData", "GenomicFeatureList",
 setMethod("as.data.frame", "GenomicFeatureList",
     function(x, row.names=NULL, optional=FALSE, ...)
     {
+        if (missing(row.names))
+            row.names <- names(x@unlistData)
         if (is.null(names(x)))
             feature <- rep(seq_len(length(x)), elementLengths(x))
         else
@@ -88,9 +90,15 @@ setMethod("strand", "GenomicFeatureList",
 
 setMethod("values", "GenomicFeatureList",
     function(x, ...)
+    {
+        values <- x@unlistData@values
+        nms <- names(x@unlistData)
+        if (!is.null(nms))
+            rownames(values) <- nms
         new2("CompressedSplitDataFrameList",
-             unlistData = x@unlistData@values, partitioning = x@partitioning,
-             check=FALSE))
+             unlistData = values, partitioning = x@partitioning, check=FALSE)
+    }
+)
 
 setReplaceMethod("seqnames", "GenomicFeatureList",
     function(x, value) 
