@@ -74,3 +74,16 @@ test_GenomicFeatureList_RangesList <- function() {
     checkIdentical(end(gfl), IntegerList(lapply(gfl, end)))
     checkIdentical(width(gfl), IntegerList(lapply(gfl, width)))
 }
+
+test_GenomicFeatureList_SplitDataFrameList <- function() {
+    checkIdentical(ncol(GenomicFeatureList()), 0L)
+    checkIdentical(ncol(make_test_GenomicFeatureList()), 2L)
+
+    checkException(colnames(GenomicFeatureList()) <- NULL, silent = TRUE)
+    checkException(colnames(make_test_GenomicFeatureList()) <- "a", silent = TRUE)
+    checkException(colnames(make_test_GenomicFeatureList()) <- letters,
+                   silent = TRUE)
+    gfl <- make_test_GenomicFeatureList()
+    colnames(gfl) <- c("a", "b")
+    checkIdentical(colnames(gfl), c("a", "b"))
+}
