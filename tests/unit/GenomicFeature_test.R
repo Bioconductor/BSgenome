@@ -30,11 +30,14 @@ test_GenomicFeature_construction <- function() {
     checkTrue(validObject(GenomicFeature(factor(letters), IRanges(1:26, 1:26))))
     checkTrue(validObject(GenomicFeature(1:10, IRanges(1:10, 1:10))))
 
-    checkIdentical(GenomicFeature(seqnames = Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
-                                 ranges = IRanges(1:10, width = 10:1, names = head(letters,10)),
-                                 strand = Rle(factor(strand(c("-", "+", "*", NA, "+", "-"))),
-                                              c(1, 2, 1, 1, 3, 2)),
-                                 score = 1:10, GC = seq(1, 0, length=10)),
+    checkIdentical(GenomicFeature(seqnames =
+                                  Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
+                                  ranges =
+                                  IRanges(1:10, width = 10:1, names = head(letters,10)),
+                                  strand =
+                                  Rle(factor(strand(c("-", "+", "*", NA, "+", "-"))),
+                                      c(1, 2, 1, 1, 3, 2)),
+                                  score = 1:10, GC = seq(1, 0, length=10)),
                    make_test_GenomicFeature())
 }
 
@@ -54,8 +57,8 @@ test_GenomicFeature_coercion <- function() {
     ## score, no strand
     gf <-
       GenomicFeature(seqnames = c(1,1,2),
-                    ranges = IRanges(1:3,4:6, names = head(letters,3)),
-                    score = c(10L,2L,NA))
+                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
+                     score = c(10L,2L,NA))
     df <-
       data.frame(seqnames = as.character(c(1,1,2)),
                  start = 1:3, end = 4:6, width = c(4L, 4L, 4L),
@@ -68,8 +71,8 @@ test_GenomicFeature_coercion <- function() {
     ## strand, no score
     gf <-
       GenomicFeature(seqnames = c(1,1,2),
-                    ranges = IRanges(1:3,4:6, names = head(letters,3)),
-                    strand = strand(c("+", "-", "*")))
+                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
+                     strand = strand(c("+", "-", "*")))
     df <-
       data.frame(seqnames = as.character(c(1,1,2)),
                  start = 1:3, end = 4:6, width = c(4L, 4L, 4L),
@@ -81,9 +84,9 @@ test_GenomicFeature_coercion <- function() {
     ## strand & score
     gf <-
       GenomicFeature(seqnames = c(1,1,2),
-                    ranges = IRanges(1:3,4:6, names = head(letters,3)),
-                    strand = strand(c("+", "-", "*")),
-                    score = c(10L,2L,NA))
+                     ranges = IRanges(1:3,4:6, names = head(letters,3)),
+                     strand = strand(c("+", "-", "*")),
+                     score = c(10L,2L,NA))
     df <-
       data.frame(seqnames = as.character(c(1,1,2)),
                  start = 1:3, end = 4:6, width = c(4L, 4L, 4L),
