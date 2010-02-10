@@ -6,7 +6,7 @@ Version: 1.15.5
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure
-Depends: R (>= 2.7.0), methods, IRanges (>= 1.5.42), Biostrings (>= 2.15.18)
+Depends: R (>= 2.7.0), methods, IRanges (>= 1.5.43), Biostrings (>= 2.15.18)
 Import: methods, IRanges, Biostrings
 Suggests: RUnit,
 	BSgenome.Celegans.UCSC.ce2 (>= 1.3.11),

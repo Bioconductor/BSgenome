@@ -366,4 +366,31 @@
 }
 
 \examples{
+  ## Construction using GenomicFeatureList
+  gf1 <-
+    GenomicFeature(seqnames = "chr2", ranges = IRanges(3, 6),
+                   strand = "+", score = 5L, GC = 0.45)
+  gf2 <-
+    GenomicFeature(seqnames = c("chr1", "chr1"),
+                   ranges = IRanges(c(7,13), width = 3),
+                   strand = c("+", "-"), score = 3:4, GC = c(0.3, 0.5))
+  gf3 <-
+    GenomicFeature(seqnames = c("chr1", "chr2"),
+                   ranges = IRanges(c(1, 4), c(3, 9)),
+                   strand = c("-", "-"), score = c(6L, 2L), GC = c(0.4, 0.1))
+  gfl <- GenomicFeatureList("f1" = gf1, "f2" = gf2, "f3" = gf3)
+  gfl
+
+  # Extract basic information
+  length(gfl)
+  ncol(gfl)
+  colnames(gfl)
+
+  # Summarize features
+  elementLengths(gfl)
+  table(seqnames(gfl))
+
+  # Extract subsets
+  gfl[seqnames(gfl) == "chr1", ]
+  gfl[seqnames(gfl) == "chr1" & strand(gfl) == "+", ]
 }
