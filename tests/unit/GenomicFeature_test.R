@@ -39,6 +39,18 @@ test_GenomicFeature_construction <- function() {
 }
 
 test_GenomicFeature_coercion <- function() {
+    ## no strand or score
+    gf <-
+      GenomicFeature(seqnames = c(1,1,2),
+                     ranges = IRanges(1:3,4:6, names = head(letters,3)))
+    df <-
+      data.frame(seqnames = as.character(c(1,1,2)),
+                 start = 1:3, end = 4:6, width = c(4L, 4L, 4L),
+                 strand = strand(rep(NA_character_, 3)),
+                 row.names = head(letters,3),
+                 stringsAsFactors = FALSE)
+    checkIdentical(as.data.frame(gf), df)
+
     ## score, no strand
     gf <-
       GenomicFeature(seqnames = c(1,1,2),
