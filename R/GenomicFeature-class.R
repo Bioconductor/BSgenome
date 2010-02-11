@@ -281,24 +281,31 @@ setReplaceMethod("colnames", "GenomicFeature",
 setMethod("[", "GenomicFeature",
     function(x, i, j, ..., drop)
     {
-        if (!missing(i)) {
+        if (missing(i)) {
+            if (!missing(j))
+                x <- initialize(x, values = x@values[, j, drop=FALSE])
+        } else {
             iInfo <- IRanges:::.bracket.Index(i, names(x), length(x))
             if (!is.null(iInfo[["msg"]]))
                 stop(iInfo[["msg"]])
             i <- iInfo[["idx"]]
+            if (missing(j))
+                values <- x@values[i, , drop=FALSE]
+            else
+                values <- x@values[i, j, drop=FALSE]
+            x <-
+              initialize(x, seqnames = x@seqnames[i], ranges = x@ranges[i],
+                         strand = x@strand[i], values = values)
+            nms <- names(x)
+            if (!is.null(nms)) {
+                whichEmpty <- which(nms == "")
+                nms[whichEmpty] <- as.character(whichEmpty)
+                nms2 <- make.unique(nms)
+                if (length(whichEmpty) > 0 || !identical(nms, nms2))
+                    names(x) <- nms2
+            }
         }
-        ans <-
-          initialize(x, seqnames = x@seqnames[i], ranges = x@ranges[i],
-                     strand = x@strand[i], values = x@values[i, j, drop=FALSE])
-        nms <- names(ans)
-        if (!is.null(nms)) {
-            whichEmpty <- which(nms == "")
-            nms[whichEmpty] <- as.character(whichEmpty)
-            nms2 <- make.unique(nms)
-            if (length(whichEmpty) > 0 || !identical(nms, nms2))
-                names(ans) <- nms2
-        }
-        ans
+        x
     }
 )
 
@@ -315,7 +322,10 @@ setReplaceMethod("[", "GenomicFeature",
             seqnames[] <- value@seqnames
             ranges[] <- value@ranges
             strand[] <- value@strand
-            values[,j] <- value@values
+            if (missing(j))
+                values[,] <- value@values
+            else
+                values[,j] <- value@values
         } else {
             iInfo <- IRanges:::.bracket.Index(i, names(x), length(x))
             if (!is.null(iInfo[["msg"]]))
@@ -324,7 +334,10 @@ setReplaceMethod("[", "GenomicFeature",
             seqnames[i] <- value@seqnames
             ranges[i] <- value@ranges
             strand[i] <- value@strand
-            values[i,j] <- value@values
+            if (missing(j))
+                values[i,] <- value@values
+            else
+                values[i,j] <- value@values
         }
         initialize(x, seqnames = seqnames, ranges = ranges,
                    strand = strand, values = values)
