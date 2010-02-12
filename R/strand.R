@@ -13,6 +13,15 @@ setMethod("strand", "character",
         factor(x, levels=lvls)
     })
 
+setMethod("strand", "logical",
+    function(x) {
+        ans <- strand()
+        length(ans) <- length(x)
+        ans[!x] <- "+"
+        ans[x] <- "-"
+        ans
+    })
+
 setMethod("strand", "DataTable",
     function(x) {
         ans <- x[["strand"]]
