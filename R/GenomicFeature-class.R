@@ -285,7 +285,7 @@ setMethod("[", "GenomicFeature",
             if (!missing(j))
                 x <- initialize(x, values = x@values[, j, drop=FALSE])
         } else {
-            iInfo <- IRanges:::.bracket.Index(i, names(x), length(x))
+            iInfo <- IRanges:::.bracket.Index(i, length(x), names(x))
             if (!is.null(iInfo[["msg"]]))
                 stop(iInfo[["msg"]])
             i <- iInfo[["idx"]]
@@ -327,7 +327,7 @@ setReplaceMethod("[", "GenomicFeature",
             else
                 values[,j] <- value@values
         } else {
-            iInfo <- IRanges:::.bracket.Index(i, names(x), length(x))
+            iInfo <- IRanges:::.bracket.Index(i, length(x), names(x))
             if (!is.null(iInfo[["msg"]]))
                 stop(iInfo[["msg"]])
             i <- iInfo[["idx"]]
@@ -385,25 +385,30 @@ setMethod("rev", "GenomicFeature",
 setMethod("seqselect", "GenomicFeature",
     function(x, start = NULL, end = NULL, width = NULL)
     {
-        ans <-
-          initialize(x,
-                     seqnames =
-                     seqselect(x@seqnames, start = start, end = end, width = width),
-                     ranges =
-                     seqselect(x@ranges, start = start, end = end, width = width),
-                     strand =
-                     seqselect(x@strand, start = start, end = end, width = width),
-                     values =
-                     seqselect(x@values, start = start, end = end, width = width))
-        nms <- names(ans)
-        if (!is.null(nms)) {
-            whichEmpty <- which(nms == "")
-            nms[whichEmpty] <- as.character(whichEmpty)
-            nms2 <- make.unique(nms)
-            if (length(whichEmpty) > 0 || !identical(nms, nms2))
-                names(ans) <- nms2
+        if (!is.null(end) || !is.null(width))
+            start <- IRanges(start = start, end = end, width = width)
+        irInfo <-
+          IRanges:::.bracket.Index(start, length(x), names(x), asRanges = TRUE)
+        if (!is.null(irInfo[["msg"]]))
+            stop(irInfo[["msg"]])
+        if (irInfo[["useIdx"]]) {
+            ir <- irInfo[["idx"]]
+            x <-
+              initialize(x,
+                         seqnames = seqselect(x@seqnames, ir),
+                         ranges = seqselect(x@ranges, ir),
+                         strand = seqselect(x@strand, ir),
+                         values = seqselect(x@values, ir))
+            nms <- names(x)
+            if (!is.null(nms)) {
+                whichEmpty <- which(nms == "")
+                nms[whichEmpty] <- as.character(whichEmpty)
+                nms2 <- make.unique(nms)
+                if (length(whichEmpty) > 0 || !identical(nms, nms2))
+                    names(x) <- nms2
+            }
         }
-        ans
+        x
     }
 )
 
@@ -476,7 +481,7 @@ setMethod("show", "GenomicFeature",
             sep = "")
         if (lo > 0) {
             k <- ifelse(lo <= 12L, lo, min(lo, 10L))
-            subset  <- object[seq_len(k)]
+            subset  <- head(object, k)
             out <-
               cbind(seqnames = as.character(seqnames(subset)),
                     ranges = IRanges:::showAsCell(ranges(subset)),
