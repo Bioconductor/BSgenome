@@ -1,71 +1,71 @@
-\name{GenomicFeatureList-class}
+\name{GRangesList-class}
 \docType{class}
 
 % Class
-\alias{class:GenomicFeatureList}
-\alias{GenomicFeatureList-class}
-\alias{GenomicFeatureList}
+\alias{class:GRangesList}
+\alias{GRangesList-class}
+\alias{GRangesList}
 
 % Constructor-like function:
-\alias{GenomicFeatureList}
+\alias{GRangesList}
 
 % Coercion methods:
-\alias{coerce,RangedData,GenomicFeatureList-method}
-\alias{as.data.frame,GenomicFeatureList-method}
+\alias{coerce,RangedData,GRangesList-method}
+\alias{as.data.frame,GRangesList-method}
 
 % Accessor methods:
-\alias{seqnames,GenomicFeatureList-method}
-\alias{seqnames<-,GenomicFeatureList-method}
-\alias{ranges,GenomicFeatureList-method}
-\alias{ranges<-,GenomicFeatureList-method}
-\alias{strand,GenomicFeatureList-method}
-\alias{strand<-,GenomicFeatureList-method}
-\alias{values,GenomicFeatureList-method}
-\alias{values<-,GenomicFeatureList-method}
+\alias{seqnames,GRangesList-method}
+\alias{seqnames<-,GRangesList-method}
+\alias{ranges,GRangesList-method}
+\alias{ranges<-,GRangesList-method}
+\alias{strand,GRangesList-method}
+\alias{strand<-,GRangesList-method}
+\alias{values,GRangesList-method}
+\alias{values<-,GRangesList-method}
 
 % RangesList methods:
-\alias{start,GenomicFeatureList-method}
-\alias{start<-,GenomicFeatureList-method}
-\alias{end,GenomicFeatureList-method}
-\alias{end<-,GenomicFeatureList-method}
-\alias{width,GenomicFeatureList-method}
-\alias{width<-,GenomicFeatureList-method}
+\alias{start,GRangesList-method}
+\alias{start<-,GRangesList-method}
+\alias{end,GRangesList-method}
+\alias{end<-,GRangesList-method}
+\alias{width,GRangesList-method}
+\alias{width<-,GRangesList-method}
 
 % SplitDataFrameList methods:
-\alias{[,GenomicFeatureList-method}
-\alias{[<-,GenomicFeatureList-method}
-\alias{ncol,GenomicFeatureList-method}
-\alias{colnames,GenomicFeatureList-method}
-\alias{colnames<-,GenomicFeatureList-method}
+\alias{[,GRangesList-method}
+\alias{[<-,GRangesList-method}
+\alias{ncol,GRangesList-method}
+\alias{colnames,GRangesList-method}
+\alias{colnames<-,GRangesList-method}
 
 % show method:
-\alias{show,GenomicFeatureList-method}
+\alias{show,GRangesList-method}
 
 
-\title{GenomicFeatureList objects}
+\title{GRangesList objects}
 
 \description{
-  The GenomicFeatureList class is a container for storing a collection
-  of GenomicFeature objects.
+  The GRangesList class is a container for storing a collection
+  of GRanges objects.
 }
 
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomicFeatureList(...)}:
-      Creates a GenomicFeatureList object using GenomicFeature objects
+      \code{GRangesList(...)}:
+      Creates a GRangesList object using GRanges objects
       supplied in \code{\ldots}.
     }
   }
 }
 
 \section{Coercion}{
-  In the code snippets below, \code{x} is a GenomicFeatureList object.
+  In the code snippets below, \code{x} is a GRangesList object.
 
   \describe{
     \item{}{
-      \code{as(from, "GenomicFeatureList")}:
-      Creates a GenomicFeatureList object from a RangedData object.
+      \code{as(from, "GRangesList")}:
+      Creates a GRangesList object from a RangedData object.
     }
     \item{}{
       \code{as.data.frame(x, row.names = NULL, optional = FALSE)}:
@@ -81,7 +81,7 @@
 }
 
 \section{Accessors}{
-  In the following code snippets, \code{x} is a GenomicFeature object.
+  In the following code snippets, \code{x} is a GRanges object.
   
   \describe{
     \item{}{
@@ -109,7 +109,7 @@
 }
 
 \section{List methods}{
-  In the following code snippets, \code{x} is a GenomicFeatureList object.
+  In the following code snippets, \code{x} is a GRangesList object.
 
   \describe{
     \item{}{
@@ -126,14 +126,14 @@
     }
     \item{}{
       \code{isEmpty(x)}:
-      Returns a logical indicating either if the GenomicFeatureList has no
+      Returns a logical indicating either if the GRangesList has no
       elements or if all its elements are empty.
     }
   }
 }
 
 \section{RangesList methods}{
-  In the following code snippets, \code{x} is a GenomicFeatureList object.
+  In the following code snippets, \code{x} is a GRangesList object.
 
   \describe{
     \item{}{
@@ -152,7 +152,7 @@
 }
 
 \section{SplitDataFrameList methods}{
-  In the following code snippets, \code{x} is a GenomicFeatureList object.
+  In the following code snippets, \code{x} is a GRangesList object.
 
   \describe{
     \item{}{
@@ -168,7 +168,7 @@
 }
 
 \section{Combining}{
-  In the code snippets below, \code{x} is a GenomicFeatureList object.
+  In the code snippets below, \code{x} is a GRangesList object.
 
   \describe{
     \item{}{\code{append(x, values, after = length(x))}:
@@ -178,20 +178,20 @@
     }
     \item{}{
       \code{c(x, ...)}:
-      Combine \code{x} and the GenomicFeatureList objects in \code{...}
+      Combine \code{x} and the GRangesList objects in \code{...}
       together. Any object in \code{...} must belong to the same class
       as \code{x}, or to one of its subclasses, or must be \code{NULL}.
       The result is an object of the same class as \code{x}.
     }
     \item{}{\code{unlist(x, recursive = TRUE, use.names = TRUE)}:
-      Concatenates the elements of \code{x} into a single GenomicFeature
+      Concatenates the elements of \code{x} into a single GRanges
       object.
     }
   }
 }
 
 \section{Subsetting}{
-  In the following code snippets, \code{x} is a GenomicFeatureList object.
+  In the following code snippets, \code{x} is a GRangesList object.
 
   \describe{
     \item{}{
@@ -214,9 +214,9 @@
     \item{}{
       \code{head(x, n = 6L)}:
       If \code{n} is non-negative, returns the first n elements of the
-      GenomicFeatureList object.
+      GRangesList object.
       If \code{n} is negative, returns all but the last \code{abs(n)} elements
-      of the GenomicFeatureList object.
+      of the GRangesList object.
     }
     \item{}{
       \code{rep(x, times, length.out, each)}:
@@ -266,13 +266,13 @@
     \item{}{
       \code{tail(x, n = 6L)}:
       If \code{n} is non-negative, returns the last n elements of the
-      GenomicFeature object.
+      GRanges object.
       If \code{n} is negative, returns all but the first \code{abs(n)} elements
-      of the GenomicFeature object.
+      of the GRanges object.
     }
     \item{}{
       \code{window(x, start = NA, end = NA, width = NA, frequency = NULL, delta = NULL, ...)}:
-      Extract the subsequence window from the GenomicFeature object using:
+      Extract the subsequence window from the GRanges object using:
       \describe{
         \item{\code{start}, \code{end}, \code{width}}{The start, end, or width
           of the window. Two of the three are required.}
@@ -289,7 +289,7 @@
       \code{value} must either be of class \code{class(x)}, belong to a subclass
       of \code{class(x)}, be coercible to \code{class(x)}, or be \code{NULL}.
       If \code{keepLength} is \code{TRUE}, the elements of \code{value} are
-      repeated to create a GenomicFeature object with the same number of elements
+      repeated to create a GRanges object with the same number of elements
       as the width of the subsequence window it is replacing.
       If \code{keepLength} is \code{FALSE}, this replacement method can modify
       the length of \code{x}, depending on how the length of the left
@@ -299,7 +299,7 @@
 }
 
 \section{Looping}{
-  In the code snippets below, \code{x} is a GenomicFeatureList object.
+  In the code snippets below, \code{x} is a GRangesList object.
 
   \describe{
     \item{}{
@@ -310,7 +310,7 @@
     \item{}{
       \code{lapply(X, FUN, ...)}:
       Like the standard \code{\link[base]{lapply}} function defined in the
-      base package, the \code{lapply} method for GenomicFeatureList objects
+      base package, the \code{lapply} method for GRangesList objects
       returns a list of the same length as \code{X}, with each element being
       the result of applying \code{FUN} to the corresponding element of
       \code{X}.
@@ -318,12 +318,12 @@
     \item{}{
       \code{Map(f, ...)}:
       Applies a function to the corresponding elements of given
-      GenomicFeatureList objects.
+      GRangesList objects.
     }
     \item{}{
       \code{mapply(FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE)}:
       Like the standard \code{\link[base]{mapply}} function defined in the
-      base package, the \code{mapply} method for GenomicFeatureList objects is a
+      base package, the \code{mapply} method for GRangesList objects is a
       multivariate version of \code{sapply}.
     }
     \item{}{
@@ -348,7 +348,7 @@
     \item{}{
       \code{sapply(X, FUN, ..., simplify=TRUE, USE.NAMES=TRUE)}:
       Like the standard \code{\link[base:lapply]{sapply}} function defined in
-      the base package, the \code{sapply} method for GenomicFeatureList objects
+      the base package, the \code{sapply} method for GRangesList objects
       is a user-friendly version of \code{lapply} by default returning a vector
       or matrix if appropriate.
     }
@@ -358,7 +358,7 @@
 \author{P. Aboyoun}
 
 \seealso{
-  \link{GenomicFeature},
+  \link{GRanges},
   \link[IRanges]{Sequence},
   \link[IRanges]{RangesList},
   \link[IRanges]{RleList},
@@ -366,19 +366,19 @@
 }
 
 \examples{
-  ## Construction using GenomicFeatureList
+  ## Construction using GRangesList
   gf1 <-
-    GenomicFeature(seqnames = "chr2", ranges = IRanges(3, 6),
-                   strand = "+", score = 5L, GC = 0.45)
+    GRanges(seqnames = "chr2", ranges = IRanges(3, 6),
+            strand = "+", score = 5L, GC = 0.45)
   gf2 <-
-    GenomicFeature(seqnames = c("chr1", "chr1"),
-                   ranges = IRanges(c(7,13), width = 3),
-                   strand = c("+", "-"), score = 3:4, GC = c(0.3, 0.5))
+    GRanges(seqnames = c("chr1", "chr1"),
+            ranges = IRanges(c(7,13), width = 3),
+            strand = c("+", "-"), score = 3:4, GC = c(0.3, 0.5))
   gf3 <-
-    GenomicFeature(seqnames = c("chr1", "chr2"),
-                   ranges = IRanges(c(1, 4), c(3, 9)),
-                   strand = c("-", "-"), score = c(6L, 2L), GC = c(0.4, 0.1))
-  gfl <- GenomicFeatureList("f1" = gf1, "f2" = gf2, "f3" = gf3)
+    GRanges(seqnames = c("chr1", "chr2"),
+            ranges = IRanges(c(1, 4), c(3, 9)),
+            strand = c("-", "-"), score = c(6L, 2L), GC = c(0.4, 0.1))
+  gfl <- GRangesList("f1" = gf1, "f2" = gf2, "f3" = gf3)
   gfl
 
   # Extract basic information

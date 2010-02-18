@@ -1,10 +1,10 @@
 ### =========================================================================
-### GenomicFeature objects
+### GRanges objects
 ### -------------------------------------------------------------------------
 ###
 ### Class definition
 
-setClass("GenomicFeature", contains = "Sequence",
+setClass("GRanges", contains = "Sequence",
          representation(seqnames = "Rle",
                         ranges = "IRanges",
                         strand = "Rle",
@@ -15,7 +15,7 @@ setClass("GenomicFeature", contains = "Sequence",
 ### Validity.
 ###
 
-.valid.GenomicFeature.slots <- function(x)
+.valid.GRanges.slots <- function(x)
 {
     n <- length(x@seqnames)
     if ((length(x@ranges) != n) || (length(x@strand) != n) ||
@@ -25,7 +25,7 @@ setClass("GenomicFeature", contains = "Sequence",
         NULL
 }
 
-.valid.GenomicFeature.seqnames <- function(x)
+.valid.GRanges.seqnames <- function(x)
 {
     if (!is.character(runValue(x@seqnames)))
         "slot 'seqnames' should be a 'character' Rle"
@@ -33,7 +33,7 @@ setClass("GenomicFeature", contains = "Sequence",
         NULL
 }
 
-.valid.GenomicFeature.strand <- function(x)
+.valid.GRanges.strand <- function(x)
 {
     if (!is.factor(runValue(x@strand)) ||
         !identical(levels(runValue(x@strand)), levels(strand())))
@@ -45,7 +45,7 @@ setClass("GenomicFeature", contains = "Sequence",
 }
 
 
-.valid.GenomicFeature.values <- function(x)
+.valid.GRanges.values <- function(x)
 {
     msg <- NULL
     if (any(c("seqnames", "ranges", "strand", "start", "end", "width",
@@ -59,22 +59,22 @@ setClass("GenomicFeature", contains = "Sequence",
     msg
 }
 
-.valid.GenomicFeature <- function(x)
+.valid.GRanges <- function(x)
 {
-    c(.valid.GenomicFeature.slots(x),
-      .valid.GenomicFeature.seqnames(x),
-      .valid.GenomicFeature.strand(x),
-      .valid.GenomicFeature.values(x))
+    c(.valid.GRanges.slots(x),
+      .valid.GRanges.seqnames(x),
+      .valid.GRanges.strand(x),
+      .valid.GRanges.values(x))
 }
 
-setValidity2("GenomicFeature", .valid.GenomicFeature)
+setValidity2("GRanges", .valid.GRanges)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Constructor.
 ###
 
-GenomicFeature <-
+GRanges <-
 function(seqnames = Rle(), ranges = IRanges(),
          strand = Rle(NA_character_, length(seqnames)), ...)
 {
@@ -100,7 +100,7 @@ function(seqnames = Rle(), ranges = IRanges(),
         rownames(values) <- NULL
     }
 
-    new("GenomicFeature", seqnames = seqnames, ranges = ranges, strand = strand,
+    new("GRanges", seqnames = seqnames, ranges = ranges, strand = strand,
         values = values)
 }
 
@@ -109,7 +109,7 @@ function(seqnames = Rle(), ranges = IRanges(),
 ### Coercion.
 ###
 
-setMethod("as.data.frame", "GenomicFeature",
+setMethod("as.data.frame", "GRanges",
     function(x, row.names=NULL, optional=FALSE, ...)
     {
         ranges <- ranges(x)
@@ -133,10 +133,10 @@ setMethod("as.data.frame", "GenomicFeature",
 ### Accessor methods.
 ###
 
-setMethod("seqnames", "GenomicFeature", function(x) x@seqnames)
-setMethod("ranges", "GenomicFeature", function(x, ...) x@ranges)
-setMethod("strand", "GenomicFeature", function(x) x@strand)
-setMethod("values", "GenomicFeature",
+setMethod("seqnames", "GRanges", function(x) x@seqnames)
+setMethod("ranges", "GRanges", function(x, ...) x@ranges)
+setMethod("strand", "GRanges", function(x) x@strand)
+setMethod("values", "GRanges",
     function(x, ...)
     {
         ans <- x@values
@@ -146,7 +146,7 @@ setMethod("values", "GenomicFeature",
     }
 )
 
-setReplaceMethod("seqnames", "GenomicFeature",
+setReplaceMethod("seqnames", "GRanges",
     function(x, value) 
     {
         if (!is(value, "Rle"))
@@ -161,7 +161,7 @@ setReplaceMethod("seqnames", "GenomicFeature",
         initialize(x, seqnames = value)
     }
 )
-setReplaceMethod("ranges", "GenomicFeature",
+setReplaceMethod("ranges", "GRanges",
     function(x, value) 
     {
         if (!is(value, "IRanges"))
@@ -176,7 +176,7 @@ setReplaceMethod("ranges", "GenomicFeature",
         initialize(x, ranges = value)
     }
 )
-setReplaceMethod("strand", "GenomicFeature",
+setReplaceMethod("strand", "GRanges",
     function(x, value) 
     {
         if (!is(value, "Rle"))
@@ -193,7 +193,7 @@ setReplaceMethod("strand", "GenomicFeature",
         initialize(x, strand = value)
     }
 )
-setReplaceMethod("values", "GenomicFeature",
+setReplaceMethod("values", "GRanges",
     function(x, value)
     {
         if (is.null(value))
@@ -213,8 +213,8 @@ setReplaceMethod("values", "GenomicFeature",
     }
 )
 
-setMethod("names", "GenomicFeature", function(x) names(x@ranges))
-setReplaceMethod("names", "GenomicFeature",
+setMethod("names", "GRanges", function(x) names(x@ranges))
+setReplaceMethod("names", "GRanges",
     function(x, value)
     {
         names(x@ranges) <- value
@@ -227,11 +227,11 @@ setReplaceMethod("names", "GenomicFeature",
 ### Ranges methods.
 ###
 
-setMethod("start", "GenomicFeature", function(x, ...) start(x@ranges))
-setMethod("end", "GenomicFeature", function(x, ...) end(x@ranges))
-setMethod("width", "GenomicFeature", function(x) width(x@ranges))
+setMethod("start", "GRanges", function(x, ...) start(x@ranges))
+setMethod("end", "GRanges", function(x, ...) end(x@ranges))
+setMethod("width", "GRanges", function(x) width(x@ranges))
 
-setReplaceMethod("start", "GenomicFeature",
+setReplaceMethod("start", "GRanges",
     function(x, value)
     {
         start(x@ranges) <- value
@@ -239,7 +239,7 @@ setReplaceMethod("start", "GenomicFeature",
     }
 )
 
-setReplaceMethod("end", "GenomicFeature",
+setReplaceMethod("end", "GRanges",
     function(x, value)
     {
         end(x@ranges) <- value
@@ -247,7 +247,7 @@ setReplaceMethod("end", "GenomicFeature",
     }
 )
 
-setReplaceMethod("width", "GenomicFeature",
+setReplaceMethod("width", "GRanges",
     function(x, value)
     {
         width(x@ranges) <- value
@@ -260,12 +260,12 @@ setReplaceMethod("width", "GenomicFeature",
 ### DataTable methods.
 ###
 
-setMethod("ncol", "GenomicFeature", function(x) ncol(x@values))
+setMethod("ncol", "GRanges", function(x) ncol(x@values))
 
-setMethod("colnames", "GenomicFeature",
+setMethod("colnames", "GRanges",
     function(x, do.NULL = TRUE, prefix = "col") 
         colnames(x@values, do.NULL = do.NULL, prefix = prefix))
-setReplaceMethod("colnames", "GenomicFeature",
+setReplaceMethod("colnames", "GRanges",
     function(x, value)
     {
         colnames(x@values) <- value
@@ -278,7 +278,7 @@ setReplaceMethod("colnames", "GenomicFeature",
 ### Sequence methods.
 ###
 
-setMethod("[", "GenomicFeature",
+setMethod("[", "GRanges",
     function(x, i, j, ..., drop)
     {
         if (missing(i)) {
@@ -309,11 +309,11 @@ setMethod("[", "GenomicFeature",
     }
 )
 
-setReplaceMethod("[", "GenomicFeature",
+setReplaceMethod("[", "GRanges",
     function(x, i, j, ..., value)
     {
-        if (!is(value, "GenomicFeature"))
-            stop("replacement value must be a GenomicFeature object")
+        if (!is(value, "GRanges"))
+            stop("replacement value must be a GRanges object")
         seqnames <- x@seqnames
         ranges <- x@ranges
         strand <- x@strand
@@ -344,7 +344,7 @@ setReplaceMethod("[", "GenomicFeature",
     }
 )
 
-setMethod("c", "GenomicFeature",
+setMethod("c", "GRanges",
     function(x, ..., recursive = FALSE)
     {
         if (recursive)
@@ -368,9 +368,9 @@ setMethod("c", "GenomicFeature",
     }
 )
 
-setMethod("length", "GenomicFeature", function(x) length(x@seqnames))
+setMethod("length", "GRanges", function(x) length(x@seqnames))
 
-setMethod("rev", "GenomicFeature",
+setMethod("rev", "GRanges",
     function(x)
     {
         if (length(x) == 0)
@@ -382,7 +382,7 @@ setMethod("rev", "GenomicFeature",
     }
 )
 
-setMethod("seqselect", "GenomicFeature",
+setMethod("seqselect", "GRanges",
     function(x, start = NULL, end = NULL, width = NULL)
     {
         if (!is.null(end) || !is.null(width))
@@ -412,11 +412,11 @@ setMethod("seqselect", "GenomicFeature",
     }
 )
 
-setReplaceMethod("seqselect", "GenomicFeature",
+setReplaceMethod("seqselect", "GRanges",
     function(x, start = NULL, end = NULL, width = NULL, value)
     {
-        if (!is(value, "GenomicFeature"))
-            stop("replacement value must be a GenomicFeature object")
+        if (!is(value, "GRanges"))
+            stop("replacement value must be a GRanges object")
         seqnames <- as.vector(x@seqnames)
         ranges <- x@ranges
         strand <- as.vector(x@strand)
@@ -430,7 +430,7 @@ setReplaceMethod("seqselect", "GenomicFeature",
     }
 )
 
-setMethod("split", "GenomicFeature",
+setMethod("split", "GRanges",
     function(x, f, drop = FALSE)
     {
         if (missing(f)) {
@@ -440,12 +440,12 @@ setMethod("split", "GenomicFeature",
             else
                 f <- factor(nms, levels = nms)
         }
-        IRanges:::newCompressedList("GenomicFeatureList", x, splitFactor = f,
+        IRanges:::newCompressedList("GRangesList", x, splitFactor = f,
                                     drop = drop)
     }
 )
 
-setMethod("window", "GenomicFeature",
+setMethod("window", "GRanges",
     function(x, start = NA, end = NA, width = NA,
              frequency = NULL, delta = NULL, ...)
     {
@@ -470,7 +470,7 @@ setMethod("window", "GenomicFeature",
 ### show method.
 ###
 
-setMethod("show", "GenomicFeature",
+setMethod("show", "GRanges",
     function(object)
     {
         lo <- length(object)

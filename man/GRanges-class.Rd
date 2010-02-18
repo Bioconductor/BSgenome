@@ -1,67 +1,67 @@
-\name{GenomicFeature-class}
+\name{GRanges-class}
 \docType{class}
 
 % Class
-\alias{class:GenomicFeature}
-\alias{GenomicFeature-class}
-\alias{GenomicFeature}
+\alias{class:GRanges}
+\alias{GRanges-class}
+\alias{GRanges}
 
 % Constructor-like function:
-\alias{GenomicFeature}
+\alias{GRanges}
 
 % Coercion methods:
-\alias{as.data.frame,GenomicFeature-method}
+\alias{as.data.frame,GRanges-method}
 
 % Accessor methods:
-\alias{seqnames,GenomicFeature-method}
-\alias{seqnames<-,GenomicFeature-method}
-\alias{ranges,GenomicFeature-method}
-\alias{ranges<-,GenomicFeature-method}
-\alias{strand,GenomicFeature-method}
-\alias{strand<-,GenomicFeature-method}
-\alias{values,GenomicFeature-method}
-\alias{values<-,GenomicFeature-method}
-\alias{names,GenomicFeature-method}
-\alias{names<-,GenomicFeature-method}
+\alias{seqnames,GRanges-method}
+\alias{seqnames<-,GRanges-method}
+\alias{ranges,GRanges-method}
+\alias{ranges<-,GRanges-method}
+\alias{strand,GRanges-method}
+\alias{strand<-,GRanges-method}
+\alias{values,GRanges-method}
+\alias{values<-,GRanges-method}
+\alias{names,GRanges-method}
+\alias{names<-,GRanges-method}
 
 % Ranges methods:
-\alias{start,GenomicFeature-method}
-\alias{start<-,GenomicFeature-method}
-\alias{end,GenomicFeature-method}
-\alias{end<-,GenomicFeature-method}
-\alias{width,GenomicFeature-method}
-\alias{width<-,GenomicFeature-method}
+\alias{start,GRanges-method}
+\alias{start<-,GRanges-method}
+\alias{end,GRanges-method}
+\alias{end<-,GRanges-method}
+\alias{width,GRanges-method}
+\alias{width<-,GRanges-method}
 
 % DataTable methods:
-\alias{[,GenomicFeature-method}
-\alias{[<-,GenomicFeature-method}
-\alias{ncol,GenomicFeature-method}
-\alias{colnames,GenomicFeature-method}
-\alias{colnames<-,GenomicFeature-method}
+\alias{[,GRanges-method}
+\alias{[<-,GRanges-method}
+\alias{ncol,GRanges-method}
+\alias{colnames,GRanges-method}
+\alias{colnames<-,GRanges-method}
 
 % Sequence methods:
-\alias{[,GenomicFeature-method}
-\alias{c,GenomicFeature-method}
-\alias{length,GenomicFeature-method}
-\alias{rev,GenomicFeature-method}
-\alias{seqselect,GenomicFeature-method}
-\alias{seqselect<-,GenomicFeature-method}
-\alias{split,GenomicFeature-method}
-\alias{window,GenomicFeature-method}
+\alias{[,GRanges-method}
+\alias{c,GRanges-method}
+\alias{length,GRanges-method}
+\alias{rev,GRanges-method}
+\alias{seqselect,GRanges-method}
+\alias{seqselect<-,GRanges-method}
+\alias{split,GRanges-method}
+\alias{window,GRanges-method}
 
 % show method:
-\alias{show,GenomicFeature-method}
+\alias{show,GRanges-method}
 
 
-\title{GenomicFeature objects}
+\title{GRanges objects}
 
 \description{
-  The GenomicFeature class is a container for the genomic locations and
+  The GRanges class is a container for the genomic locations and
   their associated annotations for a single feature.
 }
 
 \details{
-  The GenomicFeature class stores the sequences of genomic locations and
+  The GRanges class stores the sequences of genomic locations and
   associated annotations for a single feature. Each element in the sequence
   is comprised of a sequence name, an interval, a \link{strand}, and optional
   data values (e.g. score, GC content, etc.). This information is stored in
@@ -83,9 +83,9 @@
 \section{Constructor}{
   \describe{
     \item{}{
-      \code{GenomicFeature(seqnames = Rle(), ranges = IRanges(),
-                          strand = Rle(NA_character_, length(seqnames)), ...)}:
-      Creates a GenomicFeature object.
+      \code{GRanges(seqnames = Rle(), ranges = IRanges(),
+                    strand = Rle(NA_character_, length(seqnames)), ...)}:
+      Creates a GRanges object.
       \describe{
         \item{\code{seqnames}}{Rle object or character vector containing the
           sequence names.}
@@ -101,7 +101,7 @@
 }
 
 \section{Coercion}{
-  In the code snippets below, \code{x} is a GenomicFeature object.
+  In the code snippets below, \code{x} is a GRanges object.
 
   \describe{
     \item{}{
@@ -115,7 +115,7 @@
 }
 
 \section{Accessors}{
-  In the following code snippets, \code{x} is a GenomicFeature object.
+  In the following code snippets, \code{x} is a GRanges object.
 
   \describe{
     \item{}{
@@ -149,7 +149,7 @@
 }
 
 \section{Ranges methods}{
-  In the following code snippets, \code{x} is a GenomicFeature object.
+  In the following code snippets, \code{x} is a GRanges object.
 
   \describe{
     \item{}{
@@ -168,7 +168,7 @@
 }
 
 \section{DataTable methods}{
-  In the following code snippets, \code{x} is a GenomicFeature object.
+  In the following code snippets, \code{x} is a GRanges object.
 
   \describe{
     \item{}{
@@ -184,7 +184,7 @@
 }
 
 \section{Splitting and Combining}{
-  In the code snippets below, \code{x} is a GenomicFeature object.
+  In the code snippets below, \code{x} is a GRanges object.
 
   \describe{
     \item{}{
@@ -195,24 +195,24 @@
     }
     \item{}{
       \code{c(x, ...)}:
-      Combine \code{x} and the GenomicFeature objects in \code{...} together.
+      Combine \code{x} and the GRanges objects in \code{...} together.
       Any object in \code{...} must belong to the same class as \code{x},
       or to one of its subclasses, or must be \code{NULL}.
       The result is an object of the same class as \code{x}.
     }
     \item{}{
       \code{split(x, f = seq_len(length(x)), drop = FALSE)}:
-      Splits \code{x} into a \link{GenomicFeatureList}, according to \code{f},
+      Splits \code{x} into a \link{GRangesList}, according to \code{f},
       dropping elements corresponding to unrepresented levels if \code{drop}
       is \code{TRUE}. Split factor \code{f} defaults to splitting each
       element of \code{x} into a separate element in the resulting
-      \link{GenomicFeatureList} object.
+      \link{GRangesList} object.
     }
   }
 }
 
 \section{Subsetting}{
-  In the code snippets below, \code{x} is a GenomicFeature object.
+  In the code snippets below, \code{x} is a GRanges object.
 
   \describe{
     \item{}{
@@ -229,9 +229,9 @@
     \item{}{
       \code{head(x, n = 6L)}:
       If \code{n} is non-negative, returns the first n elements of the
-      GenomicFeature object.
+      GRanges object.
       If \code{n} is negative, returns all but the last \code{abs(n)} elements
-      of the GenomicFeature object.
+      of the GRanges object.
     }
     \item{}{
       \code{rep(x, times, length.out, each)}:
@@ -281,13 +281,13 @@
     \item{}{
       \code{tail(x, n = 6L)}:
       If \code{n} is non-negative, returns the last n elements of the
-      GenomicFeature object.
+      GRanges object.
       If \code{n} is negative, returns all but the first \code{abs(n)} elements
-      of the GenomicFeature object.
+      of the GRanges object.
     }
     \item{}{
       \code{window(x, start = NA, end = NA, width = NA, frequency = NULL, delta = NULL, ...)}:
-      Extract the subsequence window from the GenomicFeature object using:
+      Extract the subsequence window from the GRanges object using:
       \describe{
         \item{\code{start}, \code{end}, \code{width}}{The start, end, or width
           of the window. Two of the three are required.}
@@ -304,7 +304,7 @@
       \code{value} must either be of class \code{class(x)}, belong to a subclass
       of \code{class(x)}, be coercible to \code{class(x)}, or be \code{NULL}.
       If \code{keepLength} is \code{TRUE}, the elements of \code{value} are
-      repeated to create a GenomicFeature object with the same number of elements
+      repeated to create a GRanges object with the same number of elements
       as the width of the subsequence window it is replacing.
       If \code{keepLength} is \code{FALSE}, this replacement method can modify
       the length of \code{x}, depending on how the length of the left
@@ -316,7 +316,7 @@
 \author{P. Aboyoun}
 
 \seealso{
-  \link{GenomicFeatureList},
+  \link{GRangesList},
   \link[IRanges]{Sequence},
   \link[IRanges]{Ranges},
   \link[IRanges]{Rle},
@@ -325,15 +325,15 @@
 
 \examples{
   gf <-
-    GenomicFeature(seqnames =
-                   Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
-                   ranges =
-                   IRanges(1:10, width = 10:1, names = head(letters,10)),
-                   strand =
-                   Rle(strand(c("-", "+", "*", NA, "+", "-")),
-                       c(1, 2, 1, 1, 3, 2)),
-                   score = 1:10,
-                   GC = seq(1, 0, length=10))
+    GRanges(seqnames =
+            Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
+            ranges =
+            IRanges(1:10, width = 10:1, names = head(letters,10)),
+            strand =
+            Rle(strand(c("-", "+", "*", NA, "+", "-")),
+                c(1, 2, 1, 1, 3, 2)),
+            score = 1:10,
+            GC = seq(1, 0, length=10))
   gf
 
   # Extract basic information

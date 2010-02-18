@@ -59,12 +59,12 @@ exportMethods(
 
 
 ### ==========================================================================
-### GenomicFeature
+### GRanges
 ### --------------------------------------------------------------------------
 
-exportClasses(GenomicFeature, GenomicFeatureList)
+exportClasses(GRanges, GRangesList)
 
-export(GenomicFeature, GenomicFeatureList)
+export(GRanges, GRangesList)
 
 exportMethods("coerce", "as.data.frame",
               "seqnames", "ranges", "strand", "values",

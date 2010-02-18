@@ -1,26 +1,26 @@
 ### =========================================================================
-### GenomicFeatureList objects
+### GRangesList objects
 ### -------------------------------------------------------------------------
 ###
 ### Class definition
 
-setClass("GenomicFeatureList", contains = "CompressedList",
-         prototype = prototype(elementType = "GenomicFeature",
-                               unlistData = new("GenomicFeature")))
+setClass("GRangesList", contains = "CompressedList",
+         prototype = prototype(elementType = "GRanges",
+                               unlistData = new("GRanges")))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Constructor.
 ###
 
-GenomicFeatureList <- function(...)
+GRangesList <- function(...)
 {
     listData <- list(...)
     if (length(listData) == 1 && is.list(listData[[1L]]))
         listData <- listData[[1L]]
-    if (!all(sapply(listData, is, "GenomicFeature")))
-        stop("all elements in '...' must be GenomicFeature objects")
-    IRanges:::newCompressedList("GenomicFeatureList", listData)
+    if (!all(sapply(listData, is, "GRanges")))
+        stop("all elements in '...' must be GRanges objects")
+    IRanges:::newCompressedList("GRangesList", listData)
 }
 
 
@@ -28,7 +28,7 @@ GenomicFeatureList <- function(...)
 ### Coercion.
 ###
 
-setAs("RangedData", "GenomicFeatureList",
+setAs("RangedData", "GRangesList",
     function(from)
     {
         ranges <- unlist(ranges(from), use.names=FALSE)
@@ -38,18 +38,18 @@ setAs("RangedData", "GenomicFeatureList",
         whichStrand <- which(colnames(values) == "strand")
         if (length(whichStrand) > 0)
             values <- values[-whichStrand]
-        new("GenomicFeatureList",
+        new("GRangesList",
             unlistData =
-            GenomicFeature(seqnames = space(from),
-                           ranges = ranges,
-                           strand = Rle(strand(from)),
-                           values),
+            GRanges(seqnames = space(from),
+                    ranges = ranges,
+                    strand = Rle(strand(from)),
+                    values),
             partitioning =
             PartitioningByEnd(end = seq_len(nrow(from)), names = nms))
     }
 )
 
-setMethod("as.data.frame", "GenomicFeatureList",
+setMethod("as.data.frame", "GRangesList",
     function(x, row.names=NULL, optional=FALSE, ...)
     {
         if (missing(row.names))
@@ -70,25 +70,25 @@ setMethod("as.data.frame", "GenomicFeatureList",
 ### Accessor methods.
 ###
 
-setMethod("seqnames", "GenomicFeatureList",
+setMethod("seqnames", "GRangesList",
     function(x)
         new2("CompressedRleList",
              unlistData = x@unlistData@seqnames, partitioning = x@partitioning,
              check=FALSE))
 
-setMethod("ranges", "GenomicFeatureList",
+setMethod("ranges", "GRangesList",
     function(x, ...)
         new2("CompressedIRangesList",
              unlistData = x@unlistData@ranges, partitioning = x@partitioning,
              check=FALSE))
 
-setMethod("strand", "GenomicFeatureList",
+setMethod("strand", "GRangesList",
     function(x)
         new2("CompressedRleList",
              unlistData = x@unlistData@strand, partitioning = x@partitioning,
              check=FALSE))
 
-setMethod("values", "GenomicFeatureList",
+setMethod("values", "GRangesList",
     function(x, ...)
     {
         values <- x@unlistData@values
@@ -100,7 +100,7 @@ setMethod("values", "GenomicFeatureList",
     }
 )
 
-setReplaceMethod("seqnames", "GenomicFeatureList",
+setReplaceMethod("seqnames", "GRangesList",
     function(x, value) 
     {
         if (!is(value, "AtomicList") ||
@@ -117,7 +117,7 @@ setReplaceMethod("seqnames", "GenomicFeatureList",
     }
 )
 
-setReplaceMethod("ranges", "GenomicFeatureList",
+setReplaceMethod("ranges", "GRangesList",
     function(x, value) 
     {
         if (!is(value, "RangesList") ||
@@ -129,7 +129,7 @@ setReplaceMethod("ranges", "GenomicFeatureList",
     }
 )
 
-setReplaceMethod("strand", "GenomicFeatureList",
+setReplaceMethod("strand", "GRangesList",
     function(x, value) 
     {
         if (!is(value, "AtomicList") ||
@@ -147,7 +147,7 @@ setReplaceMethod("strand", "GenomicFeatureList",
     }
 )
 
-setReplaceMethod("values", "GenomicFeatureList",
+setReplaceMethod("values", "GRangesList",
     function(x, value) 
     {
         if (!is(value, "SplitDataFrameList") ||
@@ -165,25 +165,25 @@ setReplaceMethod("values", "GenomicFeatureList",
 ### RangesList methods.
 ###
 
-setMethod("start", "GenomicFeatureList",
+setMethod("start", "GRangesList",
     function(x, ...)
         new2("CompressedIntegerList",
              unlistData = start(x@unlistData@ranges),
              partitioning = x@partitioning, check=FALSE))
 
-setMethod("end", "GenomicFeatureList",
+setMethod("end", "GRangesList",
     function(x, ...)
         new2("CompressedIntegerList",
              unlistData = end(x@unlistData@ranges),
              partitioning = x@partitioning, check=FALSE))
 
-setMethod("width", "GenomicFeatureList",
+setMethod("width", "GRangesList",
     function(x)
         new2("CompressedIntegerList",
              unlistData = width(x@unlistData@ranges),
              partitioning = x@partitioning, check=FALSE))
 
-setReplaceMethod("start", "GenomicFeatureList",
+setReplaceMethod("start", "GRangesList",
     function(x, value)
     {
         if (!is(value, "IntegerList") ||
@@ -196,7 +196,7 @@ setReplaceMethod("start", "GenomicFeatureList",
     }
 )
 
-setReplaceMethod("end", "GenomicFeatureList",
+setReplaceMethod("end", "GRangesList",
     function(x, value)
     {
         if (!is(value, "IntegerList") ||
@@ -209,7 +209,7 @@ setReplaceMethod("end", "GenomicFeatureList",
     }
 )
 
-setReplaceMethod("width", "GenomicFeatureList",
+setReplaceMethod("width", "GRangesList",
     function(x, value)
     {
         if (!is(value, "IntegerList") ||
@@ -227,7 +227,7 @@ setReplaceMethod("width", "GenomicFeatureList",
 ### SplitDataFrameList methods.
 ###
 
-setMethod("[", "GenomicFeatureList",
+setMethod("[", "GRangesList",
     function(x, i, j, ..., drop)
     {
         if (!missing(i))
@@ -238,11 +238,11 @@ setMethod("[", "GenomicFeatureList",
     }
 )
 
-setReplaceMethod("[", "GenomicFeatureList",
+setReplaceMethod("[", "GRangesList",
     function(x, i, j, ..., value)
     {
-        if (!is(value, "GenomicFeatureList"))
-            stop("replacement value must be a GenomicFeatureList object")
+        if (!is(value, "GRangesList"))
+            stop("replacement value must be a GRangesList object")
         if (!missing(j)) {
             subvalues <- values(x)[i,,drop=FALSE]
             subvalues[,j] <- values(value)
@@ -252,12 +252,12 @@ setReplaceMethod("[", "GenomicFeatureList",
     }
 )
 
-setMethod("ncol", "GenomicFeatureList", function(x) ncol(x@unlistData@values))
+setMethod("ncol", "GRangesList", function(x) ncol(x@unlistData@values))
 
-setMethod("colnames", "GenomicFeatureList",
+setMethod("colnames", "GRangesList",
     function(x, do.NULL = TRUE, prefix = "col") 
         colnames(x@unlistData@values, do.NULL = do.NULL, prefix = prefix))
-setReplaceMethod("colnames", "GenomicFeatureList",
+setReplaceMethod("colnames", "GRangesList",
     function(x, value)
     {
         colnames(x@unlistData@values) <- value
@@ -270,7 +270,7 @@ setReplaceMethod("colnames", "GenomicFeatureList",
 ### show method.
 ###
 
-setMethod("show", "GenomicFeatureList",
+setMethod("show", "GRangesList",
     function(object)
     {
         k <- length(object)
