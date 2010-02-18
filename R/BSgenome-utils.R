@@ -67,7 +67,8 @@ setMethod("vmatchPattern", "BSgenome",
 setMethod("vcountPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
-             algorithm="auto", exclude="", maskList=logical(0))
+             algorithm="auto", exclude="", maskList=logical(0),
+             userMask = RangesList(), invertUserMask = FALSE)
     {
         countFUN <- function(posPattern, negPattern, chr,
                              max.mismatch = max.mismatch,
@@ -107,23 +108,8 @@ setMethod("vcountPattern", "BSgenome",
         negPattern <- reverseComplement(posPattern)
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
-              simplify = FALSE, maskList = logical(0))
-        if (!is.null(masks)) {
-          masks <- try(as(masks, "RangesList"), silent = TRUE)
-          if (is.character(masks))
-            stop("'masks' must be coercible to 'RangesList'")
-          chrs <- seqnames(subject)
-          if (nchar(exclude))
-            chrs <- grep(exclude, chrs, value = TRUE, invert = TRUE)
-          masks <- masks[intersect(chrs, names(masks))]
-          unmasked <- setdiff(chrs, names(masks))
-          masks <- c(masks, RangesList(sapply(unmasked, function(x) IRanges())))
-          masks <- mapply(Mask,
-                          as(seqlengths(subject)[names(masks)], "AtomicList"),
-                          start(masks), end(masks))
-          if (invert) masks <- lapply(masks, gaps)
-          maskIndex <- 1
-        }
+              simplify = FALSE, maskList = logical(0), userMask = userMask,
+              invertUserMask = invertUserMask)
         counts <-
           bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
