@@ -28,26 +28,8 @@ GRangesList <- function(...)
 ### Coercion.
 ###
 
-setAs("RangedData", "GRangesList",
-    function(from)
-    {
-        ranges <- unlist(ranges(from), use.names=FALSE)
-        values <- unlist(values(from), use.names=FALSE)
-        nms <- rownames(from)
-        rownames(values) <- NULL
-        whichStrand <- which(colnames(values) == "strand")
-        if (length(whichStrand) > 0)
-            values <- values[-whichStrand]
-        new("GRangesList",
-            unlistData =
-            GRanges(seqnames = space(from),
-                    ranges = ranges,
-                    strand = Rle(strand(from)),
-                    values),
-            partitioning =
-            PartitioningByEnd(end = seq_len(nrow(from)), names = nms))
-    }
-)
+setAs("RangedDataList", "GRangesList",
+      function(from) GRangesList(lapply(from, as, "GRanges")))
 
 setMethod("as.data.frame", "GRangesList",
     function(x, row.names=NULL, optional=FALSE, ...)

@@ -10,6 +10,7 @@
 \alias{GRanges}
 
 % Coercion methods:
+\alias{coerce,RangedData,GRanges-method}
 \alias{as.data.frame,GRanges-method}
 
 % Accessor methods:
@@ -104,6 +105,10 @@
   In the code snippets below, \code{x} is a GRanges object.
 
   \describe{
+    \item{}{
+      \code{as(from, "GRanges")}:
+      Creates a GRanges object from a RangedData object.
+    }
     \item{}{
       \code{as.data.frame(x, row.names = NULL, optional = FALSE)}:
       Creates a data.frame with columns \code{seqnames} (character), 
@@ -324,7 +329,7 @@
 }
 
 \examples{
-  gf <-
+  gr <-
     GRanges(seqnames =
             Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
             ranges =
@@ -334,15 +339,15 @@
                 c(1, 2, 1, 1, 3, 2)),
             score = 1:10,
             GC = seq(1, 0, length=10))
-  gf
+  gr
 
   # Extract basic information
-  length(gf)
-  ncol(gf)
-  colnames(gf)
+  length(gr)
+  ncol(gr)
+  colnames(gr)
 
   # Summarize feature
-  table(seqnames(gf))
-  sum(width(gf))
-  summary(values(gf)[,"score"])
+  table(seqnames(gr))
+  sum(width(gr))
+  summary(values(gr)[,"score"])
 }

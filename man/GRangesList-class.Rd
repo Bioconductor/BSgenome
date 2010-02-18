@@ -10,7 +10,7 @@
 \alias{GRangesList}
 
 % Coercion methods:
-\alias{coerce,RangedData,GRangesList-method}
+\alias{coerce,RangedDataList,GRangesList-method}
 \alias{as.data.frame,GRangesList-method}
 
 % Accessor methods:
@@ -65,7 +65,7 @@
   \describe{
     \item{}{
       \code{as(from, "GRangesList")}:
-      Creates a GRangesList object from a RangedData object.
+      Creates a GRangesList object from a RangedDataList object.
     }
     \item{}{
       \code{as.data.frame(x, row.names = NULL, optional = FALSE)}:
@@ -367,30 +367,30 @@
 
 \examples{
   ## Construction using GRangesList
-  gf1 <-
+  gr1 <-
     GRanges(seqnames = "chr2", ranges = IRanges(3, 6),
             strand = "+", score = 5L, GC = 0.45)
-  gf2 <-
+  gr2 <-
     GRanges(seqnames = c("chr1", "chr1"),
             ranges = IRanges(c(7,13), width = 3),
             strand = c("+", "-"), score = 3:4, GC = c(0.3, 0.5))
-  gf3 <-
+  gr3 <-
     GRanges(seqnames = c("chr1", "chr2"),
             ranges = IRanges(c(1, 4), c(3, 9)),
             strand = c("-", "-"), score = c(6L, 2L), GC = c(0.4, 0.1))
-  gfl <- GRangesList("f1" = gf1, "f2" = gf2, "f3" = gf3)
-  gfl
+  grl <- GRangesList("f1" = gr1, "f2" = gr2, "f3" = gr3)
+  grl
 
   # Extract basic information
-  length(gfl)
-  ncol(gfl)
-  colnames(gfl)
+  length(grl)
+  ncol(grl)
+  colnames(grl)
 
   # Summarize features
-  elementLengths(gfl)
-  table(seqnames(gfl))
+  elementLengths(grl)
+  table(seqnames(grl))
 
   # Extract subsets
-  gfl[seqnames(gfl) == "chr1", ]
-  gfl[seqnames(gfl) == "chr1" & strand(gfl) == "+", ]
+  grl[seqnames(grl) == "chr1", ]
+  grl[seqnames(grl) == "chr1" & strand(grl) == "+", ]
 }

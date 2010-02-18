@@ -43,7 +43,7 @@ test_GRanges_construction <- function() {
 
 test_GRanges_coercion <- function() {
     ## no strand or score
-    gf <-
+    gr <-
       GRanges(seqnames = c(1,1,2),
               ranges = IRanges(1:3,4:6, names = head(letters,3)))
     df <-
@@ -52,10 +52,10 @@ test_GRanges_coercion <- function() {
                  strand = strand(rep(NA_character_, 3)),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as.data.frame(gf), df)
+    checkIdentical(as.data.frame(gr), df)
 
     ## score, no strand
-    gf <-
+    gr <-
       GRanges(seqnames = c(1,1,2),
               ranges = IRanges(1:3,4:6, names = head(letters,3)),
               score = c(10L,2L,NA))
@@ -66,10 +66,10 @@ test_GRanges_coercion <- function() {
                  score = c(10L,2L,NA),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as.data.frame(gf), df)
+    checkIdentical(as.data.frame(gr), df)
 
     ## strand, no score
-    gf <-
+    gr <-
       GRanges(seqnames = c(1,1,2),
               ranges = IRanges(1:3,4:6, names = head(letters,3)),
               strand = strand(c("+", "-", "*")))
@@ -79,10 +79,10 @@ test_GRanges_coercion <- function() {
                  strand = strand(c("+", "-", "*")),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as.data.frame(gf), df)
+    checkIdentical(as.data.frame(gr), df)
 
     ## strand & score
-    gf <-
+    gr <-
       GRanges(seqnames = c(1,1,2),
               ranges = IRanges(1:3,4:6, names = head(letters,3)),
               strand = strand(c("+", "-", "*")),
@@ -94,7 +94,7 @@ test_GRanges_coercion <- function() {
                  score = c(10L,2L,NA),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
-    checkIdentical(as.data.frame(gf), df)
+    checkIdentical(as.data.frame(gr), df)
 }
 
 test_GRanges_accessors <- function() {
@@ -104,16 +104,16 @@ test_GRanges_accessors <- function() {
     checkException(seqnames(make_test_GRanges()) <- letters,
                    silent = TRUE)
 
-    gf <- make_test_GRanges()
-    val <- seqnames(gf)
+    gr <- make_test_GRanges()
+    val <- seqnames(gr)
     runValue(val) <- paste(runValue(val), ".new", sep="")
-    seqnames(gf) <- val
-    checkIdentical(seqnames(gf), val)
+    seqnames(gr) <- val
+    checkIdentical(seqnames(gr), val)
 
-    gf <- make_test_GRanges()
-    val <- head(letters, length(gf))
-    seqnames(gf) <- val
-    checkIdentical(seqnames(gf), Rle(val))
+    gr <- make_test_GRanges()
+    val <- head(letters, length(gr))
+    seqnames(gr) <- val
+    checkIdentical(seqnames(gr), Rle(val))
 
     ## ranges
     checkException(ranges(GRanges()) <- NULL, silent = TRUE)
@@ -121,53 +121,53 @@ test_GRanges_accessors <- function() {
     checkException(seqnames(make_test_GRanges()) <- IRanges(1:26, 1:26),
                    silent = TRUE)
 
-    gf <- make_test_GRanges()
-    val <- IRanges(1:length(gf), width = 10)
-    ranges(gf) <- val
-    checkIdentical(ranges(gf), val)
+    gr <- make_test_GRanges()
+    val <- IRanges(1:length(gr), width = 10)
+    ranges(gr) <- val
+    checkIdentical(ranges(gr), val)
 
     ## strand
     checkException(strand(GRanges()) <- NULL, silent = TRUE)
     checkException(strand(make_test_GRanges()) <- NULL, silent = TRUE)
     checkException(strand(make_test_GRanges()) <- letters, silent = TRUE)
 
-    gf <- make_test_GRanges()
-    val <- Rle(strand("+"), length(gf))
-    strand(gf) <- val
-    checkIdentical(strand(gf), val)
+    gr <- make_test_GRanges()
+    val <- Rle(strand("+"), length(gr))
+    strand(gr) <- val
+    checkIdentical(strand(gr), val)
 
-    gf <- make_test_GRanges()
-    val <- rep(strand("+"), length(gf))
-    strand(gf) <- val
-    checkIdentical(strand(gf), Rle(val))
+    gr <- make_test_GRanges()
+    val <- rep(strand("+"), length(gr))
+    strand(gr) <- val
+    checkIdentical(strand(gr), Rle(val))
 
     ## values
-    checkException(values(gf) <- DataFrame(strand = 1:length(gf)),
+    checkException(values(gr) <- DataFrame(strand = 1:length(gr)),
                    silent = TRUE)
-    checkException(values(gf) <- DataFrame(score = letters), silent = TRUE)
+    checkException(values(gr) <- DataFrame(score = letters), silent = TRUE)
 
-    gf <- make_test_GRanges()
-    values(gf) <- NULL
-    checkIdentical(values(gf),
-                   new("DataFrame", nrows = length(gf), rownames = names(gf)))
+    gr <- make_test_GRanges()
+    values(gr) <- NULL
+    checkIdentical(values(gr),
+                   new("DataFrame", nrows = length(gr), rownames = names(gr)))
 
-    gf <- make_test_GRanges()
-    val <- DataFrame(x = 1:length(gf), y = head(letters, length(gf)))
-    rownames(val) <- names(gf)
-    values(gf) <- val
-    checkTrue(validObject(gf))
-    checkIdentical(values(gf), val)
+    gr <- make_test_GRanges()
+    val <- DataFrame(x = 1:length(gr), y = head(letters, length(gr)))
+    rownames(val) <- names(gr)
+    values(gr) <- val
+    checkTrue(validObject(gr))
+    checkIdentical(values(gr), val)
 
     ## names
-    checkException(names(gf) <- letters, silent = TRUE)
+    checkException(names(gr) <- letters, silent = TRUE)
 
-    gf <- make_test_GRanges()
-    names(gf) <- NULL
-    checkIdentical(names(gf), NULL)
+    gr <- make_test_GRanges()
+    names(gr) <- NULL
+    checkIdentical(names(gr), NULL)
 
-    gf <- make_test_GRanges()
-    names(gf) <- head(letters, length(gf))
-    checkIdentical(names(gf), head(letters, length(gf)))
+    gr <- make_test_GRanges()
+    names(gr) <- head(letters, length(gr))
+    checkIdentical(names(gr), head(letters, length(gr)))
 }
 
 test_GRanges_Ranges <- function() {
@@ -176,27 +176,27 @@ test_GRanges_Ranges <- function() {
     checkException(start(make_test_GRanges()) <- letters, silent = TRUE)
     checkException(start(make_test_GRanges()) <- 1:26, silent = TRUE)
 
-    gf <- make_test_GRanges()
-    start(gf) <- as.numeric(seq_len(length(gf)))
-    checkIdentical(start(gf), seq_len(length(gf)))
+    gr <- make_test_GRanges()
+    start(gr) <- as.numeric(seq_len(length(gr)))
+    checkIdentical(start(gr), seq_len(length(gr)))
 
     ## end
     checkException(end(GRanges()) <- NULL, silent = TRUE)
     checkException(end(make_test_GRanges()) <- letters, silent = TRUE)
     checkException(end(make_test_GRanges()) <- 1:26, silent = TRUE)
 
-    gf <- make_test_GRanges()
-    end(gf) <- as.numeric(10L + seq_len(length(gf)))
-    checkIdentical(end(gf), 10L + seq_len(length(gf)))
+    gr <- make_test_GRanges()
+    end(gr) <- as.numeric(10L + seq_len(length(gr)))
+    checkIdentical(end(gr), 10L + seq_len(length(gr)))
 
     ## width
     checkException(width(GRanges()) <- NULL, silent = TRUE)
     checkException(width(make_test_GRanges()) <- letters, silent = TRUE)
     checkException(width(make_test_GRanges()) <- 1:26, silent = TRUE)
 
-    gf <- make_test_GRanges()
-    width(gf) <- as.numeric(10L + seq_len(length(gf)))
-    checkIdentical(width(gf), 10L + seq_len(length(gf)))
+    gr <- make_test_GRanges()
+    width(gr) <- as.numeric(10L + seq_len(length(gr)))
+    checkIdentical(width(gr), 10L + seq_len(length(gr)))
 }
 
 test_GRanges_DataTable <- function() {
@@ -207,73 +207,73 @@ test_GRanges_DataTable <- function() {
     checkException(colnames(make_test_GRanges()) <- "a", silent = TRUE)
     checkException(colnames(make_test_GRanges()) <- letters,
                    silent = TRUE)
-    gf <- make_test_GRanges()
-    colnames(gf) <- c("a", "b")
-    checkIdentical(colnames(gf), c("a", "b"))
+    gr <- make_test_GRanges()
+    colnames(gr) <- c("a", "b")
+    checkIdentical(colnames(gr), c("a", "b"))
 }
 
 test_GRanges_Sequence <- function() {
     ## [
-    gf <- make_test_GRanges()
-    checkException(gf[1000], silent = TRUE)
-    checkException(gf["bad"], silent = TRUE)
-    checkIdentical(gf, gf[])
-    checkIdentical(as.data.frame(gf)[c(1,3,5),], as.data.frame(gf[c(1,3,5)]))
-    checkIdentical(as.data.frame(gf)[c(1,3,5),-7],
-                   as.data.frame(gf[c(1,3,5),"score"]))
-    checkIdentical(as.data.frame(gf)[c(1,3,5),-7],
-                   as.data.frame(gf[c(1,3,5),1]))
+    gr <- make_test_GRanges()
+    checkException(gr[1000], silent = TRUE)
+    checkException(gr["bad"], silent = TRUE)
+    checkIdentical(gr, gr[])
+    checkIdentical(as.data.frame(gr)[c(1,3,5),], as.data.frame(gr[c(1,3,5)]))
+    checkIdentical(as.data.frame(gr)[c(1,3,5),-7],
+                   as.data.frame(gr[c(1,3,5),"score"]))
+    checkIdentical(as.data.frame(gr)[c(1,3,5),-7],
+                   as.data.frame(gr[c(1,3,5),1]))
 
     ## [<-
-    gf <- make_test_GRanges()
-    gf[] <- rev(gf)
-    revgf <- rev(make_test_GRanges())
-    names(revgf) <- rev(names(revgf))
-    checkIdentical(gf, revgf)
+    gr <- make_test_GRanges()
+    gr[] <- rev(gr)
+    revgr <- rev(make_test_GRanges())
+    names(revgr) <- rev(names(revgr))
+    checkIdentical(gr, revgr)
 
     ## c
-    gf <- make_test_GRanges()
-    gf2 <- gf
-    names(gf2) <- NULL
+    gr <- make_test_GRanges()
+    gr2 <- gr
+    names(gr2) <- NULL
     checkException(c(GRanges(), RangedData()), silent = TRUE)
-    checkException(c(gf, gf[,-1]), silent = TRUE)
-    checkIdentical(as.data.frame(c(gf, gf)),
-                   as.data.frame(gf)[rep(seq_len(length(gf)), 2),])
-    checkIdentical(as.data.frame(c(gf, gf2)),
-                   rbind(as.data.frame(gf), as.data.frame(gf2)))
-    checkIdentical(as.data.frame(c(gf2, gf)),
-                   rbind(as.data.frame(gf2), as.data.frame(gf)))
+    checkException(c(gr, gr[,-1]), silent = TRUE)
+    checkIdentical(as.data.frame(c(gr, gr)),
+                   as.data.frame(gr)[rep(seq_len(length(gr)), 2),])
+    checkIdentical(as.data.frame(c(gr, gr2)),
+                   rbind(as.data.frame(gr), as.data.frame(gr2)))
+    checkIdentical(as.data.frame(c(gr2, gr)),
+                   rbind(as.data.frame(gr2), as.data.frame(gr)))
 
     ## length
-    checkIdentical(length(gf), length(gf@seqnames))
+    checkIdentical(length(gr), length(gr@seqnames))
 
     ## seqselect
-    gf <- make_test_GRanges()
-    checkIdentical(gf[1:3], seqselect(gf, 1, 3))
-    checkIdentical(gf[c(1:3, 1:3)], seqselect(gf, c(1,1), c(3,3)))
+    gr <- make_test_GRanges()
+    checkIdentical(gr[1:3], seqselect(gr, 1, 3))
+    checkIdentical(gr[c(1:3, 1:3)], seqselect(gr, c(1,1), c(3,3)))
 
     ## seqselect<-
-    gf1 <- make_test_GRanges()
-    gf1[1:3] <- make_test_GRanges()[4:6]
-    gf2 <- make_test_GRanges()
-    seqselect(gf2, 1, 3) <- make_test_GRanges()[4:6]
-    checkIdentical(gf1, gf2)
+    gr1 <- make_test_GRanges()
+    gr1[1:3] <- make_test_GRanges()[4:6]
+    gr2 <- make_test_GRanges()
+    seqselect(gr2, 1, 3) <- make_test_GRanges()[4:6]
+    checkIdentical(gr1, gr2)
 
     ## split
-    gf <- make_test_GRanges()
-    checkException(split(gf, NULL), silent = TRUE)
-    checkIdentical(split(unname(gf)),
-                   GRangesList(lapply(structure(seq_len(length(gf)),
-                                names = as.character(seq_len(length(gf)))),
-                                      function(i) unname(gf)[i])))
-    checkIdentical(split(gf),
-                   GRangesList(lapply(structure(seq_len(length(gf)),
-                                                names = names(gf)),
-                                      function(i) gf[i])))
-    checkIdentical(split(gf, rep(c("a", "b"), each=5)),
-                   GRangesList(a = head(gf, 5), b = tail(gf, 5)))
+    gr <- make_test_GRanges()
+    checkException(split(gr, NULL), silent = TRUE)
+    checkIdentical(split(unname(gr)),
+                   GRangesList(lapply(structure(seq_len(length(gr)),
+                                names = as.character(seq_len(length(gr)))),
+                                      function(i) unname(gr)[i])))
+    checkIdentical(split(gr),
+                   GRangesList(lapply(structure(seq_len(length(gr)),
+                                                names = names(gr)),
+                                      function(i) gr[i])))
+    checkIdentical(split(gr, rep(c("a", "b"), each=5)),
+                   GRangesList(a = head(gr, 5), b = tail(gr, 5)))
 
     ## window
-    gf <- make_test_GRanges()
-    checkIdentical(gf[1:3], window(gf, 1, 3))
+    gr <- make_test_GRanges()
+    checkIdentical(gr[1:3], window(gr, 1, 3))
 }

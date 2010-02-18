@@ -109,6 +109,23 @@ function(seqnames = Rle(), ranges = IRanges(),
 ### Coercion.
 ###
 
+setAs("RangedData", "GRanges",
+    function(from)
+    {
+        ranges <- unlist(ranges(from), use.names=FALSE)
+        values <- unlist(values(from), use.names=FALSE)
+        nms <- rownames(from)
+        rownames(values) <- NULL
+        whichStrand <- which(colnames(values) == "strand")
+        if (length(whichStrand) > 0)
+            values <- values[-whichStrand]
+        GRanges(seqnames = space(from),
+                ranges = ranges,
+                strand = Rle(strand(from)),
+                values)
+    }
+)
+
 setMethod("as.data.frame", "GRanges",
     function(x, row.names=NULL, optional=FALSE, ...)
     {
