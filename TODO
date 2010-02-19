@@ -1,2 +1,27 @@
 - RangesList
   - Make GenomicRanges() accept IRanges as 'start' parameter
+
+#+begin_src R
+  library("GenomicFeatures")
+  library("Rsamtools")
+  library("BSgenome")
+
+  st <- system.time
+  
+  bamFile <- "NA19239.SLX.maq.SRP000033.2009_09.subset.bam"
+  tx <- loadFeatures("ucsc-human.sqlite")
+  
+  ## FIXME: need to align chromosome naming conventions.
+  ## bam file uses "1" and tx db uses "chr1".
+  ##
+  ## one solution is:
+  ## runValue(bigPat@unlistData@seqnames) <-
+  ##    paste("chr", runValue(bigPat@unlistData@seqnames), sep = "")
+  ##
+  st(bigTarget <- transcripts(tx))
+  
+  ## or load serialized?
+  st(bigPat <- readBAMasAlignments1(bamFile))
+  
+  st(olaps <- findOverlaps(bigPat[1:500], bigTarget))
+#+end_src
