@@ -23,10 +23,10 @@ Collate: available.genomes.R
 	injectSNPs.R
 	getSeq.R
 	bsapply.R
-    gdreduce.R
+	gdreduce.R
 	BSgenome-utils.R
 	BSgenomeForge.R
 	strand.R
-    GRanges-class.R
-    GRangesList-class.R
-	findOverlaps.R
+	GRanges-class.R
+	GRangesList-class.R
+	findOverlaps-methods.R

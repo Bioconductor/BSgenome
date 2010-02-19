@@ -2,7 +2,22 @@
 ## TODO: add tests for more complex overlaps
 ## TODO: performance evaluation and improvement
 
-findOverlaps <- BSgenome:::findOverlaps1
+test_matching_seqnames <- function()
+{
+    prefixes <- c("", "chr", "Chr", "CHR", "chrom", "Chrom", "CHROM")
+    P <- length(prefixes)
+    for (isArabic1 in c(TRUE, FALSE)) {
+        for (pre1 in seq_len(P - 1L)) {
+            for (pre2 in ((pre1 + 1L):P)) {
+                num1 <- if(isArabic1) 1:24 else as.character(as.roman(1:30))
+                num2 <- if(!isArabic1) as.character(as.roman(1:24)) else 1:30
+                seq1 <- paste(prefixes[pre1], num1, sep = "")
+                seq2 <- paste(prefixes[pre2], num2, sep = "")
+                checkTrue(!BSgenome:::.similarSeqnameConvention(seq1, seq2))
+            }
+        }
+    }
+}
 
 make_target <- function() {
     new("GRanges",
@@ -17,24 +32,77 @@ make_pattern <- function() {
                 nomatch = GRanges(seqnames = "chr1",
                 ranges = IRanges(start=5, end=10), strand = "+"),
 
-                onematch = GRanges( seqnames = "chr3",
+                onematch = GRanges(seqnames = "chr3",
                 ranges = IRanges(start=2, end=7), strand = "-"),
 
                 twomatch = GRanges(seqnames = "chr1",
                 ranges = IRanges(start=1, end=5), strand = "-"))
 }
 
-test_findOverlaps_small <- function()
+test_findOverlaps_no_overlaps_returns_empty_matches <- function()
+{
+    pattern <- make_pattern()
+    target <- make_target()
+    ranges(target) <- shift(ranges(target), 1000L)
+    ans <- findOverlaps(pattern, target)
+    expect <-
+      new("RangesMatching",
+          matchMatrix = matrix(integer(),  byrow = TRUE, ncol = 2L,
+                               dimnames = list(NULL, c("query", "subject"))),
+          DIM = c(10L, 3L))
+    checkEquals(expect, ans)
+}
+
+test_findOverlaps_empty_pattern <- function()
+{
+    pattern <- new("GRangesList")
+    target <- make_target()
+    ans <- findOverlaps(pattern, target)
+    expect <-
+      new("RangesMatching",
+          matchMatrix = matrix(integer(), byrow = TRUE, ncol = 2L,
+                               dimnames = list(NULL, c("query", "subject"))),
+            DIM = c(10L, 0L))
+    checkEquals(expect, ans)
+}
+
+test_findOverlaps_empty_target <- function()
+{
+    pattern <- make_pattern()
+    target <- new("GRanges")
+    ans <- findOverlaps(pattern, target)   
+    expect <-
+      new("RangesMatching",
+          matchMatrix = matrix(integer(), byrow = TRUE, ncol = 2L,
+                               dimnames = list(NULL, c("query", "subject"))),
+          DIM = c(0L, 3L))
+    checkEquals(expect, ans)
+}
+
+test_findOverlaps_zero_one_two_matches <- function()
 {
     pattern <- make_pattern()
     target <- make_target()
     ans <- findOverlaps(pattern, target)
-
     expect <- new("RangesMatching",
                   matchMatrix = matrix(c(2L, 7L, 3L, 1L, 3L, 5L),
                   byrow = TRUE, ncol = 2L,
                   dimnames = list(NULL, c("query", "subject"))),
                   DIM = c(10L, 3L))
+    checkEquals(expect, ans)
+}
 
+test_findOverlaps_multimatch_within_one_pattern <- function()
+{
+    pattern <- make_pattern()
+    pattern[[3L]] <- c(pattern[[3L]], pattern[[3L]])
+    target <- make_target()
+    ans <- findOverlaps(pattern, target)
+    expect <-
+      new("RangesMatching",
+          matchMatrix = matrix(c(2L, 7L, 3L, 1L, 3L, 5L),
+                               byrow = TRUE, ncol = 2L,
+                               dimnames = list(NULL, c("query", "subject"))),
+          DIM = c(10L, 3L))
     checkEquals(expect, ans)
 }

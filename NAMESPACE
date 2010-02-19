@@ -74,5 +74,5 @@ exportMethods("coerce", "as.data.frame",
               "ncol", "colnames", "colnames<-",
               "[", "[<-", "c", "length", "rev", "seqselect", "seqselect<-",
               "split", "window",
-              "show")
-
+              "show",
+              "findOverlaps")
