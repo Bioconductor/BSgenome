@@ -39,6 +39,8 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
               sort(intersect(uniqueQuerySeqnames, uniqueSubjectSeqnames))
             matrixList <- vector("list", length = length(uniqueSeqnames) * 2L)
             i <- 1L
+            queryRanges <- unname(ranges(query))
+            subjectRanges <- unname(ranges(subject))
             for (seqnm in uniqueSeqnames) {
                 queryWant0 <- querySeqnames == seqnm
                 subjectWant0 <- subjectSeqnames == seqnm
@@ -46,11 +48,9 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                     queryIdx <- which(queryWant0 & (queryStrand == strd))
                     subjectIdx <- which(subjectWant0 & (subjectStrand == strd))
 
-                    queryRanges <- ranges(query[queryIdx])
-                    subjectRanges <- ranges(subject[subjectIdx])
-
                     overlaps <-
-                      callGeneric(queryRanges, subjectRanges,
+                      callGeneric(queryRanges[queryIdx],
+                                  subjectRanges[subjectIdx],
                                   maxgap = maxgap, multiple = multiple,
                                   type = type)
 
