@@ -12,7 +12,7 @@
 }
 
 .cleanMatchMatrix <- function(matchMatrix) {
-    fastDiff <- function(x) .Call("Integer_diff_with_0", x, PACKAGE="IRanges")
+    fastDiff <- IRanges:::diffWithInitialZero
     nr <- nrow(matchMatrix)
     nc <- ncol(matchMatrix)
     if (nr <= 1L) {
@@ -38,17 +38,11 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                      dimnames = list(NULL, c("query", "subject")))
         } else {
             querySeqnames <- seqnames(query)
-            querySplitRanges <-
-              split(IRanges(start = start(querySeqnames),
-                            width = runLength(querySeqnames)),
-                    runValue(querySeqnames))
+            querySplitRanges <- splitRanges(querySeqnames)
             uniqueQuerySeqnames <- names(querySplitRanges)
 
             subjectSeqnames <- seqnames(subject)
-            subjectSplitRanges <-
-              split(IRanges(start = start(subjectSeqnames),
-                            width = runLength(subjectSeqnames)),
-                    runValue(subjectSeqnames))
+            subjectSplitRanges <- splitRanges(subjectSeqnames)
             uniqueSubjectSeqnames <- names(subjectSplitRanges)
 
             if (!.similarSeqnameConvention(uniqueQuerySeqnames,
