@@ -1,7 +1,7 @@
 .similarSeqnameConvention <- function(seqs1, seqs2) {
     funList <-
-      list(isRoman = function(x) grepl("[iv]", tolower(x)),
-           isArabic = function(x) grepl("[1-9]", tolower(x)),
+      list(isRoman = function(x) grepl("[ivIV]", x),
+           isArabic = function(x) grepl("[1-9]", x),
            haschr = function(x) grepl("^chr", x),
            hasChr = function(x) grepl("^Chr", x),
            hasCHR = function(x) grepl("^CHR", x),
@@ -11,6 +11,21 @@
     all(sapply(funList, function(f) any(f(seqs1)) == any(f(seqs2))))
 }
 
+.cleanMatchMatrix <- function(matchMatrix) {
+    fastDiff <- function(x) .Call("Integer_diff_with_0", x, PACKAGE="IRanges")
+    nr <- nrow(matchMatrix)
+    nc <- ncol(matchMatrix)
+    if (nr <= 1L) {
+        matchMatrix
+    } else {
+        matchMatrix <-
+          matchMatrix[order(matchMatrix[ , 1L, drop=TRUE],
+                            matchMatrix[ , 2L, drop=TRUE]), ,
+                      drop=FALSE]
+        matchMatrix[fastDiff(matchMatrix[,1L,drop=TRUE]) != 0L |
+                    fastDiff(matchMatrix[,2L,drop=TRUE]) != 0L, , drop=FALSE]
+    }
+}
 
 setMethod("findOverlaps", c("GRanges", "GRanges"),
     function(query, subject, maxgap = 0, multiple = TRUE,
@@ -22,48 +37,57 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
               matrix(integer(), ncol = 2,
                      dimnames = list(NULL, c("query", "subject")))
         } else {
-            querySeqnames <- as.character(seqnames(query))
-            uniqueQuerySeqnames <- unique(querySeqnames)
-            queryStrand <- as.character(strand(query))
+            querySeqnames <- seqnames(query)
+            querySplitRanges <-
+              split(IRanges(start = start(querySeqnames),
+                            width = runLength(querySeqnames)),
+                    runValue(querySeqnames))
+            uniqueQuerySeqnames <- names(querySplitRanges)
 
-            subjectSeqnames <- as.character(seqnames(subject))
-            uniqueSubjectSeqnames <- unique(subjectSeqnames)
-            subjectStrand <- as.character(strand(subject))
+            subjectSeqnames <- seqnames(subject)
+            subjectSplitRanges <-
+              split(IRanges(start = start(subjectSeqnames),
+                            width = runLength(subjectSeqnames)),
+                    runValue(subjectSeqnames))
+            uniqueSubjectSeqnames <- names(subjectSplitRanges)
 
             if (!.similarSeqnameConvention(uniqueQuerySeqnames,
                                            uniqueSubjectSeqnames))
                 stop("'query' and 'subject' do not use a similiar naming ",
                      "convention for seqnames")
 
-            uniqueSeqnames <-
-              sort(intersect(uniqueQuerySeqnames, uniqueSubjectSeqnames))
-            matrixList <- vector("list", length = length(uniqueSeqnames) * 2L)
-            i <- 1L
+            commonSeqnames <-
+              intersect(uniqueQuerySeqnames, uniqueSubjectSeqnames)
+
+            queryStrand <- as.character(strand(query))
             queryRanges <- unname(ranges(query))
+
+            subjectStrand <- as.character(strand(subject))
             subjectRanges <- unname(ranges(subject))
-            for (seqnm in uniqueSeqnames) {
-                queryWant0 <- querySeqnames == seqnm
-                subjectWant0 <- subjectSeqnames == seqnm
-                for (strd in c("+", "-")) {
-                    queryIdx <- which(queryWant0 & (queryStrand == strd))
-                    subjectIdx <- which(subjectWant0 & (subjectStrand == strd))
 
-                    overlaps <-
-                      callGeneric(queryRanges[queryIdx],
-                                  subjectRanges[subjectIdx],
-                                  maxgap = maxgap, multiple = multiple,
-                                  type = type)
-
-                    matrixList[[i]] <-
-                      cbind(query = queryIdx[queryHits(overlaps)],
-                            subject = subjectIdx[subjectHits(overlaps)])
-
-                    i <- i + 1L
-                }
-            }
-            matchMatrix <- do.call(rbind, matrixList)
             matchMatrix <-
-              matchMatrix[order(matchMatrix[ , 1L], matchMatrix[ , 2L]), ,
+              do.call(rbind,
+                      lapply(commonSeqnames, function(seqnm)
+                      {
+                          qIdxs <- querySplitRanges[[seqnm]]
+                          sIdxs <- subjectSplitRanges[[seqnm]]
+                          overlaps <-
+                            findOverlaps(seqselect(queryRanges, qIdxs),
+                                         seqselect(subjectRanges, sIdxs),
+                                         maxgap = maxgap, multiple = multiple,
+                                         type = type)
+                          qHits <- queryHits(overlaps)
+                          sHits <- subjectHits(overlaps)
+                          matches <-
+                            cbind(query = as.integer(qIdxs)[qHits],
+                                  subject = as.integer(sIdxs)[sHits])
+                          matches[seqselect(queryStrand, qIdxs)[qHits] ==
+                                  seqselect(subjectStrand, sIdxs)[sHits], ,
+                                  drop=FALSE]
+                      }))
+            matchMatrix <-
+              matchMatrix[order(matchMatrix[ , 1L, drop=TRUE],
+                                matchMatrix[ , 2L, drop=TRUE]), ,
                           drop=FALSE]
         }
         new("RangesMatching", matchMatrix = matchMatrix, DIM = DIM)
@@ -79,7 +103,7 @@ setMethod("findOverlaps", c("GRangesList", "GRanges"),
                       maxgap = maxgap, multiple = multiple, type = type)
         matchMatrix <- ans@matchMatrix
         matchMatrix[, 1L] <- togroup(query@partitioning)[matchMatrix[, 1L]]
-        matchMatrix <- matchMatrix[!duplicated(matchMatrix), , drop=FALSE]
+        matchMatrix <- .cleanMatchMatrix(matchMatrix)
         DIM <- c(length(subject), length(query))
         initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
     }
@@ -94,7 +118,7 @@ setMethod("findOverlaps", c("GRanges", "GRangesList"),
                       maxgap = maxgap, multiple = multiple, type = type)
         matchMatrix <- ans@matchMatrix
         matchMatrix[, 2L] <- togroup(subject@partitioning)[matchMatrix[, 2L]]
-        matchMatrix <- matchMatrix[!duplicated(matchMatrix), , drop=FALSE]
+        matchMatrix <- .cleanMatchMatrix(matchMatrix)
         DIM <- c(length(subject), length(query))
         initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
     }
@@ -111,7 +135,7 @@ setMethod("findOverlaps", c("GRangesList", "GRangesList"),
         matchMatrix <- ans@matchMatrix
         matchMatrix[, 1L] <- togroup(query@partitioning)[matchMatrix[, 1L]]
         matchMatrix[, 2L] <- togroup(subject@partitioning)[matchMatrix[, 2L]]
-        matchMatrix <- matchMatrix[!duplicated(matchMatrix), , drop=FALSE]
+        matchMatrix <- .cleanMatchMatrix(matchMatrix)
         DIM <- c(length(subject), length(query))
         initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
     }
