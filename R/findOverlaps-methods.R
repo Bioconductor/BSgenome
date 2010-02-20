@@ -12,31 +12,26 @@
 }
 
 
-setMethod("findOverlaps", c("GRangesList", "GRanges"),
+setMethod("findOverlaps", c("GRanges", "GRanges"),
     function(query, subject, maxgap = 0, multiple = TRUE,
              type = c("any", "start", "end", "within", "equal"))
     {
-        if (is(query, "Alignments1"))
-            query <- as(query, "GRangesList")
-
         DIM <- c(length(subject), length(query))
         if (DIM[1L] == 0L || DIM[2L] == 0L) {
             matchMatrix <-
               matrix(integer(), ncol = 2,
                      dimnames = list(NULL, c("query", "subject")))
         } else {
-            queryGroup <- togroup(query@partitioning)
-            queryUnlistedRanges <- query@unlistData@ranges
-            querySeqnames <- as.character(query@unlistData@seqnames)
+            querySeqnames <- as.character(seqnames(query))
             uniqueQuerySeqnames <- unique(querySeqnames)
-            queryStrand <- as.character(query@unlistData@strand)
+            queryStrand <- as.character(strand(query))
 
             subjectSeqnames <- as.character(seqnames(subject))
             uniqueSubjectSeqnames <- unique(subjectSeqnames)
             subjectStrand <- as.character(strand(subject))
 
             if (!.similarSeqnameConvention(uniqueQuerySeqnames,
-                    uniqueSubjectSeqnames))
+                                           uniqueSubjectSeqnames))
                 stop("'query' and 'subject' do not use a similiar naming ",
                      "convention for seqnames")
 
@@ -46,20 +41,23 @@ setMethod("findOverlaps", c("GRangesList", "GRanges"),
             i <- 1L
             for (seqnm in uniqueSeqnames) {
                 queryWant0 <- querySeqnames == seqnm
-                tarWant0 <- subjectSeqnames == seqnm
+                subjectWant0 <- subjectSeqnames == seqnm
                 for (strd in c("+", "-")) {
-                    queryWant <- which(queryWant0 & (queryStrand == strd))
-                    queryRanges <- queryUnlistedRanges[queryWant]
-                    queryIdx <- queryGroup[queryWant]
+                    queryIdx <- which(queryWant0 & (queryStrand == strd))
+                    subjectIdx <- which(subjectWant0 & (subjectStrand == strd))
 
-                    tarIdx <- which(tarWant0 & (subjectStrand == strd))
-                    tarRanges <- ranges(subject[tarIdx])
+                    queryRanges <- ranges(query[queryIdx])
+                    subjectRanges <- ranges(subject[subjectIdx])
 
-                    overlaps <- callGeneric(queryRanges, tarRanges)
-                    queryIdx <- queryIdx[queryHits(overlaps)]
-                    subjectIdx <- tarIdx[subjectHits(overlaps)]
+                    overlaps <-
+                      callGeneric(queryRanges, subjectRanges,
+                                  maxgap = maxgap, multiple = multiple,
+                                  type = type)
+
                     matrixList[[i]] <-
-                      cbind(query = queryIdx, subject = subjectIdx)
+                      cbind(query = queryIdx[queryHits(overlaps)],
+                            subject = subjectIdx[subjectHits(overlaps)])
+
                     i <- i + 1L
                 }
             }
@@ -67,8 +65,54 @@ setMethod("findOverlaps", c("GRangesList", "GRanges"),
             matchMatrix <-
               matchMatrix[order(matchMatrix[ , 1L], matchMatrix[ , 2L]), ,
                           drop=FALSE]
-            matchMatrix <- matchMatrix[!duplicated(matchMatrix), , drop=FALSE]
         }
         new("RangesMatching", matchMatrix = matchMatrix, DIM = DIM)
+    }
+)
+
+setMethod("findOverlaps", c("GRangesList", "GRanges"),
+    function(query, subject, maxgap = 0, multiple = TRUE,
+             type = c("any", "start", "end", "within", "equal"))
+    {
+        ans <-
+          callGeneric(unlist(query, use.names=FALSE), subject,
+                      maxgap = maxgap, multiple = multiple, type = type)
+        matchMatrix <- ans@matchMatrix
+        matchMatrix[, 1L] <- togroup(query@partitioning)[matchMatrix[, 1L]]
+        matchMatrix <- matchMatrix[!duplicated(matchMatrix), , drop=FALSE]
+        DIM <- c(length(subject), length(query))
+        initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+    }
+)
+
+setMethod("findOverlaps", c("GRanges", "GRangesList"),
+    function(query, subject, maxgap = 0, multiple = TRUE,
+             type = c("any", "start", "end", "within", "equal"))
+    {
+        ans <-
+          callGeneric(query, unlist(subject, use.names=FALSE),
+                      maxgap = maxgap, multiple = multiple, type = type)
+        matchMatrix <- ans@matchMatrix
+        matchMatrix[, 2L] <- togroup(subject@partitioning)[matchMatrix[, 2L]]
+        matchMatrix <- matchMatrix[!duplicated(matchMatrix), , drop=FALSE]
+        DIM <- c(length(subject), length(query))
+        initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+    }
+)
+
+setMethod("findOverlaps", c("GRangesList", "GRangesList"),
+    function(query, subject, maxgap = 0, multiple = TRUE,
+             type = c("any", "start", "end", "within", "equal"))
+    {
+        ans <-
+          callGeneric(unlist(query, use.names=FALSE),
+                      unlist(subject, use.names=FALSE),
+                      maxgap = maxgap, multiple = multiple, type = type)
+        matchMatrix <- ans@matchMatrix
+        matchMatrix[, 1L] <- togroup(query@partitioning)[matchMatrix[, 1L]]
+        matchMatrix[, 2L] <- togroup(subject@partitioning)[matchMatrix[, 2L]]
+        matchMatrix <- matchMatrix[!duplicated(matchMatrix), , drop=FALSE]
+        DIM <- c(length(subject), length(query))
+        initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
     }
 )
