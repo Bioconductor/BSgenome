@@ -19,8 +19,8 @@
         matchMatrix
     } else {
         matchMatrix <-
-          matchMatrix[order(matchMatrix[ , 1L, drop=TRUE],
-                            matchMatrix[ , 2L, drop=TRUE]), ,
+          matchMatrix[IRanges:::orderTwoIntegers(matchMatrix[ , 1L, drop=TRUE],
+                                                 matchMatrix[ , 2L, drop=TRUE]), ,
                       drop=FALSE]
         matchMatrix[fastDiff(matchMatrix[,1L,drop=TRUE]) != 0L |
                     fastDiff(matchMatrix[,2L,drop=TRUE]) != 0L, , drop=FALSE]
@@ -80,8 +80,8 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                                   drop=FALSE]
                       }))
             matchMatrix <-
-              matchMatrix[order(matchMatrix[ , 1L, drop=TRUE],
-                                matchMatrix[ , 2L, drop=TRUE]), ,
+              matchMatrix[IRanges:::orderTwoIntegers(matchMatrix[ , 1L, drop=TRUE],
+                                                     matchMatrix[ , 2L, drop=TRUE]), ,
                           drop=FALSE]
         }
         new("RangesMatching", matchMatrix = matchMatrix, DIM = DIM)
