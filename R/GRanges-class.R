@@ -272,6 +272,14 @@ setReplaceMethod("width", "GRanges",
     }
 )
 
+setMethod("shift", "GRanges",
+    function(x, shift, use.names=TRUE)
+    {
+        x@ranges <- shift(x@ranges, shift, use.names=use.names)
+        x
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### DataTable methods.

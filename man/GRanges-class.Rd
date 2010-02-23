@@ -32,6 +32,7 @@
 \alias{end<-,GRanges-method}
 \alias{width,GRanges-method}
 \alias{width<-,GRanges-method}
+\alias{shift,GRanges-method}
 
 % DataTable methods:
 \alias{[,GRanges-method}
