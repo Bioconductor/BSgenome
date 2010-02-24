@@ -72,16 +72,18 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
             if (IRanges:::anyMissing(runValue(queryStrand)))
                 runValue(queryStrand)[is.na(runValue(queryStrand))] <- "*"
             levels(runValue(queryStrand)) <- c("1", "-1", "0")
-            runValue(queryStrand) <- as.integer(as.character(runValue(queryStrand)))
-            queryStrand <- as.integer(queryStrand)
+            runValue(queryStrand) <-
+              as.integer(as.character(runValue(queryStrand)))
+            queryStrand <- as.vector(queryStrand)
             queryRanges <- unname(ranges(query))
 
             subjectStrand <- strand(subject)
             if (IRanges:::anyMissing(runValue(subjectStrand)))
                 runValue(subjectStrand)[is.na(runValue(subjectStrand))] <- "*"
             levels(runValue(subjectStrand)) <- c("1", "-1", "0")
-            runValue(subjectStrand) <- as.integer(as.character(runValue(subjectStrand)))
-            subjectStrand <- as.integer(subjectStrand)
+            runValue(subjectStrand) <-
+              as.integer(as.character(runValue(subjectStrand)))
+            subjectStrand <- as.vector(subjectStrand)
             subjectRanges <- unname(ranges(subject))
 
             matchMatrix <-
