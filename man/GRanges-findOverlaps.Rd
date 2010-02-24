@@ -45,6 +45,27 @@
   }
 }
 
+\details{
+  The \code{findOverlaps} methods involving \link{GRanges} and
+  \link{GRangesList} objects use the triplet (sequence name, range,
+  strand) to determine which features (see paragraph below for the
+  definition of feature) from the \code{query} overlap which features
+  in the \code{subject}, where strand values of \code{"*"} and \code{NA}
+  are treated as occurring on both the \code{"+"} and \code{"-"} strand.
+  An overlap is recorded when a feature in the \code{query} and a feature
+  in the \code{subject} have the same sequence name, have a compatible
+  pairing of strands (e.g. \code{"+"}/\code{"+"}, \code{"-"}/\code{"-"},
+  \code{"*"}/\code{"+"}, \code{NA}/\code{"+"}, etc.), and satisfy the
+  interval overlap requirements.
+
+  In the context of \code{findOverlaps}, a feature is a collection of
+  ranges that are treated as a single entity. For \link{GRanges} objects,
+  a feature is a single range; while for \link{GRangesList} objects,
+  a feature and a list element containing a set of ranges. In the results,
+  the features are referred to by number, which run from 1 to
+  \code{length(query)}/\code{length(subject)}.
+}
+
 \value{
   A \link[IRanges:RangesMatching-class]{RangesMatching} object when
   \code{multiple = TRUE}.
