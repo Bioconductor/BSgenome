@@ -381,16 +381,21 @@
   grl <- GRangesList("gr1" = gr1, "gr2" = gr2, "gr3" = gr3)
   grl
 
-  # Extract basic information
+  # Extracting basic information
   length(grl)
   ncol(grl)
   colnames(grl)
 
-  # Summarize elements
+  # Summarizing elements
   elementLengths(grl)
   table(seqnames(grl))
 
-  # Extract subsets
+  # Extracting subsets
   grl[seqnames(grl) == "chr1", ]
   grl[seqnames(grl) == "chr1" & strand(grl) == "+", ]
+
+  # Changing sequence name
+  unique(seqnames(grl))
+  seqnames(grl) <- sub("chr", "Chrom", seqnames(grl))
+  grl
 }

@@ -342,13 +342,18 @@
             GC = seq(1, 0, length=10))
   gr
 
-  # Extract basic information
+  # Extracting basic information
   length(gr)
   ncol(gr)
   colnames(gr)
 
-  # Summarize elements
+  # Summarizing elements
   table(seqnames(gr))
   sum(width(gr))
   summary(values(gr)[,"score"])
+
+  # Changing sequence name
+  unique(seqnames(gr))
+  seqnames(gr) <- sub("chr", "Chrom", seqnames(gr))
+  gr
 }
