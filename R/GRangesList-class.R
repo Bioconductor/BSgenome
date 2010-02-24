@@ -10,6 +10,26 @@ setClass("GRangesList", contains = "CompressedList",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Validity.
+###
+
+.valid.GRangesList.ranges <- function(x)
+{
+    if (IRanges:::anyMissingOrOutside(width(x@unlistData@ranges), 1L))
+        paste("list elements contain one or more ranges with 0 width")
+    else
+        NULL
+}
+
+.valid.GRangesList <- function(x)
+{
+    c(.valid.GRangesList.ranges(x))
+}
+
+setValidity2("GRangesList", .valid.GRangesList)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Constructor.
 ###
 
@@ -20,7 +40,9 @@ GRangesList <- function(...)
         listData <- listData[[1L]]
     if (!all(sapply(listData, is, "GRanges")))
         stop("all elements in '...' must be GRanges objects")
-    IRanges:::newCompressedList("GRangesList", listData)
+    ans <- IRanges:::newCompressedList("GRangesList", listData)
+    validObject(ans)
+    ans
 }
 
 
