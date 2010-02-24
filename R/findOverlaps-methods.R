@@ -27,12 +27,27 @@
     }
 }
 
+.matchMatrixToVector <- function(matchMatrix, lengthQuery) {
+    matchMatrix <-
+      matchMatrix[IRanges:::diffWithInitialZero(matchMatrix[,1L,drop=TRUE]) != 0L,,
+                  drop=FALSE]
+    ans <- rep.int(NA_integer_, lengthQuery)
+    ans[matchMatrix[,1L,drop=TRUE]] <- matchMatrix[,2L,drop=TRUE]
+    ans
+}
+
 setMethod("findOverlaps", c("GRanges", "GRanges"),
     function(query, subject, maxgap = 0, multiple = TRUE,
-             type = c("any", "start", "end", "within", "equal"))
+             type = c("any", "start", "end"))
     {
+        if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
+            stop("'maxgap' must be a non-negative integer")
+        if (!IRanges:::isTRUEorFALSE(multiple))
+            stop("'multiple' must be TRUE or FALSE")
+        type <- match.arg(type)
+
         DIM <- c(length(subject), length(query))
-        if (DIM[1L] == 0L || DIM[2L] == 0L) {
+        if (min(DIM) == 0L) {
             matchMatrix <-
               matrix(integer(), ncol = 2,
                      dimnames = list(NULL, c("query", "subject")))
@@ -53,10 +68,20 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
             commonSeqnames <-
               intersect(uniqueQuerySeqnames, uniqueSubjectSeqnames)
 
-            queryStrand <- as.character(strand(query))
+            queryStrand <- strand(query)
+            if (IRanges:::anyMissing(runValue(queryStrand)))
+                runValue(queryStrand)[is.na(runValue(queryStrand))] <- "*"
+            levels(runValue(queryStrand)) <- c("1", "-1", "0")
+            runValue(queryStrand) <- as.integer(as.character(runValue(queryStrand)))
+            queryStrand <- as.integer(queryStrand)
             queryRanges <- unname(ranges(query))
 
-            subjectStrand <- as.character(strand(subject))
+            subjectStrand <- strand(subject)
+            if (IRanges:::anyMissing(runValue(subjectStrand)))
+                runValue(subjectStrand)[is.na(runValue(subjectStrand))] <- "*"
+            levels(runValue(subjectStrand)) <- c("1", "-1", "0")
+            runValue(subjectStrand) <- as.integer(as.character(runValue(subjectStrand)))
+            subjectStrand <- as.integer(subjectStrand)
             subjectRanges <- unname(ranges(subject))
 
             matchMatrix <-
@@ -68,15 +93,15 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                           overlaps <-
                             findOverlaps(seqselect(queryRanges, qIdxs),
                                          seqselect(subjectRanges, sIdxs),
-                                         maxgap = maxgap, multiple = multiple,
+                                         maxgap = maxgap, multiple = TRUE,
                                          type = type)
                           qHits <- queryHits(overlaps)
                           sHits <- subjectHits(overlaps)
                           matches <-
                             cbind(query = as.integer(qIdxs)[qHits],
                                   subject = as.integer(sIdxs)[sHits])
-                          matches[seqselect(queryStrand, qIdxs)[qHits] ==
-                                  seqselect(subjectStrand, sIdxs)[sHits], ,
+                          matches[seqselect(queryStrand, qIdxs)[qHits] *
+                                  seqselect(subjectStrand, sIdxs)[sHits] != -1L, ,
                                   drop=FALSE]
                       }))
             matchMatrix <-
@@ -84,53 +109,113 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                                                      matchMatrix[ , 2L, drop=TRUE]), ,
                           drop=FALSE]
         }
-        new("RangesMatching", matchMatrix = matchMatrix, DIM = DIM)
+        if (multiple) {
+            new("RangesMatching", matchMatrix = matchMatrix, DIM = DIM)
+        } else {
+            .matchMatrixToVector(matchMatrix, length(query))
+        }
     }
 )
 
 setMethod("findOverlaps", c("GRangesList", "GRanges"),
     function(query, subject, maxgap = 0, multiple = TRUE,
-             type = c("any", "start", "end", "within", "equal"))
+             type = c("any", "start", "end"))
     {
+        if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
+            stop("'maxgap' must be a non-negative integer")
+        if (!IRanges:::isTRUEorFALSE(multiple))
+            stop("'multiple' must be TRUE or FALSE")
+        type <- match.arg(type)
+
         ans <-
           callGeneric(unlist(query, use.names=FALSE), subject,
-                      maxgap = maxgap, multiple = multiple, type = type)
+                      maxgap = maxgap, multiple = TRUE,
+                      type = match.arg(type))
         matchMatrix <- ans@matchMatrix
-        matchMatrix[, 1L] <- togroup(query@partitioning)[matchMatrix[, 1L]]
+        matchMatrix[, 1L] <-
+          togroup(query@partitioning)[matchMatrix[, 1L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
-        DIM <- c(length(subject), length(query))
-        initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+        if (multiple) {
+            DIM <- c(length(subject), length(query))
+            initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+        } else {
+            .matchMatrixToVector(matchMatrix, length(query))
+        }
     }
 )
 
 setMethod("findOverlaps", c("GRanges", "GRangesList"),
     function(query, subject, maxgap = 0, multiple = TRUE,
-             type = c("any", "start", "end", "within", "equal"))
+             type = c("any", "start", "end"))
     {
+        if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
+            stop("'maxgap' must be a non-negative integer")
+        if (!IRanges:::isTRUEorFALSE(multiple))
+            stop("'multiple' must be TRUE or FALSE")
+        type <- match.arg(type)
+
+        unlistSubject <- unlist(subject, use.names=FALSE)
+        subjectGroups <- togroup(subject@partitioning)
+        if (type == "start") {
+            keep <-
+              IRanges:::whichAsVector(IRanges:::diffWithInitialZero(subjectGroups) != 0L)
+            unlistSubject <-  unlistSubject[keep]
+            subjectGroups <- subjectGroups[keep]
+        } else if (type == "end") {
+            keep <- end(subject@partitioning)[elementLengths(subject) > 0L]
+            unlistSubject <-  unlistSubject[keep]
+            subjectGroups <- subjectGroups[keep]
+        }
         ans <-
-          callGeneric(query, unlist(subject, use.names=FALSE),
-                      maxgap = maxgap, multiple = multiple, type = type)
+          callGeneric(query, unlistSubject, maxgap = maxgap,
+                      multiple = TRUE, type = type)
         matchMatrix <- ans@matchMatrix
-        matchMatrix[, 2L] <- togroup(subject@partitioning)[matchMatrix[, 2L]]
+        matchMatrix[, 2L] <- subjectGroups[matchMatrix[, 2L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
-        DIM <- c(length(subject), length(query))
-        initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+        if (multiple) {
+            DIM <- c(length(subject), length(query))
+            initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+        } else {
+            .matchMatrixToVector(matchMatrix, length(query))
+        }
     }
 )
 
 setMethod("findOverlaps", c("GRangesList", "GRangesList"),
     function(query, subject, maxgap = 0, multiple = TRUE,
-             type = c("any", "start", "end", "within", "equal"))
+             type = c("any", "start", "end"))
     {
+        if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
+            stop("'maxgap' must be a non-negative integer")
+        if (!IRanges:::isTRUEorFALSE(multiple))
+            stop("'multiple' must be TRUE or FALSE")
+        type <- match.arg(type)
+
+        unlistSubject <- unlist(subject, use.names=FALSE)
+        subjectGroups <- togroup(subject@partitioning)
+        if (type == "start") {
+            keep <-
+              IRanges:::whichAsVector(IRanges:::diffWithInitialZero(subjectGroups) != 0L)
+            unlistSubject <-  unlistSubject[keep]
+            subjectGroups <- subjectGroups[keep]
+        } else if (type == "end") {
+            keep <- end(subject@partitioning)[elementLengths(subject) > 0L]
+            unlistSubject <-  unlistSubject[keep]
+            subjectGroups <- subjectGroups[keep]
+        }
         ans <-
-          callGeneric(unlist(query, use.names=FALSE),
-                      unlist(subject, use.names=FALSE),
-                      maxgap = maxgap, multiple = multiple, type = type)
+          callGeneric(unlist(query, use.names=FALSE), unlistSubject,
+                      maxgap = maxgap, multiple = TRUE, type = type)
         matchMatrix <- ans@matchMatrix
-        matchMatrix[, 1L] <- togroup(query@partitioning)[matchMatrix[, 1L]]
-        matchMatrix[, 2L] <- togroup(subject@partitioning)[matchMatrix[, 2L]]
+        matchMatrix[, 1L] <-
+          togroup(query@partitioning)[matchMatrix[, 1L, drop=TRUE]]
+        matchMatrix[, 2L] <- subjectGroups[matchMatrix[, 2L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
-        DIM <- c(length(subject), length(query))
-        initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+        if (multiple) {
+            DIM <- c(length(subject), length(query))
+            initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
+        } else {
+            .matchMatrixToVector(matchMatrix, length(query))
+        }
     }
 )

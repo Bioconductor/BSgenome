@@ -347,7 +347,7 @@
   ncol(gr)
   colnames(gr)
 
-  # Summarize feature
+  # Summarize elements
   table(seqnames(gr))
   sum(width(gr))
   summary(values(gr)[,"score"])

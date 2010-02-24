@@ -378,7 +378,7 @@
     GRanges(seqnames = c("chr1", "chr2"),
             ranges = IRanges(c(1, 4), c(3, 9)),
             strand = c("-", "-"), score = c(6L, 2L), GC = c(0.4, 0.1))
-  grl <- GRangesList("f1" = gr1, "f2" = gr2, "f3" = gr3)
+  grl <- GRangesList("gr1" = gr1, "gr2" = gr2, "gr3" = gr3)
   grl
 
   # Extract basic information
@@ -386,7 +386,7 @@
   ncol(grl)
   colnames(grl)
 
-  # Summarize features
+  # Summarize elements
   elementLengths(grl)
   table(seqnames(grl))
 
