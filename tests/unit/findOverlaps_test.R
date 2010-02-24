@@ -1,7 +1,3 @@
-## TODO: support strand "*", NA
-## TODO: add tests for more complex overlaps
-## TODO: performance evaluation and improvement
-
 test_matching_seqnames <- function()
 {
     prefixes <- c("", "chr", "Chr", "CHR", "chrom", "Chrom", "CHROM")
@@ -187,6 +183,50 @@ test_findOverlaps_multimatch_within_one_query <- function()
     expectAny <- c(NA_integer_, 7L, 1L)
     expectStart <- c(NA_integer_, NA_integer_, 1L)
     expectEnd <- c(NA_integer_, NA_integer_, NA_integer_)
+    ansAny <- findOverlaps(query, subject, multiple = FALSE, type = "any")
+    ansStart <- findOverlaps(query, subject, multiple = FALSE, type = "start")
+    ansEnd <- findOverlaps(query, subject, multiple = FALSE, type = "end")
+    checkEquals(expectAny, ansAny)
+    checkEquals(expectStart, ansStart)
+    checkEquals(expectEnd, ansEnd)
+}
+
+test_findOverlaps_missing_strand <- function()
+{
+    query <- make_query()
+    subject <- make_subject()
+
+    query@unlistData@strand <- Rle(strand(c("*", NA, "-")))
+
+    ## multiple = TRUE
+    expectAny <- 
+      new("RangesMatching",
+          matchMatrix = matrix(c(1L, 1L, 1L, 5L, 1L, 6L, 2L, 7L, 3L, 1L, 3L, 5L),
+                               byrow = TRUE, ncol = 2L,
+                               dimnames = list(NULL, c("query", "subject"))),
+          DIM = c(10L, 3L))
+    expectStart <- 
+      new("RangesMatching",
+          matchMatrix = matrix(c(1L, 5L, 3L, 1L), byrow = TRUE, ncol = 2L,
+                               dimnames = list(NULL, c("query", "subject"))),
+          DIM = c(10L, 3L))
+    expectEnd <- 
+      new("RangesMatching",
+          matchMatrix = matrix(c(1L, 1L, 1L, 5L, 1L, 6L),
+                               byrow = TRUE, ncol = 2L,
+                               dimnames = list(NULL, c("query", "subject"))),
+          DIM = c(10L, 3L))
+    ansAny <- findOverlaps(query, subject, multiple = TRUE, type = "any")
+    ansStart <- findOverlaps(query, subject, multiple = TRUE, type = "start")
+    ansEnd <- findOverlaps(query, subject, multiple = TRUE, type = "end")
+    checkEquals(expectAny, ansAny)
+    checkEquals(expectStart, ansStart)
+    checkEquals(expectEnd, ansEnd)
+
+    # multiple = FALSE
+    expectAny <- c(1L, 7L, 1L)
+    expectStart <- c(5L, NA_integer_, 1L)
+    expectEnd <- c(1L, NA_integer_, NA_integer_)
     ansAny <- findOverlaps(query, subject, multiple = FALSE, type = "any")
     ansStart <- findOverlaps(query, subject, multiple = FALSE, type = "start")
     ansEnd <- findOverlaps(query, subject, multiple = FALSE, type = "end")
