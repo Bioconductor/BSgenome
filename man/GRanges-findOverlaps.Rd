@@ -14,7 +14,7 @@
 }
 
 \usage{
-  \S4method{findOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0, multiple = TRUE,
+  \S4method{findOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L, multiple = TRUE,
              type = c("any", "start", "end"))
 }
 
@@ -28,8 +28,8 @@
     target intervals.
   }
   \item{maxgap}{
-    A non-negative integer representing the maximum distance to be
-    considered an overlap.
+    A non-negative integer representing the maximum distance between
+    a query interval and a subject interval.
   }
   \item{multiple}{
     A logical value denoting whether to return all the overlaps or

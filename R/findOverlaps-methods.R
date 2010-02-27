@@ -11,6 +11,11 @@
     all(sapply(funList, function(f) any(f(seqs1)) == any(f(seqs2))))
 }
 
+
+### =========================================================================
+### findOverlaps methods
+### -------------------------------------------------------------------------
+
 .cleanMatchMatrix <- function(matchMatrix) {
     fastDiff <- IRanges:::diffWithInitialZero
     nr <- nrow(matchMatrix)
@@ -37,7 +42,7 @@
 }
 
 setMethod("findOverlaps", c("GRanges", "GRanges"),
-    function(query, subject, maxgap = 0, multiple = TRUE,
+    function(query, subject, maxgap = 0L, multiple = TRUE,
              type = c("any", "start", "end"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
@@ -46,7 +51,7 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
             stop("'multiple' must be TRUE or FALSE")
         type <- match.arg(type)
 
-        DIM <- c(length(subject), length(query))
+        DIM <- c(length(query), length(subject))
         if (min(DIM) == 0L) {
             matchMatrix <-
               matrix(integer(), ncol = 2,
@@ -120,7 +125,7 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
 )
 
 setMethod("findOverlaps", c("GRangesList", "GRanges"),
-    function(query, subject, maxgap = 0, multiple = TRUE,
+    function(query, subject, maxgap = 0L, multiple = TRUE,
              type = c("any", "start", "end"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
@@ -138,7 +143,7 @@ setMethod("findOverlaps", c("GRangesList", "GRanges"),
           togroup(query@partitioning)[matchMatrix[, 1L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
         if (multiple) {
-            DIM <- c(length(subject), length(query))
+            DIM <- c(length(query), length(subject))
             initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
         } else {
             .matchMatrixToVector(matchMatrix, length(query))
@@ -147,7 +152,7 @@ setMethod("findOverlaps", c("GRangesList", "GRanges"),
 )
 
 setMethod("findOverlaps", c("GRanges", "GRangesList"),
-    function(query, subject, maxgap = 0, multiple = TRUE,
+    function(query, subject, maxgap = 0L, multiple = TRUE,
              type = c("any", "start", "end"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
@@ -175,7 +180,7 @@ setMethod("findOverlaps", c("GRanges", "GRangesList"),
         matchMatrix[, 2L] <- subjectGroups[matchMatrix[, 2L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
         if (multiple) {
-            DIM <- c(length(subject), length(query))
+            DIM <- c(length(query), length(subject))
             initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
         } else {
             .matchMatrixToVector(matchMatrix, length(query))
@@ -184,7 +189,7 @@ setMethod("findOverlaps", c("GRanges", "GRangesList"),
 )
 
 setMethod("findOverlaps", c("GRangesList", "GRangesList"),
-    function(query, subject, maxgap = 0, multiple = TRUE,
+    function(query, subject, maxgap = 0L, multiple = TRUE,
              type = c("any", "start", "end"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
@@ -214,7 +219,7 @@ setMethod("findOverlaps", c("GRangesList", "GRangesList"),
         matchMatrix[, 2L] <- subjectGroups[matchMatrix[, 2L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
         if (multiple) {
-            DIM <- c(length(subject), length(query))
+            DIM <- c(length(query), length(subject))
             initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
         } else {
             .matchMatrixToVector(matchMatrix, length(query))
