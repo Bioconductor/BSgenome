@@ -5,6 +5,11 @@
 \alias{findOverlaps,GRangesList,GRanges-method}
 \alias{findOverlaps,GRangesList,GRangesList-method}
 
+\alias{countOverlaps,GRanges,GRanges-method}
+\alias{countOverlaps,GRanges,GRangesList-method}
+\alias{countOverlaps,GRangesList,GRanges-method}
+\alias{countOverlaps,GRangesList,GRangesList-method}
+
 
 \title{GRanges and GRangesList Interval Overlaps}
 
@@ -16,6 +21,8 @@
 \usage{
   \S4method{findOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L, multiple = TRUE,
              type = c("any", "start", "end"))
+  \S4method{countOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L,
+              type = c("any", "start", "end"))
 }
 
 \arguments{
@@ -67,9 +74,12 @@
 }
 
 \value{
-  A \link[IRanges:RangesMatching-class]{RangesMatching} object when
-  \code{multiple = TRUE}.
-  An integer vector when \code{multiple = FALSE}.
+  For \code{findOverlaps} either a
+  \link[IRanges:RangesMatching-class]{RangesMatching} object when
+  \code{multiple = TRUE} or an integer vector when \code{multiple = FALSE}.
+
+  For \code{countOverlaps} an integer vector containing the tabulated
+  query overlap hits.
 }
 
 \author{P. Aboyoun and S. Falcon}
@@ -109,16 +119,21 @@
   grlist <- GRangesList("gr1" = gr1, "gr2" = gr2, "gr3" = gr3)
 
   ## Overlapping two GRanges objects
+  countOverlaps(gr, gr1)
   findOverlaps(gr, gr1)
+  countOverlaps(gr, gr1, type = "start")
   findOverlaps(gr, gr1, type = "start")
   findOverlaps(gr, gr1, multiple = FALSE)
 
   ## Overlapping a GRanges and a GRangesList object
+  countOverlaps(grlist, gr)
   findOverlaps(grlist, gr)
+  countOverlaps(grlist, gr, type = "start")
   findOverlaps(grlist, gr, type = "start")
   findOverlaps(grlist, gr, multiple = FALSE)
 
   ## Overlapping two GRangesList objects
+  countOverlaps(grlist, rev(grlist))
   findOverlaps(grlist, rev(grlist))
 }
 

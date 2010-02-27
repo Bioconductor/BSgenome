@@ -226,3 +226,44 @@ setMethod("findOverlaps", c("GRangesList", "GRangesList"),
         }
     }
 )
+
+
+### =========================================================================
+### countOverlaps methods
+### -------------------------------------------------------------------------
+
+setMethod("countOverlaps", c("GRanges", "GRanges"),
+    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    {
+        tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
+                                        type = match.arg(type))),
+                 length(query))
+    }
+)
+
+setMethod("countOverlaps", c("GRangesList", "GRanges"),
+    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    {
+        tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
+                                        type = match.arg(type))),
+                 length(query))
+    }
+)
+
+setMethod("countOverlaps", c("GRanges", "GRangesList"),
+    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    {
+        tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
+                                        type = match.arg(type))),
+                 length(query))
+    }
+)
+
+setMethod("countOverlaps", c("GRangesList", "GRangesList"),
+    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    {
+        tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
+                                        type = match.arg(type))),
+                 length(query))
+    }
+)
