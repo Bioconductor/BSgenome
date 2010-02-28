@@ -42,14 +42,14 @@
 }
 
 setMethod("findOverlaps", c("GRanges", "GRanges"),
-    function(query, subject, maxgap = 0L, multiple = TRUE,
-             type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"),
+             select = c("all", "first"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
             stop("'maxgap' must be a non-negative integer")
-        if (!IRanges:::isTRUEorFALSE(multiple))
-            stop("'multiple' must be TRUE or FALSE")
         type <- match.arg(type)
+        select <- match.arg(select)
 
         DIM <- c(length(query), length(subject))
         if (min(DIM) == 0L) {
@@ -100,8 +100,8 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                           overlaps <-
                             findOverlaps(seqselect(queryRanges, qIdxs),
                                          seqselect(subjectRanges, sIdxs),
-                                         maxgap = maxgap, multiple = TRUE,
-                                         type = type)
+                                         maxgap = maxgap, type = type,
+                                         select = "all")
                           qHits <- queryHits(overlaps)
                           sHits <- subjectHits(overlaps)
                           matches <-
@@ -116,7 +116,7 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                                                      matchMatrix[ , 2L, drop=TRUE]), ,
                           drop=FALSE]
         }
-        if (multiple) {
+        if (select == "all") {
             new("RangesMatching", matchMatrix = matchMatrix, DIM = DIM)
         } else {
             .matchMatrixToVector(matchMatrix, length(query))
@@ -125,24 +125,23 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
 )
 
 setMethod("findOverlaps", c("GRangesList", "GRanges"),
-    function(query, subject, maxgap = 0L, multiple = TRUE,
-             type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"),
+             select = c("all", "first"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
             stop("'maxgap' must be a non-negative integer")
-        if (!IRanges:::isTRUEorFALSE(multiple))
-            stop("'multiple' must be TRUE or FALSE")
         type <- match.arg(type)
+        select <- match.arg(select)
 
         ans <-
           callGeneric(unlist(query, use.names=FALSE), subject,
-                      maxgap = maxgap, multiple = TRUE,
-                      type = match.arg(type))
+                      maxgap = maxgap, type = type, select = "all")
         matchMatrix <- ans@matchMatrix
         matchMatrix[, 1L] <-
           togroup(query@partitioning)[matchMatrix[, 1L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
-        if (multiple) {
+        if (select == "all") {
             DIM <- c(length(query), length(subject))
             initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
         } else {
@@ -152,14 +151,14 @@ setMethod("findOverlaps", c("GRangesList", "GRanges"),
 )
 
 setMethod("findOverlaps", c("GRanges", "GRangesList"),
-    function(query, subject, maxgap = 0L, multiple = TRUE,
-             type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"),
+             select = c("all", "first"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
             stop("'maxgap' must be a non-negative integer")
-        if (!IRanges:::isTRUEorFALSE(multiple))
-            stop("'multiple' must be TRUE or FALSE")
         type <- match.arg(type)
+        select <- match.arg(select)
 
         unlistSubject <- unlist(subject, use.names=FALSE)
         subjectGroups <- togroup(subject@partitioning)
@@ -175,11 +174,11 @@ setMethod("findOverlaps", c("GRanges", "GRangesList"),
         }
         ans <-
           callGeneric(query, unlistSubject, maxgap = maxgap,
-                      multiple = TRUE, type = type)
+                      type = type, select = "all")
         matchMatrix <- ans@matchMatrix
         matchMatrix[, 2L] <- subjectGroups[matchMatrix[, 2L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
-        if (multiple) {
+        if (select == "all") {
             DIM <- c(length(query), length(subject))
             initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
         } else {
@@ -189,14 +188,14 @@ setMethod("findOverlaps", c("GRanges", "GRangesList"),
 )
 
 setMethod("findOverlaps", c("GRangesList", "GRangesList"),
-    function(query, subject, maxgap = 0L, multiple = TRUE,
-             type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"),
+             select = c("all", "first"))
     {
         if (!IRanges:::isSingleNumber(maxgap) || maxgap < 0)
             stop("'maxgap' must be a non-negative integer")
-        if (!IRanges:::isTRUEorFALSE(multiple))
-            stop("'multiple' must be TRUE or FALSE")
         type <- match.arg(type)
+        select <- match.arg(select)
 
         unlistSubject <- unlist(subject, use.names=FALSE)
         subjectGroups <- togroup(subject@partitioning)
@@ -212,13 +211,13 @@ setMethod("findOverlaps", c("GRangesList", "GRangesList"),
         }
         ans <-
           callGeneric(unlist(query, use.names=FALSE), unlistSubject,
-                      maxgap = maxgap, multiple = TRUE, type = type)
+                      maxgap = maxgap, type = type, select = "all")
         matchMatrix <- ans@matchMatrix
         matchMatrix[, 1L] <-
           togroup(query@partitioning)[matchMatrix[, 1L, drop=TRUE]]
         matchMatrix[, 2L] <- subjectGroups[matchMatrix[, 2L, drop=TRUE]]
         matchMatrix <- .cleanMatchMatrix(matchMatrix)
-        if (multiple) {
+        if (select == "all") {
             DIM <- c(length(query), length(subject))
             initialize(ans, matchMatrix = matchMatrix, DIM = DIM)
         } else {
@@ -233,37 +232,41 @@ setMethod("findOverlaps", c("GRangesList", "GRangesList"),
 ### -------------------------------------------------------------------------
 
 setMethod("countOverlaps", c("GRanges", "GRanges"),
-    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"))
     {
+        type <- match.arg(type)
         tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
-                                        type = match.arg(type))),
-                 length(query))
+                                        type = type)), length(query))
     }
 )
 
 setMethod("countOverlaps", c("GRangesList", "GRanges"),
-    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"))
     {
+        type <- match.arg(type)
         tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
-                                        type = match.arg(type))),
-                 length(query))
+                                        type = type)), length(query))
     }
 )
 
 setMethod("countOverlaps", c("GRanges", "GRangesList"),
-    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"))
     {
+        type <- match.arg(type)
         tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
-                                        type = match.arg(type))),
-                 length(query))
+                                        type = type)), length(query))
     }
 )
 
 setMethod("countOverlaps", c("GRangesList", "GRangesList"),
-    function(query, subject, maxgap = 0L, type = c("any", "start", "end"))
+    function(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"))
     {
+        type <- match.arg(type)
         tabulate(queryHits(findOverlaps(query, subject, maxgap = maxgap,
-                                        type = match.arg(type))),
-                 length(query))
+                                        type = type)), length(query))
     }
 )

@@ -19,8 +19,8 @@
 }
 
 \usage{
-  \S4method{findOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L, multiple = TRUE,
-             type = c("any", "start", "end"))
+  \S4method{findOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L,
+             type = c("any", "start", "end"), select = c("all", "first"))
   \S4method{countOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L,
               type = c("any", "start", "end"))
 }
@@ -38,10 +38,6 @@
     A non-negative integer representing the maximum distance between
     a query interval and a subject interval.
   }
-  \item{multiple}{
-    A logical value denoting whether to return all the overlaps or
-    just a single overlap for each query interval.
-  }
   \item{type}{
     The type of acceptable overlap:
     \code{"any"} - any overlap within \code{maxgap},
@@ -49,6 +45,11 @@
     of the \code{subject} within \code{maxgap}, and
     \code{"end"} - the end of the \code{query} overlaps the end of the
     \code{subject} within \code{maxgap}.
+  }
+  \item{select}{
+    Overlaps to return:
+    \code{"all"} - select all overlaps, and
+    \code{"first"} - select the first overlap.
   }
 }
 
@@ -76,7 +77,7 @@
 \value{
   For \code{findOverlaps} either a
   \link[IRanges:RangesMatching-class]{RangesMatching} object when
-  \code{multiple = TRUE} or an integer vector when \code{multiple = FALSE}.
+  \code{select = "all"} or an integer vector when \code{select = "first"}.
 
   For \code{countOverlaps} an integer vector containing the tabulated
   query overlap hits.
@@ -123,14 +124,14 @@
   findOverlaps(gr, gr1)
   countOverlaps(gr, gr1, type = "start")
   findOverlaps(gr, gr1, type = "start")
-  findOverlaps(gr, gr1, multiple = FALSE)
+  findOverlaps(gr, gr1, select = "first")
 
   ## Overlapping a GRanges and a GRangesList object
   countOverlaps(grlist, gr)
   findOverlaps(grlist, gr)
   countOverlaps(grlist, gr, type = "start")
   findOverlaps(grlist, gr, type = "start")
-  findOverlaps(grlist, gr, multiple = FALSE)
+  findOverlaps(grlist, gr, select = "first")
 
   ## Overlapping two GRangesList objects
   countOverlaps(grlist, rev(grlist))

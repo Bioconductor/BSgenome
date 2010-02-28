@@ -41,21 +41,21 @@ test_findOverlaps_no_overlaps_returns_empty_matches <- function()
     subject <- make_subject()
     ranges(subject) <- shift(ranges(subject), 1000L)
 
-    ## multiple = TRUE
+    ## select = "all"
     expect <-
       new("RangesMatching",
           matchMatrix = matrix(integer(),  byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
           DIM = c(3L, 10L))
     for (type in c("any", "start", "end")) {
-        ans <- findOverlaps(query, subject, multiple = TRUE, type = type)
+        ans <- findOverlaps(query, subject, type = type, select = "all")
         checkEquals(expect, ans)
     }
 
-    ## multiple = FALSE
+    ## select = "first"
     expect <- rep(NA_integer_, length(query))
     for (type in c("any", "start", "end")) {
-        ans <- findOverlaps(query, subject, multiple = FALSE, type = type)
+        ans <- findOverlaps(query, subject, type = type, select = "first")
         checkEquals(expect, ans)
     }
 }
@@ -65,21 +65,21 @@ test_findOverlaps_empty_query <- function()
     query <- new("GRangesList")
     subject <- make_subject()
 
-    ## multiple = TRUE
+    ## select = "all"
     expect <-
       new("RangesMatching",
           matchMatrix = matrix(integer(), byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
             DIM = c(0L, 10L))
     for (type in c("any", "start", "end")) {
-        ans <- findOverlaps(query, subject, multiple = TRUE, type = type)
+        ans <- findOverlaps(query, subject, type = type, select = "all")
         checkEquals(expect, ans)
     }
 
-    ## multiple = FALSE
+    ## select = "first"
     expect <- integer()
     for (type in c("any", "start", "end")) {
-        ans <- findOverlaps(query, subject, multiple = FALSE, type = type)
+        ans <- findOverlaps(query, subject, type = type, select = "first")
         checkEquals(expect, ans)
     }
 }
@@ -89,21 +89,21 @@ test_findOverlaps_empty_subject <- function()
     query <- make_query()
     subject <- new("GRanges")
 
-    ## multiple = TRUE
+    ## select = "all"
     expect <-
       new("RangesMatching",
           matchMatrix = matrix(integer(), byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
           DIM = c(3L, 0L))
     for (type in c("any", "start", "end")) {
-        ans <- findOverlaps(query, subject, multiple = TRUE, type = type)
+        ans <- findOverlaps(query, subject, type = type, select = "all")
         checkEquals(expect, ans)
     }
 
-    ## multiple = FALSE
+    ## select = "first"
     expect <- rep(NA_integer_, length(query))
     for (type in c("any", "start", "end")) {
-        ans <- findOverlaps(query, subject, multiple = FALSE, type = type)
+        ans <- findOverlaps(query, subject, type = type, select = "first")
         checkEquals(expect, ans)
     }
 }
@@ -113,7 +113,7 @@ test_findOverlaps_zero_one_two_matches <- function()
     query <- make_query()
     subject <- make_subject()
 
-    ## multiple = TRUE
+    ## select = "all"
     expectAny <- 
       new("RangesMatching",
           matchMatrix = matrix(c(2L, 7L, 3L, 1L, 3L, 5L),
@@ -130,20 +130,20 @@ test_findOverlaps_zero_one_two_matches <- function()
           matchMatrix = matrix(integer(), byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
           DIM = c(3L, 10L))
-    ansAny <- findOverlaps(query, subject, multiple = TRUE, type = "any")
-    ansStart <- findOverlaps(query, subject, multiple = TRUE, type = "start")
-    ansEnd <- findOverlaps(query, subject, multiple = TRUE, type = "end")
+    ansAny <- findOverlaps(query, subject, select = "all", type = "any")
+    ansStart <- findOverlaps(query, subject, select = "all", type = "start")
+    ansEnd <- findOverlaps(query, subject, select = "all", type = "end")
     checkEquals(expectAny, ansAny)
     checkEquals(expectStart, ansStart)
     checkEquals(expectEnd, ansEnd)
 
-    ## multiple = FALSE
+    ## select = "first"
     expectAny <- c(NA_integer_, 7L, 1L)
     expectStart <- c(NA_integer_, NA_integer_, 1L)
     expectEnd <- c(NA_integer_, NA_integer_, NA_integer_)
-    ansAny <- findOverlaps(query, subject, multiple = FALSE, type = "any")
-    ansStart <- findOverlaps(query, subject, multiple = FALSE, type = "start")
-    ansEnd <- findOverlaps(query, subject, multiple = FALSE, type = "end")
+    ansAny <- findOverlaps(query, subject, type = "any", select = "first")
+    ansStart <- findOverlaps(query, subject, type = "start", select = "first")
+    ansEnd <- findOverlaps(query, subject, type = "end", select = "first")
     checkEquals(expectAny, ansAny)
     checkEquals(expectStart, ansStart)
     checkEquals(expectEnd, ansEnd)
@@ -155,7 +155,7 @@ test_findOverlaps_multimatch_within_one_query <- function()
     query[[3L]] <- c(query[[3L]], query[[3L]])
     subject <- make_subject()
 
-    ## multiple = TRUE
+    ## select = "all"
     expectAny <- 
       new("RangesMatching",
           matchMatrix = matrix(c(2L, 7L, 3L, 1L, 3L, 5L),
@@ -172,20 +172,20 @@ test_findOverlaps_multimatch_within_one_query <- function()
           matchMatrix = matrix(integer(), byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
           DIM = c(3L, 10L))
-    ansAny <- findOverlaps(query, subject, multiple = TRUE, type = "any")
-    ansStart <- findOverlaps(query, subject, multiple = TRUE, type = "start")
-    ansEnd <- findOverlaps(query, subject, multiple = TRUE, type = "end")
+    ansAny <- findOverlaps(query, subject, select = "all", type = "any")
+    ansStart <- findOverlaps(query, subject, select = "all", type = "start")
+    ansEnd <- findOverlaps(query, subject, select = "all", type = "end")
     checkEquals(expectAny, ansAny)
     checkEquals(expectStart, ansStart)
     checkEquals(expectEnd, ansEnd)
 
-    ## multiple = FALSE
+    ## select = "first"
     expectAny <- c(NA_integer_, 7L, 1L)
     expectStart <- c(NA_integer_, NA_integer_, 1L)
     expectEnd <- c(NA_integer_, NA_integer_, NA_integer_)
-    ansAny <- findOverlaps(query, subject, multiple = FALSE, type = "any")
-    ansStart <- findOverlaps(query, subject, multiple = FALSE, type = "start")
-    ansEnd <- findOverlaps(query, subject, multiple = FALSE, type = "end")
+    ansAny <- findOverlaps(query, subject, type = "any", select = "first")
+    ansStart <- findOverlaps(query, subject, type = "start", select = "first")
+    ansEnd <- findOverlaps(query, subject, type = "end", select = "first")
     checkEquals(expectAny, ansAny)
     checkEquals(expectStart, ansStart)
     checkEquals(expectEnd, ansEnd)
@@ -198,7 +198,7 @@ test_findOverlaps_missing_strand <- function()
 
     query@unlistData@strand <- Rle(strand(c("*", NA, "-")))
 
-    ## multiple = TRUE
+    ## select = "all"
     expectAny <- 
       new("RangesMatching",
           matchMatrix = matrix(c(1L, 1L, 1L, 5L, 1L, 6L, 2L, 7L, 3L, 1L, 3L, 5L),
@@ -216,20 +216,20 @@ test_findOverlaps_missing_strand <- function()
                                byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
           DIM = c(3L, 10L))
-    ansAny <- findOverlaps(query, subject, multiple = TRUE, type = "any")
-    ansStart <- findOverlaps(query, subject, multiple = TRUE, type = "start")
-    ansEnd <- findOverlaps(query, subject, multiple = TRUE, type = "end")
+    ansAny <- findOverlaps(query, subject, type = "any", select = "all")
+    ansStart <- findOverlaps(query, subject, type = "start", select = "all")
+    ansEnd <- findOverlaps(query, subject, type = "end", select = "all")
     checkEquals(expectAny, ansAny)
     checkEquals(expectStart, ansStart)
     checkEquals(expectEnd, ansEnd)
 
-    # multiple = FALSE
+    # select = "first"
     expectAny <- c(1L, 7L, 1L)
     expectStart <- c(5L, NA_integer_, 1L)
     expectEnd <- c(1L, NA_integer_, NA_integer_)
-    ansAny <- findOverlaps(query, subject, multiple = FALSE, type = "any")
-    ansStart <- findOverlaps(query, subject, multiple = FALSE, type = "start")
-    ansEnd <- findOverlaps(query, subject, multiple = FALSE, type = "end")
+    ansAny <- findOverlaps(query, subject, type = "any", select = "first")
+    ansStart <- findOverlaps(query, subject, type = "start", select = "first")
+    ansEnd <- findOverlaps(query, subject, type = "end", select = "first")
     checkEquals(expectAny, ansAny)
     checkEquals(expectStart, ansStart)
     checkEquals(expectEnd, ansEnd)
