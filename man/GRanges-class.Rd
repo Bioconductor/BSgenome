@@ -170,6 +170,13 @@
       \code{width(x)}, \code{width(x) <- value}:
       Get or set \code{width(ranges(x))}.
     }
+    \item{}{
+      \code{shift(x, shift, use.names=TRUE)}:
+      Return a new GRanges object containing intervals with start and
+      end values that have been shifted by integer vector \code{shift}.
+      The \code{use.names} argument determines whether or not to
+      keep the names on the ranges.
+    }
   }
 }
 

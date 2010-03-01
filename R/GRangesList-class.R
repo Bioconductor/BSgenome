@@ -226,6 +226,22 @@ setReplaceMethod("width", "GRangesList",
     }
 )
 
+setMethod("shift", "GRangesList",
+    function(x, shift, use.names=TRUE)
+    {
+        if (is(shift, "IntegerList")) {
+            if (length(shift) != length(x) ||
+                any(elementLengths(shift) != elementLengths(x))) {
+                stop("IntegerList 'shift' not of same dimension as 'x'")
+            }
+            shift <- unlist(shift, use.names=FALSE)
+        }
+        x@unlistData@ranges <-
+          shift(x@unlistData@ranges, shift, use.names=use.names)
+        x
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SplitDataFrameList methods.

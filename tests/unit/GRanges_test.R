@@ -197,6 +197,11 @@ test_GRanges_Ranges <- function() {
     gr <- make_test_GRanges()
     width(gr) <- as.numeric(10L + seq_len(length(gr)))
     checkIdentical(width(gr), 10L + seq_len(length(gr)))
+
+    ## shift
+    gr <- make_test_GRanges()
+    shifted <- shift(gr, 10)
+    checkIdentical(start(gr) + 10L, start(shifted))
 }
 
 test_GRanges_DataTable <- function() {
