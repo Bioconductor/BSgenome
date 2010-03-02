@@ -88,7 +88,8 @@ function(seqnames = Rle(), ranges = IRanges(),
 
     if (!is(strand, "Rle"))
         strand <- Rle(strand)
-    if (!is.factor(runValue(strand)))
+    if (!is.factor(runValue(strand)) ||
+        !identical(levels(runValue(strand)), levels(strand())))
         runValue(strand) <- strand(runValue(strand))
 
     values <- DataFrame(...)
@@ -198,7 +199,8 @@ setReplaceMethod("strand", "GRanges",
     {
         if (!is(value, "Rle"))
             value <- Rle(value)
-        if (!is.factor(runValue(value)))
+        if (!is.factor(runValue(value)) ||
+            !identical(levels(runValue(value)), levels(strand())))
             runValue(value) <- strand(runValue(value))
         n <- length(x)
         k <- length(value)

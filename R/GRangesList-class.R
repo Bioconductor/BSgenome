@@ -145,7 +145,7 @@ setReplaceMethod("strand", "GRangesList",
             value <- Rle(strand(value))
         else if (!is.factor(runValue(value)) ||
                  !identical(levels(runValue(value)), levels(strand())))
-            runValue(value) <- strand(runValue)
+            runValue(value) <- strand(runValue(value))
         x@unlistData@strand <- value
         x
     }
