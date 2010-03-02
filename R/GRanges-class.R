@@ -444,16 +444,34 @@ setReplaceMethod("seqselect", "GRanges",
     {
         if (!is(value, "GRanges"))
             stop("replacement value must be a GRanges object")
-        seqnames <- as.vector(x@seqnames)
-        ranges <- x@ranges
-        strand <- as.vector(x@strand)
-        values <- x@values
-        seqselect(seqnames, start = start, end = end, width = width) <- value@seqnames
-        seqselect(ranges, start = start, end = end, width = width) <- value@ranges
-        seqselect(strand, start = start, end = end, width = width) <- value@strand
-        seqselect(values, start = start, end = end, width = width) <- value@values
-        initialize(x, seqnames = Rle(seqnames), ranges = ranges, 
-                   strand = Rle(strand), values = values)
+        if (is.null(end) && is.null(width)) {
+            if (is.null(start))
+                ir <- IRanges(start = 1, width = length(x))
+            else if (is(start, "Ranges"))
+                ir <- start
+            else {
+                if (is.logical(start) && length(start) != length(x))
+                    start <- rep(start, length.out = length(x))
+                ir <- as(start, "IRanges")
+            }
+        } else {
+            ir <- IRanges(start=start, end=end, width=width, names=NULL)
+        }
+        ir <- reduce(ir)
+        if (length(ir) == 0) {
+            x
+        } else {
+            seqnames <- as.vector(x@seqnames)
+            ranges <- x@ranges
+            strand <- as.vector(x@strand)
+            values <- x@values
+            seqselect(seqnames, ir) <- as.vector(value@seqnames)
+            seqselect(ranges, ir) <- value@ranges
+            seqselect(strand, ir) <- as.vector(value@strand)
+            seqselect(values, ir) <- value@values
+            initialize(x, seqnames = Rle(seqnames), ranges = ranges, 
+                       strand = Rle(strand), values = values)
+        }
     }
 )
 
