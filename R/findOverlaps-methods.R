@@ -74,8 +74,6 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
               intersect(uniqueQuerySeqnames, uniqueSubjectSeqnames)
 
             queryStrand <- strand(query)
-            if (IRanges:::anyMissing(runValue(queryStrand)))
-                runValue(queryStrand)[is.na(runValue(queryStrand))] <- "*"
             levels(queryStrand) <- c("1", "-1", "0")
             queryStrand@values <-
               as.integer(as.character(runValue(queryStrand)))
@@ -83,8 +81,6 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
             queryRanges <- unname(ranges(query))
 
             subjectStrand <- strand(subject)
-            if (IRanges:::anyMissing(runValue(subjectStrand)))
-                runValue(subjectStrand)[is.na(runValue(subjectStrand))] <- "*"
             levels(subjectStrand) <- c("1", "-1", "0")
             subjectStrand@values <-
               as.integer(as.character(runValue(subjectStrand)))
@@ -107,8 +103,10 @@ setMethod("findOverlaps", c("GRanges", "GRanges"),
                           matches <-
                             cbind(query = as.integer(qIdxs)[qHits],
                                   subject = as.integer(sIdxs)[sHits])
-                          matches[seqselect(queryStrand, qIdxs)[qHits] *
-                                  seqselect(subjectStrand, sIdxs)[sHits] != -1L, ,
+                          matches[IRanges:::whichAsVector(seqselect(queryStrand,
+                                                                    qIdxs)[qHits] *
+                                                          seqselect(subjectStrand,
+                                                                    sIdxs)[sHits] != -1L), ,
                                   drop=FALSE]
                       }))
             matchMatrix <-

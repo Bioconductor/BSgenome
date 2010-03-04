@@ -199,18 +199,18 @@ test_findOverlaps_missing_strand <- function()
     query@unlistData@strand <- Rle(strand(c("*", NA, "-")))
 
     ## select = "all"
-    expectAny <- 
+    expectAny <-
       new("RangesMatching",
-          matchMatrix = matrix(c(1L, 1L, 1L, 5L, 1L, 6L, 2L, 7L, 3L, 1L, 3L, 5L),
+          matchMatrix = matrix(c(1L, 1L, 1L, 5L, 1L, 6L, 3L, 1L, 3L, 5L),
                                byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
           DIM = c(3L, 10L))
-    expectStart <- 
+    expectStart <-
       new("RangesMatching",
           matchMatrix = matrix(c(1L, 5L, 3L, 1L), byrow = TRUE, ncol = 2L,
                                dimnames = list(NULL, c("query", "subject"))),
           DIM = c(3L, 10L))
-    expectEnd <- 
+    expectEnd <-
       new("RangesMatching",
           matchMatrix = matrix(c(1L, 1L, 1L, 5L, 1L, 6L),
                                byrow = TRUE, ncol = 2L,
@@ -224,7 +224,7 @@ test_findOverlaps_missing_strand <- function()
     checkEquals(expectEnd, ansEnd)
 
     # select = "first"
-    expectAny <- c(1L, 7L, 1L)
+    expectAny <- c(1L, NA_integer_, 1L)
     expectStart <- c(5L, NA_integer_, 1L)
     expectEnd <- c(1L, NA_integer_, NA_integer_)
     ansAny <- findOverlaps(query, subject, type = "any", select = "first")
