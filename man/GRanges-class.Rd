@@ -86,7 +86,7 @@
   \describe{
     \item{}{
       \code{GRanges(seqnames = Rle(), ranges = IRanges(),
-                    strand = Rle(NA_character_, length(seqnames)), ...)}:
+                    strand = Rle("*", length(seqnames)), ...)}:
       Creates a GRanges object.
       \describe{
         \item{\code{seqnames}}{Rle object or character vector containing the

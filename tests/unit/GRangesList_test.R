@@ -48,6 +48,7 @@ test_GRangesList_coercion <- function() {
     gr2 <-
       GRanges(seqnames = c("chr1", "chr2"),
               ranges = IRanges(1:2,1:2, names = tail(letters,2)),
+              strand = rep(NA_character_, 2),
               score = 12:13)
     grl <- GRangesList(a = gr1, b = gr2)
     df <-

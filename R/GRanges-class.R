@@ -76,7 +76,7 @@ setValidity2("GRanges", .valid.GRanges)
 
 GRanges <-
 function(seqnames = Rle(), ranges = IRanges(),
-         strand = Rle(NA_character_, length(seqnames)), ...)
+         strand = Rle("*", length(seqnames)), ...)
 {
     if (!is(seqnames, "Rle"))
         seqnames <- Rle(seqnames)

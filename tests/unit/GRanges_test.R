@@ -49,7 +49,7 @@ test_GRanges_coercion <- function() {
     df <-
       data.frame(seqnames = as.character(c(1,1,2)),
                  start = 1:3, end = 4:6, width = c(4L, 4L, 4L),
-                 strand = strand(rep(NA_character_, 3)),
+                 strand = strand(rep("*", 3)),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
     checkIdentical(as.data.frame(gr), df)
@@ -62,7 +62,7 @@ test_GRanges_coercion <- function() {
     df <-
       data.frame(seqnames = as.character(c(1,1,2)),
                  start = 1:3, end = 4:6, width = c(4L, 4L, 4L),
-                 strand = strand(rep(NA_character_, 3)),
+                 strand = strand(rep("*", 3)),
                  score = c(10L,2L,NA),
                  row.names = head(letters,3),
                  stringsAsFactors = FALSE)
