@@ -163,11 +163,16 @@ setReplaceMethod("strand", "GRangesList",
 setReplaceMethod("values", "GRangesList",
     function(x, value) 
     {
-        if (!is(value, "SplitDataFrameList") ||
-            !identical(elementLengths(x), elementLengths(value)))
-            stop("replacement 'value' is not a SplitDataFrameList with the ",
-                 "same elementLengths as 'x'")
-        value <- unlist(value, use.names = FALSE)
+        if (is.null(value)) {
+            value <- new("DataFrame", nrows = length(x@unlistData))
+        } else {
+            if (!is(value, "SplitDataFrameList") ||
+                !identical(elementLengths(x), elementLengths(value))) {
+                stop("replacement 'value' is not a SplitDataFrameList with ",
+                     "the same elementLengths as 'x'")
+             }
+             value <- unlist(value, use.names = FALSE)
+        }
         x@unlistData@values <- value
         x
     }
