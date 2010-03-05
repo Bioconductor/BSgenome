@@ -2,7 +2,7 @@ make_test_GRanges <- function() {
     new("GRanges",
         seqnames = Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
         ranges = IRanges(1:10, width = 10:1, names = head(letters, 10)),
-        strand = Rle(strand(c("-", "+", "*", NA, "+", "-")), c(1, 2, 1, 1, 3, 2)),
+        strand = Rle(strand(c("-", "+", "*", "+", "-")), c(1, 2, 2, 3, 2)),
         values = DataFrame(score = 1:10, GC = seq(1, 0, length=10)))
 }
 
@@ -10,8 +10,8 @@ test_GRanges_construction <- function() {
     checkException(GRanges(letters), silent = TRUE)
     checkException(GRanges(ranges = IRanges(1:10, 1:10)), silent = TRUE)
     checkException(GRanges(letters, IRanges(1:10, 1:10)), silent = TRUE)
-    checkException(GRanges(letters, IRanges(1:26, 1:26),
-                                 strand = letters), silent = TRUE)
+    checkException(GRanges(letters, IRanges(1:26, 1:26), strand = letters),
+                   silent = TRUE)
     checkException(GRanges(letters, IRanges(1:26, 1:26), score = 1:10),
                    silent = TRUE)
     checkException(GRanges(letters, IRanges(1:26, 1:26), start = 1:26),
@@ -20,13 +20,16 @@ test_GRanges_construction <- function() {
                    silent = TRUE)
     checkException(GRanges(letters, IRanges(1:26, 1:26), width = 1:26),
                    silent = TRUE)
-    checkException(GRanges(letters, IRanges(1:26, 1:26),
-                                  feature = letters), silent = TRUE)
+    checkException(GRanges(letters, IRanges(1:26, 1:26), feature = letters),
+                   silent = TRUE)
+    checkException(GRanges(c(letters, NA), IRanges(1:27, 1:27)),
+                   silent = TRUE)
+    checkException(GRanges(letters, IRanges(1:26, 1:26), rep(NA, 26)),
+                   silent = TRUE)
 
     checkTrue(validObject(GRanges()))
     checkTrue(validObject(GRanges(letters, IRanges(1:26, 1:26))))
-    checkTrue(validObject(GRanges(letters, IRanges(1:26, 1:26),
-                                        score = 1:26)))
+    checkTrue(validObject(GRanges(letters, IRanges(1:26, 1:26), score = 1:26)))
     checkTrue(validObject(GRanges(factor(letters), IRanges(1:26, 1:26))))
     checkTrue(validObject(GRanges(1:10, IRanges(1:10, 1:10))))
 
@@ -35,8 +38,8 @@ test_GRanges_construction <- function() {
                            ranges =
                            IRanges(1:10, width = 10:1, names = head(letters,10)),
                            strand =
-                           Rle(strand(c("-", "+", "*", NA, "+", "-")),
-                               c(1, 2, 1, 1, 3, 2)),
+                           Rle(strand(c("-", "+", "*", "+", "-")),
+                               c(1, 2, 2, 3, 2)),
                            score = 1:10, GC = seq(1, 0, length=10)),
                    make_test_GRanges())
 }

@@ -4,7 +4,7 @@ make_test_GRangesList <- function() {
         new("GRanges",
             seqnames = Rle(c("chr1", "chr2", "chr1", "chr3"), c(1, 3, 2, 4)),
             ranges = IRanges(1:10, width = 10:1, names = head(letters, 10)),
-            strand = Rle(strand(c("-", "+", "*", NA, "+", "-")), c(1, 2, 1, 1, 3, 2)),
+            strand = Rle(strand(c("-", "+", "*", "+", "-")), c(1, 2, 2, 3, 2)),
             values = DataFrame(score = 1:10, GC = seq(1, 0, length=10))),
         b =
         new("GRanges",
@@ -48,7 +48,7 @@ test_GRangesList_coercion <- function() {
     gr2 <-
       GRanges(seqnames = c("chr1", "chr2"),
               ranges = IRanges(1:2,1:2, names = tail(letters,2)),
-              strand = rep(NA_character_, 2),
+              strand = strand(c("*", "*")),
               score = 12:13)
     grl <- GRangesList(a = gr1, b = gr2)
     df <-
@@ -56,7 +56,7 @@ test_GRangesList_coercion <- function() {
                  seqnames = c(1,1,2,"chr1","chr2"),
                  start = c(1:3,1:2), end = c(4:6,1:2),
                  width = c(4L, 4L, 4L, 1L, 1L),
-                 strand = strand(c("+", "-", "*", rep(NA_character_, 2))),
+                 strand = strand(c("+", "-", "*", "*", "*")),
                  score = c(10L,2L,NA,12:13),
                  row.names = c(head(letters,3), tail(letters,2)),
                  stringsAsFactors = FALSE)

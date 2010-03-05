@@ -10,35 +10,6 @@ setClass("GRangesList", contains = "CompressedList",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Validity.
-###
-
-.valid.GRangesList.seqnames <- function(x)
-{
-    if (IRanges:::anyMissing(runValue(x@unlistData@seqnames)))
-        "some elements have missing seqnames"
-    else
-        NULL
-}
-
-.valid.GRangesList.ranges <- function(x)
-{
-    if (IRanges:::anyMissingOrOutside(width(x@unlistData@ranges), 1L))
-        "some elements have empty ranges"
-    else
-        NULL
-}
-
-.valid.GRangesList <- function(x)
-{
-    c(.valid.GRangesList.seqnames(x),
-      .valid.GRangesList.ranges(x))
-}
-
-setValidity2("GRangesList", .valid.GRangesList)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Constructor.
 ###
 

@@ -99,8 +99,8 @@
             ranges =
             IRanges(1:10, width = 10:1, names = head(letters,10)),
             strand =
-            Rle(strand(c("-", "+", "*", NA, "+", "-")),
-                c(1, 2, 1, 1, 3, 2)),
+            Rle(strand(c("-", "+", "*", "+", "-")),
+                c(1, 2, 2, 3, 2)),
             score = 1:10,
             GC = seq(1, 0, length=10))
   gr

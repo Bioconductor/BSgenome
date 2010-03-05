@@ -29,6 +29,8 @@ setClass("GRanges", contains = "Sequence",
 {
     if (!is.character(runValue(x@seqnames)))
         "slot 'seqnames' should be a 'character' Rle"
+    else if (IRanges:::anyMissing(runValue(x@seqnames)))
+        "slot 'seqnames' contains missing values"
     else
         NULL
 }
@@ -40,6 +42,8 @@ setClass("GRanges", contains = "Sequence",
         paste("slot 'strand' should be a 'factor' Rle with levels c(",
               paste('"', levels(strand()), '"', sep = "", collapse = ", "),
                     ")", sep = "")
+    else if (IRanges:::anyMissing(runValue(x@strand)))
+        "slot 'strand' contains missing values"
     else
         NULL
 }
