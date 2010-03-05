@@ -29,4 +29,5 @@ Collate: available.genomes.R
 	strand.R
 	GRanges-class.R
 	GRangesList-class.R
+	setops-methods.R
 	findOverlaps-methods.R
