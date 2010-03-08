@@ -268,3 +268,56 @@ setMethod("countOverlaps", c("GRangesList", "GRangesList"),
                                         type = type)), length(query))
     }
 )
+
+
+### =========================================================================
+### match methods
+### -------------------------------------------------------------------------
+
+setMethod("match", c("GRanges", "GRanges"),
+    function(x, table, nomatch = NA_integer_, incomparables = NULL)
+    {
+        if (length(nomatch) != 1)
+            stop("'nomatch' must be of length 1") 
+        ans <- findOverlaps(x, table, select = "first")
+        if (!is.na(nomatch) && anyMissing(ans))
+            ans[is.na(ans)] <- nomatch
+        ans
+    }
+)
+
+setMethod("match", c("GRanges", "GRangesList"),
+    function(x, table, nomatch = NA_integer_, incomparables = NULL)
+    {
+        if (length(nomatch) != 1)
+            stop("'nomatch' must be of length 1") 
+        ans <- findOverlaps(x, table, select = "first")
+        if (!is.na(nomatch) && anyMissing(ans))
+            ans[is.na(ans)] <- nomatch
+        ans
+    }
+)
+
+setMethod("match", c("GRangesList", "GRanges"),
+    function(x, table, nomatch = NA_integer_, incomparables = NULL)
+    {
+        if (length(nomatch) != 1)
+            stop("'nomatch' must be of length 1") 
+        ans <- findOverlaps(x, table, select = "first")
+        if (!is.na(nomatch) && anyMissing(ans))
+            ans[is.na(ans)] <- nomatch
+        ans
+    }
+)
+
+setMethod("match", c("GRangesList", "GRangesList"),
+    function(x, table, nomatch = NA_integer_, incomparables = NULL)
+    {
+        if (length(nomatch) != 1)
+            stop("'nomatch' must be of length 1") 
+        ans <- findOverlaps(x, table, select = "first")
+        if (!is.na(nomatch) && anyMissing(ans))
+            ans[is.na(ans)] <- nomatch
+        ans
+    }
+)

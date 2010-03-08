@@ -76,4 +76,4 @@ exportMethods("coerce", "as.data.frame",
               "split", "window",
               "show",
               "pintersect",
-              "findOverlaps", "countOverlaps")
+              "findOverlaps", "countOverlaps", "match")

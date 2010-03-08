@@ -49,14 +49,14 @@ test_findOverlaps_no_overlaps_returns_empty_matches <- function()
           DIM = c(3L, 10L))
     for (type in c("any", "start", "end")) {
         ans <- findOverlaps(query, subject, type = type, select = "all")
-        checkEquals(expect, ans)
+        checkIdentical(expect, ans)
     }
 
     ## select = "first"
     expect <- rep(NA_integer_, length(query))
     for (type in c("any", "start", "end")) {
         ans <- findOverlaps(query, subject, type = type, select = "first")
-        checkEquals(expect, ans)
+        checkIdentical(expect, ans)
     }
 }
 
@@ -73,14 +73,14 @@ test_findOverlaps_empty_query <- function()
             DIM = c(0L, 10L))
     for (type in c("any", "start", "end")) {
         ans <- findOverlaps(query, subject, type = type, select = "all")
-        checkEquals(expect, ans)
+        checkIdentical(expect, ans)
     }
 
     ## select = "first"
     expect <- integer()
     for (type in c("any", "start", "end")) {
         ans <- findOverlaps(query, subject, type = type, select = "first")
-        checkEquals(expect, ans)
+        checkIdentical(expect, ans)
     }
 }
 
@@ -97,14 +97,14 @@ test_findOverlaps_empty_subject <- function()
           DIM = c(3L, 0L))
     for (type in c("any", "start", "end")) {
         ans <- findOverlaps(query, subject, type = type, select = "all")
-        checkEquals(expect, ans)
+        checkIdentical(expect, ans)
     }
 
     ## select = "first"
     expect <- rep(NA_integer_, length(query))
     for (type in c("any", "start", "end")) {
         ans <- findOverlaps(query, subject, type = type, select = "first")
-        checkEquals(expect, ans)
+        checkIdentical(expect, ans)
     }
 }
 
@@ -133,9 +133,9 @@ test_findOverlaps_zero_one_two_matches <- function()
     ansAny <- findOverlaps(query, subject, select = "all", type = "any")
     ansStart <- findOverlaps(query, subject, select = "all", type = "start")
     ansEnd <- findOverlaps(query, subject, select = "all", type = "end")
-    checkEquals(expectAny, ansAny)
-    checkEquals(expectStart, ansStart)
-    checkEquals(expectEnd, ansEnd)
+    checkIdentical(expectAny, ansAny)
+    checkIdentical(expectStart, ansStart)
+    checkIdentical(expectEnd, ansEnd)
 
     ## select = "first"
     expectAny <- c(NA_integer_, 7L, 1L)
@@ -144,9 +144,10 @@ test_findOverlaps_zero_one_two_matches <- function()
     ansAny <- findOverlaps(query, subject, type = "any", select = "first")
     ansStart <- findOverlaps(query, subject, type = "start", select = "first")
     ansEnd <- findOverlaps(query, subject, type = "end", select = "first")
-    checkEquals(expectAny, ansAny)
-    checkEquals(expectStart, ansStart)
-    checkEquals(expectEnd, ansEnd)
+    checkIdentical(expectAny, ansAny)
+    checkIdentical(expectAny, match(query, subject))
+    checkIdentical(expectStart, ansStart)
+    checkIdentical(expectEnd, ansEnd)
 }
 
 test_findOverlaps_multimatch_within_one_query <- function()
@@ -175,9 +176,9 @@ test_findOverlaps_multimatch_within_one_query <- function()
     ansAny <- findOverlaps(query, subject, select = "all", type = "any")
     ansStart <- findOverlaps(query, subject, select = "all", type = "start")
     ansEnd <- findOverlaps(query, subject, select = "all", type = "end")
-    checkEquals(expectAny, ansAny)
-    checkEquals(expectStart, ansStart)
-    checkEquals(expectEnd, ansEnd)
+    checkIdentical(expectAny, ansAny)
+    checkIdentical(expectStart, ansStart)
+    checkIdentical(expectEnd, ansEnd)
 
     ## select = "first"
     expectAny <- c(NA_integer_, 7L, 1L)
@@ -186,9 +187,10 @@ test_findOverlaps_multimatch_within_one_query <- function()
     ansAny <- findOverlaps(query, subject, type = "any", select = "first")
     ansStart <- findOverlaps(query, subject, type = "start", select = "first")
     ansEnd <- findOverlaps(query, subject, type = "end", select = "first")
-    checkEquals(expectAny, ansAny)
-    checkEquals(expectStart, ansStart)
-    checkEquals(expectEnd, ansEnd)
+    checkIdentical(expectAny, ansAny)
+    checkIdentical(expectAny, match(query, subject))
+    checkIdentical(expectStart, ansStart)
+    checkIdentical(expectEnd, ansEnd)
 }
 
 test_findOverlaps_either_strand <- function()
@@ -219,9 +221,9 @@ test_findOverlaps_either_strand <- function()
     ansAny <- findOverlaps(query, subject, type = "any", select = "all")
     ansStart <- findOverlaps(query, subject, type = "start", select = "all")
     ansEnd <- findOverlaps(query, subject, type = "end", select = "all")
-    checkEquals(expectAny, ansAny)
-    checkEquals(expectStart, ansStart)
-    checkEquals(expectEnd, ansEnd)
+    checkIdentical(expectAny, ansAny)
+    checkIdentical(expectStart, ansStart)
+    checkIdentical(expectEnd, ansEnd)
 
     # select = "first"
     expectAny <- c(1L, 7L, 1L)
@@ -230,7 +232,8 @@ test_findOverlaps_either_strand <- function()
     ansAny <- findOverlaps(query, subject, type = "any", select = "first")
     ansStart <- findOverlaps(query, subject, type = "start", select = "first")
     ansEnd <- findOverlaps(query, subject, type = "end", select = "first")
-    checkEquals(expectAny, ansAny)
-    checkEquals(expectStart, ansStart)
-    checkEquals(expectEnd, ansEnd)
+    checkIdentical(expectAny, ansAny)
+    checkIdentical(expectAny, match(query, subject))
+    checkIdentical(expectStart, ansStart)
+    checkIdentical(expectEnd, ansEnd)
 }

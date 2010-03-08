@@ -10,6 +10,11 @@
 \alias{countOverlaps,GRangesList,GRanges-method}
 \alias{countOverlaps,GRangesList,GRangesList-method}
 
+\alias{match,GRanges,GRanges-method}
+\alias{match,GRanges,GRangesList-method}
+\alias{match,GRangesList,GRanges-method}
+\alias{match,GRangesList,GRangesList-method}
+
 
 \title{GRanges and GRangesList Interval Overlaps}
 
@@ -23,16 +28,13 @@
              type = c("any", "start", "end"), select = c("all", "first"))
   \S4method{countOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L,
               type = c("any", "start", "end"))
+  \S4method{match}{GRanges,GRanges}(x, table, nomatch = NA_integer_,
+      incomparables = NULL)
 }
 
 \arguments{
-  \item{query}{
-    A \link{GRanges} or \link{GRangesList} object representing the
-    intervals to overlap.
-  }
-  \item{subject}{
-    A \link{GRanges} or \link{GRangesList} object representing the
-    target intervals.
+  \item{query, subject, x, table}{
+    A \link{GRanges} or \link{GRangesList} object.
   }
   \item{maxgap}{
     A non-negative integer representing the maximum distance between
@@ -50,6 +52,12 @@
     Overlaps to return:
     \code{"all"} - select all overlaps, and
     \code{"first"} - select the first overlap.
+  }
+  \item{nomatch}{
+    The integer value to be returned in the case when no match is found.
+  }
+  \item{incomparables}{
+    This value is ignored.
   }
 }
 
@@ -81,6 +89,8 @@
 
   For \code{countOverlaps} an integer vector containing the tabulated
   query overlap hits.
+
+  For \code{match} same as \code{findOverlaps} when \code{select = "first"}.
 }
 
 \author{P. Aboyoun and S. Falcon}
