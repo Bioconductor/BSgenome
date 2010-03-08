@@ -28,8 +28,7 @@
              type = c("any", "start", "end"), select = c("all", "first"))
   \S4method{countOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L,
               type = c("any", "start", "end"))
-  \S4method{match}{GRanges,GRanges}(x, table, nomatch = NA_integer_,
-      incomparables = NULL)
+  \S4method{match}{GRanges,GRanges}(x, table, nomatch = NA_integer_, incomparables = NULL)
 }
 
 \arguments{
