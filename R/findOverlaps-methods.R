@@ -321,3 +321,28 @@ setMethod("match", c("GRangesList", "GRangesList"),
         ans
     }
 )
+
+
+### =========================================================================
+### %in% methods
+### -------------------------------------------------------------------------
+
+setMethod("%in%", c("GRanges", "GRanges"),
+    function(x, table)
+        !is.na(match(x, table))
+)
+
+setMethod("%in%", c("GRanges", "GRangesList"),
+    function(x, table)
+        !is.na(match(x, table))
+)
+
+setMethod("%in%", c("GRangesList", "GRanges"),
+    function(x, table)
+        !is.na(match(x, table))
+)
+
+setMethod("%in%", c("GRangesList", "GRangesList"),
+    function(x, table)
+        !is.na(match(x, table))
+)

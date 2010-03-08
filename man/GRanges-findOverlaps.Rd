@@ -15,6 +15,11 @@
 \alias{match,GRangesList,GRanges-method}
 \alias{match,GRangesList,GRangesList-method}
 
+\alias{\%in\%,GRanges,GRanges-method}
+\alias{\%in\%,GRanges,GRangesList-method}
+\alias{\%in\%,GRangesList,GRanges-method}
+\alias{\%in\%,GRangesList,GRangesList-method}
+
 
 \title{GRanges and GRangesList Interval Overlaps}
 
@@ -29,6 +34,7 @@
   \S4method{countOverlaps}{GRanges,GRanges}(query, subject, maxgap = 0L,
               type = c("any", "start", "end"))
   \S4method{match}{GRanges,GRanges}(x, table, nomatch = NA_integer_, incomparables = NULL)
+  # Also:  x \%in\% table
 }
 
 \arguments{
@@ -90,6 +96,9 @@
   query overlap hits.
 
   For \code{match} same as \code{findOverlaps} when \code{select = "first"}.
+
+  For \code{\%in\%} the logical vector produced by
+  \code{!is.na(match(x, table))}.
 }
 
 \author{P. Aboyoun and S. Falcon}
@@ -129,6 +138,7 @@
   grlist <- GRangesList("gr1" = gr1, "gr2" = gr2, "gr3" = gr3)
 
   ## Overlapping two GRanges objects
+  table(gr \%in\% gr1)
   countOverlaps(gr, gr1)
   findOverlaps(gr, gr1)
   countOverlaps(gr, gr1, type = "start")
@@ -136,6 +146,7 @@
   findOverlaps(gr, gr1, select = "first")
 
   ## Overlapping a GRanges and a GRangesList object
+  table(grlist \%in\% gr)
   countOverlaps(grlist, gr)
   findOverlaps(grlist, gr)
   countOverlaps(grlist, gr, type = "start")
