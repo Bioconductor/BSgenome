@@ -286,6 +286,37 @@ setMethod("shift", "GRanges",
     }
 )
 
+setMethod("coverage", "GRanges",
+    function(x, shift = list(0L), width = list(NULL), weight = list(1L))
+    {
+        fixArg <- function(arg, argname, uniqueSeqnames) {
+            k <- length(uniqueSeqnames)
+            if (!is.list(arg) || is(arg, "IntegerList"))
+                stop("'", argname, "' must be a list")
+            if (length(arg) < k)
+                arg <- rep(arg, length.out = k)
+            if (is.null(names(arg)))
+                names(arg) <- uniqueSeqnames
+            if (!all(uniqueSeqnames %in% names(arg)))
+                stop("some seqnames missing from names(", argname, ")")
+            arg
+        }
+        uniqueSeqnames <- unique(seqnames(x))
+        shift <- fixArg(shift, "shift", uniqueSeqnames)
+        width <- fixArg(width, "width", uniqueSeqnames)
+        weight <- fixArg(weight, "weight", uniqueSeqnames)
+        xSplitRanges <- splitRanges(seqnames(x))
+        xRanges <- unname(ranges(x))
+        IRanges:::newSimpleList("SimpleRleList",
+                      lapply(structure(uniqueSeqnames, names = uniqueSeqnames),
+                             function(i) {
+                                 coverage(seqselect(xRanges, xSplitRanges[[i]]),
+                                          shift = shift[[i]], width = width[[i]],
+                                          weight = weight[[i]])
+                             }))
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### DataTable methods.

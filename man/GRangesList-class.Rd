@@ -31,6 +31,7 @@
 \alias{width,GRangesList-method}
 \alias{width<-,GRangesList-method}
 \alias{shift,GRangesList-method}
+\alias{coverage,GRangesList-method}
 
 % SplitDataFrameList methods:
 \alias{[,GRangesList-method}
@@ -87,22 +88,22 @@
   \describe{
     \item{}{
       \code{seqnames(x)}, \code{seqnames(x) <- value}:
-      Get or set the sequence names in the form of an RleList. \code{value}
+      Gets or sets the sequence names in the form of an RleList. \code{value}
       can be an RleList or CharacterList.
     }
     \item{}{
       \code{ranges(x)}, \code{ranges(x) <- value}:
-      Get or set the ranges in the form of a CompressedIRangesList.
+      Gets or sets the ranges in the form of a CompressedIRangesList.
       \code{value} can be a RangesList object.
     }
     \item{}{
       \code{strand(x)}, \code{strand(x) <- value}:
-      Get or set the strand in the form of an RleList. \code{value} can be
+      Gets or sets the strand in the form of an RleList. \code{value} can be
       an RleList or CharacterList object.
     }
     \item{}{
       \code{values(x)}, \code{values(x) <- value}:
-      Get or set the optional data columns in the form of a
+      Gets or sets the optional data columns in the form of a
       CompressedSplitDataFrameList. \code{value} can be a DataFrameList
       object.
     }
@@ -115,15 +116,15 @@
   \describe{
     \item{}{
       \code{length(x)}:
-      Get the number of elements.
+      Gets the number of elements.
     }
     \item{}{
       \code{names(x)}, \code{names(x) <- value}:
-      Get or set the names of the elements.
+      Gets or sets the names of the elements.
     }
     \item{}{
       \code{elementLengths(x)}:
-      Get the \code{length} of each of the elements.
+      Gets the \code{length} of each of the elements.
     }
     \item{}{
       \code{isEmpty(x)}:
@@ -139,22 +140,33 @@
   \describe{
     \item{}{
       \code{start(x)}, \code{start(x) <- value}:
-      Get or set \code{start(ranges(x))}.
+      Gets or sets \code{start(ranges(x))}.
     }
     \item{}{
       \code{end(x)}, \code{end(x) <- value}:
-      Get or set \code{end(ranges(x))}.
+      Gets or sets \code{end(ranges(x))}.
     }
     \item{}{
       \code{width(x)}, \code{width(x) <- value}:
-      Get or set \code{width(ranges(x))}.
+      Gets or sets \code{width(ranges(x))}.
     }
     \item{}{
       \code{shift(x, shift, use.names=TRUE)}:
-      Return a new GRangesList object containing intervals with start and
+      Returns a new GRangesList object containing intervals with start and
       end values that have been shifted by integer vector \code{shift}.
       The \code{use.names} argument determines whether or not to
       keep the names on the ranges.
+    }
+    \item{}{
+      \code{coverage(x, shift = list(0L), width = list(NULL), weight = list(1L))}:
+      Returns a named \link[IRanges]{RleList} object with one element
+      ('integer' Rle) per unique sequence name representing how many
+      times each position in the sequence is covered by the intervals in
+      \code{x}. The \code{shift}, \code{width}, and \code{weight} arguments
+      take list arguments, possibly named by the unique sequence names in
+      \code{x}, whose elements are passed into the \code{coverage} method for
+      \link{IRanges} object. See \code{?\link[IRanges]{coverage}} for more
+      information on these optional arguments.
     }
   }
 }
@@ -165,12 +177,12 @@
   \describe{
     \item{}{
       \code{ncol(x)}:
-      Get the number of column in \code{values(x)}.
+      Gets the number of column in \code{values(x)}.
     }
     \item{}{
       \code{colnames(x, do.NULL = TRUE, prefix = "col")},
       \code{colnames(x) <- value}:
-      Get or set the column names of \code{values(x)}.
+      Gets or sets the column names of \code{values(x)}.
     }
   }
 }
@@ -180,13 +192,13 @@
 
   \describe{
     \item{}{\code{append(x, values, after = length(x))}:
-      Insert the \code{values} into \code{x} at the position given by
+      Inserts the \code{values} into \code{x} at the position given by
       \code{after}, where \code{x} and \code{values} are of the same
       class.
     }
     \item{}{
       \code{c(x, ...)}:
-      Combine \code{x} and the GRangesList objects in \code{...}
+      Combines \code{x} and the GRangesList objects in \code{...}
       together. Any object in \code{...} must belong to the same class
       as \code{x}, or to one of its subclasses, or must be \code{NULL}.
       The result is an object of the same class as \code{x}.
@@ -204,19 +216,19 @@
   \describe{
     \item{}{
       \code{x[i, j]}, \code{x[i, j] <- value}:
-      Get or set elements \code{i} with optional values columns
+      Gets or sets elements \code{i} with optional values columns
       \code{values(x)[,j]}, where \code{i} can be missing; an NA-free
       logical, numeric, or character vector; a 'logical' Rle object, or
       an AtomicList object.
     }
     \item{}{
       \code{x[[i]]}, \code{x[[i]] <- value}:
-      Get or set element \code{i}, where \code{i} is a numeric or character
+      Gets or sets element \code{i}, where \code{i} is a numeric or character
       vector of length 1.
     }
     \item{}{
       \code{x$name}, \code{x$name <- value}:
-      Get or set element \code{name}, where \code{name} is a name or character
+      Gets or sets element \code{name}, where \code{name} is a name or character
       vector of length 1.
     }
     \item{}{
@@ -241,7 +253,7 @@
     }
     \item{}{
       \code{rev(x)}:
-      Return a new object of the same class as \code{x} made of the original
+      Returns a new object of the same class as \code{x} made of the original
       elements in the reverse order.
     }
     \item{}{
@@ -267,7 +279,7 @@
     }
     \item{}{
       \code{subset(x, subset)}:
-      Return a new object of the same class as \code{x} made of the subset
+      Returns a new object of the same class as \code{x} made of the subset
       using logical vector \code{subset}, where missing values are taken as
       \code{FALSE}.
     }
@@ -280,7 +292,7 @@
     }
     \item{}{
       \code{window(x, start = NA, end = NA, width = NA, frequency = NULL, delta = NULL, ...)}:
-      Extract the subsequence window from the GRanges object using:
+      Extracts the subsequence window from the GRanges object using:
       \describe{
         \item{\code{start}, \code{end}, \code{width}}{The start, end, or width
           of the window. Two of the three are required.}
@@ -291,7 +303,7 @@
     }
     \item{}{
       \code{window(x, start = NA, end = NA, width = NA, keepLength = TRUE) <- value}:
-      Replace the subsequence window specified on the left (i.e. the subsequence
+      Replaces the subsequence window specified on the left (i.e. the subsequence
       in \code{x} specified by \code{start}, \code{end} and \code{width})
       by \code{value}.
       \code{value} must either be of class \code{class(x)}, belong to a subclass
@@ -397,6 +409,7 @@
   # Summarizing elements
   elementLengths(grl)
   table(seqnames(grl))
+  coverage(grl)
 
   # Extracting subsets
   grl[seqnames(grl) == "chr1", ]

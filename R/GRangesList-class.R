@@ -227,6 +227,13 @@ setMethod("shift", "GRangesList",
     }
 )
 
+setMethod("coverage", "GRangesList",
+    function(x, shift = list(0L), width = list(NULL), weight = list(1L))
+    {
+        callGeneric(x@unlistData, shift = shift, width = width, weight = weight)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SplitDataFrameList methods.
