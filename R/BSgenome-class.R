@@ -211,12 +211,9 @@ setMethod("SNPlocs", "BSgenome",
     }
 )
 
-setGeneric("seqnames", function(x) standardGeneric("seqnames"))
 setMethod("seqnames", "BSgenome",
     function(x) { if (length(x@seqnames) == 0) NULL else x@seqnames }
 )
-
-setGeneric("seqnames<-", function(x, value) standardGeneric("seqnames<-"))
 
 setGeneric("seqlengths", function(x) standardGeneric("seqlengths"))
 setMethod("seqlengths", "BSgenome",

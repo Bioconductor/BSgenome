@@ -30,7 +30,8 @@ setMethod("vmatchPattern", "BSgenome",
                        c(as(posMatches, "IRanges"), as(negMatches, "IRanges")),
                        strand =
                        Rle(strand(c("+", "-")),
-                           c(length(posMatches), length(negMatches))))
+                           c(length(posMatches), length(negMatches))),
+                       space = "1")
         }
 
         if (!is(pattern, "DNAString"))
@@ -158,7 +159,8 @@ setMethod("vmatchPDict", "BSgenome",
                            c(sum(posCounts), sum(negCounts))),
                        index =
                        c(Rle(seq_len(length(posMatches)), posCounts),
-                         Rle(seq_len(length(negMatches)), negCounts)))
+                         Rle(seq_len(length(negMatches)), negCounts)),
+                       space = "1")
         }
 
         if (is(pdict, "PDict"))
@@ -287,7 +289,8 @@ setMethod("matchPWM", "BSgenome",
                        score = c(posScores, negScores),
                        string =
                        c(as.character(posMatches),
-                         as.character(reverseComplement(DNAStringSet(negMatches)))))
+                         as.character(reverseComplement(DNAStringSet(negMatches)))),
+                       space = "1")
         }
 
         ## checking 'pwm'
@@ -387,7 +390,8 @@ setMethod("vmatchLRPatterns", "BSgenome",
               ord <- order(strand, strings)
               rngs <- c(as(posMatches, "IRanges"), as(negMatches, "IRanges"))
               RangedData(rngs[ord], string = Rle(strings[ord]),
-                         strand = Rle(strand[ord]))
+                         strand = Rle(strand[ord]),
+                         space = "1")
             }
 
             if (!is(Lpattern, "DNAString"))
@@ -425,7 +429,7 @@ setMethod("vmatchLRPatterns", "BSgenome",
                       with.Lindels = with.Lindels, with.Rindels = with.Rindels,
                       Lfixed = Lfixed, Rfixed = Rfixed)
             nms <- names(matches)
-            matches <- do.call(c, matches)
+            matches <- do.call(c, unname(matches))
             names(matches) <- nms
             matches
           }

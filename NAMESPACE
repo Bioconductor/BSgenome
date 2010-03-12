@@ -1,5 +1,6 @@
 import(methods)
 import(IRanges)
+importFrom(GenomicRanges, seqnames, strand)
 import(Biostrings)
 
 exportClasses(
@@ -25,10 +26,9 @@ export(
     releaseDate, releaseName,
     sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
-    seqnames, seqlengths, mseqnames,
+    seqlengths, mseqnames,
     masknames,
     injectSNPs,
-    strand,
     getSeq,
     gdapply, gdApply,
 
@@ -48,7 +48,7 @@ exportMethods(
     organism, species, provider, providerVersion,
     releaseDate, releaseName, sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
-    seqnames, "seqnames<-", seqlengths, mseqnames,
+    seqnames, seqlengths, mseqnames,
     masknames,
     injectSNPs,
     gdapply,
@@ -57,24 +57,3 @@ exportMethods(
     forgeBSgenomeDataPkg
 )
 
-
-### ==========================================================================
-### GRanges
-### --------------------------------------------------------------------------
-
-exportClasses(GRanges, GRangesList)
-
-export(GRanges, GRangesList)
-
-exportMethods("coerce", "as.data.frame",
-              "seqnames", "ranges", "strand", "values",
-              "seqnames<-", "ranges<-", "strand<-", "values<-",
-              "names", "names<-",
-              "start", "end", "width", "start<-", "end<-", "width<-",
-              "shift", "coverage",
-              "ncol", "colnames", "colnames<-",
-              "[", "[<-", "c", "length", "rev", "seqselect", "seqselect<-",
-              "split", "window",
-              "show",
-              "pintersect",
-              "findOverlaps", "countOverlaps", "match", "%in%")

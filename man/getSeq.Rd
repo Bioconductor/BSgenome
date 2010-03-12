@@ -21,8 +21,8 @@
 
 \arguments{
   \item{x}{
-    A \code{\link[BSgenome:BSgenome-class]{BSgenome}} object.
-    See the \code{\link[BSgenome]{available.genomes}} function for how
+    A \code{\link{BSgenome}} object.
+    See the \code{\link{available.genomes}} function for how
     to install a genome.
   }
   \item{names}{
@@ -30,8 +30,8 @@
     \code{RangedData} or \code{RangesList} object.
     If missing, then \code{seqnames(x)} is used.
     
-    See \code{?\link[BSgenome:BSgenome-class]{seqnames}} and
-    \code{?\link[BSgenome:BSgenome-class]{mseqnames}} to get 
+    See \code{?`\link{seqnames,BSgenome-method}`} and
+    \code{?`\link{mseqnames,BSgenome-method}`} to get 
     the list of single sequences and multiple sequences (respectively)
     contained in \code{x}.
 
@@ -105,16 +105,16 @@
 \author{H. Pages; improvements suggested by Matt Settles and others}
 
 \seealso{
-  \code{\link[BSgenome]{available.genomes}},
-  \code{\link[BSgenome]{BSgenome-class}},
-  \code{\link[BSgenome:BSgenome-class]{seqnames}},
-  \code{\link[BSgenome:BSgenome-class]{mseqnames}},
+  \code{\link{available.genomes}},
+  \code{\link{BSgenome-class}},
+  \code{\link{seqnames,BSgenome-method}},
+  \code{\link{mseqnames,BSgenome-method}},
+  \code{\link{[[,BSgenome-method}},
   \code{\link[base]{grep}},
   \code{\link[IRanges:DataTable-class]{subseq,DataTable}},
   \code{\link[IRanges:Sequence-class]{subseq,Sequence}},
   \code{\link[Biostrings:DNAString-class]{DNAString}},
-  \code{\link[Biostrings:MaskedXString-class]{MaskedDNAString}},
-  \code{\link[BSgenome:BSgenome-class]{[[,BSgenome-method}}
+  \code{\link[Biostrings:MaskedXString-class]{MaskedDNAString}}
 }
 
 \examples{
