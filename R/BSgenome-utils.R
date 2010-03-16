@@ -434,34 +434,3 @@ setMethod("vmatchLRPatterns", "BSgenome",
             matches
           }
           )
-
-setMethod("matchLRPatterns", "XStringViews",
-          function (Lpattern, Rpattern, max.gaplength, subject,
-                    max.Lmismatch = 0, max.Rmismatch = 0,
-                    with.Lindels = FALSE, with.Rindels = FALSE, 
-                    Lfixed = TRUE, Rfixed = TRUE) 
-          {
-            ans_start <- ans_width <- integer(0)
-            Lmatches <- matchPattern(Lpattern, subject,
-                                     max.mismatch = max.Lmismatch, 
-                                     with.indels = with.Lindels, fixed = Lfixed)
-            if (length(Lmatches) != 0L) {
-              ## Figure out sequence to which each Lmatch might have an Rmatch
-              Rranges <- IRanges(end(Lmatches) + 1,
-                                 width = max.gaplength + nchar(Rpattern))
-### FIXME: complicated because vmatchPattern does not support XStringViews
-              Rranges <- restrict(Rranges, start = 1L,
-                                  end = nchar(subject(subject)))
-              Rsubject <- as(Views(subject(subject), Rranges), "XStringSet")
-              Rmatches <- vmatchPattern(Rpattern, Rsubject,
-                                       max.mismatch = max.Rmismatch, 
-                                       with.indels = with.Rindels,
-                                       fixed = Rfixed)
-              Rcounts <- countIndex(Rmatches)
-              ans_start <- rep(start(Lmatches), Rcounts)
-              ans_width <- rep(width(Lmatches), Rcounts) +
-                unlist(endIndex(Rmatches))
-            }
-            Biostrings:::unsafe.newXStringViews(subject(subject), ans_start,
-                                                ans_width)
-          })
