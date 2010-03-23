@@ -10,7 +10,6 @@
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
 \alias{seqnames,BSgenome-method}
-\alias{seqlengths}
 \alias{seqlengths,BSgenome-method}
 \alias{mseqnames}
 \alias{mseqnames,BSgenome-method}

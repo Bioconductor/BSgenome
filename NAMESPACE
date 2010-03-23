@@ -1,6 +1,6 @@
 import(methods)
 import(IRanges)
-importFrom(GenomicRanges, seqnames, strand)
+importFrom(GenomicRanges, seqnames, seqlengths, strand)
 import(Biostrings)
 
 exportClasses(
@@ -26,7 +26,7 @@ export(
     releaseDate, releaseName,
     sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
-    seqlengths, mseqnames,
+    mseqnames,
     masknames,
     injectSNPs,
     getSeq,
