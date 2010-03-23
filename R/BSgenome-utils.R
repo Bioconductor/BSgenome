@@ -7,6 +7,7 @@ setMethod("vmatchPattern", "BSgenome",
              userMask = RangesList(), invertUserMask = FALSE)
     {
         matchFUN <- function(posPattern, negPattern, chr,
+                             seqlengths,
                              max.mismatch = max.mismatch,
                              min.mismatch = min.mismatch,
                              with.indels = with.indels,
@@ -26,12 +27,17 @@ setMethod("vmatchPattern", "BSgenome",
                            with.indels = with.indels,
                            fixed = fixed,
                            algorithm = algorithm)
-            RangedData(ranges =
-                       c(as(posMatches, "IRanges"), as(negMatches, "IRanges")),
-                       strand =
-                       Rle(strand(c("+", "-")),
-                           c(length(posMatches), length(negMatches))),
-                       space = "1")
+            COUNTER <<- COUNTER + 1L
+            seqnames <- names(seqlengths)
+            GRanges(seqnames = 
+                    Rle(factor(seqnames[COUNTER], levels = seqnames),
+                        length(posMatches) + length(negMatches)),
+                    ranges =
+                    c(as(posMatches, "IRanges"), as(negMatches, "IRanges")),
+                    strand =
+                    Rle(strand(c("+", "-")),
+                        c(length(posMatches), length(negMatches))),
+                    seqlengths = seqlengths)
         }
 
         if (!is(pattern, "DNAString"))
@@ -53,14 +59,18 @@ setMethod("vmatchPattern", "BSgenome",
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
               simplify = TRUE, maskList = logical(0), userMask = userMask,
               invertUserMask = invertUserMask)
+        COUNTER <- 0L
+        seqlengths <- seqlengths(subject)
         matches <-
-         bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
-                 max.mismatch = max.mismatch, min.mismatch = min.mismatch,
-                 with.indels = with.indels, fixed = fixed,
-                 algorithm = algorithm)
-        nms <- names(matches)
+          bsapply(bsParams, posPattern = posPattern, negPattern = negPattern,
+                  seqlengths = seqlengths,
+                  max.mismatch = max.mismatch, min.mismatch = min.mismatch,
+                  with.indels = with.indels, fixed = fixed,
+                  algorithm = algorithm)
+        nms <- factor(names(matches), levels = names(seqlengths))
+        nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(matches))
-        names(matches) <- nms
+        runValue(seqnames(matches)) <- nms
         matches
     }
 )
@@ -132,6 +142,7 @@ setMethod("vmatchPDict", "BSgenome",
              maskList=logical(0))
     {
         matchFUN <- function(posPDict, negPDict, chr,
+                             seqlengths,
                              max.mismatch = max.mismatch,
                              min.mismatch = min.mismatch,
                              fixed = fixed,
@@ -153,14 +164,19 @@ setMethod("vmatchPDict", "BSgenome",
                          algorithm = algorithm,
                          verbose = verbose)
             negCounts <- elementLengths(negMatches)
-            RangedData(ranges = c(unlist(posMatches), unlist(negMatches)),
-                       strand =
-                       Rle(strand(rep(c("+", "-"))),
-                           c(sum(posCounts), sum(negCounts))),
-                       index =
-                       c(Rle(seq_len(length(posMatches)), posCounts),
-                         Rle(seq_len(length(negMatches)), negCounts)),
-                       space = "1")
+            COUNTER <<- COUNTER + 1L
+            seqnames <- names(seqlengths)
+            GRanges(seqnames = 
+                    Rle(factor(seqnames[COUNTER], levels = seqnames),
+                        sum(posCounts) + sum(negCounts)),
+                    ranges = c(unlist(posMatches), unlist(negMatches)),
+                    strand =
+                    Rle(strand(rep(c("+", "-"))),
+                        c(sum(posCounts), sum(negCounts))),
+                    index =
+                    c(Rle(seq_len(length(posMatches)), posCounts),
+                      Rle(seq_len(length(negMatches)), negCounts)),
+                    seqlengths = seqlengths)
         }
 
         if (is(pdict, "PDict"))
@@ -183,13 +199,17 @@ setMethod("vmatchPDict", "BSgenome",
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
               simplify = TRUE, maskList = logical(0))
+        COUNTER <- 0L
+        seqlengths <- seqlengths(subject)
         matches <-
           bsapply(bsParams, posPDict = posPDict, negPDict = negPDict,
+                  seqlengths = seqlengths,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
-        nms <- names(matches)
+        nms <- factor(names(matches), levels = names(seqlengths))
+        nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(matches))
-        names(matches) <- nms
+        runValue(seqnames(matches)) <- nms
         matches
     }
 )
@@ -270,7 +290,7 @@ setMethod("vcountPDict", "BSgenome",
 setMethod("matchPWM", "BSgenome",
     function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
     {
-        matchFUN <- function(posPWM, negPWM, chr, min.score) {
+        matchFUN <- function(posPWM, negPWM, chr, seqlengths, min.score) {
             posMatches <-
               matchPWM(pwm = posPWM, subject = chr, min.score = min.score)
             posScores <-
@@ -281,16 +301,21 @@ setMethod("matchPWM", "BSgenome",
             negScores <-
               PWMscoreStartingAt(pwm = negPWM, subject = chr,
                                  starting.at = start(negMatches))
-            RangedData(ranges =
-                       c(as(posMatches, "IRanges"), as(negMatches, "IRanges")),
-                       strand =
-                       Rle(strand(c("+", "-")),
-                           c(length(posMatches), length(negMatches))),
-                       score = c(posScores, negScores),
-                       string =
-                       c(as.character(posMatches),
-                         as.character(reverseComplement(DNAStringSet(negMatches)))),
-                       space = "1")
+            COUNTER <<- COUNTER + 1L
+            seqnames <- names(seqlengths)
+            GRanges(seqnames = 
+                    Rle(factor(seqnames[COUNTER], levels = seqnames),
+                        length(posMatches) + length(negMatches)),
+                    ranges =
+                    c(as(posMatches, "IRanges"), as(negMatches, "IRanges")),
+                    strand =
+                    Rle(strand(c("+", "-")),
+                        c(length(posMatches), length(negMatches))),
+                    score = c(posScores, negScores),
+                    string =
+                    c(as.character(posMatches),
+                      as.character(reverseComplement(DNAStringSet(negMatches)))),
+                    seqlengths = seqlengths)
         }
 
         ## checking 'pwm'
@@ -303,15 +328,19 @@ setMethod("matchPWM", "BSgenome",
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
               simplify = TRUE, maskList = logical(0))
+        COUNTER <- 0L
+        seqlengths <- seqlengths(subject)
         matches <-
           bsapply(bsParams, posPWM = posPWM, negPWM = negPWM,
-                  min.score = min.score)
-        nms <- names(matches)
+                  seqlengths = seqlengths, min.score = min.score)
+        nms <- factor(names(matches), levels = names(seqlengths))
+        nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(matches))
-        names(matches) <- nms
-        ## created compact DNAStringSet
-        string <- factor(matches[["string"]])
-        matches[["string"]] <- DNAStringSet(levels(string))[as.integer(string)]
+        runValue(seqnames(matches)) <- nms
+        ## create compact DNAStringSet
+        string <- factor(elementMetadata(matches)[["string"]])
+        elementMetadata(matches)[["string"]] <-
+          DNAStringSet(levels(string))[as.integer(string)]
         matches
     }
 )

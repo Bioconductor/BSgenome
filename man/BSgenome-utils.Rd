@@ -110,17 +110,17 @@
 }
 
 \value{
-  A \link[IRanges]{RangedData} object for \code{matchPWM} with
-  three values columns: "strand" ('factor' Rle), "score" (numeric), and
-  "string" (DNAStringSet).
+  A \link[GenomicRanges]{GRanges} object for \code{matchPWM} with three
+  elementMetadata columns: "strand" ('factor' Rle), "score" (numeric),
+  and "string" (DNAStringSet).
 
-  A \link[IRanges]{RangedData} object for \code{vmatchPattern} with
-  one values column: "strand" ('factor' Rle).
+  A \link[GenomicRanges]{GRanges} object for \code{vmatchPattern} with
+  one elmentMetadata column: "strand" ('factor' Rle).
 
-  A \link[IRanges]{RangedData} object for \code{vmatchPDict} with
-  two values column: "strand" ('factor' Rle) and "index" ('integer' Rle).
-  The index column represents a mapping to a position in the original
-  pattern dictionary.
+  A \link[GenomicRanges]{GRanges} object for \code{vmatchPDict} with
+  two elementMetadata columns: "strand" ('factor' Rle) and "index"
+  ('integer' Rle). The index column represents a mapping to a position
+  in the original pattern dictionary.
 
   A data.frame object for \code{countPWM} and \code{vcountPattern}
   with three columns: "seqname" (factor), "strand" (factor), and
