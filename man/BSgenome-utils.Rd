@@ -116,7 +116,7 @@
   A \link[GenomicRanges]{GRanges} object for \code{vmatchPattern}.
 
   A \link[GenomicRanges]{GRanges} object for \code{vmatchPDict} with
-  one elementMetadata columns: "index", which represents a mapping to a
+  one elementMetadata column: "index", which represents a mapping to a
   position in the original pattern dictionary.
 
   A data.frame object for \code{countPWM} and \code{vcountPattern}
