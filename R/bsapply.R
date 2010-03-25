@@ -34,6 +34,9 @@ bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, mas
     
     ##get the seqnames:
     seqnames <- seqnames(BSParams@X)
+    if (!length(seqnames)) # some objects only have multi-sequences
+      seqnames <- mseqnames(BSParams@X)
+    
     seqLength <- length(seqnames)
 
     ##Restrict the seqnames based on our exclusion factor:
