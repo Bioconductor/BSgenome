@@ -4,7 +4,8 @@ setMethod("vmatchPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
              algorithm="auto", exclude="", maskList=logical(0),
-             userMask = RangesList(), invertUserMask = FALSE)
+             userMask=RangesList(), invertUserMask=FALSE,
+             asRangedData=TRUE)
     {
         matchFUN <- function(posPattern, negPattern, chr,
                              seqlengths,
@@ -71,6 +72,12 @@ setMethod("vmatchPattern", "BSgenome",
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(matches))
         runValue(seqnames(matches)) <- nms
+        if (asRangedData) {
+            warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
+            matches <- RangedData(ranges = ranges(matches),
+                                  strand = as.vector(strand(matches)),
+                                  space = as.vector(seqnames(matches)))
+        }
         matches
     }
 )
@@ -79,7 +86,7 @@ setMethod("vcountPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
              algorithm="auto", exclude="", maskList=logical(0),
-             userMask = RangesList(), invertUserMask = FALSE)
+             userMask=RangesList(), invertUserMask=FALSE)
     {
         countFUN <- function(posPattern, negPattern, chr,
                              max.mismatch = max.mismatch,
@@ -139,7 +146,7 @@ setMethod("vmatchPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
              algorithm="auto", verbose=FALSE, exclude="",
-             maskList=logical(0))
+             maskList=logical(0), asRangedData=TRUE)
     {
         matchFUN <- function(posPDict, negPDict, chr,
                              seqlengths,
@@ -210,6 +217,13 @@ setMethod("vmatchPDict", "BSgenome",
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(matches))
         runValue(seqnames(matches)) <- nms
+        if (asRangedData) {
+            warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
+            matches <- RangedData(ranges = ranges(matches),
+                                  strand = as.vector(strand(matches)),
+                                  index = elementMetadata(matches)[["index"]],
+                                  space = as.vector(seqnames(matches)))
+        }
         matches
     }
 )
@@ -288,7 +302,8 @@ setMethod("vcountPDict", "BSgenome",
 
 ## matchPWM/countPWM for BSgenome
 setMethod("matchPWM", "BSgenome",
-    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
+    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0),
+             asRangedData=TRUE)
     {
         matchFUN <- function(posPWM, negPWM, chr, seqlengths, min.score) {
             posMatches <-
@@ -341,6 +356,14 @@ setMethod("matchPWM", "BSgenome",
         string <- factor(elementMetadata(matches)[["string"]])
         elementMetadata(matches)[["string"]] <-
           DNAStringSet(levels(string))[as.integer(string)]
+        if (asRangedData) {
+            warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
+            matches <- RangedData(ranges = ranges(matches),
+                                  strand = as.vector(strand(matches)),
+                                  score = elementMetadata(matches)[["score"]],
+                                  string = elementMetadata(matches)[["string"]],
+                                  space = as.vector(seqnames(matches)))
+        }
         matches
     }
 )
