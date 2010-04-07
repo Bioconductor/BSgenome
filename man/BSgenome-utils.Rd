@@ -23,10 +23,12 @@
          maskList = logical(0))
   \S4method{vmatchPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
               with.indels = FALSE, fixed = TRUE, algorithm = "auto",
-              exclude = "", maskList = logical(0), asRangedData = TRUE)
+              exclude = "", maskList = logical(0),  userMask =
+                 RangesList(), invertUserMask = FALSE, asRangedData = TRUE)
   \S4method{vcountPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
               with.indels = FALSE, fixed = TRUE, algorithm = "auto",
-              exclude = "", maskList = logical(0))
+              exclude = "", maskList = logical(0),  userMask =
+                 RangesList(), invertUserMask = FALSE)
   \S4method{vmatchPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
             fixed = TRUE, algorithm = "auto", verbose = FALSE,
             exclude = "", maskList = logical(0), asRangedData = TRUE)
@@ -106,7 +108,14 @@
     A named logical vector of maskStates preferred when used with a
     BSGenome object.  When using the bsapply function, the masks will
     be set to the states in this vector.
-  }    
+  }
+  \item{userMask}{
+    A \linkS4class{RangesList}, containing a mask to be applied to each
+    chromosome. See \code{\link{bsapply}}.
+  }
+  \item{invertUserMask}{
+    Whether the \code{userMask} should be inverted.
+  }
   \item{asRangedData}{
     A logical value to assist in migrating output type from
     \link[IRanges]{RangedData} (deprecated) to
