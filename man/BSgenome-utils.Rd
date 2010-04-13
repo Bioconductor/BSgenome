@@ -119,7 +119,7 @@
   \item{asRangedData}{
     A logical value to assist in migrating output type from
     \link[IRanges]{RangedData} (deprecated) to
-    \link[GRanges]{GenomicRanges}. Should be \code{FALSE}.
+    \link[GenomicRanges]{GRanges}. Should be \code{FALSE}.
     If \code{TRUE}, a warning message is issued and a RangedData object
     is returned.
   }    
