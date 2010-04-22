@@ -83,13 +83,14 @@
   exclude = c(1:8,"M","X","random","hap"), simplify = TRUE)
   bsapply(params)
 
-  ## Set up the motifList to filter out all double T's and all double C's
-  params@motifList <-c("TT","CC")
-  bsapply(params)
+  if (interactive()) {
+    ## Set up the motifList to filter out all double T's and all double C's
+    params@motifList <-c("TT","CC")
+    bsapply(params)
 
-  ## Get rid of the motifList
-  params@motifList=as.character()
-
+    ## Get rid of the motifList
+    params@motifList=as.character()
+  }
 
   ##Enable all standard masks
   params@maskList <- c("RM"=TRUE,"TRF"=TRUE)
