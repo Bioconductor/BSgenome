@@ -48,6 +48,19 @@ setMethod("releaseDate", "GenomeDescription", function(x) x@release_date)
 setGeneric("releaseName", function(x) standardGeneric("releaseName"))
 setMethod("releaseName", "GenomeDescription", function(x) x@release_name)
 
+setGeneric("bsgenomeName", function(x) standardGeneric("bsgenomeName"))
+setMethod("bsgenomeName", "GenomeDescription",
+    function(x)
+    {
+        part1 <- "BSgenome"
+        tmp <- strsplit(organism(x), " ", fixed=TRUE)[[1L]]
+        part2 <- paste(substr(tmp[1L], start=1L, stop=1L), tmp[2L], sep="")
+        part3 <- provider(x)
+        part4 <- providerVersion(x)
+        paste(part1, part2, part3, part4, sep=".")
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Validity.

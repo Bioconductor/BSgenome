@@ -19,6 +19,8 @@
 \alias{releaseDate,GenomeDescription-method}
 \alias{releaseName}
 \alias{releaseName,GenomeDescription-method}
+\alias{bsgenomeName}
+\alias{bsgenomeName,GenomeDescription-method}
 
 % Standard generic methods:
 \alias{show,GenomeDescription-method}
@@ -80,6 +82,14 @@
       Human genome corresponding to the Build 36.1 from NCBI hence
       the release name for this genome is \code{"NCBI Build 36.1"}.
     }
+    \item{}{
+      \code{bsgenomeName(x)}:
+      Uses the meta information stored in \code{x} to make the name of
+      the corresponding BSgenome data package (see \link{available.genomes}
+      for details about the naming scheme used for those packages).
+      Of course there is no guarantee that a package with that name
+      actually exists.
+    }
   }
 }
 
@@ -92,8 +102,14 @@
 
 \examples{
   library(BSgenome.Celegans.UCSC.ce2)
+  class(Celegans)
+  is(Celegans, "GenomeDescription")
   provider(Celegans)
-  as(Celegans, "GenomeDescription")
+  gendesc <- as(Celegans, "GenomeDescription")
+  class(gendesc)
+  gendesc
+  provider(gendesc)
+  bsgenomeName(gendesc)
 }
 
 \keyword{methods}

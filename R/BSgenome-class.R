@@ -9,9 +9,6 @@ setClass("BSgenome",
         ## to produce the sequences below can be found (and downloaded)
         source_url="character",
 
-        ## for SNPs injection
-        SNPlocs_pkgname="character",
-
         ## seqnames: names of "single" sequences (e.g. chromosomes)
         seqnames="character",
 
@@ -29,6 +26,9 @@ setClass("BSgenome",
         nmask_per_seq="integer",
         masks_pkgname="character",
         masks_dir="character",
+
+        ## for SNPs injection
+        injectSNPs_handler="InjectSNPsHandler",
 
         .seqs_cache="environment",
         .link_counts="environment"
@@ -164,51 +164,16 @@ setMethod("length", "BSgenome", function(x) length(names(x)))
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
 setMethod("sourceUrl", "BSgenome", function(x) x@source_url)
 
-setGeneric("SNPlocs_pkgname", function(x) standardGeneric("SNPlocs_pkgname"))
 setMethod("SNPlocs_pkgname", "BSgenome",
-    function(x)
-    {
-        if (length(x@SNPlocs_pkgname) == 0)
-            return(NULL)
-        library(x@SNPlocs_pkgname, character.only=TRUE)
-        x@SNPlocs_pkgname
-    }
+    function(x) SNPlocs_pkgname(x@injectSNPs_handler)
 )
 
-setGeneric("SNPcount", function(x) standardGeneric("SNPcount"))
 setMethod("SNPcount", "BSgenome",
-    function(x)
-    {
-        pkg <- SNPlocs_pkgname(x)
-        if (is.null(pkg))
-            return(NULL)
-        getSNPcount <- try(get("getSNPcount",
-                               envir=as.environment(paste("package", pkg, sep=":")),
-                               inherits=FALSE), silent=TRUE)
-        if (!is.function(getSNPcount))
-            stop("cannot use package ", SNPlocs_pkgname(x), " for SNP injection: ",
-                 "it doesn't seem to define (and export) a function called ",
-                 "'getSNPcount'")
-        getSNPcount()
-    }
+    function(x) SNPcount(x@injectSNPs_handler)
 )
 
-setGeneric("SNPlocs", signature="x", function(x, seqname) standardGeneric("SNPlocs"))
 setMethod("SNPlocs", "BSgenome",
-    function(x, seqname)
-    {
-        pkg <- SNPlocs_pkgname(x)
-        if (is.null(pkg))
-            return(NULL)
-        getSNPlocs <- try(get("getSNPlocs",
-                              envir=as.environment(paste("package", pkg, sep=":")),
-                              inherits=FALSE), silent=TRUE)
-        if (!is.function(getSNPlocs))
-            stop("cannot use package ", SNPlocs_pkgname(x), " for SNP injection: ",
-                 "it doesn't seem to define (and export) a function called ",
-                 "'getSNPlocs'")
-        getSNPlocs(seqname)
-    }
+    function(x, seqname) SNPlocs(x@injectSNPs_handler, seqname)
 )
 
 setMethod("seqnames", "BSgenome",
@@ -366,18 +331,9 @@ setMethod("show", "BSgenome",
              "May be the ", seqs_pkgname, " package is corrupted?")
     }
     ## Inject the SNPs, if any
-    if (!is.null(SNPlocs_pkgname(bsgenome))) {
-        snp_count <- SNPcount(bsgenome)
-        if (name %in% names(snp_count)) {
-            snps <- SNPlocs(bsgenome, name)
-            if (nrow(snps) != snp_count[name])
-                warning("reported SNP count for sequence ", name, " in package ",
-                        SNPlocs_pkgname(bsgenome), " does not match the ",
-                        "number of SNPs returned by ", SNPlocs_pkgname(bsgenome),
-                        ":::getSNPlocs()")
-            .inplaceReplaceLetterAt(ans, snps$loc, snps$alleles_as_ambig)
-        } 
-    }
+    snps <- SNPlocs(bsgenome, name)
+    if (!is.null(snps)) 
+        .inplaceReplaceLetterAt(ans, snps$loc, snps$alleles_as_ambig)
     ## Load and set the built-in masks, if any
     if (nmask_per_seq > 0) {
         objname <- paste(name, ".masks", sep="")

@@ -5,6 +5,7 @@ import(Biostrings)
 
 exportClasses(
     GenomeDescription,
+    InjectSNPsHandler,
     BSgenome,
     GenomeData, GenomeDataList,
 
@@ -21,9 +22,8 @@ export(
     GenomeData, GenomeDataList, gdreduce,
 
     ## Generic functions:
-    organism, species,
-    provider, providerVersion,
-    releaseDate, releaseName,
+    organism, species, provider, providerVersion,
+    releaseDate, releaseName, bsgenomeName,
     sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
     mseqnames,
@@ -46,7 +46,8 @@ exportMethods(
 
     ## Methods for generics defined in this package:
     organism, species, provider, providerVersion,
-    releaseDate, releaseName, sourceUrl,
+    releaseDate, releaseName, bsgenomeName,
+    sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
     seqnames, seqlengths, mseqnames,
     masknames,

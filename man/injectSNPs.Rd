@@ -1,12 +1,19 @@
 \name{injectSNPs}
 
+\alias{class:InjectSNPsHandler}
+\alias{InjectSNPsHandler-class}
+\alias{InjectSNPsHandler}
+
 \alias{injectSNPs}
 \alias{injectSNPs,BSgenome-method}
 \alias{SNPlocs_pkgname}
+\alias{SNPlocs_pkgname,InjectSNPsHandler-method}
 \alias{SNPlocs_pkgname,BSgenome-method}
 \alias{SNPcount}
+\alias{SNPcount,InjectSNPsHandler-method}
 \alias{SNPcount,BSgenome-method}
 \alias{SNPlocs}
+\alias{SNPlocs,InjectSNPsHandler-method}
 \alias{SNPlocs,BSgenome-method}
 
 \alias{available.SNPs}
