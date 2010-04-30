@@ -209,7 +209,8 @@ setMethod("vmatchPDict", "BSgenome",
         COUNTER <- 0L
         seqlengths <- seqlengths(subject)
         matches <-
-          bsapply(bsParams, posPDict = posPDict, negPDict = negPDict,
+          bsapply(bsParams, posPDict = PDict(posPDict),
+                  negPDict = PDict(negPDict),
                   seqlengths = seqlengths,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
@@ -289,7 +290,8 @@ setMethod("vcountPDict", "BSgenome",
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
               simplify = FALSE, maskList = logical(0))
         counts <-
-          bsapply(bsParams, posPDict = posPDict, negPDict = negPDict,
+          bsapply(bsParams, posPDict = PDict(posPDict),
+                  negPDict = PDict(negPDict),
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
         DataFrame(DataFrame(seqname =
