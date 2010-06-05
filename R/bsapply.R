@@ -9,106 +9,84 @@ setClass("BSParams",
            userMask="RangesList",
            invertUserMask="logical"),
          prototype=prototype(
-           exclude="",
+           exclude=character(0),
            simplify=FALSE,
-           maskList=as.logical(vector()),
-           motifList=as.character(vector()),
+           maskList=logical(0),
+           motifList=character(0),
            invertUserMask=FALSE,
            userMask=RangesList()
-           ))
+           ),
+         validity=function(object) {
+             msg <- TRUE
+             if (length(object@maskList) > 0) {
+                 for(i in seq_len(length(object@maskList))) {
+                     if(!(names(object@maskList)[i] %in% masknames(object@X))) {
+                         msg <-
+                           "the names of 'maskList' must be vector of names corresponding to the default BSgenome masks."
+                         break
+                     }
+                 }
+             }
+             msg
+         })
 
+bsapply <-
+function(BSParams, ...)
+{
+    if (!is(BSParams, "BSParams") ||
+        !isTRUE(validObject(BSParams, test=TRUE)))
+        stop("'X' must be a valid BSgenome object")
 
-bsapply <- function(BSParams, ...){##X, FUN, exclude = "", simplify = FALSE, maskList = c(), ...){
-
-    ##Some argument checking in case someone changes the value inside the params object.
-    if(!is(BSParams@X, "BSgenome")) stop("'X' must be a BSgenome object")
-    if(!is.function(BSParams@FUN)) stop("'FUN' must be a function")
-    if(!is.character(BSParams@exclude)) stop("'exclude' must be a character vector")
-
-    ##Argument checking for maskList:
-    if(length(BSParams@maskList)>0){ ##if there are masks
-        for(i in seq_len(length(BSParams@maskList))){ #loop thru masks and deal with each in turn
-            if( !( names(BSParams@maskList)[i] %in% masknames(BSParams@X)) ){stop("the names of 'BSParams@maskList' must be vector of names corresponding to the default BSgenome masks.")}
-        }
-    }
-    
-    ##get the seqnames:
-    seqnames <- seqnames(BSParams@X)
-    if (!length(seqnames)) # some objects only have multi-sequences
-      seqnames <- mseqnames(BSParams@X)
-    
-    seqLength <- length(seqnames)
-
-    ##Restrict the seqnames based on our exclusion factor:
-    pariahIndex <- numeric()
-    for(i in seq_len(length(BSParams@exclude))){
-        ind <- grep(BSParams@exclude[i],seqnames)
-        ##Catenate the indices together as we go
-        pariahIndex <- c(pariahIndex, ind)
-    }
-
-    ##Added precaution in case some indices are found more than once...
-    pariahIndex <- unique(pariahIndex)
-    ##IF the grepping has found something then we need to change our seqnames
-    ##But let's not be silly and allow people to exclude EVERYTHING.
-    if(length(pariahIndex) > 0 && length(pariahIndex) != seqLength){
-        seqnames <- seqnames[-pariahIndex]
-    }
-
-    masks <- BSParams@userMask
-    masks <- masks[intersect(seqnames, names(masks))]
-    unmasked <- setdiff(seqnames, names(masks))
-    masks <- reduce(masks)
-    masks <- c(masks, RangesList(sapply(unmasked, function(x) IRanges())))
-    masks <- mapply(Mask,
-                    as(seqlengths(BSParams@X)[names(masks)], "AtomicList"),
-                    start(masks), end(masks))
-    if (BSParams@invertUserMask)
-      masks <- lapply(masks, gaps)
-
-    ##Some stuff has to be done for each chromosome
-    processSeqname <- function(seqname, ...){
-
+    processSeqname <- function(seqname, ...)
+    {
         seq <- BSParams@X[[seqname]]
-        
-        if(length(BSParams@maskList)>0){ ##if there are masks
-            for(i in seq_len(length(BSParams@maskList))){ ##loop thru masks and deal with each in turn
-                if(names(BSParams@maskList)[i] %in% masknames(BSParams@X)){#IF its one of the named masks, then set it accordingly
-                        active(masks(seq))[names(BSParams@maskList)[i]] <- BSParams@maskList[[i]]
+
+        if (length(BSParams@maskList) > 0) {
+            for(i in seq_len(length(BSParams@maskList))){
+                if(names(BSParams@maskList)[i] %in% masknames(BSParams@X)) {
+                    active(masks(seq))[names(BSParams@maskList)[i]] <-
+                      BSParams@maskList[[i]]
                 }
             }
         }
 
-        if(length(BSParams@motifList)>0){ ##if there are motifs
-            for(i in seq_len(length(BSParams@motifList))){ ##loop thru motifs 
-                seq <- maskMotif(seq, BSParams@motifList[i]) ##mask off each motif
+        if (length(BSParams@motifList) > 0){
+            for(i in seq_len(length(BSParams@motifList))) {
+                seq <- maskMotif(seq, BSParams@motifList[i])
             }
         }
 
-        ## apply user mask
-        seqMask <- masks(seq)
-        if (!is.null(masks(seq)))
-          seqMask <- append(masks(seq), seqMask)
-        masks(seq) <- seqMask
-       
-        ## This is where we finally get to run the MAIN function (FUN) that was passed in
-        result <- BSParams@FUN(seq, ...)
-        return(result)
+        seqMask <- userMask[[seqname]]
+        if (length(seqMask) > 0) {
+            seqMask <- Mask(length(seq), start(seqMask), end(seqMask))
+            if (BSParams@invertUserMask)
+                seqMask <- gaps(seqMask)
+            if (!is.null(masks(seq)))
+                seqMask <- append(masks(seq), seqMask)
+            masks(seq) <- seqMask
+        }
+
+        BSParams@FUN(seq, ...)
     }
 
-    
-    ##Then apply the above function to each
-    if(BSParams@simplify == FALSE){
-        ans <-
-          GenomeData(lapply(structure(seqnames, names = seqnames), processSeqname, ...),
-                     providerVersion = providerVersion(BSParams@X),
-                     organism = organism(BSParams@X),
-                     provider = provider(BSParams@X))
-        return(ans)
-    }else{
-        ans <- sapply(seqnames, processSeqname, ...)
-        return(ans)
+    if (length(seqnames(BSParams@X)) > 0)
+        seqnames <- seqnames(BSParams@X)
+    else
+        seqnames <- mseqnames(BSParams@X)
+
+    exclude <- unname(BSParams@exclude[nzchar(BSParams@exclude)])
+    pariahIndex <- unique(unlist(lapply(exclude, grep, seqnames)))
+    if (length(pariahIndex) > 0)
+        seqnames <- seqnames[- pariahIndex]
+
+    userMask <- reduce(BSParams@userMask)
+
+    if (BSParams@simplify) {
+        sapply(seqnames, processSeqname, ...)
+    } else {
+        GenomeData(lapply(structure(seqnames, names = seqnames), processSeqname, ...),
+                   providerVersion = providerVersion(BSParams@X),
+                   organism = organism(BSParams@X),
+                   provider = provider(BSParams@X))
     }
-    ans
 }
-

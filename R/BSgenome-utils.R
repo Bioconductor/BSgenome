@@ -58,7 +58,7 @@ setMethod("vmatchPattern", "BSgenome",
         negPattern <- reverseComplement(posPattern)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = TRUE, maskList = logical(0), userMask = userMask,
+              simplify = FALSE, maskList = logical(0), userMask = userMask,
               invertUserMask = invertUserMask)
         COUNTER <- 0L
         seqlengths <- seqlengths(subject)
@@ -70,7 +70,7 @@ setMethod("vmatchPattern", "BSgenome",
                   algorithm = algorithm)
         nms <- factor(names(matches), levels = names(seqlengths))
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
-        matches <- do.call(c, unname(matches))
+        matches <- do.call(c, unname(as.list(matches)))
         runValue(seqnames(matches)) <- nms
         if (asRangedData) {
             warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
@@ -205,18 +205,19 @@ setMethod("vmatchPDict", "BSgenome",
         negPDict <- reverseComplement(posPDict)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = TRUE, maskList = logical(0))
+              simplify = FALSE, maskList = logical(0))
         COUNTER <- 0L
         seqlengths <- seqlengths(subject)
         matches <-
-          bsapply(bsParams, posPDict = PDict(posPDict),
-                  negPDict = PDict(negPDict),
+          bsapply(bsParams,
+                  posPDict = PDict(posPDict, max.mismatch = max.mismatch),
+                  negPDict = PDict(negPDict, max.mismatch = max.mismatch),
                   seqlengths = seqlengths,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
         nms <- factor(names(matches), levels = names(seqlengths))
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
-        matches <- do.call(c, unname(matches))
+        matches <- do.call(c, unname(as.list(matches)))
         runValue(seqnames(matches)) <- nms
         if (asRangedData) {
             warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
@@ -290,8 +291,9 @@ setMethod("vcountPDict", "BSgenome",
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
               simplify = FALSE, maskList = logical(0))
         counts <-
-          bsapply(bsParams, posPDict = PDict(posPDict),
-                  negPDict = PDict(negPDict),
+          bsapply(bsParams,
+                  posPDict = PDict(posPDict, max.mismatch = max.mismatch),
+                  negPDict = PDict(negPDict, max.mismatch = max.mismatch),
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
         DataFrame(DataFrame(seqname =
@@ -344,7 +346,7 @@ setMethod("matchPWM", "BSgenome",
         negPWM <- reverseComplement(posPWM)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = TRUE, maskList = logical(0))
+              simplify = FALSE, maskList = logical(0))
         COUNTER <- 0L
         seqlengths <- seqlengths(subject)
         matches <-
@@ -352,7 +354,7 @@ setMethod("matchPWM", "BSgenome",
                   seqlengths = seqlengths, min.score = min.score)
         nms <- factor(names(matches), levels = names(seqlengths))
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
-        matches <- do.call(c, unname(matches))
+        matches <- do.call(c, unname(as.list(matches)))
         runValue(seqnames(matches)) <- nms
         ## create compact DNAStringSet
         string <- factor(elementMetadata(matches)[["string"]])
