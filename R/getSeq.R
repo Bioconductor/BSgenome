@@ -20,7 +20,38 @@
     Rle(strand(strand))
 }
 
-.mkGRangesFromRangesList <- function(x, strand)
+### Assumes 'names' is a character vector.
+.normGetSeqArgs <- function(names, start, end, width, strand)
+{
+    start <- IRanges:::.normargSEW(start, "start")
+    end <- IRanges:::.normargSEW(end, "end")
+    width <- IRanges:::.normargSEW(width, "width")
+    l0 <- length(names)
+    l1 <- length(start)
+    l2 <- length(end)
+    l3 <- length(width)
+    max0123 <- max(l0, l1, l2, l3)
+    ## Recycling will fail for vectors of length 0.
+    names <- IRanges:::recycleVector(names, max0123)
+    start <- IRanges:::recycleVector(start, max0123)
+    end <- IRanges:::recycleVector(end, max0123)
+    width <- IRanges:::recycleVector(width, max0123)
+    strand <- .normargStrand(strand, max0123)
+    list(names=names, start=start, end=end, width=width, strand=strand)
+}
+
+### Assumes 'seqlengths' is a named integer vector and 'names' is a character
+### vector with values in 'names(seqlengths)'.
+.newGRangesFromGetSeqArgs <- function(seqlengths, names,
+                                      start, end, width, strand)
+{
+    refwidths <- seqlengths[names]
+    ranges <- solveUserSEW(refwidths, start=start, end=end, width=width)
+    GRanges(seqnames=names, ranges=ranges, strand=strand)
+}
+
+### Assumes 'x' is a RangesList object with names.
+.newGRangesFromNamedRangesList <- function(x, strand)
 {
     seqnames <- rep.int(names(x), elementLengths(x))
     ranges <- unlist(x, use.names=FALSE)
@@ -28,18 +59,22 @@
     GRanges(seqnames=seqnames, ranges=ranges, strand=strand)
 }
 
-.mkGRanges <- function(names, start, end, width, strand)
+### Assumes 'x' is a Ranges object with names.
+.newGRangesFromNamedRanges <- function(x, strand)
+{
+    strand <- .normargStrand(strand, length(x))
+    GRanges(seqnames=names(x), ranges=unname(x), strand=strand)
+}
+
+.newGRanges <- function(names, strand)
 {
     if (is(names, "GRanges")) {
-        if (!identical(c(start, end, width, strand), c(NA, NA, NA, "+")))
-            stop("'start', 'end', 'width' and 'strand' cannot be ",
-                 "specified when 'names' is a GRanges object")
+        if (!identical(strand, "+"))
+            stop("'strand' cannot be specified ",
+                 "when 'names' is a GRanges object")
         return(names)
     }
     if (is(names, "RangedData")) {
-        if (!identical(c(start, end, width), c(NA, NA, NA)))
-            stop("'start', 'end' and 'width' cannot be ",
-                 "specified when 'names' is a RangedData object")
         if ("strand" %in% colnames(names)) {
             if (!identical(strand, "+"))
                 stop("'strand' cannot be specified ",
@@ -50,22 +85,17 @@
         }
         return(as(names, "GRanges"))
     }
-    if (is(names, "RangesList")) {
-        if (!identical(c(start, end, width), c(NA, NA, NA)))
-            stop("'start', 'end' and 'width' cannot be ",
-                 "specified when 'names' is a RangesList object")
+    if (is(names, "RangesList") || is(names, "Ranges")) {
         if (is.null(names(names)))
-            stop("when 'names' is a RangesList object, it must be ",
-                 "named with the sequence names")
-        return(.mkGRangesFromRangesList(names, strand))
+            stop("when 'names' is a RangesList or Ranges object, it must ",
+                 "be named with the sequence names")
+        if (is(names, "RangesList"))
+            ans <- .newGRangesFromNamedRangesList(names, strand)
+        else
+            ans <- .newGRangesFromNamedRanges(names, strand)
+        return(ans)
     } 
-    if (is.factor(names))
-        names <- as.vector(names)
-    if (!is.character(names) || any(is.na(names)))
-        stop("'names' must be a character vector (with no NAs)")
-    ranges <- IRanges(start=start, end=end, width=width)
-    strand <- .normargStrand(strand, length(ranges))
-    GRanges(seqnames=names, ranges=ranges, strand)
+    stop("invalid 'names'")
 }
 
 .dropUnusedGRangesSeqnamesLevels <- function(x)
@@ -135,7 +165,7 @@
                                as.factor(seqnames(granges)))
 }
 
-.extractSpecialSeq <- function(x, name, start, width, strand)
+.extractSpecialSeq <- function(x, name, start, end, width, strand)
 {
     nhits <- 0L
     for (mseqname in mseqnames(x)) {
@@ -167,12 +197,37 @@
                       start <- start(granges)[i]
                       width <- width(granges)[i]
                       strand <- as.character(strand(granges))[i]
-                      .extractSpecialSeq(x, name, start, width, strand)
+                      .extractSpecialSeq(x, name, start, NA, width, strand)
                   }
            )
     ## Inefficient way to turn a list of DNAString objects into a DNAStringSet
     ## object. TODO: Find a better way (then maybe make this a "DNAStringSet"
     ## method for list objects).
+    if (length(ans) == 0L)
+        return(DNAStringSet())
+    subject <- do.call(xscat, ans)
+    DNAStringSet(successiveViews(subject, elementLengths(ans)))
+}
+
+.extractSpecialSeqsFromBSgenome2 <- function(x, names,
+                                             start, end, width, strand)
+{
+    ans <- lapply(seq_len(length(names)),
+                  function(i)
+                  {
+                      name <- names[i]
+                      start <- start[i]
+                      end <- end[i]
+                      width <- width[i]
+                      strand <- as.character(strand(granges))[i]
+                      BSgenome:::.extractSpecialSeq(x, name, start, end, width, strand)
+                  }
+           )
+    ## Inefficient way to turn a list of DNAString objects into a DNAStringSet
+    ## object. TODO: Find a better way (then maybe make this a "DNAStringSet"
+    ## method for list objects).
+    if (length(ans) == 0L)
+        return(DNAStringSet())
     subject <- do.call(xscat, ans)
     DNAStringSet(successiveViews(subject, elementLengths(ans)))
 }
@@ -185,19 +240,48 @@ setMethod("getSeq", "BSgenome",
     {
         if (!isTRUEorFALSE(as.character))
             stop("'as.character' must be TRUE or FALSE")
-        if (missing(names))
-            names <- seqnames(x)
-        granges <- .mkGRanges(names, start, end, width, strand)
-        seqnames <- as.character(seqnames(granges))
-        is_special <- !(seqnames %in% seqnames(x))
-        if (any(is_special)) {
-            ans <- rep.int(DNAStringSet(""), length(is_special))
-            ans[is_special] <-
-                .extractSpecialSeqsFromBSgenome(x, granges[is_special])
-            granges <- .dropUnusedGRangesSeqnamesLevels(granges[!is_special])
-            ans[!is_special] <- .extractSeqsFromBSgenome(x, granges)
+        if (missing(names) || is.factor(names) || is.character(names)) {
+            if (missing(names))
+                names <- seqnames(x)
+            else if (is.factor(names))
+                names <- as.character(names)
+            args <- .normGetSeqArgs(names, start, end, width, strand)
+            is_not_special <- args$names %in% seqnames(x)
+            is_special <- !is_not_special
+            ans <- rep.int(DNAStringSet(""), length(args$names))
+            ans[is_special] <- .extractSpecialSeqsFromBSgenome2(x,
+                                   args$names[is_special],
+                                   args$start[is_special],
+                                   args$end[is_special],
+                                   args$width[is_special],
+                                   args$strand[is_special])
+            granges <- .newGRangesFromGetSeqArgs(seqlengths(x),
+                           args$names[is_not_special],
+                           args$start[is_not_special],
+                           args$end[is_not_special],
+                           args$width[is_not_special],
+                           args$strand[is_not_special])
+            ans[is_not_special] <- .extractSeqsFromBSgenome(x, granges)
+            if (length(ans) == 1L)
+                ans <- ans[[1L]]  # turn 1st and unique element into DNAString
         } else {
-            ans <- .extractSeqsFromBSgenome(x, granges)
+            if (!identical(c(start, end, width), c(NA, NA, NA)))
+                stop("'start', 'end' and 'width' cannot only be specified ",
+                     "when 'names' is missing or a character vector/factor")
+            granges <- .newGRanges(names, strand)
+            seqnames <- as.character(seqnames(granges))
+            is_not_special <- seqnames %in% seqnames(x)
+            is_special <- !is_not_special
+            if (any(is_special)) {
+                ans <- rep.int(DNAStringSet(""), length(is_special))
+                ans[is_special] <-
+                    .extractSpecialSeqsFromBSgenome(x, granges[is_special])
+                granges <- .dropUnusedGRangesSeqnamesLevels(
+                               granges[is_not_special])
+                ans[is_not_special] <- .extractSeqsFromBSgenome(x, granges)
+            } else {
+                ans <- .extractSeqsFromBSgenome(x, granges)
+            }
         }
         if (as.character)
             ans <- as.character(ans)
