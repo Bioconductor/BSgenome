@@ -1,6 +1,6 @@
 import(methods)
 import(IRanges)
-importFrom(GenomicRanges, seqnames, seqlengths, strand)
+import(GenomicRanges)
 import(Biostrings)
 
 exportClasses(
