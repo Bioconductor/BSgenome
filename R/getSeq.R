@@ -77,8 +77,8 @@
     if (is(names, "RangedData")) {
         if ("strand" %in% colnames(names)) {
             if (!identical(strand, "+"))
-                stop("'strand' cannot be specified ",
-                     "when 'names' is a stranded RangedData object")
+                stop("'strand' cannot be specified when 'names' ",
+                     "is a RangedData object with a strand column")
         } else {
             strand <- Rle(strand(.normargStrand(strand, length(names))))
             values(names) <- DataFrame(strand=strand)
@@ -87,8 +87,8 @@
     }
     if (is(names, "RangesList") || is(names, "Ranges")) {
         if (is.null(names(names)))
-            stop("when 'names' is a RangesList or Ranges object, it must ",
-                 "be named with the sequence names")
+            stop("when 'names' is a RangesList or Ranges object, ",
+                 "it must be named with the sequence names")
         if (is(names, "RangesList"))
             ans <- .newGRangesFromNamedRangesList(names, strand)
         else

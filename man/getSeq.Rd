@@ -6,10 +6,9 @@
 \title{getSeq}
 
 \description{
-   A convenience function for extracting a set of sequences (or
-   subsequences) from a \link[BSgenome:BSgenome-class]{BSgenome} or
-   other object. This man page 
-   specifically documents the \link[BSgenome:BSgenome-class]{BSgenome} method.
+   A function for extracting a set of sequences (or subsequences) from
+   a \link{BSgenome} object or other sequence container. This man page 
+   specifically documents the method for \link{BSgenome} objects.
 }
 
 \usage{
@@ -21,85 +20,113 @@
 
 \arguments{
   \item{x}{
-    A \code{\link{BSgenome}} object.
+    A \link{BSgenome} object.
     See the \code{\link{available.genomes}} function for how
     to install a genome.
   }
   \item{names}{
-    The names of the sequences to extract from \code{x}, or a
-    \code{RangedData} or \code{RangesList} object.
-    If missing, then \code{seqnames(x)} is used.
+    The names of the sequences in \code{x} from where to extract the
+    subsequences, or a \link[GenomicRanges]{GRanges} object,
+    or a \link[IRanges]{RangedData} object,
+    or a named \link[IRanges]{RangesList} object,
+    or a named \link[IRanges]{Ranges} object.
+    The \link[IRanges]{RangesList} or \link[IRanges]{Ranges} object
+    must be named according to the sequences in \code{x} from where
+    to extract the subsequences.
+
+    If \code{names} is missing, then \code{seqnames(x)} is used.
     
     See \code{?`\link{seqnames,BSgenome-method}`} and
     \code{?`\link{mseqnames,BSgenome-method}`} to get 
     the list of single sequences and multiple sequences (respectively)
     contained in \code{x}.
-
-    Here is how the lookup between the names passed to the \code{names}
-    argument and the sequences in \code{x} is performed.
-    For each \code{name} in \code{names}:
-    (1) if \code{x} contains a single sequence with that name
-    then this sequence is returned;
-    (2) otherwise the names of all the elements in all the multiple
-    sequences are searched: \code{name} is treated as a regular
-    expression and \code{\link[base]{grep}} is used for this search.
-    If exactly one sequence is found, then it's returned, otherwise an
-    error is raised.
-
-    If \code{names} is a \code{RangedData} or \code{RangesList}, the
-    \code{space}, \code{start}, and \code{width} are extracted and
-    treated as the \code{names}, \code{start} and \code{width}
-    arguments, respectively. In the case of a \code{RangedData}, the
-    \dQuote{strand} column, if any, is extracted and overrides the
-    \code{strand} argument. If there is no \dQuote{strand} column, all
-    features are assumed to be on the positive strand. A warning is
-    emitted if any of the overridden arguments is passed to the
-    function.
   }
   \item{start, end, width}{
-    Vector of integers (eventually with NAs). Overridden if \code{names}
-    is a \code{RangedData} or \code{RangesList}.
+    Vector of integers (eventually with NAs) specifying the locations
+    of the subsequences to extract.
+    These are not needed (and therefore it's an error to supply them)
+    when \code{names} is a \link[GenomicRanges]{GRanges},
+    \link[IRanges]{RangedData}, \link[IRanges]{RangesList}
+    or \link[IRanges]{Ranges} object.
   }
   \item{strand}{
-    A vector containing \code{+}s or/and \code{-}s. Overridden if
-    \code{names} is a \code{RangedData}.
+    A vector containing \code{"+"}s or/and \code{"-"}s.
+    This is not needed (and therefore it's an error to supply it)
+    when \code{names} is a \link[GenomicRanges]{GRanges} object
+    or a \link[IRanges]{RangedData} object with a strand column.
   }
   \item{as.character}{
     \code{TRUE} or \code{FALSE}. Should the extracted sequences
     be returned in a standard character vector?
   }
-
   \item{...}{Additional arguments. (Currently ignored.)}
 }
 
 \details{
-  The \code{names}, \code{start}, \code{end}, \code{width} and \code{strand}
-  arguments are expanded cyclically to the length of the longest provided
-  none are of zero length.
+  L, the number of sequences to extract, is determined as follow:
+  \itemize{
+  \item If \code{names} is a \link[GenomicRanges]{GRanges} or
+        \link[IRanges]{Ranges} object then L = \code{length(names)}.
+  \item If \code{names} is a \link[IRanges]{RangedData} object
+        then L = \code{nrow(names)}.
+  \item If \code{names} is a \link[IRanges]{RangesList} object
+        then L = \code{length(unlist(names))}.
+  \item Otherwise, L is the length of the longest of \code{names},
+        \code{start}, \code{end} and \code{width} and all these
+        arguments are recycled to this length.
+        \code{NA}s and negative values in these 3 arguments are
+        solved according to the rules of the SEW (Start/End/Width)
+        interface (see \code{?\link[IRanges]{solveUserSEW}} for
+        the details).
+  }
+
+  If \code{names} is neither a \link[GenomicRanges]{GRanges} object
+  or a \link[IRanges]{RangedData} object with a strand column,
+  then it is also recycled to length L.
+
+  Here is how the lookup between the names passed to the \code{names}
+  argument and the sequences in \code{x} is performed.
+  For each \code{name} in \code{names}:
+  \itemize{
+  \item (1): If \code{x} contains a single sequence with that name
+        then this sequence is used for extraction;
+  \item (2): Otherwise the names of all the elements in all the
+        multiple sequences are searched: \code{name} is treated
+        as a regular expression and \code{\link[base]{grep}} is
+        used for this search. If exactly one sequence is found,
+        then it is used for extraction, otherwise an error is raised.
+  }
 }
 
 \value{
-  A standard character vector when \code{as.character=TRUE}.
-  Note that when \code{as.character=TRUE}, then the masks that
-  are defined on top of the sequences to extract are ignored
-  (i.e. dropped) if any (see \code{?`\link[Biostrings]{MaskedXString-class}`}
-  for more information about masked sequences).
+  A character vector of length L when \code{as.character=TRUE}.
 
-  A \link[Biostrings:DNAString-class]{DNAString} or
-  \link[Biostrings:MaskedXString-class]{MaskedDNAString} 
+  A \link[Biostrings]{DNAString} or \link[Biostrings]{DNAStringSet}
   object when \code{as.character=FALSE}.
-  Note that \code{as.character=FALSE} is not supported yet when extracting
-  more than one sequence.
+  More precisely the returned value is a \link[Biostrings]{DNAString}
+  object if L = 1 and \code{names} is not a \link[GenomicRanges]{GRanges},
+  \link[IRanges]{RangedData}, \link[IRanges]{RangesList} or
+  \link[IRanges]{Ranges} object.
+  Otherwise it's a \link[Biostrings]{DNAStringSet} object.
 }
 
 \note{
-  Be aware that using \code{as.character=TRUE} can be very inefficient
-  when the returned character vector contains very long strings
-  (> 1 million letters) or is itself a long vector (> 10000 strings).
+  The default value for the \code{as.character} argument is \code{TRUE}
+  even though \code{getSeq} is much more efficient (in terms of speed
+  and memory usage) when used with \code{as.character=FALSE}.
 
-  \code{getSeq} is much more efficient when used with
-  \code{as.character=FALSE} but this works only for extracting
-  one sequence at a time for now.
+  Be aware that using \code{as.character=TRUE} can be very inefficient
+  when extracting a high number of sequences (hundreds of thousands)
+  or long sequences (> 1 million letters).
+
+  For this reason the plan is to change the default value to \code{FALSE}
+  in the near future.
+
+  Note that the masks in \code{x}, if any, are always ignored. In other
+  words, masked regions in the genome are extracted in the same way as
+  unmasked regions (this is achieved by dropping the masks before extraction).
+  See \code{?`\link[Biostrings]{MaskedXString-class}`} for more
+  information about masked sequences.
 }
 
 \author{H. Pages; improvements suggested by Matt Settles and others}
@@ -118,6 +145,10 @@
 }
 
 \examples{
+  ## ---------------------------------------------------------------------
+  ## A. EXTRACTING A FEW SEQUENCES FROM THE C. elegans GENOME
+  ## ---------------------------------------------------------------------
+
   # Load the Caenorhabditis elegans genome (UCSC Release ce2):
   library(BSgenome.Celegans.UCSC.ce2)
 
@@ -162,6 +193,33 @@
 
   getSeq(Celegans, "NM_058280_up_5000",
          start=-1000, as.character=FALSE) == s2  # TRUE
+
+  ## ---------------------------------------------------------------------
+  ## B. RANDOMLY EXTRACTING A HIGH NUMBER OF 40-mers FROM THE C. elegans
+  ##    GENOME
+  ## ---------------------------------------------------------------------
+  extractRandomReads <- function(x, density, readlength)
+  {
+      if (!is.integer(readlength))
+          readlength <- as.integer(readlength)
+      start <- lapply(seqnames(x),
+                      function(name)
+                      {
+                        seqlength <- seqlengths(x)[name]
+                        sample(seqlength - readlength + 1L,
+                               seqlength * density,
+                               replace=TRUE)
+                      })
+      names <- rep.int(seqnames(x), elementLengths(start))
+      ranges <- IRanges(start=unlist(start), width=readlength)
+      strand <- strand(sample(c("+", "-"), length(names), replace=TRUE))
+      gr <- GRanges(seqnames=names, ranges=ranges, strand=strand)
+      getSeq(x, gr, as.character=FALSE)
+  }
+  library(BSgenome.Celegans.UCSC.ce2)
+  ## With a density of 1 read every 100 genome bases, the total number of
+  ## extracted reads is about 1 million:
+  rndreads <- extractRandomReads(Celegans, 0.01, 40)
 }
 
 \keyword{manip}
