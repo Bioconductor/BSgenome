@@ -17,7 +17,7 @@
             stop("cannot recycle zero-length 'strand'")
         strand <- IRanges:::recycleVector(strand, length)
     }
-    Rle(strand(strand))
+    strand
 }
 
 ### Assumes 'names' is a character vector.
@@ -80,7 +80,7 @@
                 stop("'strand' cannot be specified ",
                      "when 'names' is a stranded RangedData object")
         } else {
-            strand <- .normargStrand(strand, length(names))
+            strand <- Rle(strand(.normargStrand(strand, length(names))))
             values(names) <- DataFrame(strand=strand)
         }
         return(as(names, "GRanges"))
@@ -141,11 +141,14 @@
 .extractSeqsFromBSgenome <- function(x, granges)
 {
     ## Check that 'seqlengths(granges)' is compatible with 'x'.
-    if (!all(names(seqlengths(granges)) %in% names(seqlengths(x))))
-        stop("sequence names in GRanges are incompatible with BSgenome object")
-    if (!all(is.na(seqlengths(granges)))
-     && !identical(seqlengths(granges), seqlengths(x)[names(seqlengths(granges))]))
-        stop("sequence lengths in GRanges are incompatible with BSgenome object")
+    #if (!all(names(seqlengths(granges)) %in% names(seqlengths(x))))
+    #    stop("sequence names in GRanges are incompatible with BSgenome object")
+    #if (!all(is.na(seqlengths(granges)))
+    # && !identical(seqlengths(granges),
+    #               seqlengths(x)[names(seqlengths(granges))]))
+    #    stop("sequence lengths in GRanges are incompatible ",
+    #         "with BSgenome object")
+
     ## Split 'granges' by sequence names.
     grglist <- split(granges, seqnames(granges))
     ## Loop over the sequence names and extract the ranges.
@@ -188,6 +191,18 @@
     stop("'strand' elements must be \"+\" or \"-\"")
 }
 
+### Assumes 'x' is a list of DNAString objects and turns it into a
+### DNAStringSet object.
+### TODO: Find a better way to do this (current implementation is not very
+### efficient). Also maybe make this a "DNAStringSet" method for list objects.
+.listOfDNAStringToDNAStringSet <- function(x)
+{
+    if (length(x) == 0L)
+        return(DNAStringSet())
+    subject <- do.call(xscat, x)
+    DNAStringSet(successiveViews(subject, elementLengths(x)))
+}
+
 .extractSpecialSeqsFromBSgenome <- function(x, granges)
 {
     ans <- lapply(seq_len(length(granges)),
@@ -200,36 +215,18 @@
                       .extractSpecialSeq(x, name, start, NA, width, strand)
                   }
            )
-    ## Inefficient way to turn a list of DNAString objects into a DNAStringSet
-    ## object. TODO: Find a better way (then maybe make this a "DNAStringSet"
-    ## method for list objects).
-    if (length(ans) == 0L)
-        return(DNAStringSet())
-    subject <- do.call(xscat, ans)
-    DNAStringSet(successiveViews(subject, elementLengths(ans)))
+    .listOfDNAStringToDNAStringSet(ans)
 }
 
 .extractSpecialSeqsFromBSgenome2 <- function(x, names,
                                              start, end, width, strand)
 {
     ans <- lapply(seq_len(length(names)),
-                  function(i)
-                  {
-                      name <- names[i]
-                      start <- start[i]
-                      end <- end[i]
-                      width <- width[i]
-                      strand <- as.character(strand(granges))[i]
-                      BSgenome:::.extractSpecialSeq(x, name, start, end, width, strand)
-                  }
+               function(i)
+                   .extractSpecialSeq(x, names[i],
+                                      start[i], end[i], width[i], strand[i])
            )
-    ## Inefficient way to turn a list of DNAString objects into a DNAStringSet
-    ## object. TODO: Find a better way (then maybe make this a "DNAStringSet"
-    ## method for list objects).
-    if (length(ans) == 0L)
-        return(DNAStringSet())
-    subject <- do.call(xscat, ans)
-    DNAStringSet(successiveViews(subject, elementLengths(ans)))
+    .listOfDNAStringToDNAStringSet(ans)
 }
 
 setGeneric("getSeq", function(x, ...) standardGeneric("getSeq"))
@@ -240,11 +237,15 @@ setMethod("getSeq", "BSgenome",
     {
         if (!isTRUEorFALSE(as.character))
             stop("'as.character' must be TRUE or FALSE")
-        if (missing(names) || is.factor(names) || is.character(names)) {
-            if (missing(names))
-                names <- seqnames(x)
-            else if (is.factor(names))
-                names <- as.character(names)
+        if (missing(names)) {
+            names <- seqnames(x)
+        } else {
+            if (is(names, "Rle"))
+                names <- as.vector(names)
+            if (is.factor(names))
+                names <- as.vector(names)
+        }
+        if (is.character(names)) {
             args <- .normGetSeqArgs(names, start, end, width, strand)
             is_not_special <- args$names %in% seqnames(x)
             is_special <- !is_not_special
@@ -266,8 +267,9 @@ setMethod("getSeq", "BSgenome",
                 ans <- ans[[1L]]  # turn 1st and unique element into DNAString
         } else {
             if (!identical(c(start, end, width), c(NA, NA, NA)))
-                stop("'start', 'end' and 'width' cannot only be specified ",
-                     "when 'names' is missing or a character vector/factor")
+                stop("'start', 'end' and 'width' can only be specified when ",
+                     "'names' is either missing, a character vector/factor, ",
+                     "a character-Rle, or a factor-Rle")
             granges <- .newGRanges(names, strand)
             seqnames <- as.character(seqnames(granges))
             is_not_special <- seqnames %in% seqnames(x)
