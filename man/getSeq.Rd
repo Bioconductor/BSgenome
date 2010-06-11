@@ -12,10 +12,10 @@
 }
 
 \usage{
-  getSeq(x, ...)
+getSeq(x, ...)
 
-  \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA,
-                strand="+", as.character=TRUE) 
+\S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA,
+                 strand="+", as.character=TRUE) 
 }
 
 \arguments{
@@ -133,20 +133,23 @@
 
 \seealso{
   \code{\link{available.genomes}},
-  \code{\link{BSgenome-class}},
-  \code{\link{seqnames,BSgenome-method}},
-  \code{\link{mseqnames,BSgenome-method}},
-  \code{\link{[[,BSgenome-method}},
-  \code{\link[base]{grep}},
-  \code{\link[IRanges:DataTable-class]{subseq,DataTable}},
-  \code{\link[IRanges:Sequence-class]{subseq,Sequence}},
-  \code{\link[Biostrings:DNAString-class]{DNAString}},
-  \code{\link[Biostrings:MaskedXString-class]{MaskedDNAString}}
+  \link{BSgenome-class},
+  \link{seqnames,BSgenome-method},
+  \link{mseqnames,BSgenome-method},
+  \link{[[,BSgenome-method},
+  \link[Biostrings]{DNAString-class},
+  \link[Biostrings]{MaskedDNAString-class},
+  \link[GenomicRanges]{GRanges-class},
+  \link[IRanges]{RangesList-class},
+  \link[IRanges]{Ranges-class},
+  \link[IRanges]{subseq,DataTable},
+  \link[IRanges]{subseq,Sequence},
+  \code{\link[base]{grep}}
 }
 
 \examples{
   ## ---------------------------------------------------------------------
-  ## A. EXTRACTING A FEW SEQUENCES FROM THE C. elegans GENOME
+  ## A. EXTRACTING A SMALL NUMBER OF SEQUENCES FROM THE C. elegans GENOME
   ## ---------------------------------------------------------------------
 
   # Load the Caenorhabditis elegans genome (UCSC Release ce2):
