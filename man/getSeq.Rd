@@ -82,7 +82,7 @@ getSeq(x, ...)
 
   If \code{names} is neither a \link[GenomicRanges]{GRanges} object
   or a \link[IRanges]{RangedData} object with a strand column,
-  then it is also recycled to length L.
+  then the \code{strand} argument is also recycled to length L.
 
   Here is how the lookup between the names passed to the \code{names}
   argument and the sequences in \code{x} is performed.
@@ -198,7 +198,7 @@ getSeq(x, ...)
          start=-1000, as.character=FALSE) == s2  # TRUE
 
   ## ---------------------------------------------------------------------
-  ## B. RANDOMLY EXTRACTING A HIGH NUMBER OF 40-mers FROM THE C. elegans
+  ## B. RANDOMLY EXTRACTING A HIGH NUMBER OF 40-MERS FROM THE C. elegans
   ##    GENOME
   ## ---------------------------------------------------------------------
   extractRandomReads <- function(x, density, readlength)
@@ -221,8 +221,39 @@ getSeq(x, ...)
   }
   library(BSgenome.Celegans.UCSC.ce2)
   ## With a density of 1 read every 100 genome bases, the total number of
-  ## extracted reads is about 1 million:
+  ## extracted 40-mers is about 1 million:
   rndreads <- extractRandomReads(Celegans, 0.01, 40)
+  ## Notes:
+  ## - The short sequences in 'rndreads' can be seen as the result of a
+  ##   simulated high-throughput sequencing experiment. A non-realistic
+  ##   one though because:
+  ##     (a) It assumes that the underlying technology is perfect (the
+  ##         generated reads have no technology induced errors).
+  ##     (b) It assumes that the sequenced genome is exactly the same as the
+  ##         reference genome.
+  ##     (c) The simulated reads can contain IUPAC ambiguity letters only
+  ##         because the reference genome contains them. In a real
+  ##         high-throughput sequencing experiment, the sequenced genome
+  ##         of course doesn't contain those letters, but the sequencer
+  ##         can introduce them in the generated reads to indicate ambiguous
+  ##         base-calling.
+  ## - Those reads are coming from the plus and minus strands of the
+  ##   chromosomes.
+  ## - With a density of 0.01 and the reads being only 40-base long, the
+  ##   average coverage of the genome is only 0.4 which is low. The total
+  ##   number of reads is about 1 million and it takes less than 10 sec.
+  ##   to generate them.
+  ## - A higher coverage can be achieved by using a higher density and/or
+  ##   longer reads. For example, with a density of 0.1 and 100-base reads
+  ##   the average coverage is 10. The total number of reads is about 10
+  ##   millions and it takes less than 1 minute to generate them.
+  ## - Those reads could easily be mapped back to the reference by using
+  ##   an efficient matching tool like matchPDict() for performing exact
+  ##   matching (see ?matchPDict for more information). Typically, a
+  ##   small percentage of the reads (4 to 5\% in our case) will hit the
+  ##   reference at multiple locations. This is especially true for such
+  ##   short reads, and, in a lower proportion, is still true for longer
+  ##   reads, even for reads as long as 300 bases.
 }
 
 \keyword{manip}
