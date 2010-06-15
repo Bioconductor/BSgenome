@@ -138,12 +138,12 @@ getSeq(x, ...)
   \link{mseqnames,BSgenome-method},
   \link{[[,BSgenome-method},
   \link[Biostrings]{DNAString-class},
+  \link[Biostrings]{DNAStringSet-class},
   \link[Biostrings]{MaskedDNAString-class},
   \link[GenomicRanges]{GRanges-class},
-  \link[IRanges]{RangesList-class},
   \link[IRanges]{Ranges-class},
-  \link[IRanges]{subseq,DataTable},
-  \link[IRanges]{subseq,Sequence},
+  \link[IRanges]{RangesList-class},
+  \link[IRanges]{subseq,XVector-method},
   \code{\link[base]{grep}}
 }
 
@@ -229,14 +229,14 @@ getSeq(x, ...)
   ##   one though because:
   ##     (a) It assumes that the underlying technology is perfect (the
   ##         generated reads have no technology induced errors).
-  ##     (b) It assumes that the sequenced genome is exactly the same as the
-  ##         reference genome.
+  ##     (b) It assumes that the sequenced genome is exactly the same as
+  ##         the reference genome.
   ##     (c) The simulated reads can contain IUPAC ambiguity letters only
   ##         because the reference genome contains them. In a real
   ##         high-throughput sequencing experiment, the sequenced genome
   ##         of course doesn't contain those letters, but the sequencer
-  ##         can introduce them in the generated reads to indicate ambiguous
-  ##         base-calling.
+  ##         can introduce them in the generated reads to indicate
+  ##         ambiguous base-calling.
   ## - Those reads are coming from the plus and minus strands of the
   ##   chromosomes.
   ## - With a density of 0.01 and the reads being only 40-base long, the

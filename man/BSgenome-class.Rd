@@ -53,10 +53,8 @@
     }
     \item{\code{seqnames(x)}}{
       Return the index of the single sequences contained in \code{x}.
-      Each single sequence is stored in an
-      \code{\link[Biostrings:XString-class]{XString}} 
-      or \code{\link[Biostrings:MaskedXString-class]{MaskedXString}} object and
-      typically comes 
+      Each single sequence is stored in a \link[Biostrings]{DNAString}
+      or \link[Biostrings]{MaskedDNAString} object and typically comes 
       from a source file (FASTA) with a single record.
       The names returned by \code{seqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
@@ -65,26 +63,23 @@
     \item{\code{seqlengths(x)}}{
       Return the lengths of the single sequences contained in \code{x}.
 
-      See \code{?`\link[Biostrings:XString-class]{length}`} and
-      \code{?`\link[Biostrings:MaskedXString-class]{length}`} for
-      the definition of the length of an
-      \code{\link[Biostrings:XString-class]{XString}} 
-      or \code{\link[Biostrings:MaskedXString-class]{MaskedXString}} object.
+      See \code{?`\link[IRanges]{length,XVector-method}`} and
+      \code{?`\link[Biostrings]{length,MaskedXString-method}`} for
+      the definition of the length of a \link[Biostrings]{DNAString}
+      or \link[Biostrings]{MaskedDNAString} object.
       Note that the length of a masked sequence
-      (\code{\link[Biostrings]{MaskedXString-class}} object) is not
-      affected by the 
-      current set of active masks but the \code{nchar} method for
-      \code{\link[Biostrings]{MaskedXString-class}} is.
+      (\link[Biostrings]{MaskedXString} object) is not
+      affected by the current set of active masks but the \code{nchar}
+      method for \link[Biostrings]{MaskedXString} objects is.
 
       \code{names(seqlengths(x))} is guaranteed to be identical to
       \code{seqnames(x)}.
     }
     \item{\code{mseqnames(x)}}{
       Return the index of the multiple sequences contained in \code{x}.
-      Each multiple sequence is stored in an
-      \code{\link[Biostrings]{XStringSet-class}}
-      object and typically comes from a source file (FASTA) with multiple
-      records.
+      Each multiple sequence is stored in a
+      \link[Biostrings]{DNAStringSet} object and typically comes from
+      a source file (FASTA) with multiple records.
       The names returned by \code{mseqnames(x)} usually reflect the names
       of those source files but a common prefix or suffix was eventually
       removed in order to keep them as short as possible.
@@ -150,16 +145,14 @@
 
 \seealso{
   \code{\link[BSgenome]{available.genomes}},
-  \code{\link[BSgenome]{GenomeDescription-class}},
-  \code{\link[BSgenome]{BSgenome-utils}},
-  \code{\link[Biostrings]{XString-class}},
-  \code{\link[Biostrings]{MaskedXString-class}},
-  \code{\link[Biostrings]{XStringSet-class}},
-  \code{\link[BSgenome]{injectSNPs}},
-  \code{\link[IRanges:DataTable-class]{subseq,DataTable}},
-  \code{\link[IRanges:Sequence-class]{subseq,Sequence}},
+  \link[BSgenome]{GenomeDescription-class},
+  \link[BSgenome]{BSgenome-utils},
+  \link[Biostrings]{DNAString-class},
+  \link[Biostrings]{DNAStringSet-class},
+  \link[Biostrings]{MaskedDNAString-class},
   \code{\link[BSgenome]{getSeq}},
-  \code{\link[Biostrings]{matchPattern}},
+  \code{\link[BSgenome]{injectSNPs}},
+  \link[IRanges]{subseq,XVector-method},
   \code{\link[base]{rm}},
   \code{\link[base]{gc}}
 }
