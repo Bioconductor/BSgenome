@@ -1,0 +1,25 @@
+Package: BSgenome.Celegans.UCSC.ce6
+Title: Caenorhabditis elegans (Worm) full genome (UCSC version ce6)
+Description: Caenorhabditis elegans (Worm) full genome as provided by UCSC (ce6, May 2008) and stored in Biostrings objects.
+Version: 1.3.16
+organism: Caenorhabditis elegans
+species: Worm
+provider: UCSC
+provider_version: ce6
+release_date: May 2008
+release_name: WormBase v. WS190
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/ce6/bigZips/
+organism_biocview: Caenorhabditis_elegans
+BSgenomeObjname: Celegans
+seqnames: paste("chr", c("I", "II", "III", "IV", "V", "X", "M"), sep="")
+mseqnames: c("upstream1000", "upstream2000", "upstream5000")
+nmask_per_seq: 0
+SrcDataFiles1: chromFa.tar.gz
+	upstream1000.fa.gz
+	upstream2000.fa.gz
+	upstream5000.fa.gz
+	from ftp://hgdownload.cse.ucsc.edu/goldenPath/ce6/bigZips/
+PkgExamples: Celegans
+	seqlengths(Celegans)
+	Celegans$chrI  # same as Celegans[["chrI"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Celegans.UCSC.ce6/seqs
