@@ -1,0 +1,12 @@
+Downloaded the danRer6.fa.gz file on June 17, 2010
+
+11724 FASTA records:
+
+o 26 chromosome sequences (1, 2, ..., 25, M)
+
+o 11418 Zv8_NA* sequences
+
+o 280 Zv8_scaffold* sequences
+
+Use the splitbigfasta.R script to split danRer6.fa
+
