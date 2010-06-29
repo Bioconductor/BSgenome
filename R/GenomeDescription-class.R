@@ -91,6 +91,10 @@ GenomeDescription <- function(organism, species,
                               provider, provider_version,
                               release_date, release_name)
 {
+    if (identical(organism, "NA")) organism <- NA_character_
+    if (identical(species, "NA")) species <- NA_character_
+    if (identical(release_date, "NA")) release_date <- NA_character_
+    if (identical(release_name, "NA")) release_name <- NA_character_
     new("GenomeDescription",
         organism=organism,
         species=species,

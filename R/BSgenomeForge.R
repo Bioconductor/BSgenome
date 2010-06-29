@@ -462,7 +462,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             stop("'symvals' contains duplicated symbols")
         }
         ## All symvals should by single strings (non-NA)
-        is_OK <- sapply(symvals, function(val) {isSingleString(val)})
+        is_OK <- sapply(symvals, isSingleString)
         if (!all(is_OK)) {
             bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
             stop("values for symbols ", bad_syms, " are not single strings")

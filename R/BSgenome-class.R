@@ -186,7 +186,7 @@ setMethod("seqlengths", "BSgenome",
         if (length(x@seqlengths) == 1 && is.na(x@seqlengths)) {
             objname <- "seqlengths"
             x@seqlengths <- .loadSingleObject(objname, x@seqs_dir, x@seqs_pkgname)
-            if (!identical(names(x@seqlengths), x@seqnames)) {
+            if (!identical(names(x@seqlengths), seqnames(x))) {
                 filepath <- .getObjFilepath(objname, x@seqs_dir)
                 stop("sequence names found in file '", filepath, "' are not ",
                      "identical to the names returned by seqnames(). ",
@@ -284,8 +284,10 @@ setMethod("show", "BSgenome",
             }
             if (col != 1) cat("\n")
         }
-        cat(object@species, "genome\n")
-        cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
+        if (!is.na(object@species)) {
+            cat(object@species, "genome\n")
+            cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
+        }
         callNextMethod()
         if (!is.null(SNPlocs_pkgname(object)))
             cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
