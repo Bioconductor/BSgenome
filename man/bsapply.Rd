@@ -75,7 +75,7 @@
 
 
   ## Examples on how to use the masks
-  library("BSgenome.Hsapiens.UCSC.hg18")
+  library("BSgenome.Hsapiens.UCSC.hg19")
   ## I can make things verbose if I want to see the chromosomes getting processed.
   options(verbose=TRUE)
   ## For the 1st example, lets use default masks

@@ -527,7 +527,7 @@ For a given package, all the sequences will always have the same number of
 masks.
 
 <<f1>>=
-library(BSgenome.Hsapiens.UCSC.hg18)
+library(BSgenome.Hsapiens.UCSC.hg19)
 chrY <- Hsapiens$chrY
 chrY
 chrM <- Hsapiens$chrM

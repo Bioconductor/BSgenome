@@ -27,15 +27,15 @@
 }
 
 \usage{
-  injectSNPs(x, SNPlocs_pkgname)
+injectSNPs(x, SNPlocs_pkgname)
 
-  SNPlocs_pkgname(x)
-  SNPcount(x)
-  SNPlocs(x, seqname)
+SNPlocs_pkgname(x)
+SNPcount(x)
+SNPlocs(x, seqname)
 
-  ## Related utilities
-  available.SNPs(type=getOption("pkgType"))
-  installed.SNPs()
+## Related utilities
+available.SNPs(type=getOption("pkgType"))
+installed.SNPs()
 }
 
 \arguments{
@@ -60,7 +60,9 @@
 \value{
   \code{injectSNPs} returns a copy of the original genome \code{x} where some
   or all of the single sequences were altered by injecting the SNPs defined in
-  the \code{SNPlocs_pkgname} package.
+  the SNPlocs data package specified thru the \code{SNPlocs_pkgname} argument.
+  The SNPs in the altered genome are represented by an IUPAC ambiguity code
+  at each SNP location.
 
   \code{SNPlocs_pkgname}, \code{SNPcount} and \code{SNPlocs} return \code{NULL}
   if no SNPs were injected in \code{x} (i.e. if \code{x} is not a
@@ -90,35 +92,47 @@
 
 \seealso{
   \link[BSgenome]{BSgenome-class},
-  \code{\link[Biostrings:replaceLetterAt]{.inplaceReplaceLetterAt}}
+  \code{\link[Biostrings]{IUPAC_CODE_MAP}},
+  \code{\link[Biostrings]{injectHardMask}},
+  \code{\link[Biostrings]{letterFrequencyInSlidingView}},
+  \code{\link[Biostrings]{.inplaceReplaceLetterAt}}
 }
 
 \examples{
-  # What SNPlocs data packages are already installed:
+  ## What SNPlocs data packages are already installed:
   installed.SNPs()
 
-  # What SNPlocs data packages are available:
+  ## What SNPlocs data packages are available:
   available.SNPs()
 
   if (interactive()) {
     ## Make your choice and install with:
     source("http://bioconductor.org/biocLite.R")
-    biocLite("SNPlocs.Hsapiens.dbSNP.20071016")
+    biocLite("SNPlocs.Hsapiens.dbSNP.20100427")
   }
 
   ## Inject SNPs from dbSNP into the Human genome:
-  library(BSgenome.Hsapiens.UCSC.hg18)
+  library(BSgenome.Hsapiens.UCSC.hg19)
   Hsapiens
   SNPlocs_pkgname(Hsapiens)
 
-  HsWithSNPs <- injectSNPs(Hsapiens, "SNPlocs.Hsapiens.dbSNP.20071016")
-  HsWithSNPs  # note the extra "with SNPs injected from ..." line
-  SNPlocs_pkgname(HsWithSNPs)
-  SNPcount(HsWithSNPs)
-  SNPlocs(HsWithSNPs, "chr1")
+  SNP_Hsapiens <- injectSNPs(Hsapiens, "SNPlocs.Hsapiens.dbSNP.20100427")
+  SNP_Hsapiens  # note the extra "with SNPs injected from ..." line
+  SNPlocs_pkgname(SNP_Hsapiens)
+  SNPcount(SNP_Hsapiens)
+  head(SNPlocs(SNP_Hsapiens, "chr1"))
 
   alphabetFrequency(Hsapiens$chr1)
-  alphabetFrequency(HsWithSNPs$chr1)
+  alphabetFrequency(SNP_Hsapiens$chr1)
+
+  ## Find runs of SNPs of length at least 25 in chr1:
+  chr1 <- injectHardMask(SNP_Hsapiens$chr1)
+  ambiguous_letters <- paste(DNA_ALPHABET[5:15], collapse="")
+  lf <- letterFrequencyInSlidingView(chr1, 25, ambiguous_letters)
+  sl <- slice(as.integer(lf), lower=25)
+  v1 <- Views(chr1, start(sl), end(sl)+24)
+  v1
+  max(width(v1))  # length of longest run
 }
 
 \keyword{manip}
