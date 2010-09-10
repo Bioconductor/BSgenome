@@ -125,14 +125,21 @@ installed.SNPs()
   alphabetFrequency(Hsapiens$chr1)
   alphabetFrequency(SNP_Hsapiens$chr1)
 
-  ## Find runs of SNPs of length at least 25 in chr1:
-  chr1 <- injectHardMask(SNP_Hsapiens$chr1)
-  ambiguous_letters <- paste(DNA_ALPHABET[5:15], collapse="")
-  lf <- letterFrequencyInSlidingView(chr1, 25, ambiguous_letters)
-  sl <- slice(as.integer(lf), lower=25)
-  v1 <- Views(chr1, start(sl), end(sl)+24)
-  v1
-  max(width(v1))  # length of longest run
+  ## Find runs of SNPs of length at least 25 in chr1. Might require
+  ## more memory than some platforms can handle (e.g. 32-bit Windows
+  ## and maybe some Mac OS X machines with little memory):
+  is_32bit_windows <- .Platform$OS.type == "windows" &&
+                      .Platform$r_arch == "i386"
+  is_macosx <- substr(R.version$os, start=1, stop=6) == "darwin"
+  if (!is_32bit_windows && !is_macosx) {
+      chr1 <- injectHardMask(SNP_Hsapiens$chr1)
+      ambiguous_letters <- paste(DNA_ALPHABET[5:15], collapse="")
+      lf <- letterFrequencyInSlidingView(chr1, 25, ambiguous_letters)
+      sl <- slice(as.integer(lf), lower=25)
+      v1 <- Views(chr1, start(sl), end(sl)+24)
+      v1
+      max(width(v1))  # length of longest SNP run
+  }
 }
 
 \keyword{manip}
