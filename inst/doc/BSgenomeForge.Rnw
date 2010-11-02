@@ -73,15 +73,12 @@ This document describes the process of forging a \term{BSgenome data package}.
 It is intended for Bioconductor users who want to make a new \term{BSgenome
 data package}, not for regular users of these packages.
 
-In this document, we call \term{target package} the package that will result
-from this process.
-
 Start {\R} (make sure you are using the latest release version), load the
 \Rpackage{BSgenome} package, and use the \Rfunction{available.genomes}
 function to get the list of \term{BSgenome data packages} available
 in the current release version of Bioconductor.
 So you confirm that none of those genomes suits your needs? And you want to
-make your own package? If your answer was yes to these 2 questions, then you've
+make your own package? If your answer is yes to these 2 questions, then you've
 come to the right place.
 
 Requirements:
@@ -101,7 +98,8 @@ Requirements:
 \item Finally, you need to obtain the \term{source data files} of the genome
       that you want to build a package for.
       There are 2 groups of \term{source data files}: (1) the files containing
-      the sequence data and (2) the files containing the mask data.
+      the sequence data (those files are required), and (2) the files
+      containing the mask data (those files are optional).
       For most organisms, these files have been made publicly available on the
       internet by genome providers like UCSC, NCBI, FlyBase, TAIR, etc.
       The next section of this document explains how to obtain and prepare
@@ -112,7 +110,7 @@ Refer to the \textit{R Installation and Administration} manual
 \footnote{\url{http://cran.r-project.org/doc/manuals/R-admin.html}}
 if you need to install {\R} or upgrade your {\R} version,
 and to the \textit{Installation Instructions} page
-\footnote{\url{http://bioconductor.org/docs/install/}}
+\footnote{\url{http://bioconductor.org/install/}}
 on the Bioconductor website if you need to install or update the
 \Rpackage{Biostrings} or \Rpackage{BSgenome} packages.
 
@@ -123,11 +121,15 @@ BSgenomeForge functions are welcome. Please address them to the author
 Bioconductor website \footnote{\url{http://bioconductor.org/}}
 and subscribe to this list if you've not already done so.
 
+In this document, we call \term{target package} the \term{BSgenome
+data package} package that we want to forge.
+
 
 \section{Obtain and prepare the source data files}
 
 As mentioned earlier, there are 2 groups of \term{source data files}: (1) the
-files containing the sequence data and (2) the files containing the mask data.
+files containing the sequence data (required), and (2) the files containing
+the mask data (optional).
 
 \subsection{Sequence data (group 1)}
 
@@ -135,8 +137,26 @@ Group 1 must be FASTA files. You need 1 file per sequence that you
 want to put in the \term{target package}. The name of each file must be of
 the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>} where
 \textit{<seqname>} is the name of the sequence in it and \textit{<prefix>}
-and \textit{<suffix>} are a prefix and a suffix (eventually empty) that is the
-same for all the files.
+and \textit{<suffix>} are a prefix and a suffix (eventually empty) that are
+the same for all the files.
+
+For example the FASTA files available at UCSC in the ``Data set by
+chromosome'' section for Stickleback
+(\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/chromosomes/})
+could already be considered to have names of this form (\texttt{chrI.fa.gz},
+\texttt{chrII.fa.gz}, \texttt{chrIII.fa.gz}, ..., \texttt{chrXXI.fa.gz},
+\texttt{chrM.fa.gz} and \texttt{chrUn.fa.gz}). However, because the files
+will need to be uncompressed after download and before they can be used
+by the forging process, the suffix will need to be set to \texttt{.fa},
+not \texttt{.fa.gz}. Also the prefix here is empty, not \texttt{chr},
+because \texttt{chr} is considered to be part of the sequence names
+(a chromosome naming convention commonly used at UCSC).
+Note that, alternatively, you can download and extract the big
+\texttt{chromFa.tar.gz} tarball located in the ``Full data set'' section
+(aka the \textit{bigZips} folder) for Stickleback
+(\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/}):
+it should contain the same files as the ``Data set by chromosome'' folder.
+
 You can use the \Rfunction{fasta.info} function from the \Rpackage{Biostrings}
 package to see what's in a FASTA file:
 <<>>=
@@ -147,8 +167,9 @@ fasta.info(file)
 
 \subsection{Mask data (group 2)}
 
-What you need for group 2 depends on what built-in masks you want to put
-on each single sequence of the \term{target package}. 
+The mask data are not available for all organisms. What you download exactly
+depends of course on what's available and also on what built-in masks you
+want to have in the \term{target package}.
 4 kinds of built-in masks are currently supported by BSgenomeForge:
 \begin{itemize}
 \item the masks of assembly gaps, aka ``the AGAPS masks'';
@@ -163,38 +184,49 @@ on each single sequence of the \term{target package}.
 For the AGAPS masks, you need UCSC ``gap'' or NCBI ``agp'' files. It can be one
 file per chromosome or a single big file containing the assembly gap information
 for all the chromosomes together. In the former case, the name of each file must
-be of the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>}, like for
-the FASTA files in group 1.
+be of the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>}. Like for
+the FASTA files in group 1, \textit{<seqname>} must be the name of the sequence
+(sequence names for FASTA files and AGAPS masks must match) and
+\textit{<prefix>} and \textit{<suffix>} must be a prefix and a suffix
+(eventually empty) that are the same for all the files (this prefix/suffix
+doesn't need to be, and typically is not, the same as for the FASTA files in
+group 1).
 
 You don't need any file for the AMB masks.
 
-For the RM masks, you need RepeatMasker \code{.out} files. Like for the AGAPS
+For the RM masks, you need RepeatMasker \texttt{.out} files. Like for the AGAPS
 masks, it can be one file per chromosome or a single big file containing the
 RepeatMasker information for all the chromosomes together.
 In the former case, the name of each file must also be of the form
-\textit{<prefix>}\textit{<seqname>}\textit{<suffix>}.
+\textit{<prefix>}\textit{<seqname>}\textit{<suffix>}. Same comments apply
+as for the AGAPS masks above.
 
-For the TRF masks, you need Tandem Repeats Finder \code{.bed} files.
-Again, it can be one file per chromosome (named
-\textit{<prefix>}\textit{<seqname>}\textit{<suffix>}) or a single big file.
+For the TRF masks, you need Tandem Repeats Finder \texttt{.bed} files.
+Again, it can be one file per chromosome or a single big file.
+In the former case, the name of each file must also be of the form
+\textit{<prefix>}\textit{<seqname>}\textit{<suffix>}). Same comments apply
+as for the AGAPS masks above.
+
+Again, for some organisms none of the masks above are available or only some
+of them are.
 
 \subsection{An example}
 
 Here is how the \term{source data files} for the
-\Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package obtained and prepared:
+\Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package were obtained and prepared:
 
 \begin{itemize}
 \item Group 1:
       \begin{itemize}
-      \item Single sequences: file \code{chromFa.tar.gz} was downloaded
-            from the \textit{bigZips} folder
+      \item Single sequences: file \texttt{chromFa.tar.gz} was downloaded
+            from the UCSC \textit{bigZips} folder
             \footnote{\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}}
             for \code{rn4} and extracted with:
             \begin{verbatim}
                 tar zxf chromFa.tar.gz
             \end{verbatim}
-      \item Multiple sequences: files \code{upstream1000.fa.gz},
-            \code{upstream2000.fa.gz} and \code{upstream5000.fa.gz} were
+      \item Multiple sequences: files \texttt{upstream1000.fa.gz},
+            \texttt{upstream2000.fa.gz} and \texttt{upstream5000.fa.gz} were
             downloaded from the same \textit{bigZips} folder and uncompressed
             with:
             \begin{verbatim}
@@ -203,11 +235,11 @@ Here is how the \term{source data files} for the
       \end{itemize}
 \item Group 2:
       \begin{itemize}
-      \item AGAPS masks: all the \code{chr*\_gap.txt.gz} files (UCSC ``gap''
-            files) were downloaded from the \textit{database} folder
+      \item AGAPS masks: all the \texttt{chr*\_gap.txt.gz} files (UCSC ``gap''
+            files) were downloaded from the UCSC \textit{database} folder
             \footnote{\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}}
-            for \code{rn4}. This was done with the standard Unix/Linux \code{ftp}
-            command:
+            for \code{rn4}. This was done with the standard Unix/Linux
+            \code{ftp} command:
             \begin{verbatim}
                 ftp hgdownload.cse.ucsc.edu # login as "anonymous"
                 cd goldenPath/rn4/database
@@ -218,13 +250,13 @@ Here is how the \term{source data files} for the
             \begin{verbatim}
                 for file in chr*_gap.txt.gz; do gunzip $file ; done
             \end{verbatim}
-      \item RM masks: file \code{chromOut.tar.gz} was downloaded from
-            the \textit{bigZips} folder and extracted with:
+      \item RM masks: file \texttt{chromOut.tar.gz} was downloaded from
+            the UCSC \textit{bigZips} folder and extracted with:
             \begin{verbatim}
                 tar zxf chromOut.tar.gz
             \end{verbatim}
-      \item TRF masks: file \code{chromTrf.tar.gz} was downloaded from
-            the \textit{bigZips} folder and extracted with:
+      \item TRF masks: file \texttt{chromTrf.tar.gz} was downloaded from
+            the UCSC \textit{bigZips} folder and extracted with:
             \begin{verbatim}
                 tar zxf chromTrf.tar.gz
             \end{verbatim}
@@ -241,13 +273,13 @@ and in the \textit{<masks\_srcdir>} folder for group 2.
 Note that all the \term{source data files} should be located directly in the
 \textit{<seqs\_srcdir>} and \textit{<masks\_srcdir>} folders, not in subfolders
 of these folders. For example, depending on the genome, UCSC provides either a
-big \code{chromFa.tar.gz} or \code{chromFa.zip} file that contains the sequence
-data for all the chromosomes. But it could be that, after extraction of this
-big file, the individual FASTA files for each chromosome end up being located
-one level down the \textit{<seqs\_srcdir>} folder (granted that you were in this
-folder when you extracted the file). If this is the case, then you will need
-to move them one level up (use \code{mv -i */*.fa .} for this, then remove
-all the empty subfolders with \code{rmdir *}).
+big \texttt{chromFa.tar.gz} or \texttt{chromFa.zip} file that contains the
+sequence data for all the chromosomes. But it could be that, after extraction
+of this big file, the individual FASTA files for each chromosome end up being
+located one level down the \textit{<seqs\_srcdir>} folder (granted that you
+were in this folder when you extracted the file). If this is the case, then
+you will need to move them one level up (use \code{mv -i */*.fa .} for this,
+then remove all the empty subfolders with \code{rmdir *}).
 
 
 \section{Prepare the BSgenome data package seed file}
@@ -259,17 +291,17 @@ needed by the \Rfunction{forgeBSgenomeDataPkg} function to forge the
 \term{target package}.
 
 The format of this file is DCF (Debian Control File), which is also the format
-used for the \code{DESCRIPTION} file of any {\R} package. The valid fields of
+used for the \texttt{DESCRIPTION} file of any {\R} package. The valid fields of
 a \term{seed file} are divided in 3 categories:
 \begin{enumerate}
-\item Standard \code{DESCRIPTION} fields. These fields are actually
-      the mandatory fields found in any \code{DESCRIPTION} file.
-      They will be copied to the \code{DESCRIPTION} file of the \term{target
+\item Standard \texttt{DESCRIPTION} fields. These fields are actually
+      the mandatory fields found in any \texttt{DESCRIPTION} file.
+      They will be copied to the \texttt{DESCRIPTION} file of the \term{target
       package}.
 
-\item Non-standard \code{DESCRIPTION} fields. These fields are specific
+\item Non-standard \texttt{DESCRIPTION} fields. These fields are specific
       to \term{seed files} and they will also be copied to the
-      \code{DESCRIPTION} file of the \term{target package}.
+      \texttt{DESCRIPTION} file of the \term{target package}.
       In addition, the values of those fields will be stored in the
       \Rclass{BSgenome} object that will be contained in the \term{target
       package}. This means that the users of the \term{target package} will be
@@ -286,7 +318,7 @@ fields of a \term{seed file}.
 Alternatively, the reader in a hurry can go directly to the last subsection of
 this section for an example of \term{seed file}.
 
-\subsection{Standard \code{DESCRIPTION} fields}
+\subsection{Standard \texttt{DESCRIPTION} fields}
 
 \begin{itemize}
 \item \code{Package}: Name to give to the \term{target package}. The convention
@@ -307,7 +339,7 @@ this section for an example of \term{seed file}.
 
 \item \code{Description}, \code{Version}, \code{Author}, \code{Maintainer},
       \code{License}: Like the 2 previous fields, these are mandatory fields
-      found in any \code{DESCRIPTION} file.
+      found in any \texttt{DESCRIPTION} file.
       Please refer to the \textit{The DESCRIPTION file} section
       of the \textit{Writing R Extensions} manual
       \footnote{\url{http://cran.r-project.org/doc/manuals/R-exts.html\#The-DESCRIPTION-file}}
@@ -317,7 +349,7 @@ this section for an example of \term{seed file}.
       license of the \term{source data files} if any.
 \end{itemize}
 
-\subsection{Non-standard \code{DESCRIPTION} fields}
+\subsection{Non-standard \texttt{DESCRIPTION} fields}
 
 \begin{itemize}
 \item \code{organism}: The full name of the organism (e.g. \code{Rattus
@@ -385,7 +417,8 @@ this section for an example of \term{seed file}.
       to 4).
 
 \item \code{PkgDetails}: [OPTIONAL] Some arbitrary text that will be copied
-      to the \code{Details} section of the man page of the \term{target package}.
+      to the \code{Details} section of the man page of the \term{target
+      package}.
 
 \item \code{SrcDataFiles1}, \code{SrcDataFiles2}: [OPTIONAL] Some arbitrary
       text that will be copied to the \code{Note} section of the man pages of
@@ -407,7 +440,7 @@ this section for an example of \term{seed file}.
       (fields \code{seqnames} and \code{mseqnames}) to get the name of the
       corresponding FASTA file.
       Default values are the empty prefix for \code{seqfiles\_prefix} and
-      \code{.fa} for \code{seqfiles\_suffix}.
+      \texttt{.fa} for \code{seqfiles\_suffix}.
 
 \item \code{AGAPSfiles\_type}: [OPTIONAL] Must be \code{gap} (the default) if
       the \term{source data files} containing the AGAPS masks information are
@@ -433,13 +466,13 @@ this section for an example of \term{seed file}.
       [OPTIONAL] Those fields work like the \code{AGAPSfiles*} fields above
       but for the RM masks.
       Default values are the empty prefix for \code{RMfiles\_prefix} and
-      \code{.fa.out} for \code{RMfiles\_suffix}.
+      \texttt{.fa.out} for \code{RMfiles\_suffix}.
 
 \item \code{TRFfiles\_name}, \code{TRFfiles\_prefix}, \code{TRFfiles\_suffix}:
       [OPTIONAL] Those fields work like the \code{AGAPSfiles*} fields above
       but for the TRF masks.
       Default values are the empty prefix for \code{TRFfiles\_prefix} and
-      \code{.bed} for \code{TRFfiles\_suffix}.
+      \texttt{.bed} for \code{TRFfiles\_suffix}.
 
 \end{itemize}
 
@@ -463,8 +496,8 @@ your package.
 
 To forge the package, start \R, load the \Rpackage{BSgenome} package, and call
 the \Rfunction{forgeBSgenomeDataPkg} function on your \term{seed file}.
-For example, if the path to your \term{seed file} is \code{"path/to/my/seed"},
-do:
+For example, if the path to your \term{seed file} is
+\texttt{"path/to/my/seed"}, do:
 <<eval=false>>=
 library(BSgenome)
 forgeBSgenomeDataPkg("path/to/my/seed")
@@ -485,7 +518,8 @@ Then check the package with
 \begin{verbatim}
     R CMD check <tarball>
 \end{verbatim}
-where \code{<tarball>} is the path to the tarball produced by \code{R CMD build}.
+where \code{<tarball>} is the path to the tarball produced by
+\code{R CMD build}.
 
 Finally install the package with
 \begin{verbatim}
