@@ -61,33 +61,29 @@
     GRanges(seqnames=names(x), ranges=unname(x), strand=strand)
 }
 
-.newGRanges <- function(names, strand)
+### Error messages refer to 'x' as "names" because of the context .toGRanges()
+### is used.
+.toGRanges <- function(x, strand)
 {
-    if (is(names, "GRanges")) {
-        if (!identical(strand, "+"))
-            stop("'strand' cannot be specified ",
-                 "when 'names' is a GRanges object")
-        return(names)
-    }
-    if (is(names, "RangedData")) {
-        if ("strand" %in% colnames(names)) {
+    if (is(x, "RangedData")) {
+        if ("strand" %in% colnames(x)) {
             if (!identical(strand, "+"))
                 stop("'strand' cannot be specified when 'names' ",
                      "is a RangedData object with a strand column")
         } else {
-            strand <- Rle(strand(.normargStrand(strand, length(names))))
-            values(names) <- DataFrame(strand=strand)
+            strand <- Rle(strand(.normargStrand(strand, nrow(x))))
+            values(x) <- DataFrame(strand=strand)
         }
-        return(as(names, "GRanges"))
+        return(as(x, "GRanges"))
     }
-    if (is(names, "RangesList") || is(names, "Ranges")) {
-        if (is.null(names(names)))
+    if (is(x, "RangesList") || is(x, "Ranges")) {
+        if (is.null(names(x)))
             stop("when 'names' is a RangesList or Ranges object, ",
                  "it must be named with the sequence names")
-        if (is(names, "RangesList"))
-            ans <- .newGRangesFromNamedRangesList(names, strand)
+        if (is(x, "RangesList"))
+            ans <- .newGRangesFromNamedRangesList(x, strand)
         else
-            ans <- .newGRangesFromNamedRanges(names, strand)
+            ans <- .newGRangesFromNamedRanges(x, strand)
         return(ans)
     } 
     stop("invalid 'names'")
@@ -286,7 +282,13 @@ setMethod("getSeq", "BSgenome",
                 stop("'start', 'end' and 'width' can only be specified when ",
                      "'names' is either missing, a character vector/factor, ",
                      "a character-Rle, or a factor-Rle")
-            names <- .newGRanges(names, strand)
+            if (is(names, "GRanges")) {
+                if (!identical(strand, "+"))
+                    stop("'strand' cannot be specified ",
+                         "when 'names' is a GRanges object")
+            } else {
+                names <- .toGRanges(names, strand)
+            }
             seqnames <- as.character(seqnames(names))
             sseq_idx <- seqnames %in% seqnames(x)
             sseq_args <- list(names=.dropUnusedGRangesSeqnamesLevels(
