@@ -15,6 +15,9 @@
         strand <- as.vector(strand)
     if (!is.character(strand))
         stop("invalid 'strand'")
+    lvls <- levels(strand())
+    if (!all(strand %in% lvls))
+        stop("strand values must be in '", paste(lvls, collapse="' '"), "'")
     if (length(strand) > length)
         stop("too many elements in 'strand'")
     if (length(strand) < length) {
@@ -22,6 +25,24 @@
             stop("cannot recycle zero-length 'strand'")
         strand <- IRanges:::recycleVector(strand, length)
     }
+    strand
+}
+
+### Make 'strand' star-free.
+### If applied on the output of .normargStrand(), then returns a character
+### vector guaranteed to have only "+" or "-" elements (no "*").
+### If applied on the output of strand(GRanges), then returns a 'factor' Rle
+### guaranteed to have only "+" or "-" elements (no "*").
+.starfreeStrand <- function(strand)
+{
+    ustrand <- unique(strand)
+    if (length(ustrand) == 1L && ustrand == "*") {
+        ## Strand is "*" for all the elements. Replace it by "+".
+        strand[] <- "+"
+        return(strand)
+    }
+    if ("*" %in% ustrand)
+        stop("cannot mix \"*\" with other strand values")
     strand
 }
 
@@ -41,7 +62,7 @@
     start <- IRanges:::recycleVector(start, max0123)
     end <- IRanges:::recycleVector(end, max0123)
     width <- IRanges:::recycleVector(width, max0123)
-    strand <- .normargStrand(strand, max0123)
+    strand <- .starfreeStrand(.normargStrand(strand, max0123))
     list(names=names, start=start, end=end, width=width, strand=strand)
 }
 
@@ -105,12 +126,10 @@
 ###
 
 ### Assumes 'ranges' and 'strand' have the same length and that this
-### length is >= 1.
+### length is >= 1. Also assumes that 'strand' is star-free.
 .extractSeqsFromDNAString <- function(subject, ranges, strand)
 {
     rglist <- split(unname(ranges), strand)
-    if (elementLengths(rglist)[["*"]] != 0L)
-        stop("'strand' elements must be \"+\" or \"-\"")
     plus_ranges <- rglist[["+"]]
     if (length(plus_ranges) == 0L) {
         plus_dnaset <- DNAStringSet()
@@ -136,7 +155,8 @@
 
 ### 'names' must be a character vector or a GRanges object.
 ### If 'names' is character vector, then 'start', 'end', 'width', and 'strand'
-### are assumed to be already normalized. Otherwise, they are ignored.
+### are assumed to be already normalized (and star-free for 'strand').
+### Otherwise, they are ignored and 'strand(names)' is assumed to be star-free.
 .extractFromBSgenomeSingleSequences <- function(x, names,
                                                 start, end, width, strand)
 {
@@ -174,32 +194,38 @@
                                as.factor(seqnames(names)))
 }
 
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### .extractFromBSgenomeMultipleSequences()
 ###
 
+### Assumes that 'strand' is star-free.
 .getOneSeqFromBSgenomeMultipleSequences <- function(x, name,
-                                                    start, end, width, strand)
+                                                    start, end, width, strand,
+                                                    exact.match)
 {
     nhits <- 0L
     for (mseqname in mseqnames(x)) {
         mseq <- x[[mseqname]]
-        ii <- grep(name, names(mseq))
-        nhits <- nhits + length(ii)
-        if (length(ii) == 1L)
+        if (exact.match) {
+            ii <- which(names(mseq) == name)
+        } else {
+            ii <- grep(name, names(mseq))
+        }
+        if (nhits == 0L && length(ii) == 1L)
             subject <- mseq[[ii]]
+        nhits <- nhits + length(ii)
     }
     if (nhits == 0L)
         stop("sequence ", name, " not found")
     if (nhits > 1L)
         stop("sequence ", name, " found more than once, ",
              "please use a non-ambiguous name")
-    ans <- subseq(subject, start=start, width=width)
+    ans <- subseq(subject, start=start, end=end, width=width)
     if (strand == "+")
         return(xvcopy(ans))
-    if (strand == "-")
+    else
         return(reverseComplement(ans))
-    stop("'strand' elements must be \"+\" or \"-\"")
 }
 
 ### Assumes 'x' is a list of DNAString objects and turns it into a
@@ -216,7 +242,8 @@
 
 ### 'names' must be a character vector or a GRanges object.
 ### If 'names' is character vector, then 'start', 'end', 'width', and 'strand'
-### are assumed to be already normalized. Otherwise, they are ignored.
+### are assumed to be already normalized (and star-free for 'strand').
+### Otherwise, they are ignored and 'strand(names)' is assumed to be star-free.
 .extractFromBSgenomeMultipleSequences <- function(x, names,
                                                   start, end, width, strand)
 {
@@ -224,7 +251,8 @@
         ans <- lapply(seq_len(length(names)),
             function(i)
                 .getOneSeqFromBSgenomeMultipleSequences(x, names[i],
-                                start[i], end[i], width[i], strand[i])
+                                start[i], end[i], width[i], strand[i],
+                                exact.match=FALSE)
         )
     } else {
         ans <- lapply(seq_len(length(names)),
@@ -235,7 +263,8 @@
                 width <- width(names)[i]
                 strand <- as.character(strand(names))[i]
                 .getOneSeqFromBSgenomeMultipleSequences(x, name,
-                                start, NA, width, strand)
+                                start, NA, width, strand,
+                                exact.match=TRUE)
             }
         )
     }
@@ -289,6 +318,7 @@ setMethod("getSeq", "BSgenome",
             } else {
                 names <- .toGRanges(names, strand)
             }
+            strand(names) <- .starfreeStrand(strand(names))
             seqnames <- as.character(seqnames(names))
             sseq_idx <- seqnames %in% seqnames(x)
             sseq_args <- list(names=.dropUnusedGRangesSeqnamesLevels(

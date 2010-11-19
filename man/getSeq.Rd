@@ -25,14 +25,15 @@ getSeq(x, ...)
     to install a genome.
   }
   \item{names}{
-    The names of the sequences in \code{x} from where to extract the
-    subsequences, or a \link[GenomicRanges]{GRanges} object,
+    A character vector containing the names of the sequences
+    in \code{x} where to get the subsequences from,
+    or a \link[GenomicRanges]{GRanges} object,
     or a \link[IRanges]{RangedData} object,
     or a named \link[IRanges]{RangesList} object,
     or a named \link[IRanges]{Ranges} object.
     The \link[IRanges]{RangesList} or \link[IRanges]{Ranges} object
-    must be named according to the sequences in \code{x} from where
-    to extract the subsequences.
+    must be named according to the sequences
+    in \code{x} where to get the subsequences from.
 
     If \code{names} is missing, then \code{seqnames(x)} is used.
     
@@ -91,9 +92,12 @@ getSeq(x, ...)
   \item (1): If \code{x} contains a single sequence with that name
         then this sequence is used for extraction;
   \item (2): Otherwise the names of all the elements in all the
-        multiple sequences are searched: \code{name} is treated
-        as a regular expression and \code{\link[base]{grep}} is
-        used for this search. If exactly one sequence is found,
+        multiple sequences are searched. If the \code{names} argument
+        is a character vector then \code{name} is treated as a regular
+        expression and \code{\link[base]{grep}} is used for this search,
+        otherwise (i.e. when the names are supplied via a higher level
+        object like \link[GenomicRanges]{GRanges}) \code{name} must match
+        exactly the name of the sequence. If exactly one sequence is found,
         then it is used for extraction, otherwise an error is raised.
   }
 }
@@ -141,15 +145,16 @@ getSeq(x, ...)
   \link[Biostrings]{DNAStringSet-class},
   \link[Biostrings]{MaskedDNAString-class},
   \link[GenomicRanges]{GRanges-class},
-  \link[IRanges]{Ranges-class},
+  \link[IRanges]{RangedData-class},
   \link[IRanges]{RangesList-class},
+  \link[IRanges]{Ranges-class},
   \link[IRanges]{subseq,XVector-method},
   \code{\link[base]{grep}}
 }
 
 \examples{
   ## ---------------------------------------------------------------------
-  ## A. EXTRACTING A SMALL NUMBER OF SEQUENCES FROM THE C. elegans GENOME
+  ## A. SIMPLE EXAMPLES
   ## ---------------------------------------------------------------------
 
   # Load the Caenorhabditis elegans genome (UCSC Release ce2):
@@ -163,10 +168,12 @@ getSeq(x, ...)
   # which is in fact the same as doing:
   Celegans$chrV
 
-  # Never try this:
-  #getSeq(Celegans, "chrV")
-  # or this (even worse):
-  #getSeq(Celegans)
+  \dontrun{
+    # Never try this:
+    getSeq(Celegans, "chrV")
+    # or this (even worse):
+    getSeq(Celegans)
+  }
 
   # Get the first 20 bases of each chromosome:
   getSeq(Celegans, end=20)
@@ -174,7 +181,29 @@ getSeq(x, ...)
   # Get the last 20 bases of each chromosome:
   getSeq(Celegans, start=-20)
 
-  # Extracting small sequences from different chromosomes:
+  # Get the "NM_058280_up_1000" sequence (belongs to the upstream1000
+  # multiple sequence) as a character string:
+  s1 <- getSeq(Celegans, "NM_058280_up_1000")
+  # or as a DNAString object (more efficient):
+  s2 <- getSeq(Celegans, "NM_058280_up_1000", as.character=FALSE)
+
+  stopifnot(identical(as.character(s2), s1))
+  stopifnot(identical(getSeq(Celegans, "NM_058280_up_5000", start=-1000), s1))
+
+  \dontrun{
+    # Fails because there is more than one sequence across
+    # Celegans$upstream1000, Celegans$upstream2000 and Celegans$upstream5000
+    # with "NM_058280" in its name:
+    getSeq(Celegans, "NM_058280")
+
+    # Fails because there is no sequence named exactly "NM_058280":
+    getSeq(Celegans, "^NM_058280$")
+  }
+
+  ## ---------------------------------------------------------------------
+  ## B. EXTRACTING SMALL SEQUENCES FROM DIFFERENT CHROMOSOMES
+  ## ---------------------------------------------------------------------
+
   myseqs <- data.frame(
     chr=c("chrI", "chrX", "chrM", "chrM", "chrX", "chrI", "chrM", "chrI"),
     start=c(NA, -40, 8510, 301, 30001, 9220500, -2804, -30),
@@ -186,21 +215,40 @@ getSeq(x, ...)
   getSeq(Celegans, myseqs$chr,
          start=myseqs$start, end=myseqs$end, strand=myseqs$strand)
 
-  # Get the "NM_058280_up_1000" sequence (belongs to the upstream1000
-  # multiple sequence) as a character string:
-  s1 <- getSeq(Celegans, "NM_058280_up_1000")
-  # or a DNAString object (more efficient):
-  s2 <- getSeq(Celegans, "NM_058280_up_1000", as.character=FALSE)
+  ## ---------------------------------------------------------------------
+  ## C. USING A GRanges OBJECT
+  ## ---------------------------------------------------------------------
 
-  getSeq(Celegans, "NM_058280_up_5000", start=-1000) == s1  # TRUE
+  gr1 <- GRanges(seqnames=c("chrI", "chrI", "chrM"),
+                 ranges=IRanges(start=101:103, width=9))
+  gr1  # all strand values are "*"
+  getSeq(Celegans, gr1)  # treats strand values as if they were "+"
 
-  getSeq(Celegans, "NM_058280_up_5000",
-         start=-1000, as.character=FALSE) == s2  # TRUE
+  strand(gr1)[] <- "-"
+  getSeq(Celegans, gr1)
+
+  strand(gr1)[1] <- "+"
+  getSeq(Celegans, gr1)
+
+  strand(gr1)[2] <- "*"
+  if (interactive) {
+    getSeq(Celegans, gr1)  # Error: cannot mix "*" with other strand values
+  }
+
+  gr2 <- GRanges(seqnames=c("chrM", "NM_058280_up_1000"),
+                 ranges=IRanges(start=103:102, width=9))
+  gr2
+  if (interactive) {
+    ## Because the sequence names are supplied via a GRanges object, they
+    ## are not treated as regular expressions:
+    getSeq(Celegans, gr2)  # Error: sequence NM_058280_up_1000 not found
+  }
 
   ## ---------------------------------------------------------------------
-  ## B. RANDOMLY EXTRACTING A HIGH NUMBER OF 40-MERS FROM THE C. elegans
-  ##    GENOME
+  ## D. EXTRACTING A HIGH NUMBER OF RANDOM 40-MERS FROM A GENOME
   ## ---------------------------------------------------------------------
+
+  ## Note the use of 'as.character=FALSE'.
   extractRandomReads <- function(x, density, readlength)
   {
       if (!is.integer(readlength))
@@ -219,10 +267,11 @@ getSeq(x, ...)
       gr <- GRanges(seqnames=names, ranges=ranges, strand=strand)
       getSeq(x, gr, as.character=FALSE)
   }
-  library(BSgenome.Celegans.UCSC.ce2)
+
   ## With a density of 1 read every 100 genome bases, the total number of
   ## extracted 40-mers is about 1 million:
   rndreads <- extractRandomReads(Celegans, 0.01, 40)
+
   ## Notes:
   ## - The short sequences in 'rndreads' can be seen as the result of a
   ##   simulated high-throughput sequencing experiment. A non-realistic
