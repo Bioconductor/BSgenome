@@ -231,14 +231,13 @@ getSeq(x, ...)
   getSeq(Celegans, gr1)
 
   strand(gr1)[2] <- "*"
-  if (interactive) {
+  if (interactive())
     getSeq(Celegans, gr1)  # Error: cannot mix "*" with other strand values
-  }
 
   gr2 <- GRanges(seqnames=c("chrM", "NM_058280_up_1000"),
                  ranges=IRanges(start=103:102, width=9))
   gr2
-  if (interactive) {
+  if (interactive()) {
     ## Because the sequence names are supplied via a GRanges object, they
     ## are not treated as regular expressions:
     getSeq(Celegans, gr2)  # Error: sequence NM_058280_up_1000 not found
