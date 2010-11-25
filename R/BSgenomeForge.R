@@ -55,7 +55,7 @@ getSeqSrcpaths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "getSeqlengths" and "forgeSeqlengthsFile" functions.
+### The getSeqlengths() and forgeSeqlengthsFile() functions.
 ###
 
 getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
@@ -369,6 +369,7 @@ setClass(
         organism_biocview="character",
         BSgenomeObjname="character",
         seqnames="character",         # a single string containing R source code
+        circ_seqs="character",        # a single string containing R source code
         mseqnames="character",        # a single string containing R source code
         nmask_per_seq="integer",      # a single integer
         PkgDetails="character",
@@ -394,6 +395,7 @@ setClass(
         License="Artistic-2.0",
         source_url="-- information not available --",
         seqnames="NULL",              # equivalent to "character(0)"
+        circ_seqs="NULL",
         mseqnames="NULL",
         nmask_per_seq=0L,
         PkgDetails="",
@@ -449,6 +451,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             ORGANISMBIOCVIEW=x@organism_biocview,
             BSGENOMEOBJNAME=x@BSgenomeObjname,
             SEQNAMES=x@seqnames,
+            CIRCSEQS=x@circ_seqs,
             MSEQNAMES=x@mseqnames,
             NMASKPERSEQ=as.character(x@nmask_per_seq),
             PKGDETAILS=x@PkgDetails,

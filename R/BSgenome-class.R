@@ -212,7 +212,7 @@ setMethod("masknames", "BSgenome",
 ### Constructor-like functions and generics
 ###
 
-.loadSeqinfo <- function(seqnames, seqs_pkgname, seqs_dir)
+.makeSeqinfo <- function(seqnames, circ_seqs, seqs_pkgname, seqs_dir)
 {
     objname <- "seqlengths"
     seqlengths <- .loadSingleObject(objname, seqs_dir, seqs_pkgname)
@@ -222,15 +222,20 @@ setMethod("masknames", "BSgenome",
              "identical to 'seqnames'. ",
              "May be the ", seqs_pkgname, " package is corrupted?")
     }
-    Seqinfo(seqnames=seqnames, seqlengths=seqlengths)
+    if (identical(circ_seqs, NA))
+        is_circ <- NA
+    else
+        is_circ <- seqnames %in% circ_seqs
+    Seqinfo(seqnames=seqnames, seqlengths=seqlengths, isCircular=is_circ)
 }
 
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
-                     seqnames, mseqnames, seqs_pkgname, seqs_dir,
+                     seqnames, circ_seqs=NA, mseqnames,
+                     seqs_pkgname, seqs_dir,
                      nmask_per_seq, masks_pkgname, masks_dir)
 {
-    seqinfo <- .loadSeqinfo(seqnames, seqs_pkgname, seqs_dir)
+    seqinfo <- .makeSeqinfo(seqnames, circ_seqs, seqs_pkgname, seqs_dir)
     if (is.null(mseqnames))
         mseqnames <- character(0)
     ans <- new("BSgenome",

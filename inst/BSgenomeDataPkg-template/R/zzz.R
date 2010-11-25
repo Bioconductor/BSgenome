@@ -4,6 +4,8 @@
 
 .seqnames <- @SEQNAMES@
 
+.circ_seqs <- @CIRCSEQS@
+
 .mseqnames <- @MSEQNAMES@
 
 .nmask_per_seq <- @NMASKPERSEQ@
@@ -20,6 +22,7 @@
         release_name="@RELEASENAME@",
         source_url="@SOURCEURL@",
         seqnames=.seqnames,
+        circ_seqs=.circ_seqs,
         mseqnames=.mseqnames,
         seqs_pkgname=pkgname,
         seqs_dir=extdata_dir,
