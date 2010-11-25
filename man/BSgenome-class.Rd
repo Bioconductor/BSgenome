@@ -9,8 +9,7 @@
 % Accessor methods:
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
-\alias{seqnames,BSgenome-method}
-\alias{seqlengths,BSgenome-method}
+\alias{seqinfo,BSgenome-method}
 \alias{mseqnames}
 \alias{mseqnames,BSgenome-method}
 \alias{names,BSgenome-method}
@@ -36,23 +35,27 @@
 }
 
 \section{Accessor methods}{
-  In the code snippets below,
-  \code{x} is a BSgenome object
-  and \code{name} is the name of a sequence (character-string).
+  In the code snippets below, \code{x} is a BSgenome object.
   Note that, because the BSgenome class contains the
-  \code{\link[BSgenome:GenomeDescription-class]{GenomeDescription}} class, then
-  all the accessor methods for
-  \code{\link[BSgenome:GenomeDescription-class]{GenomeDescription}} 
-  objects can also be used on \code{x}.
+  \code{\link{GenomeDescription}} class, then all the accessor methods
+  for \code{\link{GenomeDescription}} objects can also be used on \code{x}.
 
   \describe{
     \item{\code{sourceUrl(x)}}{
-      Return the source URL i.e. the permanent URL to the place where the
+      Returns the source URL i.e. the permanent URL to the place where the
       FASTA files used to produce the sequences contained in \code{x} can
       be found (and downloaded).
     }
+    \item{\code{seqinfo(x)}}{
+      Gets the names, lengths, and circularity flags of the single sequences
+      contained in \code{x}. All this information is returned in a
+      \link[GenomicRanges]{Seqinfo} object.
+      Each part of this information can be retrieved separately with
+      \code{seqnames(x)}, \code{seqlengths(x)}, and \code{isCircular(x)},
+      respectively, as described below.
+    }
     \item{\code{seqnames(x)}}{
-      Return the index of the single sequences contained in \code{x}.
+      Returns the names of the single sequences contained in \code{x}.
       Each single sequence is stored in a \link[Biostrings]{DNAString}
       or \link[Biostrings]{MaskedDNAString} object and typically comes 
       from a source file (FASTA) with a single record.
@@ -61,7 +64,7 @@
       removed in order to keep them as short as possible.
     }
     \item{\code{seqlengths(x)}}{
-      Return the lengths of the single sequences contained in \code{x}.
+      Returns the lengths of the single sequences contained in \code{x}.
 
       See \code{?`\link[IRanges]{length,XVector-method}`} and
       \code{?`\link[Biostrings]{length,MaskedXString-method}`} for
@@ -75,8 +78,15 @@
       \code{names(seqlengths(x))} is guaranteed to be identical to
       \code{seqnames(x)}.
     }
+    \item{\code{isCircular(x)}}{
+      Returns the circularity flags of the single sequences contained
+      in \code{x}.
+
+      \code{names(isCircular(x))} is guaranteed to be identical to
+      \code{seqnames(x)}.
+    }
     \item{\code{mseqnames(x)}}{
-      Return the index of the multiple sequences contained in \code{x}.
+      Returns the index of the multiple sequences contained in \code{x}.
       Each multiple sequence is stored in a
       \link[Biostrings]{DNAStringSet} object and typically comes from
       a source file (FASTA) with multiple records.
@@ -85,15 +95,16 @@
       removed in order to keep them as short as possible.
     }
     \item{\code{names(x)}}{
-      Return the index of all sequences contained in \code{x}.
+      Returns the index of all sequences contained in \code{x}.
       This is the same as \code{c(seqnames(x), mseqnames(x))}.
     }
     \item{\code{length(x)}}{
-      Return the length of \code{x}, i.e., the number of all sequences
+      Returns the length of \code{x}, i.e., the number of all sequences
       that it contains. This is the same as \code{length(names(x))}.
     }
     \item{\code{x[[name]]}}{
-      Return sequence (single or multiple) named \code{name}.
+      Returns the sequence (single or multiple) in \code{x} named \code{name}
+      (\code{name}  must be a single string).
       No sequence is actually loaded into memory until this is explicitely
       requested with a call to \code{x[[name]]} or \code{x$name}.
       When loaded, a sequence is kept in a cache. It will be automatically
@@ -147,6 +158,7 @@
   \code{\link[BSgenome]{available.genomes}},
   \link[BSgenome]{GenomeDescription-class},
   \link[BSgenome]{BSgenome-utils},
+  \link[GenomicRanges]{Seqinfo-class},
   \link[Biostrings]{DNAString-class},
   \link[Biostrings]{DNAStringSet-class},
   \link[Biostrings]{MaskedDNAString-class},

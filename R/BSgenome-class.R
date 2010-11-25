@@ -9,11 +9,9 @@ setClass("BSgenome",
         ## to produce the sequences below can be found (and downloaded)
         source_url="character",
 
-        ## seqnames: names of "single" sequences (e.g. chromosomes)
-        seqnames="character",
-
-        ## seqlengths: lengths of "single" sequences
-        seqlengths="integer",
+        ## contains the seqnames (names of "single" sequences), seqlengths,
+        ## and circularity flags
+        seqinfo="Seqinfo",
 
         ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
@@ -61,7 +59,7 @@ setClass("BSgenome",
     tmp_env <- new.env(parent=emptyenv())
     loaded_names <- load(filepath, envir=tmp_env)
     ## Check that we get only 1 object
-    if (length(loaded_names) != 1)
+    if (length(loaded_names) != 1L)
         stop("file '", filepath, "' contains 0 or more than 1 serialized object. ",
              "May be the ", objpkgname, " package is corrupted?")
     ## ... and that it has the expected name
@@ -176,30 +174,21 @@ setMethod("SNPlocs", "BSgenome",
     function(x, seqname) SNPlocs(x@injectSNPs_handler, seqname)
 )
 
-setMethod("seqnames", "BSgenome",
-    function(x) { if (length(x@seqnames) == 0) NULL else x@seqnames }
-)
+setMethod("seqinfo", "BSgenome", function(x) x@seqinfo)
 
-setMethod("seqlengths", "BSgenome",
+setMethod("seqnames", "BSgenome",
     function(x)
     {
-        if (length(x@seqlengths) == 1 && is.na(x@seqlengths)) {
-            objname <- "seqlengths"
-            x@seqlengths <- .loadSingleObject(objname, x@seqs_dir, x@seqs_pkgname)
-            if (!identical(names(x@seqlengths), seqnames(x))) {
-                filepath <- .getObjFilepath(objname, x@seqs_dir)
-                stop("sequence names found in file '", filepath, "' are not ",
-                     "identical to the names returned by seqnames(). ",
-                     "May be the ", x@seqs_pkgname, " package is corrupted?")
-            }
-        }
-        x@seqlengths
+        ans <- seqnames(seqinfo(x))
+        if (length(ans) == 0L)
+            ans <- NULL
+        ans
     }
 )
 
 setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
 setMethod("mseqnames", "BSgenome",
-    function(x) { if (length(x@mseqnames) == 0) NULL else x@mseqnames }
+    function(x) { if (length(x@mseqnames) == 0L) NULL else x@mseqnames }
 )
 
 setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
@@ -208,7 +197,7 @@ setGeneric("masknames", function(x) standardGeneric("masknames"))
 setMethod("masknames", "BSgenome",
     function(x)
     {
-        if (x@nmask_per_seq == 0)
+        if (x@nmask_per_seq == 0L)
             return(NULL)
         ## TODO: Put this kind of checking in a validity method for BSgenome
         ## objects (that's what validity methods are for).
@@ -223,13 +212,25 @@ setMethod("masknames", "BSgenome",
 ### Constructor-like functions and generics
 ###
 
+.loadSeqinfo <- function(seqnames, seqs_pkgname, seqs_dir)
+{
+    objname <- "seqlengths"
+    seqlengths <- .loadSingleObject(objname, seqs_dir, seqs_pkgname)
+    if (!identical(names(seqlengths), seqnames)) {
+        filepath <- .getObjFilepath(objname, seqs_dir)
+        stop("sequence names found in file '", filepath, "' are not ",
+             "identical to 'seqnames'. ",
+             "May be the ", seqs_pkgname, " package is corrupted?")
+    }
+    Seqinfo(seqnames=seqnames, seqlengths=seqlengths)
+}
+
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, mseqnames, seqs_pkgname, seqs_dir,
                      nmask_per_seq, masks_pkgname, masks_dir)
 {
-    if (is.null(seqnames))
-        seqnames <- character(0)
+    seqinfo <- .loadSeqinfo(seqnames, seqs_pkgname, seqs_dir)
     if (is.null(mseqnames))
         mseqnames <- character(0)
     ans <- new("BSgenome",
@@ -237,8 +238,7 @@ BSgenome <- function(organism, species, provider, provider_version,
                           provider, provider_version,
                           release_date, release_name),
         source_url=source_url,
-        seqnames=seqnames,
-        seqlengths=as.integer(NA),
+        seqinfo=seqinfo,
         mseqnames=mseqnames,
         seqs_pkgname=seqs_pkgname,
         seqs_dir=seqs_dir,
@@ -264,25 +264,25 @@ setMethod("show", "BSgenome",
     {
         mystrwrap <- function(line)
             writeLines(strwrap(line, width=getOption("width")+1,
-                               exdent=0, prefix=.SHOW_BSGENOME_PREFIX))
+                               exdent=0L, prefix=.SHOW_BSGENOME_PREFIX))
         showSequenceIndex <- function(names, prefix)
         {
-            index_width <- getOption("width") + 2 - nchar(prefix)
+            index_width <- getOption("width") + 2L - nchar(prefix)
             col_width <- max(nchar(names))
-            ncols <- index_width %/% (col_width + 2)
-            col <- 1
+            ncols <- index_width %/% (col_width + 2L)
+            col <- 1L
             for (name in names) {
-                if (col == 1) cat(prefix)
+                if (col == 1L) cat(prefix)
                 cat(format(name, width=col_width))
                 if (col == ncols) {
                     cat("\n")
-                    col <- 1
+                    col <- 1L
                 } else {
                     cat("  ")
-                    col <- col + 1
+                    col <- col + 1L
                 }
             }
-            if (col != 1) cat("\n")
+            if (col != 1L) cat("\n")
         }
         if (!is.na(object@species)) {
             cat(object@species, "genome\n")
@@ -292,16 +292,16 @@ setMethod("show", "BSgenome",
         if (!is.null(SNPlocs_pkgname(object)))
             cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
-        if (length(mseqnames(object)) != 0)
+        if (length(mseqnames(object)) != 0L)
             mystrwrap("single sequences (see '?seqnames'):")
         else
             mystrwrap("sequences (see '?seqnames'):")
-        if (length(seqnames(object)) != 0)
+        if (length(seqnames(object)) != 0L)
             showSequenceIndex(seqnames(object), .SHOW_SEQSECTION_PREFIX)
         else
             cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
         cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
-        if (length(mseqnames(object)) != 0) {
+        if (length(mseqnames(object)) != 0L) {
             mystrwrap("multiple sequences (see '?mseqnames'):")
             showSequenceIndex(mseqnames(object), .SHOW_SEQSECTION_PREFIX)
             cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
@@ -337,7 +337,7 @@ setMethod("show", "BSgenome",
     if (!is.null(snps)) 
         .inplaceReplaceLetterAt(ans, snps$loc, snps$alleles_as_ambig)
     ## Load and set the built-in masks, if any
-    if (nmask_per_seq > 0) {
+    if (nmask_per_seq > 0L) {
         objname <- paste(name, ".masks", sep="")
         builtinmasks <- .loadSingleObject(objname, masks_dir, masks_pkgname)
         if (length(builtinmasks) < nmask_per_seq) {
@@ -381,7 +381,7 @@ setMethod("[[", "BSgenome",
         ## 'x' is guaranteed to be a "BSgenome" object (if it's not, then the
         ## method dispatch algo will not even call this method), so nargs() is
         ## guaranteed to be >= 1
-        if (nargs() >= 3)
+        if (nargs() >= 3L)
             stop("too many subscripts")
         subscripts <- list(...)
         if (!missing(i))
@@ -390,7 +390,7 @@ setMethod("[[", "BSgenome",
             subscripts$j <- j
         ## At this point, 'subscripts' should be guaranteed
         ## to be of length <= 1
-        if (length(subscripts) == 0)
+        if (length(subscripts) == 0L)
             stop("no index specified")
         i <- subscripts[[1]]
         if (length(i) < 1)
@@ -405,7 +405,7 @@ setMethod("[[", "BSgenome",
             if (!is.numeric(i) || is.na(i))
                 stop("no such sequence")
             i <- as.integer(i)
-            if (i < 1 || length(x) < i)
+            if (i < 1L || length(x) < i)
                 stop("no such sequence")
             name <- names(x)[i]
         }

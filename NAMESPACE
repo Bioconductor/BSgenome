@@ -49,7 +49,7 @@ exportMethods(
     releaseDate, releaseName, bsgenomeName,
     sourceUrl,
     SNPlocs_pkgname, SNPcount, SNPlocs,
-    seqnames, seqlengths, mseqnames,
+    seqinfo, mseqnames,
     masknames,
     injectSNPs,
     gdapply,

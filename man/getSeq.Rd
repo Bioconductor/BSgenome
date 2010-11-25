@@ -37,10 +37,9 @@ getSeq(x, ...)
 
     If \code{names} is missing, then \code{seqnames(x)} is used.
     
-    See \code{?`\link{seqnames,BSgenome-method}`} and
-    \code{?`\link{mseqnames,BSgenome-method}`} to get 
-    the list of single sequences and multiple sequences (respectively)
-    contained in \code{x}.
+    See \code{?`\link{BSgenome-class}`} for details on how to get
+    the lists of single sequences and multiple sequences (respectively)
+    contained in a \link{BSgenome} object.
   }
   \item{start, end, width}{
     Vector of integers (eventually with NAs) specifying the locations
@@ -129,8 +128,8 @@ getSeq(x, ...)
   Note that the masks in \code{x}, if any, are always ignored. In other
   words, masked regions in the genome are extracted in the same way as
   unmasked regions (this is achieved by dropping the masks before extraction).
-  See \code{?`\link[Biostrings]{MaskedXString-class}`} for more
-  information about masked sequences.
+  See \code{?`\link[Biostrings]{MaskedDNAString-class}`} for more
+  information about masked DNA sequences.
 }
 
 \author{H. Pages; improvements suggested by Matt Settles and others}
@@ -138,9 +137,6 @@ getSeq(x, ...)
 \seealso{
   \code{\link{available.genomes}},
   \link{BSgenome-class},
-  \link{seqnames,BSgenome-method},
-  \link{mseqnames,BSgenome-method},
-  \link{[[,BSgenome-method},
   \link[Biostrings]{DNAString-class},
   \link[Biostrings]{DNAStringSet-class},
   \link[Biostrings]{MaskedDNAString-class},
@@ -148,7 +144,6 @@ getSeq(x, ...)
   \link[IRanges]{RangedData-class},
   \link[IRanges]{RangesList-class},
   \link[IRanges]{Ranges-class},
-  \link[IRanges]{subseq,XVector-method},
   \code{\link[base]{grep}}
 }
 
