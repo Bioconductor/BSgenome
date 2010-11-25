@@ -409,6 +409,12 @@ this section for an example of \term{seed file}.
       E.g. \code{paste("chr", c(1:20, "X", "M", "Un", paste(c(1:20, "X", "Un"),
       "\_random", sep="")), sep="")}.
 
+\item \code{circ\_seqs}: [OPTIONAL] An {\R} expression returning the names of
+      the circular sequences (in a character vector). This must be a subset
+      of the \code{seqnames} specified above.
+      E.g. \code{"chrM"} for rn4 or \code{c("chrM", "2micron")} for the sacCer2
+      genome (Yeast) from UCSC.
+
 \item \code{mseqnames}: [OPTIONAL] An {\R} expression returning the names of
       the multiple sequences to forge (in a character vector).
       E.g. \code{paste("upstream", c("1000", "2000", "5000"), sep="")}.
