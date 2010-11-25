@@ -1,7 +1,7 @@
 Package: BSgenome.Ecoli.NCBI.20080805
 Title: Escherichia coli full genomes
 Description: Escherichia coli full genomes for several strains as provided by NCBI on 2008/08/05 and stored in Biostrings objects.
-Version: 1.3.16
+Version: 1.3.17
 organism: Escherichia coli
 species: E. coli
 provider: NCBI
@@ -12,6 +12,7 @@ source_url: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/
 organism_biocview: Escherichia_coli
 BSgenomeObjname: Ecoli
 seqnames: c(paste("NC_", c("008253", "008563", "010468", "004431", "009801", "009800", "002655", "002695", "010498", "007946", "010473", "000913"), sep=""), "AC_000091")
+circ_seqs: c(paste("NC_", c("008253", "008563", "010468", "004431", "009801", "009800", "002655", "002695", "010498", "007946", "010473", "000913"), sep=""), "AC_000091")
 nmask_per_seq: 0
 PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequence.
 	The full genomes for the following strains are present in

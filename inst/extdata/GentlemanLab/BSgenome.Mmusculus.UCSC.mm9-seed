@@ -1,7 +1,7 @@
 Package: BSgenome.Mmusculus.UCSC.mm9
 Title: Mus musculus (Mouse) full genome (UCSC version mm9)
 Description: Mus musculus (Mouse) full genome as provided by UCSC (mm9, Jul. 2007) and stored in Biostrings objects.
-Version: 1.3.16
+Version: 1.3.17
 organism: Mus musculus
 species: Mouse
 provider: UCSC
@@ -12,6 +12,7 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/mm9/bigZips/
 organism_biocview: Mus_musculus
 BSgenomeObjname: Mmusculus
 seqnames: paste("chr", c(1:19, "X", "Y", "M", paste(c(1, 3, 4, 5, 7, 8, 9, 13, 16, 17, "X", "Y", "Un"), "_random", sep="")), sep="")
+circ_seqs: "chrM"
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz

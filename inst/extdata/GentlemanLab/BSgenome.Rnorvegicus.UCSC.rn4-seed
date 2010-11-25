@@ -1,7 +1,7 @@
 Package: BSgenome.Rnorvegicus.UCSC.rn4
 Title: Rattus norvegicus (Rat) full genome (UCSC version rn4)
 Description: Rattus norvegicus (Rat) full genome as provided by UCSC (rn4, Nov. 2004) and stored in Biostrings objects.
-Version: 1.3.16
+Version: 1.3.17
 organism: Rattus norvegicus
 species: Rat
 provider: UCSC
@@ -12,6 +12,7 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
 organism_biocview: Rattus_norvegicus
 BSgenomeObjname: Rnorvegicus
 seqnames: paste("chr", c(1:20, "X", "M", "Un", paste(c(1:20, "X", "Un"), "_random", sep="")), sep="")
+circ_seqs: "chrM"
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
 nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz

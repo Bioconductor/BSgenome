@@ -1,7 +1,7 @@
 Package: BSgenome.Scerevisiae.UCSC.sacCer2
 Title: Saccharomyces cerevisiae (Yeast) full genome (UCSC version sacCer2)
 Description: Saccharomyces cerevisiae (Yeast) full genome as provided by UCSC (sacCer2, June 2008) and stored in Biostrings objects.
-Version: 1.3.16
+Version: 1.3.17
 organism: Saccharomyces cerevisiae
 species: Yeast
 provider: UCSC
@@ -12,6 +12,7 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/sacCer2/bigZips/
 organism_biocview: Saccharomyces_cerevisiae
 BSgenomeObjname: Scerevisiae
 seqnames: c(paste("chr", c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "M"), sep=""), "2micron")
+circ_seqs: c("chrM", "2micron")
 nmask_per_seq: 0
 SrcDataFiles1: http://hgdownload.cse.ucsc.edu/goldenPath/sacCer2/bigZips/chromFa.tar.gz
 PkgExamples: Scerevisiae
