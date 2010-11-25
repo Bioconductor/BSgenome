@@ -1,7 +1,7 @@
 Package: BSgenome.Athaliana.TAIR.04232008
 Title: Arabidopsis thaliana full genome (TAIR version from April 23, 2008)
 Description: Arabidopsis thaliana full genome as provided by TAIR (snapshot from April 23, 2008) and stored in Biostrings objects.
-Version: 1.3.16
+Version: 1.3.17
 organism: Arabidopsis thaliana
 species: Arabidopsis
 provider: TAIR
@@ -12,6 +12,7 @@ source_url: ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/
 organism_biocview: Arabidopsis_thaliana
 BSgenomeObjname: Athaliana
 seqnames: paste("chr", c(1:5, "C", "M"), sep="")
+circ_seqs: "chrM"
 nmask_per_seq: 0
 SrcDataFiles1: all the chr*.fas file from ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/
 	WARNING: This is where things are today (Oct 1st, 2008) but is probably
