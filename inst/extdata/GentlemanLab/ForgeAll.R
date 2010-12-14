@@ -7,8 +7,8 @@ library(BSgenome)
 pkgs <- c(
   "BSgenome.Amellifera.BeeBase.assembly4",
   "BSgenome.Amellifera.UCSC.apiMel2",
-  "BSgenome.Athaliana.TAIR.01222004",
   "BSgenome.Athaliana.TAIR.04232008",
+  "BSgenome.Athaliana.TAIR.TAIR9",
   "BSgenome.Btaurus.UCSC.bosTau3",
   "BSgenome.Btaurus.UCSC.bosTau4",
   "BSgenome.Celegans.UCSC.ce2",
