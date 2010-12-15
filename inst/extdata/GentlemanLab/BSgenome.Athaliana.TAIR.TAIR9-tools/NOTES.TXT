@@ -1,0 +1,114 @@
+Sequences
+=========
+
+ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR9_genome_release/
+file: TAIR9_chr_all.fas
+
+R code used to split TAIR9_chr_all.fas into 1 FASTA file per sequence:
+
+  splitTair9ChrAllFasta <- function(filepath)
+  {
+    NAMESMAP <- paste("Chr", c(1:5, "M", "C"), sep="")
+    names(NAMESMAP) <- c(1:5, "mitochondria", "chloroplast")
+    chr_all <- read.DNAStringSet(filepath)
+    shortnames <- sapply(strsplit(names(chr_all), " ", fixed=TRUE),
+                         function(xx) xx[1L])
+    if (!identical(shortnames, names(NAMESMAP)))
+      stop(filepath, " doesn't contain the expected sequence names")
+    names(chr_all) <- NAMESMAP
+    for (i in seq_len(length(chr_all))) {
+      out <- paste(NAMESMAP[i], ".fa", sep="")
+      cat("Writing ", out, " file ... ", sep="")
+      write.XStringSet(chr_all[i], filepath=out)
+      cat("OK\n")
+    }
+  }
+  splitTair9ChrAllFasta("TAIR9_chr_all.fas")
+
+
+Masks
+=====
+
+This was an attempt at putting built-in masks in
+BSgenome.Athaliana.TAIR.TAIR9 but it didn't work! (see below why)
+
+The first published version of BSgenome.Athaliana.TAIR.TAIR9 (version
+1.3.18) has NO built-in masks.
+
+Assembly gaps extracted from 
+
+  ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR9_genome_release/TAIR9_gff3/Assembly_GFF/
+  file: tair9_Assembly_gaps.gff
+
+R code used to convert tair9_Assembly_gaps.gff into a UCSC-like "gap" file:
+
+  tair9GapsGFF.to.UCSCGapFile <- function(infile, outfile)
+  {
+    gff <- read.table(infile, sep="\t", quote="")
+    if (!identical(levels(gff[[3L]]), "gap"))
+      stop("some rows have a feature type != \"gap\"")
+    if (!identical(levels(gff[[7L]]), "+"))
+      stop("some gaps are not on the + strand")
+    if (!identical(levels(gff[[6L]]), ".")
+     || !identical(levels(gff[[8L]]), "."))
+      stop("field 6 and 8 are not empty")
+    gap <- gff[c(1L, 4L, 5L)]
+    gap[[2L]] <- gap[[2L]] - 1L
+    gap <- cbind(gap, 0L, "N", gap[[3L]] - gap[[2L]], ".", ".")
+    write.table(gap, file=outfile, quote=FALSE, sep="\t", col.names=FALSE)
+  }
+  tair9GapsGFF.to.UCSCGapFile("tair9_Assembly_gaps.gff", "gap.txt")
+
+Problems with those assembly gaps: some of them have a size that doesn't
+match the size of the corresponding N-block in the sequence (as reported
+in TAIR9_chr_all.fas).
+
+Email sent to the TAIR curators on Dec 14, 2010:
+
+-----------------------------------------------------------------------
+Hi TAIR curators,
+
+For my project, I need to use the whole chromosome TAIR9 sequences
+provided here
+
+
+ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR9_genome_release/TAIR9_chr_all.fas
+
+and also I need to know the exact locations (and sizes) of the
+assembly gaps for those sequences.
+
+After looking at the tair9_Assembly_gaps.gff file (from
+ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR9_genome_release/TAIR9_gff3/Assembly_GFF/),
+I found that some of the assembly gaps listed in this file are not
+compatible with the N-blocks found in the sequences. See at the end of
+this email for the exact list of problems I found.
+
+My question is: what could explain that the size of an assembly gap
+is not the same as the size of its corresponding N-block? Is this
+really intended? If not, is there another file somewhere on your site
+that contains the actual size of the assembly gaps?
+
+Thanks in advance,
+H.
+
+List of problems found in the tair9_Assembly_gaps.gff file:
+
+  Line # | seqname | type |    start      end | NOTE
+
+       5 | Chr1    | gap  | 14545722 14581721 | NOTE=Size_36000_centromeric BAC
+  Pb: the size of the N-block found in the sequence is 35998!
+
+      15 | Chr1    | gap  | 15345855 15346528 | NOTE=Size_674_exact sizes of the gaps are unknown
+  Pb: the size of the N-block found in the sequence is 60!
+
+      35 | Chr3    | gap  | 13589757 13589816 | NOTE=Size_60_centromeric BAC
+  Pb: the size of the N-block found in the sequence is 56!
+
+      76 | Chr3    | gap  | 15132295 15132547 | NOTE=Size_253_N's as sequence needs to be verified
+  Pb: the size of the N-block found in the sequence is 251!
+
+      93 | Chr5    | gap  | 11725025 11726024 | NOTE=Size_1000
+  Pb: the size of the N-block found in the sequence is 998!
+
+----------------------------------------------------------------------- 
+
