@@ -22,25 +22,25 @@
 }
 
 \usage{
-  ## Top-level BSgenomeForge function:
+## Top-level BSgenomeForge function:
 
-  forgeBSgenomeDataPkg(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
+forgeBSgenomeDataPkg(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
 
-  ## Low-level BSgenomeForge functions:
+## Low-level BSgenomeForge functions:
 
-  forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
-                      seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
+                    seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
 
-  forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
-                seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
+              seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
 
-  forgeMasksFiles(seqnames, nmask_per_seq,
-                  seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
-                  AGAPSfiles_type="gap", AGAPSfiles_name=NA,
-                  AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
-                  RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
-                  TRFfiles_name=NA, TRFfiles_prefix="", TRFfiles_suffix=".bed",
-                  verbose=TRUE)
+forgeMasksFiles(seqnames, nmask_per_seq,
+                seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
+                AGAPSfiles_type="gap", AGAPSfiles_name=NA,
+                AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
+                RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
+                TRFfiles_name=NA, TRFfiles_prefix="", TRFfiles_suffix=".bed",
+                verbose=TRUE)
 }
 
 \arguments{

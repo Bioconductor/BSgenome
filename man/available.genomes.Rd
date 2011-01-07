@@ -14,8 +14,8 @@
 }
 
 \usage{
-  available.genomes(type=getOption("pkgType"))
-  installed.genomes()
+available.genomes(type=getOption("pkgType"))
+installed.genomes()
 }
 
 \arguments{

@@ -9,7 +9,7 @@
 }
 
 \usage{
-  bsapply(BSParams, ...)
+bsapply(BSParams, ...)
 }
 
 \arguments{

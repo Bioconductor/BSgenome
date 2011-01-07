@@ -17,24 +17,24 @@
 }
 
 \usage{
-  \S4method{matchPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "",
-         maskList = logical(0), asRangedData = TRUE)
-  \S4method{countPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "", 
-         maskList = logical(0))
-  \S4method{vmatchPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
-              with.indels = FALSE, fixed = TRUE, algorithm = "auto",
-              exclude = "", maskList = logical(0),  userMask =
-                 RangesList(), invertUserMask = FALSE, asRangedData = TRUE)
-  \S4method{vcountPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
-              with.indels = FALSE, fixed = TRUE, algorithm = "auto",
-              exclude = "", maskList = logical(0),  userMask =
-                 RangesList(), invertUserMask = FALSE)
-  \S4method{vmatchPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
-            fixed = TRUE, algorithm = "auto", verbose = FALSE,
-            exclude = "", maskList = logical(0), asRangedData = TRUE)
-  \S4method{vcountPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
-            fixed = TRUE, algorithm = "auto", collapse = FALSE,
-            weight = 1L, verbose = FALSE, exclude = "", maskList = logical(0))
+\S4method{matchPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "",
+       maskList = logical(0), asRangedData = TRUE)
+\S4method{countPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "", 
+       maskList = logical(0))
+\S4method{vmatchPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
+            with.indels = FALSE, fixed = TRUE, algorithm = "auto",
+            exclude = "", maskList = logical(0),  userMask =
+               RangesList(), invertUserMask = FALSE, asRangedData = TRUE)
+\S4method{vcountPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
+            with.indels = FALSE, fixed = TRUE, algorithm = "auto",
+            exclude = "", maskList = logical(0),  userMask =
+               RangesList(), invertUserMask = FALSE)
+\S4method{vmatchPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
+          fixed = TRUE, algorithm = "auto", verbose = FALSE,
+          exclude = "", maskList = logical(0), asRangedData = TRUE)
+\S4method{vcountPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
+          fixed = TRUE, algorithm = "auto", collapse = FALSE,
+          weight = 1L, verbose = FALSE, exclude = "", maskList = logical(0))
 }
 
 \arguments{
