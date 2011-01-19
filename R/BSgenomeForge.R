@@ -579,7 +579,8 @@ setMethod("forgeBSgenomeDataPkg", "list",
 setMethod("forgeBSgenomeDataPkg", "character",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
     {
-        y <- as.list(.readSeedFile(x, verbose=verbose))
+        y <- .readSeedFile(x, verbose=verbose)
+        y <- as.list(y)
         if (missing(seqs_srcdir)) {
             seqs_srcdir <- y[["seqs_srcdir"]]
             if (is.null(seqs_srcdir))
