@@ -569,8 +569,8 @@ setMethod("forgeBSgenomeDataPkg", "list",
     }
     tmp_file <- file.path(tempdir(), "cleanseed9999.dcf")
     .removeCommentsFromFile(file, tmp_file)
+    on.exit(file.remove(tmp_file))
     ans <- read.dcf(tmp_file)  # a character matrix
-    file.remove(tmp_file)
     if (nrow(ans) != 1)
         stop("seed file '", file, "' must have exactly 1 record")
     ans[1, , drop=TRUE]
