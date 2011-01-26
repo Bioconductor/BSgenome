@@ -19,6 +19,7 @@ pkgs <- c(
   "BSgenome.Drerio.UCSC.danRer5",
   "BSgenome.Drerio.UCSC.danRer6",
   "BSgenome.Ecoli.NCBI.20080805",
+  "BSgenome.Gaculeatus.UCSC.gasAcu1",
   "BSgenome.Ggallus.UCSC.galGal3",
   "BSgenome.Hsapiens.UCSC.hg17",
   "BSgenome.Hsapiens.UCSC.hg18",

@@ -414,13 +414,18 @@ this section for an example of \term{seed file}.
       of the \code{seqnames} specified above.
       E.g. \code{"chrM"} for rn4 or \code{c("chrM", "2micron")} for the sacCer2
       genome (Yeast) from UCSC.
+      The default value for \code{circ\_seqs} is \code{NULL} (no circular
+      sequence).
 
 \item \code{mseqnames}: [OPTIONAL] An {\R} expression returning the names of
       the multiple sequences to forge (in a character vector).
       E.g. \code{paste("upstream", c("1000", "2000", "5000"), sep="")}.
+      The default value for \code{mseqnames} is \code{NULL} (no multiple
+      sequence).
 
 \item \code{nmask\_per\_seq}: [OPTIONAL] The number of masks per sequence (0
-      to 4).
+      to 4). The default value for \code{nmask\_per\_seq} is \code{0}
+      (no mask).
 
 \item \code{PkgDetails}: [OPTIONAL] Some arbitrary text that will be copied
       to the \code{Details} section of the man page of the \term{target
@@ -446,7 +451,7 @@ this section for an example of \term{seed file}.
       (fields \code{seqnames} and \code{mseqnames}) to get the name of the
       corresponding FASTA file.
       Default values are the empty prefix for \code{seqfiles\_prefix} and
-      \texttt{.fa} for \code{seqfiles\_suffix}.
+      \code{.fa} for \code{seqfiles\_suffix}.
 
 \item \code{AGAPSfiles\_type}: [OPTIONAL] Must be \code{gap} (the default) if
       the \term{source data files} containing the AGAPS masks information are

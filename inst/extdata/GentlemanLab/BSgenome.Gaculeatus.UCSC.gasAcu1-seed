@@ -1,0 +1,30 @@
+Package: BSgenome.Gaculeatus.UCSC.gasAcu1
+Title: Gasterosteus aculeatus (Stickleback) full genome (UCSC version gasAcu1)
+Description: Gasterosteus aculeatus (Stickleback) full genome as provided by UCSC (gasAcu1, Feb. 2006) and stored in Biostrings objects.
+Version: 1.3.17
+organism: Gasterosteus aculeatus 
+species: Stickleback 
+provider: UCSC
+provider_version: gasAcu1 
+release_date: Feb. 2006
+release_name: Broad Release 1.0 
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/
+organism_biocview: Gasterosteus_aculeatus 
+BSgenomeObjname: Gaculeatus
+seqnames: paste("chr", c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "M", "Un"), sep="")
+circ_seqs: "chrM"
+mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
+nmask_per_seq: 4 
+SrcDataFiles1: sequences: chromFa.tar.gz + upstream*.fa.gz files
+	from http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/
+SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/database/gap.txt.gz
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/chromTrf.tar.gz
+PkgExamples: Gaculeatus
+	seqlengths(Gaculeatus)
+	Gaculeatus$chrI # same as Gaculeatus[["chrI"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/seqs
+masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/masks
+AGAPSfiles_name: gap.txt
+RMfiles_suffix: .fa.out
+TRFfiles_suffix: .bed
