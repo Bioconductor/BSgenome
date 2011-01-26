@@ -9,7 +9,7 @@ provider_version: galGal3
 release_date: May 2006
 release_name: WUSTL Gallus-gallus-2.1
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/galGal3/bigZips/
-organism_biocview: Gallus gallus
+organism_biocview: Gallus_gallus
 BSgenomeObjname: Ggallus
 seqnames: paste("chr", c(1:20, 32, "M", "W", "Z", "E64", "E22C19W28_E50C23", paste(c(1:2, 4:8, 10:13, 16:18, 20, 22, 25, 28, "W", "Z", "Un", "E64", "E22C19W28_E50C23"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
