@@ -117,11 +117,15 @@ setMethod("gdapply",
 ## coersion to data.frame methods
 setAs("GenomeData", "data.frame",
       function(from) {
-          ans <- 
-              do.call(rbind, 
-                      sapply(names(from),
+          ind <- names(from)
+          if (is.null(ind))
+              ind <- seq(length(from))
+          ans <-
+              do.call(rbind,
+                      sapply(ind,
                              function(chr) {
-                                 cbind(as(from[[chr]], "data.frame"), chromosome = chr)
+                               cbind(as(from[[chr]], "data.frame"),
+                                     chromosome = chr)
                              }, simplify = FALSE))
           row.names(ans) <- NULL
           ans
@@ -129,11 +133,15 @@ setAs("GenomeData", "data.frame",
 
 setAs("GenomeDataList", "data.frame",
       function(from) {
+          ind <- names(from)
+          if (is.null(ind))
+              ind <- seq(length(from))
           ans <- 
               do.call(rbind, 
-                      sapply(names(from),
+                      sapply(ind,
                              function(sample) {
-                                 cbind(as(from[[sample]], "data.frame"), sample = sample)
+                                 cbind(as(from[[sample]], "data.frame"),
+                                       sample = sample)
                              }, simplify = FALSE))
           row.names(ans) <- NULL
           ans
