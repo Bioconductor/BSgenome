@@ -64,22 +64,8 @@
   \item{with.indels}{
     If \code{TRUE} then indels are allowed. In that case, \code{min.mismatch}
     must be \code{0} and \code{max.mismatch} is interpreted as the maximum
-    "edit distance" allowed between the pattern and a match.
-    Note that in order to avoid pollution by redundant matches,
-    only the "best local matches" are returned.
-    Roughly speaking, a "best local match" is a match that is locally
-    both the closest (to the pattern P) and the shortest.
-    More precisely, a substring S' of the subject S is a "best local match" iff:
-    \preformatted{
-       (a) nedit(P, S') <= max.mismatch
-       (b) for every substring S1 of S':
-               nedit(P, S1) > nedit(P, S')
-       (c) for every substring S2 of S that contains S':
-               nedit(P, S2) <= nedit(P, S')
-    }
-    One nice property of "best local matches" is that their first and last
-    letters are guaranteed to be aligned with letters in P (i.e. they match
-    letters in P).
+    "edit distance" allowed between any pattern and any of its matches
+    (see \code{?`\link[Biostrings]{matchPattern}`} for the details).
   }
   \item{fixed}{
     If \code{FALSE} then IUPAC extended letters are interpreted as ambiguities
