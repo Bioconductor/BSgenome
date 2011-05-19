@@ -15,7 +15,7 @@
 getSeq(x, ...)
 
 \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA,
-                 strand="+", as.character=TRUE) 
+                 strand="+", as.character=FALSE) 
 }
 
 \arguments{
@@ -105,7 +105,7 @@ getSeq(x, ...)
   A character vector of length L when \code{as.character=TRUE}.
 
   A \link[Biostrings]{DNAString} or \link[Biostrings]{DNAStringSet}
-  object when \code{as.character=FALSE}.
+  object when \code{as.character=FALSE} (the default).
   More precisely the returned value is a \link[Biostrings]{DNAString}
   object if L = 1 and \code{names} is not a \link[GenomicRanges]{GRanges},
   \link[IRanges]{RangedData}, \link[IRanges]{RangesList} or
@@ -114,16 +114,9 @@ getSeq(x, ...)
 }
 
 \note{
-  The default value for the \code{as.character} argument is \code{TRUE}
-  even though \code{getSeq} is much more efficient (in terms of speed
-  and memory usage) when used with \code{as.character=FALSE}.
-
   Be aware that using \code{as.character=TRUE} can be very inefficient
-  when extracting a high number of sequences (hundreds of thousands)
-  or long sequences (> 1 million letters).
-
-  For this reason the plan is to change the default value to \code{FALSE}
-  in the near future.
+  when extracting a "big" amount of DNA sequences (e.g. millions of
+  short sequences or a small number of very long sequences).
 
   Note that the masks in \code{x}, if any, are always ignored. In other
   words, masked regions in the genome are extracted in the same way as
@@ -159,15 +152,15 @@ getSeq(x, ...)
   Celegans
 
   # Get chromosome V as a DNAString object:
-  getSeq(Celegans, "chrV", as.character=FALSE)
+  getSeq(Celegans, "chrV")
   # which is in fact the same as doing:
   Celegans$chrV
 
   \dontrun{
     # Never try this:
-    getSeq(Celegans, "chrV")
+    getSeq(Celegans, "chrV", as.character=TRUE)
     # or this (even worse):
-    getSeq(Celegans)
+    getSeq(Celegans, as.character=TRUE)
   }
 
   # Get the first 20 bases of each chromosome:
@@ -178,9 +171,9 @@ getSeq(x, ...)
 
   # Get the "NM_058280_up_1000" sequence (belongs to the upstream1000
   # multiple sequence) as a character string:
-  s1 <- getSeq(Celegans, "NM_058280_up_1000")
+  s1 <- getSeq(Celegans, "NM_058280_up_1000", as.character=TRUE)
   # or as a DNAString object (more efficient):
-  s2 <- getSeq(Celegans, "NM_058280_up_1000", as.character=FALSE)
+  s2 <- getSeq(Celegans, "NM_058280_up_1000")
 
   stopifnot(identical(as.character(s2), s1))
   stopifnot(identical(getSeq(Celegans, "NM_058280_up_5000", start=-1000), s1))
@@ -242,7 +235,6 @@ getSeq(x, ...)
   ## D. EXTRACTING A HIGH NUMBER OF RANDOM 40-MERS FROM A GENOME
   ## ---------------------------------------------------------------------
 
-  ## Note the use of 'as.character=FALSE'.
   extractRandomReads <- function(x, density, readlength)
   {
       if (!is.integer(readlength))
@@ -259,7 +251,7 @@ getSeq(x, ...)
       ranges <- IRanges(start=unlist(start), width=readlength)
       strand <- strand(sample(c("+", "-"), length(names), replace=TRUE))
       gr <- GRanges(seqnames=names, ranges=ranges, strand=strand)
-      getSeq(x, gr, as.character=FALSE)
+      getSeq(x, gr)
   }
 
   ## With a density of 1 read every 100 genome bases, the total number of

@@ -280,9 +280,15 @@ setGeneric("getSeq", function(x, ...) standardGeneric("getSeq"))
 
 setMethod("getSeq", "BSgenome",
     function(x, names, start=NA, end=NA, width=NA, strand="+",
-             as.character=TRUE)
+             as.character=FALSE)
     {
-        if (!isTRUEorFALSE(as.character))
+        if (missing(as.character))
+            warning("  Starting with BioC 2.9, the default for getSeq() ",
+              "'as.character' argument\n  has changed from TRUE to FALSE. ",
+              "From now you need to specify\n",
+              "    getSeq(..., as.character=TRUE)\n",
+              "  if you want the result of getSeq() in a character vector.")
+        else if (!isTRUEorFALSE(as.character))
             stop("'as.character' must be TRUE or FALSE")
         if (missing(names)) {
             names <- seqnames(x)
