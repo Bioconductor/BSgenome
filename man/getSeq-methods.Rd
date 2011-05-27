@@ -1,19 +1,15 @@
-\name{getSeq}
+\name{getSeq-methods}
 
-\alias{getSeq}
 \alias{getSeq,BSgenome-method}
 
-\title{getSeq}
+\title{getSeq method for BSgenome objects}
 
 \description{
-   A function for extracting a set of sequences (or subsequences) from
-   a \link{BSgenome} object or other sequence container. This man page 
-   specifically documents the method for \link{BSgenome} objects.
+   A \code{\link[Biostrings]{getSeq}} method for extracting a set of
+   sequences (or subsequences) from a \link{BSgenome} object.
 }
 
 \usage{
-getSeq(x, ...)
-
 \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA,
                  strand="+", as.character=FALSE) 
 }
@@ -128,6 +124,7 @@ getSeq(x, ...)
 \author{H. Pages; improvements suggested by Matt Settles and others}
 
 \seealso{
+  \code{\link[Biostrings]{getSeq}},
   \code{\link{available.genomes}},
   \link{BSgenome-class},
   \link[Biostrings]{DNAString-class},

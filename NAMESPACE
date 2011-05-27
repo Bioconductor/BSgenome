@@ -29,7 +29,6 @@ export(
     mseqnames,
     masknames,
     injectSNPs,
-    getSeq,
     gdapply, gdApply,
 
     ## BSgenomeForge functions:
@@ -42,7 +41,7 @@ export(
 exportMethods(
     ## Methods for generics defined elsewhere:
     names, show, length, "[[", "$", score,
-    matchPWM, countPWM, vmatchPattern, vcountPattern,
+    getSeq, matchPWM, countPWM, vmatchPattern, vcountPattern,
 
     ## Methods for generics defined in this package:
     organism, species, provider, providerVersion,
