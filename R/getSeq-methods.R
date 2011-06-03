@@ -148,9 +148,9 @@
                                      width=width(minus_ranges))
         minus_dnaset <- reverseComplement(minus_dnaset)
     }
-    unsplit.list.of.XStringSet("DNAStringSet",
-                               list(plus_dnaset, minus_dnaset),
-                               as.factor(strand))
+    unsplit.list.of.XVectorList("DNAStringSet",
+                                list(plus_dnaset, minus_dnaset),
+                                as.factor(strand))
 }
 
 ### 'names' must be a character vector or a GRanges object.
@@ -190,8 +190,8 @@
         }
     )
     ## "unsplit" 'dnaset_list'.
-    unsplit.list.of.XStringSet("DNAStringSet", dnaset_list,
-                               as.factor(seqnames(names)))
+    unsplit.list.of.XVectorList("DNAStringSet", dnaset_list,
+                                as.factor(seqnames(names)))
 }
 
 
