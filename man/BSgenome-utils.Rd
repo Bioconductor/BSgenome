@@ -138,7 +138,7 @@
   \code{\link[Biostrings]{matchPWM}},
   \code{\link[Biostrings]{matchPattern}},
   \code{\link[Biostrings]{matchPDict}},
-  \code{\link[BSgenome]{bsapply}}
+  \code{\link{bsapply}}
 }
 
 \examples{

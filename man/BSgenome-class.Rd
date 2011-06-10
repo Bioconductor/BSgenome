@@ -155,15 +155,15 @@
 \author{H. Pages}
 
 \seealso{
-  \code{\link[BSgenome]{available.genomes}},
-  \link[BSgenome]{GenomeDescription-class},
-  \link[BSgenome]{BSgenome-utils},
+  \code{\link{available.genomes}},
+  \link{GenomeDescription-class},
+  \link{BSgenome-utils},
   \link[GenomicRanges]{Seqinfo-class},
   \link[Biostrings]{DNAString-class},
   \link[Biostrings]{DNAStringSet-class},
   \link[Biostrings]{MaskedDNAString-class},
-  \code{\link[BSgenome]{getSeq}},
-  \code{\link[BSgenome]{injectSNPs}},
+  \code{\link{getSeq,BSgenome-method}},
+  \code{\link{injectSNPs}},
   \link[IRanges]{subseq,XVector-method},
   \code{\link[base]{rm}},
   \code{\link[base]{gc}}

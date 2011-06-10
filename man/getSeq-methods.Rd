@@ -167,12 +167,8 @@
   getSeq(Celegans, start=-20)
 
   # Get the "NM_058280_up_1000" sequence (belongs to the upstream1000
-  # multiple sequence) as a character string:
-  s1 <- getSeq(Celegans, "NM_058280_up_1000", as.character=TRUE)
-  # or as a DNAString object (more efficient):
-  s2 <- getSeq(Celegans, "NM_058280_up_1000")
-
-  stopifnot(identical(as.character(s2), s1))
+  # multiple sequence) as a DNAString object:
+  s1 <- getSeq(Celegans, "NM_058280_up_1000")
   stopifnot(identical(getSeq(Celegans, "NM_058280_up_5000", start=-1000), s1))
 
   \dontrun{

@@ -91,7 +91,7 @@ installed.SNPs()
 \author{H. Pages}
 
 \seealso{
-  \link[BSgenome]{BSgenome-class},
+  \link{BSgenome-class},
   \code{\link[Biostrings]{IUPAC_CODE_MAP}},
   \code{\link[Biostrings]{injectHardMask}},
   \code{\link[Biostrings]{letterFrequencyInSlidingView}},

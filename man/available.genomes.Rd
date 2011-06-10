@@ -48,7 +48,7 @@ installed.genomes()
 \author{H. Pages}
 
 \seealso{
-  \link[BSgenome]{BSgenome-class},
+  \link{BSgenome-class},
   \code{\link[utils:update.packages]{available.packages}}
 }
 
