@@ -13,7 +13,7 @@ getDataAnnotationContribUrl <- function(type=getOption("pkgType"))
     biocinstallRepos <- NULL
     ## Sourcing this file will define the 'biocinstallRepos' function
     suppressWarnings(source("http://bioconductor.org/biocLite.R", local=TRUE))
-    contrib.url(biocinstallRepos()[2], type=type)
+    contrib.url(biocinstallRepos()["BioCann"], type=type)
 }
 
 available.genomes <- function(type=getOption("pkgType"))
