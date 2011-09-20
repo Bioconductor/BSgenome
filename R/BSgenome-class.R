@@ -202,7 +202,8 @@ setMethod("masknames", "BSgenome",
         ## TODO: Put this kind of checking in a validity method for BSgenome
         ## objects (that's what validity methods are for).
         if (x@nmask_per_seq > length(BUILTIN_MASKNAMES))
-            stop("internal anomaly: x@nmask_per_seq > ", length(BUILTIN_MASKNAMES))
+            stop("internal anomaly: x@nmask_per_seq > ",
+                 length(BUILTIN_MASKNAMES))
         BUILTIN_MASKNAMES[seq_len(x@nmask_per_seq)]
     }
 )
@@ -212,7 +213,8 @@ setMethod("masknames", "BSgenome",
 ### Constructor-like functions and generics
 ###
 
-.makeSeqinfo <- function(seqnames, circ_seqs, seqs_pkgname, seqs_dir)
+.makeSeqinfo <- function(seqnames, circ_seqs, seqs_pkgname, seqs_dir,
+                         provider_version)
 {
     objname <- "seqlengths"
     seqlengths <- .loadSingleObject(objname, seqs_dir, seqs_pkgname)
@@ -226,7 +228,8 @@ setMethod("masknames", "BSgenome",
         is_circ <- NA
     else
         is_circ <- seqnames %in% circ_seqs
-    Seqinfo(seqnames=seqnames, seqlengths=seqlengths, isCircular=is_circ)
+    Seqinfo(seqnames=seqnames, seqlengths=seqlengths, isCircular=is_circ,
+            genome=provider_version)
 }
 
 BSgenome <- function(organism, species, provider, provider_version,
@@ -235,7 +238,8 @@ BSgenome <- function(organism, species, provider, provider_version,
                      seqs_pkgname, seqs_dir,
                      nmask_per_seq, masks_pkgname, masks_dir)
 {
-    seqinfo <- .makeSeqinfo(seqnames, circ_seqs, seqs_pkgname, seqs_dir)
+    seqinfo <- .makeSeqinfo(seqnames, circ_seqs, seqs_pkgname, seqs_dir,
+                            provider_version)
     if (is.null(mseqnames))
         mseqnames <- character(0)
     ans <- new("BSgenome",
