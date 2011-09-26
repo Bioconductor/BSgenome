@@ -276,8 +276,6 @@
 ### The "getSeq" generic and method for BSgenome objects.
 ###
 
-setGeneric("getSeq", function(x, ...) standardGeneric("getSeq"))
-
 setMethod("getSeq", "BSgenome",
     function(x, names, start=NA, end=NA, width=NA, strand="+",
              as.character=FALSE)
