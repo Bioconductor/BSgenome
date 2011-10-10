@@ -346,7 +346,7 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "BSgenomeDataPkgSeed" class.
+### The "BSgenomeDataPkgSeed" class and its low-level constructor.
 ###
 
 setClass(
@@ -416,6 +416,32 @@ setClass(
         TRFfiles_suffix=".bed"
     )
 )   
+
+### Generic transformation of a named list into an S4 object with automatic
+### coercion of the list elements to the required types.
+makeS4FromList <- function(Class, x)
+{
+    if (!is.list(x) || is.null(names(x)))
+        stop("'x' must be a named list")
+    explicit_slots <- getSlots(Class)[names(x)]
+    if (any(is.na(explicit_slots))) {
+        invalid_names <- setdiff(names(x), names(getSlots(Class)))
+        stop("some names in 'x' are not valid ", Class, " slots (",
+             paste(invalid_names, collapse=", "), ")")
+    }
+    y <- lapply(seq_len(length(x)),
+                function(i) {
+                    x_elt <- x[[i]]
+                    if (is(x_elt, explicit_slots[i]))
+                        return(x_elt)
+                    as(x_elt, explicit_slots[i])
+                })
+    names(y) <- names(x)
+    y$Class <- Class
+    do.call(new, y)
+}
+
+BSgenomeDataPkgSeed <- function(x) makeS4FromList("BSgenomeDataPkgSeed", x)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -509,9 +535,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
 setMethod("forgeBSgenomeDataPkg", "list",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
     {
-        storage.mode(x$nmask_per_seq) <- "integer"
-        x$Class <- "BSgenomeDataPkgSeed"
-        y <- do.call(new, x)
+        y <- BSgenomeDataPkgSeed(x)
         forgeBSgenomeDataPkg(y,
             seqs_srcdir=seqs_srcdir,
             masks_srcdir=masks_srcdir,
