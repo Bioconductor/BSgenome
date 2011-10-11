@@ -30,7 +30,8 @@ pkgs <- c(
   "BSgenome.Ptroglodytes.UCSC.panTro2",
   "BSgenome.Rnorvegicus.UCSC.rn4",
   "BSgenome.Scerevisiae.UCSC.sacCer1",
-  "BSgenome.Scerevisiae.UCSC.sacCer2"
+  "BSgenome.Scerevisiae.UCSC.sacCer2",
+  "BSgenome.Scerevisiae.UCSC.sacCer3"
 )
 
 for (pkg in pkgs) {

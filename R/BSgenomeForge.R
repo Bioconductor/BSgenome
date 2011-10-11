@@ -17,7 +17,11 @@
     if (verbose)
         cat("Saving '", objname, "' object to compressed data file '",
             destfile, "'... ", sep="")
-    save(list=objname, file=destfile, compress=TRUE)
+    ## Using compress="xz" (instead of compress="gzip") would produce a .rda
+    ## file that is about 20% smaller on disk but it would also take almost 3x
+    ## longer to load it later on with load(). Tested on hg19 chr1 with R-2.14
+    ## (2011-09-20 r57033). This is why we stick to compress="gzip".
+    save(list=objname, file=destfile, compress="gzip")
     if (verbose)
         cat("DONE\n")
     remove(list=objname)
