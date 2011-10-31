@@ -2,12 +2,12 @@ Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages
 Description: Infrastructure shared by all the Biostrings-based genome data
              packages 
-Version: 1.21.7
+Version: 1.21.8
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
-Depends: R (>= 2.8.0), methods, IRanges (>= 1.11.7), GenomicRanges (>= 1.5.42),
+Depends: R (>= 2.8.0), methods, IRanges (>= 1.11.34), GenomicRanges (>= 1.5.42),
 	Biostrings (>= 2.21.4)
 Import: methods, IRanges, GenomicRanges, Biostrings
 Suggests: RUnit,
