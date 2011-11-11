@@ -1,4 +1,13 @@
 import(methods)
+
+importFrom(BiocGenerics,
+    cbind, rbind,
+    order,
+    paste,
+    rep.int,
+    updateObject
+)
+
 import(IRanges)
 import(GenomicRanges)
 import(Biostrings)
