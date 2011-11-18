@@ -170,6 +170,14 @@ setMethod("SNPcount", "BSgenome",
     function(x) SNPcount(x@injectSNPs_handler)
 )
 
+setMethod("loadLoc", "BSgenome",
+    function(x, seqname) loadLoc(x@injectSNPs_handler, seqname)
+)
+
+setMethod("loadAlleles", "BSgenome",
+    function(x, seqname) loadAlleles(x@injectSNPs_handler, seqname)
+)
+
 setMethod("SNPlocs", "BSgenome",
     function(x, seqname) SNPlocs(x@injectSNPs_handler, seqname)
 )
