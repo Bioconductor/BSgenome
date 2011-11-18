@@ -6,8 +6,6 @@ setClass("InjectSNPsHandler",
     representation(
         SNPlocs_pkgname="character",  # single string
         getSNPcount="function",
-        loadLoc="function",
-        loadAlleles="function",
         getSNPlocs="function",
         seqname_translation_table="character"  # named character vector
     )
@@ -60,17 +58,6 @@ setClass("InjectSNPsHandler",
     seqname_translation_table
 }
 
-.get_SNPlocs_FUN <- function(funname, SNPlocs_pkgname)
-{
-    pkgenvir <- as.environment(paste("package", SNPlocs_pkgname, sep=":"))
-    FUN <- try(get(funname, envir=pkgenvir, inherits=FALSE), silent=TRUE)
-    if (!is.function(FUN))
-        stop("cannot use package ", SNPlocs_pkgname, " for SNP injection:\n",
-             "  it doesn't seem to define (and export) a function called ",
-             "'", funname, "'")
-    FUN
-}
-
 ### Calling this constructor has the side effect of loading the SNPlocs
 ### package!
 InjectSNPsHandler <- function(SNPlocs_pkgname, bsgenome_pkgname,
@@ -79,10 +66,21 @@ InjectSNPsHandler <- function(SNPlocs_pkgname, bsgenome_pkgname,
     if (!isSingleString(SNPlocs_pkgname))
         stop("'SNPlocs_pkgname' must be a single string")
     library(SNPlocs_pkgname, character.only=TRUE)
-    getSNPcount <- .get_SNPlocs_FUN("getSNPcount", SNPlocs_pkgname)
-    loadLoc <- .get_SNPlocs_FUN(".loadLoc", SNPlocs_pkgname)
-    loadAlleles <- .get_SNPlocs_FUN(".loadAlleles", SNPlocs_pkgname)
-    getSNPlocs <- .get_SNPlocs_FUN("getSNPlocs", SNPlocs_pkgname)
+    pkgenvir <- as.environment(paste("package", SNPlocs_pkgname, sep=":"))
+    getSNPcount <- try(get("getSNPcount",
+                           envir=pkgenvir,
+                           inherits=FALSE), silent=TRUE)
+    if (!is.function(getSNPcount))
+        stop("cannot use package ", SNPlocs_pkgname, " for SNP injection:\n",
+             "  it doesn't seem to define (and export) a function called ",
+             "'getSNPcount'")
+    getSNPlocs <- try(get("getSNPlocs",
+                          envir=pkgenvir,
+                          inherits=FALSE), silent=TRUE)
+    if (!is.function(getSNPlocs))
+        stop("cannot use package ", SNPlocs_pkgname, " for SNP injection:\n",
+             "  it doesn't seem to define (and export) a function called ",
+             "'getSNPlocs'")
     seqname_translation_table <- .get.seqname_translation_table(
                                            SNPlocs_pkgname,
                                            bsgenome_pkgname,
@@ -97,8 +95,6 @@ InjectSNPsHandler <- function(SNPlocs_pkgname, bsgenome_pkgname,
     new("InjectSNPsHandler",
         SNPlocs_pkgname=SNPlocs_pkgname,
         getSNPcount=getSNPcount,
-        loadLoc=loadLoc,
-        loadAlleles=loadAlleles,
         getSNPlocs=getSNPlocs,
         seqname_translation_table=seqname_translation_table)
 }
@@ -130,42 +126,6 @@ setMethod("SNPcount", "InjectSNPsHandler",
     }
 )
 
-setGeneric("loadLoc", signature="x",
-    function(x, seqname) standardGeneric("loadLoc"))
-
-setMethod("loadLoc", "InjectSNPsHandler",
-    function(x, seqname)
-    {
-        if (length(x@SNPlocs_pkgname) == 0L)
-            return(NULL)
-        if (!isSingleString(seqname))
-            stop("'seqname' must be a single string")
-        if (!(seqname %in% names(SNPcount(x))))
-            return(NULL)
-        if (length(x@seqname_translation_table) != 0L)
-            seqname <- x@seqname_translation_table[seqname]
-        x@loadLoc(seqname)
-    }
-)
-
-setGeneric("loadAlleles", signature="x",
-    function(x, seqname) standardGeneric("loadAlleles"))
-
-setMethod("loadAlleles", "InjectSNPsHandler",
-    function(x, seqname)
-    {
-        if (length(x@SNPlocs_pkgname) == 0L)
-            return(NULL)
-        if (!isSingleString(seqname))
-            stop("'seqname' must be a single string")
-        if (!(seqname %in% names(SNPcount(x))))
-            return(NULL)
-        if (length(x@seqname_translation_table) != 0L)
-            seqname <- x@seqname_translation_table[seqname]
-        x@loadAlleles(seqname)
-    }
-)
-
 setGeneric("SNPlocs", signature="x",
     function(x, seqname) standardGeneric("SNPlocs"))
 
@@ -180,7 +140,13 @@ setMethod("SNPlocs", "InjectSNPsHandler",
             return(NULL)
         if (length(x@seqname_translation_table) != 0L)
             seqname <- x@seqname_translation_table[seqname]
-        x@getSNPlocs(seqname)
+        ans <- x@getSNPlocs(seqname)
+        if (nrow(ans) != x@getSNPcount()[seqname])
+            stop("reported SNP count for sequence ", seqname, " in package ",
+                 SNPlocs_pkgname(x), " does not match the ",
+                 "number of SNPs returned by ", SNPlocs_pkgname(x),
+                 ":::getSNPlocs()")
+        ans
     }
 )
 
