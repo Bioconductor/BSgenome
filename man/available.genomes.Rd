@@ -14,11 +14,15 @@
 }
 
 \usage{
-available.genomes(type=getOption("pkgType"))
-installed.genomes()
+available.genomes(splitNameParts=FALSE, type=getOption("pkgType"))
+installed.genomes(splitNameParts=FALSE)
 }
 
 \arguments{
+  \item{splitNameParts}{
+    Whether to split or not the package names in parts. In that case
+    the result is returned in a data frame.
+  }
   \item{type}{
     Character string indicating the type of package (\code{"source"},
     \code{"mac.binary"} or \code{"win.binary"}) to look for.
@@ -58,6 +62,9 @@ installed.genomes()
 
   # What genomes are available:
   available.genomes()
+
+  # Split the package names in parts:
+  available.genomes(TRUE)
 
   # Make your choice and install with:
   source("http://bioconductor.org/biocLite.R")
