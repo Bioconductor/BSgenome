@@ -17,11 +17,11 @@
     ## From now, any top-level element in 'tmp' is guaranteed to be a character
     ## vector of length 4.
     utmp <- unlist(tmp)
-    idx1 <- (1:length(tmp)) * 4L - 3L
-    cbind(pkgname=pkgs,
-          organism=utmp[idx1+1L],
-          provider=utmp[idx1+2L],
-          provider_version=utmp[idx1+3L])
+    idx4 <- (1:length(tmp)) * 4L
+    data.frame(pkgname=pkgs,
+               organism=utmp[idx4 - 2L],
+               provider=utmp[idx4 - 1L],
+               provider_version=utmp[idx4])
 }
 
 installed.genomes <- function(splitNameParts=FALSE)
