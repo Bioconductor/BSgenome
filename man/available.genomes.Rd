@@ -64,7 +64,9 @@ installed.genomes(splitNameParts=FALSE)
   available.genomes()
 
   # Split the package names in parts:
-  available.genomes(TRUE)
+  ag <- available.genomes(TRUE)
+  table(ag$organism)
+  table(ag$provider)
 
   # Make your choice and install with:
   source("http://bioconductor.org/biocLite.R")
