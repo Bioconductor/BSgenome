@@ -27,6 +27,7 @@ pkgs <- c(
   "BSgenome.Hsapiens.UCSC.hg19",
   "BSgenome.Mmusculus.UCSC.mm8",
   "BSgenome.Mmusculus.UCSC.mm9",
+  "BSgenome.Mmusculus.UCSC.mm10",
   "BSgenome.Ptroglodytes.UCSC.panTro2",
   "BSgenome.Rnorvegicus.UCSC.rn4",
   "BSgenome.Scerevisiae.UCSC.sacCer1",
