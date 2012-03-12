@@ -18,4 +18,4 @@ SrcDataFiles1: http://hgdownload.cse.ucsc.edu/goldenPath/sacCer2/bigZips/chromFa
 PkgExamples: Scerevisiae
 	seqlengths(Scerevisiae)
 	Scerevisiae$chrI  # same as Scerevisiae[["chrI"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Scerevisiae.UCSC.sacCer2/seqs
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Scerevisiae.UCSC.sacCer2/seqs

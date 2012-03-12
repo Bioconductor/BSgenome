@@ -25,4 +25,4 @@ SrcDataFiles1: ATH1_chr1.1con.01222004
 PkgExamples: Athaliana
 	seqlengths(Athaliana)
 	Athaliana$chr1  # same as Athaliana[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.01222004/seqs
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.01222004/seqs

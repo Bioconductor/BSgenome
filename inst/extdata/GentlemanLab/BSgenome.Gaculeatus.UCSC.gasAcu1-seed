@@ -23,8 +23,8 @@ SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/da
 PkgExamples: Gaculeatus
 	seqlengths(Gaculeatus)
 	Gaculeatus$chrI # same as Gaculeatus[["chrI"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .fa.out
 TRFfiles_suffix: .bed

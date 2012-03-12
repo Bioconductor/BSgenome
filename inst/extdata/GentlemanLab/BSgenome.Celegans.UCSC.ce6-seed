@@ -23,4 +23,4 @@ SrcDataFiles1: chromFa.tar.gz
 PkgExamples: Celegans
 	seqlengths(Celegans)
 	Celegans$chrI  # same as Celegans[["chrI"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Celegans.UCSC.ce6/seqs
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Celegans.UCSC.ce6/seqs

@@ -23,6 +23,6 @@ SrcDataFiles2: AGAPS masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/golden
 PkgExamples: Ptroglodytes
 	seqlengths(Ptroglodytes)
 	Ptroglodytes$chr1  # same as Ptroglodytes[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/masks
 AGAPSfiles_name: gap.txt

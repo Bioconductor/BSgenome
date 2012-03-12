@@ -22,5 +22,5 @@ SrcDataFiles1: all the chr*.fas file from ftp://ftp.arabidopsis.org/home/tair/Se
 PkgExamples: Athaliana
 	seqlengths(Athaliana)
 	Athaliana$chr1  # same as Athaliana[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.04232008/seqs
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.04232008/seqs
 seqfiles_suffix: .fas

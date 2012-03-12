@@ -23,5 +23,5 @@ SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.
 PkgExamples: Ggallus
 	seqlengths(Ggallus)
 	Ggallus$chr1  # same as Ggallus[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal3/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal3/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal3/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal3/masks

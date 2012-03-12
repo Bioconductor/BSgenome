@@ -23,8 +23,8 @@ SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer7/da
 PkgExamples: Drerio
 	seqlengths(Drerio)
 	Drerio$chr1  # same as Drerio[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer7/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer7/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer7/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer7/masks
 AGAPSfiles_name: gap.txt
 RMfiles_name: danRer7.fa.out
 TRFfiles_name: danRer7.trf.bed

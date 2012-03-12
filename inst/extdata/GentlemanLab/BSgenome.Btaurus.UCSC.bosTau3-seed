@@ -21,8 +21,8 @@ SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/da
 PkgExamples: Btaurus
 	seqlengths(Btaurus)
 	Btaurus$chr1  # same as Btaurus[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/masks
 AGAPSfiles_name: gap.txt
 RMfiles_name: bosTau3.fa.out
 TRFfiles_name: bosTau3.trf.bed

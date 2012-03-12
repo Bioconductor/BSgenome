@@ -23,5 +23,5 @@ SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.
 PkgExamples: Rnorvegicus
 	seqlengths(Rnorvegicus)
 	Rnorvegicus$chr1  # same as Rnorvegicus[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/masks

@@ -22,5 +22,5 @@ SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.
 PkgExamples: Cfamiliaris
 	seqlengths(Cfamiliaris)
 	Cfamiliaris$chr1  # same as Cfamiliaris[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/masks

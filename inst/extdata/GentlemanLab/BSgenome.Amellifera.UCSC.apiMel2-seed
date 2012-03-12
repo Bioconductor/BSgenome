@@ -19,7 +19,7 @@ SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/da
 PkgExamples: Amellifera
 	seqlengths(Amellifera)
 	Amellifera$Group1  # same as Amellifera[["Group1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .out

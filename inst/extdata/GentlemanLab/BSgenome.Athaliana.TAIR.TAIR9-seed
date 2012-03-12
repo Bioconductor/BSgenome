@@ -18,4 +18,4 @@ SrcDataFiles1: ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR9_genome_release/TA
 PkgExamples: Athaliana
 	seqlengths(Athaliana)
 	Athaliana$Chr1  # same as Athaliana[["Chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.TAIR9/seqs
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.TAIR9/seqs

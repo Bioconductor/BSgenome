@@ -23,5 +23,5 @@ SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.
 PkgExamples: Dmelanogaster
 	seqlengths(Dmelanogaster)
 	Dmelanogaster$chr2L  # same as Dmelanogaster[["chr2L"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm2/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm2/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm2/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm2/masks

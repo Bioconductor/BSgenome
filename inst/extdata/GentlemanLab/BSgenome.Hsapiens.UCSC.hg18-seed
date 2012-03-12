@@ -23,5 +23,5 @@ SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.
 PkgExamples: Hsapiens
 	seqlengths(Hsapiens)
 	Hsapiens$chr1  # same as Hsapiens[["chr1"]]
-seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/seqs
-masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/masks
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/masks
