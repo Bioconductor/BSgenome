@@ -16,7 +16,7 @@
     destfile <- file.path(destdir, paste(objname, ".rda", sep=""))
     if (verbose)
         cat("Saving '", objname, "' object to compressed data file '",
-            destfile, "'... ", sep="")
+            destfile, "' ... ", sep="")
     ## Using compress="xz" (instead of compress="gzip") would produce a .rda
     ## file that is about 20% smaller on disk but it would also take almost 3x
     ## longer to load it later on with load(). Tested on hg19 chr1 with R-2.14
@@ -114,7 +114,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     srcpath <- getSeqSrcpaths(name, prefix=prefix, suffix=suffix,
                               seqs_srcdir=seqs_srcdir)
     if (verbose)
-        cat("Loading FASTA file '", srcpath, "' in '", name, "' object... ", sep="")
+        cat("Loading FASTA file '", srcpath, "' in '", name, "' object ... ", sep="")
     seq <- read.DNAStringSet(srcpath, "fasta")
     if (verbose)
         cat("DONE\n")
@@ -394,8 +394,8 @@ setClass(
         TRFfiles_suffix="character"
     ),
     prototype(
-        Author="H. Pages",
-        Maintainer="Biocore Team c/o BioC user list <bioconductor@stat.math.ethz.ch>",
+        Author="The Bioconductor Dev Team",
+        Maintainer="Bioconductor Package Maintainer <maintainer@bioconductor.org>",
         License="Artistic-2.0",
         source_url="-- information not available --",
         seqnames="NULL",              # equivalent to "character(0)"
