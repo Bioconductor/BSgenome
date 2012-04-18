@@ -5,7 +5,7 @@ setMethod("vmatchPattern", "BSgenome",
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
              algorithm="auto", exclude="", maskList=logical(0),
              userMask=RangesList(), invertUserMask=FALSE,
-             asRangedData=TRUE)
+             asRangedData=FALSE)
     {
         matchFUN <- function(posPattern, negPattern, chr,
                              seqlengths,
@@ -53,6 +53,15 @@ setMethod("vmatchPattern", "BSgenome",
           Biostrings:::normargMinMismatch(min.mismatch, max.mismatch)
         with.indels <- Biostrings:::normargWithIndels(with.indels)
         fixed <- Biostrings:::normargFixed(fixed, DNAStringSet())
+        if (!missing(asRangedData)) {
+            msg <- c("the 'asRangedData' argument is deprecated ",
+                     "and will be removed soon")
+            .Deprecated(msg=msg)
+        }
+        if (asRangedData) {
+            msg <- "using 'asRangedData=TRUE' is defunct"
+            .Defunct(msg=msg)
+        }
 
         posPattern <- pattern
         negPattern <- reverseComplement(posPattern)
@@ -72,12 +81,6 @@ setMethod("vmatchPattern", "BSgenome",
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(as.list(matches)))
         runValue(seqnames(matches)) <- nms
-        if (asRangedData) {
-            warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
-            matches <- RangedData(ranges = ranges(matches),
-                                  strand = as.vector(strand(matches)),
-                                  space = as.vector(seqnames(matches)))
-        }
         matches
     }
 )
@@ -146,7 +149,7 @@ setMethod("vmatchPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
              algorithm="auto", verbose=FALSE, exclude="",
-             maskList=logical(0), asRangedData=TRUE)
+             maskList=logical(0), asRangedData=FALSE)
     {
         matchFUN <- function(posPDict, negPDict, chr,
                              seqlengths,
@@ -200,6 +203,15 @@ setMethod("vmatchPDict", "BSgenome",
                  "for this algorithm")
         if (!isTRUEorFALSE(verbose))
             stop("'verbose' must be TRUE or FALSE")
+        if (!missing(asRangedData)) {
+            msg <- c("the 'asRangedData' argument is deprecated ",
+                     "and will be removed soon")
+            .Deprecated(msg=msg)
+        }
+        if (asRangedData) {
+            msg <- "using 'asRangedData=TRUE' is defunct"
+            .Defunct(msg=msg)
+        }
 
         posPDict <- pdict
         negPDict <- reverseComplement(posPDict)
@@ -219,13 +231,6 @@ setMethod("vmatchPDict", "BSgenome",
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(as.list(matches)))
         runValue(seqnames(matches)) <- nms
-        if (asRangedData) {
-            warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
-            matches <- RangedData(ranges = ranges(matches),
-                                  strand = as.vector(strand(matches)),
-                                  index = elementMetadata(matches)[["index"]],
-                                  space = as.vector(seqnames(matches)))
-        }
         matches
     }
 )
@@ -307,7 +312,7 @@ setMethod("vcountPDict", "BSgenome",
 ## matchPWM/countPWM for BSgenome
 setMethod("matchPWM", "BSgenome",
     function(pwm, subject, min.score="80%", exclude="", maskList=logical(0),
-             asRangedData=TRUE)
+             asRangedData=FALSE)
     {
         matchFUN <- function(posPWM, negPWM, chr, seqlengths, min.score) {
             posMatches <-
@@ -341,6 +346,15 @@ setMethod("matchPWM", "BSgenome",
         pwm <- Biostrings:::.normargPwm(pwm)
         ## checking 'min.score'
         min.score <- Biostrings:::.normargMinScore(min.score, pwm)
+        if (!missing(asRangedData)) {
+            msg <- c("the 'asRangedData' argument is deprecated ",
+                     "and will be removed soon")
+            .Deprecated(msg=msg)
+        }
+        if (asRangedData) {
+            msg <- "using 'asRangedData=TRUE' is defunct"
+            .Defunct(msg=msg)
+        }
 
         posPWM <- pwm[DNA_BASES, , drop = FALSE]
         negPWM <- reverseComplement(posPWM)
@@ -360,14 +374,6 @@ setMethod("matchPWM", "BSgenome",
         string <- factor(elementMetadata(matches)[["string"]])
         elementMetadata(matches)[["string"]] <-
           DNAStringSet(levels(string))[as.integer(string)]
-        if (asRangedData) {
-            warning("RangedData output is deprecated.\nRerun using 'asRangedData=FALSE'.")
-            matches <- RangedData(ranges = ranges(matches),
-                                  strand = as.vector(strand(matches)),
-                                  score = elementMetadata(matches)[["score"]],
-                                  string = elementMetadata(matches)[["string"]],
-                                  space = as.vector(seqnames(matches)))
-        }
         matches
     }
 )

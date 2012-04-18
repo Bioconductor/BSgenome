@@ -18,20 +18,20 @@
 
 \usage{
 \S4method{matchPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "",
-       maskList = logical(0), asRangedData = TRUE)
+       maskList = logical(0), asRangedData = FALSE)
 \S4method{countPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "", 
        maskList = logical(0))
 \S4method{vmatchPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
             with.indels = FALSE, fixed = TRUE, algorithm = "auto",
             exclude = "", maskList = logical(0),  userMask =
-               RangesList(), invertUserMask = FALSE, asRangedData = TRUE)
+               RangesList(), invertUserMask = FALSE, asRangedData = FALSE)
 \S4method{vcountPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
             with.indels = FALSE, fixed = TRUE, algorithm = "auto",
             exclude = "", maskList = logical(0),  userMask =
                RangesList(), invertUserMask = FALSE)
 \S4method{vmatchPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
           fixed = TRUE, algorithm = "auto", verbose = FALSE,
-          exclude = "", maskList = logical(0), asRangedData = TRUE)
+          exclude = "", maskList = logical(0), asRangedData = FALSE)
 \S4method{vcountPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
           fixed = TRUE, algorithm = "auto", collapse = FALSE,
           weight = 1L, verbose = FALSE, exclude = "", maskList = logical(0))
@@ -104,10 +104,8 @@
   }
   \item{asRangedData}{
     A logical value to assist in migrating output type from
-    \link[IRanges]{RangedData} (deprecated) to
+    \link[IRanges]{RangedData} (defunct) to
     \link[GenomicRanges]{GRanges}. Should be \code{FALSE}.
-    If \code{TRUE}, a warning message is issued and a RangedData object
-    is returned.
   }    
 }
 
@@ -146,14 +144,14 @@
   data(HNF4alpha)
 
   pwm <- PWM(HNF4alpha)
-  matchPWM(pwm, Celegans, asRangedData = FALSE)
+  matchPWM(pwm, Celegans)
   countPWM(pwm, Celegans)
 
   pattern <- consensusString(HNF4alpha)
-  vmatchPattern(pattern, Celegans, fixed = "subject", asRangedData = FALSE)
+  vmatchPattern(pattern, Celegans, fixed = "subject")
   vcountPattern(pattern, Celegans, fixed = "subject")
 
-  vmatchPDict(HNF4alpha[1:10], Celegans, asRangedData = FALSE)
+  vmatchPDict(HNF4alpha[1:10], Celegans)
   vcountPDict(HNF4alpha[1:10], Celegans)
 }
 

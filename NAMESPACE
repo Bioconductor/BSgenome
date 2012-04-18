@@ -21,7 +21,7 @@ export(
     BSgenome,
     installed.SNPs, available.SNPs,
     bsapply,
-    GenomeData, GenomeDataList, gdreduce,
+    GenomeData, GenomeDataList,
 
     ## Generic functions:
     organism, species, provider, providerVersion,
@@ -32,6 +32,7 @@ export(
     masknames,
     injectSNPs,
     gdapply, gdApply,
+    gdReduce, gdreduce,
 
     ## BSgenomeForge functions:
     forgeSeqlengthsFile,
@@ -54,6 +55,7 @@ exportMethods(
     masknames,
     injectSNPs,
     gdapply,
+    gdReduce,
 
     ## BSgenomeForge methods:
     forgeBSgenomeDataPkg

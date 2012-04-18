@@ -1,16 +1,18 @@
-setGeneric("gdreduce",
+gdreduce <- function(...) .Deprecated("gdReduce")
+
+setGeneric("gdReduce",
            function(f, ..., init, right=FALSE, accumulate=FALSE,
-                    gdArgs=list()) standardGeneric("gdreduce"),
+                    gdArgs=list()) standardGeneric("gdReduce"),
            signature="...")
 
-setMethod(gdreduce, "GenomeDataList",
+setMethod(gdReduce, "GenomeDataList",
           function(f, ..., init, right=FALSE, accumulate=FALSE,
                    gdArgs=list())
 {
     args <- list(...)
     if (length(args) > 1L)
         stop("'...' must satisfy 'length(...) == 1' in\n  ",
-             "'gdreduce,GenomeDataList-method'")
+             "'gdReduce,GenomeDataList-method'")
     gdlist <- args[[1]]
     gdnames <- lapply(gdlist, names)
     nms <- unique(unlist(gdnames))
@@ -31,15 +33,15 @@ setMethod(gdreduce, "GenomeDataList",
     do.call(GenomeData, c(list(listData=listData), gdArgs))
 })
 
-setMethod(gdreduce, "GenomeData",
+setMethod(gdReduce, "GenomeData",
           function(f, ..., init, right=FALSE, accumulate=FALSE,
                    gdArgs=list())
 {
     if (missing(init))
-        gdreduce(f, GenomeDataList(list(...)), right=right,
+        gdReduce(f, GenomeDataList(list(...)), right=right,
                  accumulate=accumulate, gdArgs=gdArgs)
     else
-        gdreduce(f, GenomeDataList(list(...)), init=init, right=right,
+        gdReduce(f, GenomeDataList(list(...)), init=init, right=right,
                  accumulate=accumulate, gdArgs=gdArgs)
 
 })

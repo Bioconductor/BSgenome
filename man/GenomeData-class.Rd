@@ -19,8 +19,6 @@
 \alias{coerce,GenomeData,RangesList-method}
 \alias{coerce,GenomeData,RangedData-method}
 
-% Reduction
-\alias{gdreduce,GenomeData-method}
 
 \title{Data on the genome}
 \description{\code{GenomeData} formally represents genomic data as a
@@ -105,32 +103,20 @@
   }
 }
 
-\section{Reduction}{
-  \describe{
-	\item{}{\code{gdreduce(f, ..., init, right=FALSE, accumulate=FALSE, gdArgs=list())}:
-
-	  Successively combine \code{\linkS4class{GenomeData}} elements of
-	  \code{...} using \code{f}; all arguments assigned to \code{...}
-	  must be of class \code{GenomeData}. \code{f} is a function
-	  accepting two objects returned by \code{"[["} applied to the
-	  successive elements of \code{...}, returning a single
-	  \code{GenomeData} object to be used in subsequent calls to
-	  \code{f}. \code{init}, \code{right}, and \code{accumulate} are as
-	  described for \code{\link{Reduce}}.
-	  \code{gdArgs} can be used to provide metadata information to the
-	  constructor used to create the final \code{GenomeData} object.
-
-	}
-  }
-}
-
 \author{ Michael Lawrence }
 
 \seealso{
-  \link[BSgenome:GenomeDataList-class]{GenomeDataList}, a container of
-  this class and useful for storing data on multiple samples.
+  \link{GenomeDataList-class}, a container for storing a
+  list of GenomeData objects and useful e.g. for storing data
+  on multiple samples.
 
-  \linkS4class{SimpleList}, the base of this class.
+  \link{SimpleList-class}, the base of this class.
+
+  \code{\link{gdapply}} for applying a function to elements of a
+  GenomeData object.
+
+  \code{\link{gdReduce}} for successively combining GenomeData objects
+  into a single GenomeData objects.
 }
 
 \examples{

@@ -60,60 +60,6 @@ setValidity("GenomeData",
               else NULL
             })
 
-setClass("GenomeDataList", prototype = prototype(elementType = "GenomeData"),
-         contains = "SimpleList")
-
-setValidity("GenomeDataList",
-            function(object) {
-              ## each element must be a "GenomeData"
-                if (!identical(elementType(object), "GenomeData"))
-                    return("The elementType(object) is not 'GenomeData'")
-                TRUE
-            })
-
-GenomeDataList <- function(listData = list(), metadata = list(),
-                           elementMetadata = NULL)
-{
-  new("GenomeDataList", listData = listData, metadata = metadata,
-      elementMetadata = elementMetadata)
-}
-
-## An apply-type function for working with GenomeData and GenomeDataList objects:
-gdApply <- function(...) 
-{
-    .Deprecated("gdapply",
-                msg = "gdApply() is deprecated. Use gdapply() instead [all lowercase].")
-    gdapply(...)
-}
-
-
-setGeneric("gdapply",
-           function(X, FUN, ...) {
-               standardGeneric("gdapply")
-           })
-
-setMethod("gdapply",
-          signature(X = "GenomeDataList", FUN = "function"),
-          function(X, FUN, ...) {
-              new.elements <- lapply(X, gdapply, FUN, ...)
-              cls <- lapply(new.elements, class)
-              ucl <- unique(unlist(cls))
-              if (identical(ucl, "GenomeData"))
-                  GenomeDataList(new.elements, metadata(X))
-              else new.elements
-          })
-
-setMethod("gdapply",
-          signature(X = "GenomeData", FUN = "function"),
-          function(X, FUN, ...) {
-              new.elements <- lapply(X, FUN, ...)
-              cls <- lapply(new.elements, class)
-              ucl <- unique(unlist(cls))
-              if (length(ucl) == 1)
-                  GenomeData(new.elements, metadata = metadata(X))
-              else new.elements
-          })
-
 ## coersion to data.frame methods
 setAs("GenomeData", "data.frame",
       function(from) {
@@ -126,22 +72,6 @@ setAs("GenomeData", "data.frame",
                              function(chr) {
                                cbind(as(from[[chr]], "data.frame"),
                                      chromosome = chr)
-                             }, simplify = FALSE))
-          row.names(ans) <- NULL
-          ans
-      })
-
-setAs("GenomeDataList", "data.frame",
-      function(from) {
-          ind <- names(from)
-          if (is.null(ind))
-              ind <- seq(length(from))
-          ans <- 
-              do.call(rbind, 
-                      sapply(ind,
-                             function(sample) {
-                                 cbind(as(from[[sample]], "data.frame"),
-                                       sample = sample)
                              }, simplify = FALSE))
           row.names(ans) <- NULL
           ans
@@ -163,9 +93,3 @@ setAs("GenomeData", "RangedData", function(from) {
   ans
 })
 
-setAs("GenomeDataList", "RangedDataList", function(from) {
-  ans <- do.call(RangedDataList, lapply(from, as, "RangedData"))
-  metadata(ans) <- metadata(from)
-  elementMetadata(ans) <- elementMetadata(from)
-  ans
-})

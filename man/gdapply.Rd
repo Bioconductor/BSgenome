@@ -4,23 +4,22 @@
 \alias{gdapply,GenomeData,function-method}
 \alias{gdapply,GenomeDataList,function-method}
 
+% Defunct:
 \alias{gdApply}
-\alias{gdApply,GenomeData,function-method}
-\alias{gdApply,GenomeDataList,function-method}
 
 \title{
   Applies a function to elements of a GenomeData
 }
 \description{
   Returns a list of values obtained by applying a function to elements
-  of a GenomeData or GenomeDataList object.
+  of a \link{GenomeData} or \link{GenomeDataList} object.
 }
 \usage{
 gdapply(X, FUN, ...)
 }
 \arguments{
   \item{X}{
-    An object of class \code{"GenomeData"} or \code{"GenomeDataList"}
+    An object of class \link{GenomeData} or \link{GenomeDataList}.
   }
   \item{FUN}{
     A function to be applied to each chromosome-level sub-element of
@@ -36,5 +35,8 @@ gdapply(X, FUN, ...)
 \author{
   Deepayan Sarkar
 }
+\seealso{
+  \link{GenomeData-class},
+  \link{GenomeDataList-class}
+}
 \keyword{manip}
-

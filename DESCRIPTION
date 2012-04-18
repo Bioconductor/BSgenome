@@ -2,7 +2,7 @@ Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages
 Description: Infrastructure shared by all the Biostrings-based genome data
              packages 
-Version: 1.25.0
+Version: 1.25.1
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
@@ -23,10 +23,12 @@ Collate: utils.R
 	GenomeDescription-class.R
 	InjectSNPsHandler-class.R
 	BSgenome-class.R
-	container-classes.R
 	injectSNPs.R
 	getSeq-methods.R
 	bsapply.R
-	gdreduce.R
 	BSgenome-utils.R
+	GenomeData-class.R
+	GenomeDataList-class.R
+	gdapply.R
+	gdReduce.R
 	BSgenomeForge.R
