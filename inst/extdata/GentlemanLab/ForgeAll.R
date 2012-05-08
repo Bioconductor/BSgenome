@@ -13,6 +13,7 @@ pkgs <- c(
   "BSgenome.Btaurus.UCSC.bosTau4",
   "BSgenome.Celegans.UCSC.ce2",
   "BSgenome.Celegans.UCSC.ce6",
+  "BSgenome.Celegans.UCSC.ce10",
   "BSgenome.Cfamiliaris.UCSC.canFam2",
   "BSgenome.Dmelanogaster.UCSC.dm2",
   "BSgenome.Dmelanogaster.UCSC.dm3",
