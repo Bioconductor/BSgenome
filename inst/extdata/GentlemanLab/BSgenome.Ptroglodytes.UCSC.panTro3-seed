@@ -1,0 +1,30 @@
+Package: BSgenome.Ptroglodytes.UCSC.panTro3
+Title: Pan troglodytes (Chimp) full genome (UCSC version panTro3)
+Description: Pan troglodytes (Chimp) full genome as provided by UCSC (panTro3, Oct. 2010) and stored in Biostrings objects.
+Version: 1.3.17
+organism: Pan troglodytes
+species: Chimp
+provider: UCSC
+provider_version: panTro3
+release_date: Oct. 2010
+release_name: CGSC Build 2.1.3
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/panTro3/bigZips/
+organism_biocview: Pan_troglodytes
+BSgenomeObjname: Ptroglodytes
+seqnames: paste("chr", c(1, "2A", "2B", 3:22, "X", "Y", "M"), sep="")
+circ_seqs: "chrM"
+mseqnames: c(paste("chr", c(1, "2A", "2B", 3:22, "X", "Y", "M"), "_random", sep=""), "chrUn", paste("upstream", c("1000", "2000", "5000"), sep=""))
+nmask_per_seq: 4
+SrcDataFiles1: sequences: panTro3.fa.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
+	from http://hgdownload.cse.ucsc.edu/goldenPath/panTro3/bigZips/
+SrcDataFiles2: AGAPS masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro3/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro3/bigZips/panTro3.fa.out.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro3/bigZips/panTro3.trf.bed.gz
+PkgExamples: Ptroglodytes
+	seqlengths(Ptroglodytes)
+	Ptroglodytes$chr1  # same as Ptroglodytes[["chr1"]]
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro3/seqs
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro3/masks
+AGAPSfiles_name: gap.txt
+RMfiles_name: panTro3.fa.out
+TRFfiles_name: panTro3.trf.bed
