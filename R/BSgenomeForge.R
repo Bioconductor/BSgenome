@@ -115,7 +115,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
                               seqs_srcdir=seqs_srcdir)
     if (verbose)
         cat("Loading FASTA file '", srcpath, "' in '", name, "' object ... ", sep="")
-    seq <- read.DNAStringSet(srcpath, "fasta")
+    seq <- readDNAStringSet(srcpath, "fasta")
     if (verbose)
         cat("DONE\n")
     if (is.single.seq) {
