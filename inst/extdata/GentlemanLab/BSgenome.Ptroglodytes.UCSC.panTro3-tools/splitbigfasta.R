@@ -11,7 +11,7 @@ for (seqname in seqnames) {
     write.XStringSet(seq, file=filename, width=50L)
 }
 
-### Send the chr*_random sequences to 1 FASTA file per chromosome.
+### Send the chr*_random sequences to 1 FASTA file per sequence.
 for (seqname in seqnames) {
     mseq <- panTro3[grep(paste0(seqname, "_"), names(panTro3), fixed=TRUE)]
     filename <- paste(seqname, "_random.fa", sep="")
