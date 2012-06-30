@@ -282,6 +282,19 @@ rndreads <- extractRandomReads(Celegans, 0.01, 40)
 ##   reference at multiple locations. This is especially true for such
 ##   short reads, and, in a lower proportion, is still true for longer
 ##   reads, even for reads as long as 300 bases.
+
+## ---------------------------------------------------------------------
+## E. SEE THE BSgenome CACHE IN ACTION
+## ---------------------------------------------------------------------
+
+options(verbose=TRUE)
+first20 <- getSeq(Celegans, end=20)
+first20
+gc()
+stopifnot(length(ls(Celegans@.seqs_cache)) == 0L)
+## One more gc() call is needed in order to see the amount of memory in
+## used after all the chromosomes have been removed from the cache:
+gc()
 }
 
 \keyword{manip}
