@@ -374,6 +374,8 @@ setMethod("show", "BSgenome",
     seqs_cache <- bsgenome@.seqs_cache
     if (!exists(name, envir=seqs_cache, inherits=FALSE)) {
         ans <- .loadBSgenomeSequence(name, bsgenome)
+        if (getOption("verbose"))
+            cat("caching ", name, "\n", sep="")
         assign(name, ans, envir=seqs_cache)
     }
     ans <- get(name, envir=seqs_cache)
