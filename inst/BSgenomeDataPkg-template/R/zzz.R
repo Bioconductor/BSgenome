@@ -30,9 +30,15 @@
         masks_pkgname=pkgname,
         masks_dir=extdata_dir
     )
-    objname <- "@BSGENOMEOBJNAME@"
+
     ns <- asNamespace(pkgname)
+
+    objname <- "@PKGNAME@"
     assign(objname, bsgenome, envir=ns)
     namespaceExport(ns, objname)
+
+    old_objname <- "@BSGENOMEOBJNAME@"
+    assign(old_objname, bsgenome, envir=ns)
+    namespaceExport(ns, old_objname)
 }
 

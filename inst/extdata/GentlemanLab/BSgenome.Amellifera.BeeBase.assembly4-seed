@@ -1,7 +1,7 @@
 Package: BSgenome.Amellifera.BeeBase.assembly4
 Title: Apis mellifera (Honey Bee) full genome (BeeBase assembly4)
 Description: Apis mellifera (Honey Bee) full genome as provided by BeeBase (assembly4, Feb. 2008) and stored in Biostrings objects.
-Version: 1.3.16
+Version: 1.3.19
 organism: Apis mellifera
 species: Honey Bee
 provider: BeeBase
@@ -14,7 +14,5 @@ BSgenomeObjname: Amellifera
 seqnames: paste("Group", 1:16, sep="")
 mseqnames: "GroupUn"
 nmask_per_seq: 0
-PkgExamples: Amellifera
-	seqlengths(Amellifera)
-	Amellifera$Group1  # same as Amellifera[["Group1"]]
+PkgExamples: genome$Group1  # same as genome[["Group1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.BeeBase.assembly4/seqs

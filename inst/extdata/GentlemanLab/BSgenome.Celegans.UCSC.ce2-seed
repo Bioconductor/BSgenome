@@ -1,7 +1,7 @@
 Package: BSgenome.Celegans.UCSC.ce2
 Title: Caenorhabditis elegans (Worm) full genome (UCSC version ce2)
 Description: Caenorhabditis elegans (Worm) full genome as provided by UCSC (ce2, Mar. 2004) and stored in Biostrings objects.
-Version: 1.3.17
+Version: 1.3.19
 organism: Caenorhabditis elegans
 species: Worm
 provider: UCSC
@@ -20,7 +20,5 @@ SrcDataFiles1: chromFa.zip
 	upstream2000.zip
 	upstream5000.zip
 	from http://hgdownload.cse.ucsc.edu/goldenPath/ce2/bigZips/
-PkgExamples: Celegans
-	seqlengths(Celegans)
-	Celegans$chrI  # same as Celegans[["chrI"]]
+PkgExamples: genome$chrI  # same as genome[["chrI"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Celegans.UCSC.ce2/seqs

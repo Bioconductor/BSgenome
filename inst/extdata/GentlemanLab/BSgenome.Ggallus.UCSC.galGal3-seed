@@ -1,7 +1,7 @@
 Package: BSgenome.Ggallus.UCSC.galGal3
 Title: Gallus gallus (Chicken) full genome (UCSC version galGal3)
 Description: Gallus gallus (Chicken) full genome as provided by UCSC (galGal3, May 2006) and stored in Biostrings objects.
-Version: 1.3.18
+Version: 1.3.19
 organism: Gallus gallus
 species: Chicken
 provider: UCSC
@@ -20,8 +20,6 @@ SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz
 SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/galGal3/database/
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/galGal3/bigZips/chromOut.tar.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/galGal3/bigZips/chromTrf.tar.gz
-PkgExamples: Ggallus
-	seqlengths(Ggallus)
-	Ggallus$chr1  # same as Ggallus[["chr1"]]
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal3/seqs
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal3/masks

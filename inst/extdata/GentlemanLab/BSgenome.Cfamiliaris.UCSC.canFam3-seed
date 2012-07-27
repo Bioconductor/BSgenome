@@ -1,7 +1,7 @@
 Package: BSgenome.Cfamiliaris.UCSC.canFam3
 Title: Canis lupus familiaris (Dog) full genome (UCSC version canFam3)
 Description: Canis lupus familiaris (Dog) full genome as provided by UCSC (canFam3, Sep. 2011) and stored in Biostrings objects.
-Version: 1.3.17
+Version: 1.3.19
 organism: Canis lupus familiaris
 species: Dog
 provider: UCSC
@@ -20,9 +20,7 @@ SrcDataFiles1: sequences: canFam3.fa.gz and the upstream*.fa.gz files
 SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/database/gap.txt.gz
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/canFam3.fa.out.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/canFam3.trf.bed.gz
-PkgExamples: Cfamiliaris
-	seqlengths(Cfamiliaris)
-	Cfamiliaris$chr1  # same as Cfamiliaris[["chr1"]]
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam3/seqs
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam3/masks
 AGAPSfiles_name: gap.txt

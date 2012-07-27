@@ -1,10 +1,9 @@
-\name{@BSGENOMEOBJNAME@}
+\name{@PKGNAME@}
 \docType{package}
 
 \alias{@PKGNAME@-package}
 \alias{@PKGNAME@}
 \alias{@BSGENOMEOBJNAME@}
-
 
 \title{@PKGTITLE@}
 
@@ -37,9 +36,12 @@
 }
 
 \examples{
+@PKGNAME@
+genome <- @PKGNAME@
+seqlengths(genome)
 @PKGEXAMPLES@
 
-if ("AGAPS" \%in\% masknames(@BSGENOMEOBJNAME@)) {
+if ("AGAPS" \%in\% masknames(genome)) {
 
   ## Check that the assembly gaps contain only Ns:
   checkOnlyNsInGaps <- function(seq)
@@ -55,9 +57,9 @@ if ("AGAPS" \%in\% masknames(@BSGENOMEOBJNAME@)) {
   ## from the cache:
   options(verbose=TRUE)
 
-  for (seqname in seqnames(@BSGENOMEOBJNAME@)) {
+  for (seqname in seqnames(genome)) {
     cat("Checking sequence", seqname, "... ")
-    seq <- @BSGENOMEOBJNAME@[[seqname]]
+    seq <- genome[[seqname]]
     checkOnlyNsInGaps(seq)
     cat("OK\n")
   }

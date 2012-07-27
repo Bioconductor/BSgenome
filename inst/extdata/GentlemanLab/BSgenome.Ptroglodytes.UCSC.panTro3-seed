@@ -1,7 +1,7 @@
 Package: BSgenome.Ptroglodytes.UCSC.panTro3
 Title: Pan troglodytes (Chimp) full genome (UCSC version panTro3)
 Description: Pan troglodytes (Chimp) full genome as provided by UCSC (panTro3, Oct. 2010) and stored in Biostrings objects.
-Version: 1.3.17
+Version: 1.3.19
 organism: Pan troglodytes
 species: Chimp
 provider: UCSC
@@ -20,9 +20,7 @@ SrcDataFiles1: sequences: panTro3.fa.gz, upstream1000.fa.gz, upstream2000.fa.gz,
 SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro3/database/gap.txt.gz
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro3/bigZips/panTro3.fa.out.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro3/bigZips/panTro3.trf.bed.gz
-PkgExamples: Ptroglodytes
-	seqlengths(Ptroglodytes)
-	Ptroglodytes$chr1  # same as Ptroglodytes[["chr1"]]
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro3/seqs
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro3/masks
 AGAPSfiles_name: gap.txt
