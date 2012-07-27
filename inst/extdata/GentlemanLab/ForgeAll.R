@@ -15,6 +15,7 @@ pkgs <- c(
   "BSgenome.Celegans.UCSC.ce6",
   "BSgenome.Celegans.UCSC.ce10",
   "BSgenome.Cfamiliaris.UCSC.canFam2",
+  "BSgenome.Cfamiliaris.UCSC.canFam3",
   "BSgenome.Dmelanogaster.UCSC.dm2",
   "BSgenome.Dmelanogaster.UCSC.dm3",
   "BSgenome.Drerio.UCSC.danRer5",
