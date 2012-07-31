@@ -29,6 +29,10 @@ export(
     ## Generic functions:
     organism, species, provider, providerVersion,
     releaseDate, releaseName, bsgenomeName,
+
+    referenceGenome, compatibleGenomes,
+    snpcount, snplocs,
+
     sourceUrl,
     SNPlocs, SNPlocs_pkgname, SNPcount,
     mseqnames,
@@ -53,6 +57,10 @@ exportMethods(
     organism, species, provider, providerVersion,
     releaseDate, releaseName, bsgenomeName,
     seqinfo, seqnames, seqlengths, isCircular,
+
+    referenceGenome, compatibleGenomes,
+    snpcount, snplocs,
+
     sourceUrl,
     SNPlocs, SNPlocs_pkgname, SNPcount,
     mseqnames,

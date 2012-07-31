@@ -37,6 +37,7 @@ setClass("SNPlocs",
         ## the serialized objects containing the SNPs
         data_pkgname="character",
         data_dirpath="character",
+        data_serialized_objnames="character",
 
         .data_cache="environment"
     )
@@ -52,7 +53,7 @@ newSNPlocs <- function(provider, provider_version,
                        release_date, release_name,
                        download_url, download_date,
                        reference_genome, compatible_genomes,
-                       data_pkgname, data_dirpath)
+                       data_pkgname, data_dirpath, data_serialized_objnames)
 {
     new("SNPlocs",
         provider=provider,
@@ -65,11 +66,72 @@ newSNPlocs <- function(provider, provider_version,
         compatible_genomes=compatible_genomes,
         data_pkgname=data_pkgname,
         data_dirpath=data_dirpath,
+        data_serialized_objnames=data_serialized_objnames,
         .data_cache=new.env(parent=emptyenv()))
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Accessors
+###
+
+setMethod("provider", "SNPlocs", function(x) x@provider)
+
+setMethod("providerVersion", "SNPlocs", function(x) x@provider_version)
+
+setMethod("releaseDate", "SNPlocs", function(x) x@release_date)
+
+setMethod("releaseName", "SNPlocs", function(x) x@release_name)
+
+setGeneric("referenceGenome", function(x) standardGeneric("referenceGenome"))
+setMethod("referenceGenome", "SNPlocs", function(x) x@reference_genome)
+
+setGeneric("compatibleGenomes",
+    function(x) standardGeneric("compatibleGenomes")
+)
+setMethod("compatibleGenomes", "SNPlocs", function(x) x@compatible_genomes)
+
+setMethod("organism", "SNPlocs", function(x) organism(referenceGenome(x)))
+
+setMethod("species", "SNPlocs", function(x) species(referenceGenome(x)))
+
+setMethod("seqinfo", "SNPlocs", function(x) seqinfo(referenceGenome(x)))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### snpcount() and snplocs()
+###
+
+.get_SNPlocs_data <- function(x, objname, caching=TRUE)
+{
+}
+
+setGeneric("snpcount", function(x) standardGeneric("snpcount"))
+setMethod("snpcount", "SNPlocs",
+    function(x)
+    {
+        
+    }
+)
+
+setGeneric("snplocs", function(x) standardGeneric("snplocs"))
+setMethod("snplocs", "SNPlocs",
+    function(x)
+    {
+        
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The 'show' method
 ###
+
+setMethod("show", "SNPlocs",
+    function(object)
+    {
+        cat(class(object), " object for ",
+            provider(object), " ", releaseName(object), "\n", sep="")
+    }
+)
 
