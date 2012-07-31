@@ -289,3 +289,45 @@ setMethod("snplocs", "SNPlocs",
     }
 )
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### snpid2loc(), snpid2alleles(), and snpid2grange()
+###
+
+### Returns a named integer vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is its position on the chromosome.
+setGeneric("snpid2loc", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2loc")
+)
+
+setMethod("snpid2loc", "SNPlocs",
+    function(x, snpid, caching=TRUE)
+    {
+    }
+)
+
+### Returns a named character vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is a single IUPAC code representing the associated
+### alleles.
+setGeneric("snpid2alleles", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2alleles")
+)
+
+setMethod("snpid2alleles", "SNPlocs",
+    function(x, snpid, caching=TRUE)
+    {
+    }
+)
+
+setGeneric("snpid2grange", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2grange")
+)
+
+setMethod("snpid2grange", "SNPlocs",
+    function(x, snpid, caching=TRUE)
+    {
+    }
+)
+
