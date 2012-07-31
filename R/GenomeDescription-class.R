@@ -21,7 +21,10 @@ setClass("GenomeDescription",
 
         ## release_name: "NCBI Build 36.1", "NCBI Build 36",
         ## "SGD 1 Oct 2003 sequence", etc...
-        release_name="character"
+        release_name="character",
+
+        ## names, lengths, and circularity flags of the genome sequences
+        seqinfo="Seqinfo"
     )
 )
 
@@ -61,6 +64,18 @@ setMethod("bsgenomeName", "GenomeDescription",
     }
 )
 
+setMethod("seqinfo", "GenomeDescription", function(x) x@seqinfo)
+
+setMethod("seqnames", "GenomeDescription",
+    function(x)
+    {
+        ans <- seqnames(seqinfo(x))
+        if (length(ans) == 0L)
+            ans <- NULL
+        ans
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Validity.
@@ -69,6 +84,8 @@ setMethod("bsgenomeName", "GenomeDescription",
 setValidity("GenomeDescription",
     function(object)
     {
+        SINGLE_STRING_SLOTS <- setdiff(slotNames("GenomeDescription"),
+                                       "seqinfo")
         .validSlot <- function(slotname)
         {
             slotval <- slot(object, slotname)
@@ -78,7 +95,7 @@ setValidity("GenomeDescription",
                              "single string (or NA)", sep="")
             return(problem)
         }
-        unlist(lapply(slotNames("GenomeDescription"), .validSlot))
+        unlist(lapply(SINGLE_STRING_SLOTS, .validSlot))
     }
 )
 
@@ -89,7 +106,8 @@ setValidity("GenomeDescription",
 
 GenomeDescription <- function(organism, species,
                               provider, provider_version,
-                              release_date, release_name)
+                              release_date, release_name,
+                              seqinfo)
 {
     if (identical(organism, "NA")) organism <- NA_character_
     if (identical(species, "NA")) species <- NA_character_
@@ -101,7 +119,8 @@ GenomeDescription <- function(organism, species,
         provider=provider,
         provider_version=provider_version,
         release_date=release_date,
-        release_name=release_name)
+        release_name=release_name,
+        seqinfo=seqinfo)
 }
 
 
@@ -109,18 +128,23 @@ GenomeDescription <- function(organism, species,
 ### The 'show' method
 ###
 
+showGenomeDescription <- function(x, margin="", print.seqlengths=FALSE)
+{
+    cat(margin, "organism: ", organism(x), " (",  species(x), ")\n", sep="")
+    cat(margin, "provider: ", provider(x), "\n", sep="")
+    cat(margin, "provider version: ", providerVersion(x), "\n", sep="")
+    cat(margin, "release date: ", releaseDate(x), "\n", sep="")
+    cat(margin, "release name: ", releaseName(x), "\n", sep="")
+    if (print.seqlengths) {
+        cat(margin, "---\n", sep="")
+        GenomicRanges:::showSeqlengths(x, margin=margin)
+    }
+}
+
 setMethod("show", "GenomeDescription",
     function(object)
     {
-        PREFIX <- "| "
-        mystrwrap <- function(line)
-            writeLines(strwrap(line, width=getOption("width")+1,
-                               exdent=0, prefix=PREFIX))
-        cat(PREFIX, "organism: ", organism(object), " (",  species(object), ")\n", sep="")
-        cat(PREFIX, "provider: ", provider(object), "\n", sep="")
-        cat(PREFIX, "provider version: ", providerVersion(object), "\n", sep="")
-        cat(PREFIX, "release date: ", releaseDate(object), "\n", sep="")
-        cat(PREFIX, "release name: ", releaseName(object), "\n", sep="")
+        showGenomeDescription(object, margin="| ", print.seqlengths=TRUE)
     }
 )
 

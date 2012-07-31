@@ -21,6 +21,7 @@
 \alias{releaseName,GenomeDescription-method}
 \alias{bsgenomeName}
 \alias{bsgenomeName,GenomeDescription-method}
+\alias{seqinfo,GenomeDescription-method}
 
 % Standard generic methods:
 \alias{show,GenomeDescription-method}
@@ -90,6 +91,25 @@
       Of course there is no guarantee that a package with that name
       actually exists.
     }
+    \item{\code{seqinfo(x)}}{
+      Gets information about the genome sequences. This information
+      is returned in a \link[GenomicRanges]{Seqinfo} object.
+      Each part of the information can be retrieved separately with
+      \code{seqnames(x)}, \code{seqlengths(x)}, and \code{isCircular(x)},
+      respectively, as described below.
+    }
+    \item{\code{seqnames(x)}}{
+      Gets the names of the genome sequences.
+      \code{seqnames(x)} is equivalent to \code{seqnames(seqinfo(x))}.
+    }
+    \item{\code{seqlengths(x)}}{
+      Gets the lengths of the genome sequences.
+      \code{seqlengths(x)} is equivalent to \code{seqlengths(seqinfo(x))}.
+    }
+    \item{\code{isCircular(x)}}{
+      Returns the circularity flags of the genome sequences.
+      \code{isCircular(x)} is equivalent to \code{isCircular(seqinfo(x))}.
+    }
   }
 }
 
@@ -97,19 +117,22 @@
 
 \seealso{
   \code{\link{available.genomes}},
+  \link[GenomicRanges]{Seqinfo-class},
   \link{BSgenome-class}
 }
 
 \examples{
-  library(BSgenome.Celegans.UCSC.ce2)
-  class(Celegans)
-  is(Celegans, "GenomeDescription")
-  provider(Celegans)
-  gendesc <- as(Celegans, "GenomeDescription")
-  class(gendesc)
-  gendesc
-  provider(gendesc)
-  bsgenomeName(gendesc)
+library(BSgenome.Celegans.UCSC.ce2)
+class(Celegans)
+is(Celegans, "GenomeDescription")
+provider(Celegans)
+seqinfo(Celegans)
+gendesc <- as(Celegans, "GenomeDescription")
+class(gendesc)
+gendesc
+provider(gendesc)
+seqinfo(gendesc)
+bsgenomeName(gendesc)
 }
 
 \keyword{methods}

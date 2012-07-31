@@ -9,21 +9,17 @@ setClass("BSgenome",
         ## to produce the sequences below can be found (and downloaded)
         source_url="character",
 
-        ## contains the seqnames (names of "single" sequences), seqlengths,
-        ## and circularity flags
-        seqinfo="Seqinfo",
-
         ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
 
         ## where to find the serialized objects containing the sequences
         seqs_pkgname="character",
-        seqs_dir="character",
+        seqs_dirpath="character",
 
         ## where to find the serialized objects containing the masks
         nmask_per_seq="integer",
         masks_pkgname="character",
-        masks_dir="character",
+        masks_dirpath="character",
 
         ## for SNPs injection
         injectSNPs_handler="InjectSNPsHandler",
@@ -174,18 +170,6 @@ setMethod("SNPlocs", "BSgenome",
     function(x, seqname) SNPlocs(x@injectSNPs_handler, seqname)
 )
 
-setMethod("seqinfo", "BSgenome", function(x) x@seqinfo)
-
-setMethod("seqnames", "BSgenome",
-    function(x)
-    {
-        ans <- seqnames(seqinfo(x))
-        if (length(ans) == 0L)
-            ans <- NULL
-        ans
-    }
-)
-
 setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
 setMethod("mseqnames", "BSgenome",
     function(x) { if (length(x@mseqnames) == 0L) NULL else x@mseqnames }
@@ -213,13 +197,13 @@ setMethod("masknames", "BSgenome",
 ### Constructor-like functions and generics
 ###
 
-.makeSeqinfo <- function(seqnames, circ_seqs, seqs_pkgname, seqs_dir,
+.makeSeqinfo <- function(seqnames, circ_seqs, seqs_pkgname, seqs_dirpath,
                          provider_version)
 {
     objname <- "seqlengths"
-    seqlengths <- .loadSingleObject(objname, seqs_dir, seqs_pkgname)
+    seqlengths <- .loadSingleObject(objname, seqs_dirpath, seqs_pkgname)
     if (!identical(names(seqlengths), seqnames)) {
-        filepath <- .getObjFilepath(objname, seqs_dir)
+        filepath <- .getObjFilepath(objname, seqs_dirpath)
         stop("sequence names found in file '", filepath, "' are not ",
              "identical to 'seqnames'. ",
              "May be the ", seqs_pkgname, " package is corrupted?")
@@ -235,29 +219,28 @@ setMethod("masknames", "BSgenome",
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
-                     seqs_pkgname, seqs_dir,
-                     nmask_per_seq, masks_pkgname, masks_dir)
+                     seqs_pkgname, seqs_dirpath,
+                     nmask_per_seq, masks_pkgname, masks_dirpath)
 {
-    seqinfo <- .makeSeqinfo(seqnames, circ_seqs, seqs_pkgname, seqs_dir,
+    seqinfo <- .makeSeqinfo(seqnames, circ_seqs, seqs_pkgname, seqs_dirpath,
                             provider_version)
     if (is.null(mseqnames))
         mseqnames <- character(0)
-    ans <- new("BSgenome",
+    new("BSgenome",
         GenomeDescription(organism, species,
                           provider, provider_version,
-                          release_date, release_name),
+                          release_date, release_name,
+                          seqinfo),
         source_url=source_url,
-        seqinfo=seqinfo,
         mseqnames=mseqnames,
         seqs_pkgname=seqs_pkgname,
-        seqs_dir=seqs_dir,
+        seqs_dirpath=seqs_dirpath,
         nmask_per_seq=as.integer(nmask_per_seq),
         masks_pkgname=masks_pkgname,
-        masks_dir=masks_dir,
+        masks_dirpath=masks_dirpath,
         .seqs_cache=new.env(parent=emptyenv()),
         .link_counts=new.env(parent=emptyenv())
     )
-    ans
 }
 
 
@@ -297,7 +280,7 @@ setMethod("show", "BSgenome",
             cat(object@species, "genome\n")
             cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         }
-        callNextMethod()
+        showGenomeDescription(object, margin=.SHOW_BSGENOME_PREFIX)
         if (!is.null(SNPlocs_pkgname(object)))
             cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
@@ -327,16 +310,16 @@ setMethod("show", "BSgenome",
 .loadBSgenomeSequence <- function(name, bsgenome)
 {
     seqs_pkgname <- bsgenome@seqs_pkgname
-    seqs_dir <- bsgenome@seqs_dir
+    seqs_dirpath <- bsgenome@seqs_dirpath
     nmask_per_seq <- length(masknames(bsgenome))
     masks_pkgname <- bsgenome@masks_pkgname
-    masks_dir <- bsgenome@masks_dir
-    ans <- .loadSingleObject(name, seqs_dir, seqs_pkgname)
+    masks_dirpath <- bsgenome@masks_dirpath
+    ans <- .loadSingleObject(name, seqs_dirpath, seqs_pkgname)
     if (!is(ans, "XString"))
         return(ans)
     ## Check the length of the sequence
     if (length(ans) != seqlengths(bsgenome)[[name]]) {
-        seq_filepath <- .getObjFilepath(name, seqs_dir)
+        seq_filepath <- .getObjFilepath(name, seqs_dirpath)
         stop("sequence found in file '", seq_filepath, "' does ",
              "not have the length reported by seqlengths(). ",
              "May be the ", seqs_pkgname, " package is corrupted?")
@@ -348,9 +331,9 @@ setMethod("show", "BSgenome",
     ## Load and set the built-in masks, if any
     if (nmask_per_seq > 0L) {
         objname <- paste(name, ".masks", sep="")
-        builtinmasks <- .loadSingleObject(objname, masks_dir, masks_pkgname)
+        builtinmasks <- .loadSingleObject(objname, masks_dirpath, masks_pkgname)
         if (length(builtinmasks) < nmask_per_seq) {
-            masks_filepath <- .getObjFilepath(objname, masks_dir)
+            masks_filepath <- .getObjFilepath(objname, masks_dirpath)
             stop("expecting ", nmask_per_seq, " built-in masks per ",
                  "single sequence, found only ", length(builtinmasks),
                  " in file '", masks_filepath, "'. ",
@@ -359,7 +342,7 @@ setMethod("show", "BSgenome",
         if (length(builtinmasks) > nmask_per_seq)
             builtinmasks <- builtinmasks[seq_len(nmask_per_seq)]
         if (!identical(names(builtinmasks), masknames(bsgenome))) {
-            masks_filepath <- .getObjFilepath(objname, masks_dir)
+            masks_filepath <- .getObjFilepath(objname, masks_dirpath)
             stop("mask names found in file '", masks_filepath, "' are not ",
                  "identical to the names returned by masknames(). ",
                  "May be the ", masks_pkgname, " package is corrupted?")

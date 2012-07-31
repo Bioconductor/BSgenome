@@ -7,6 +7,7 @@ import(Biostrings)
 
 exportClasses(
     GenomeDescription,
+    SNPlocs,
     InjectSNPsHandler,
     BSgenome,
     GenomeData, GenomeDataList,
@@ -18,6 +19,8 @@ exportClasses(
 export(
     ## Non-generic functions:
     installed.genomes, available.genomes,
+    GenomeDescription,
+    newSNPlocs,
     BSgenome,
     installed.SNPs, available.SNPs,
     bsapply,
@@ -27,7 +30,7 @@ export(
     organism, species, provider, providerVersion,
     releaseDate, releaseName, bsgenomeName,
     sourceUrl,
-    SNPlocs_pkgname, SNPcount, SNPlocs,
+    SNPlocs, SNPlocs_pkgname, SNPcount,
     mseqnames,
     masknames,
     injectSNPs,
@@ -49,9 +52,10 @@ exportMethods(
     ## Methods for generics defined in this package:
     organism, species, provider, providerVersion,
     releaseDate, releaseName, bsgenomeName,
+    seqinfo, seqnames, seqlengths, isCircular,
     sourceUrl,
-    SNPlocs_pkgname, SNPcount, SNPlocs,
-    seqinfo, mseqnames,
+    SNPlocs, SNPlocs_pkgname, SNPcount,
+    mseqnames,
     masknames,
     injectSNPs,
     gdapply,
