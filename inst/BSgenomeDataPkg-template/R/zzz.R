@@ -1,6 +1,7 @@
 ###
 ###
-###
+
+.pkgname <- "@PKGNAME@"
 
 .seqnames <- @SEQNAMES@
 
@@ -12,7 +13,13 @@
 
 .onLoad <- function(libname, pkgname)
 {
-    extdata_dir <- system.file("extdata", package=pkgname, lib.loc=libname)
+    if (pkgname != .pkgname)
+        stop("package name (", pkgname, ") is not ",
+             "the expected name (", .pkgname, ")")
+    extdata_dirpath <- system.file("extdata", package=pkgname,
+                                   lib.loc=libname, mustWork=TRUE)
+
+    ## Make and export BSgenome object.
     bsgenome <- BSgenome(
         organism="@ORGANISM@",
         species="@SPECIES@",
@@ -25,15 +32,15 @@
         circ_seqs=.circ_seqs,
         mseqnames=.mseqnames,
         seqs_pkgname=pkgname,
-        seqs_dir=extdata_dir,
+        seqs_dirpath=extdata_dirpath,
         nmask_per_seq=.nmask_per_seq,
         masks_pkgname=pkgname,
-        masks_dir=extdata_dir
+        masks_dirpath=extdata_dirpath
     )
 
     ns <- asNamespace(pkgname)
 
-    objname <- "@PKGNAME@"
+    objname <- pkgname
     assign(objname, bsgenome, envir=ns)
     namespaceExport(ns, objname)
 
