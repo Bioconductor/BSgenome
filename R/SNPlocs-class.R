@@ -97,30 +97,7 @@ setMethod("species", "SNPlocs", function(x) species(referenceGenome(x)))
 
 setMethod("seqinfo", "SNPlocs", function(x) seqinfo(referenceGenome(x)))
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### snpcount() and snplocs()
-###
-
-.get_SNPlocs_data <- function(x, objname, caching=TRUE)
-{
-}
-
-setGeneric("snpcount", function(x) standardGeneric("snpcount"))
-setMethod("snpcount", "SNPlocs",
-    function(x)
-    {
-        
-    }
-)
-
-setGeneric("snplocs", function(x) standardGeneric("snplocs"))
-setMethod("snplocs", "SNPlocs",
-    function(x)
-    {
-        
-    }
-)
+setmethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -132,6 +109,183 @@ setMethod("show", "SNPlocs",
     {
         cat(class(object), " object for ",
             provider(object), " ", releaseName(object), "\n", sep="")
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### snpcount() and snplocs()
+###
+
+### Creates objects "on-the-fly" (not serialized).
+### WARNING: Improper calls to .get_SNPlocs_data() by the .create_object()
+### function can lead to infinite recursive loops!
+.create_object <- function(objname)
+{
+    if (objname == "empty_snplocs") {
+        obj <- data.frame(loc=integer(0), alleles=raw(0))
+        return(obj)
+    }
+    if (objname == "empty_ufsnplocs") {
+        obj <- data.frame(RefSNP_id=character(0),
+                          alleles_as_ambig=character(0),
+                          loc=integer(0),
+                          stringsAsFactors=FALSE)
+        return(obj)
+    }
+
+    # add more here...
+    stop("don't know how to create object '", objname, "'")
+}
+
+.get_SNPlocs_data <- function(x, objname, caching=TRUE)
+{
+    datacache <- x@.data_cache
+    not_cached <- !exists(objname, envir=datacache)
+    if (not_cached) {
+        if (objname %in% x@data_serialized_objnames) {
+            filename <- paste(objname, ".rda", sep="")
+            filepath <- file.path(x@data_dirpath, filename)
+            load(filepath, envir=datacache)
+        } else {
+            assign(objname, .create_object(objname), envir=datacache)
+        }
+    }
+    ans <- get(objname, envir=datacache)
+    if (not_cached && !caching)
+        rm(list=objname, envir=datacache)
+    ans
+}
+
+setGeneric("snpcount", function(x) standardGeneric("snpcount"))
+setMethod("snpcount", "SNPlocs",
+    function(x)
+    {
+        objname <- "SNPcount"
+        ans <- .get_SNPlocs_data(x, objname)
+        if (!is.integer(ans) || !identical(names(ans), seqlevels(x)))
+            stop("internal error: '", objname, "' data set is broken.\n",
+                 "       Please contact the maintainer of the ",
+                 x@data_pkgname, "\n       package.")
+        ans        
+    }
+)
+
+### Load raw snplocs.
+.load_raw_snplocs <- function(x, seqname, caching)
+{
+    objname <- paste(seqname, "_snplocs", sep="")
+    ans <- .get_SNPlocs_data(x, objname, caching=caching)
+    empty_snplocs <- .get_SNPlocs_data(x, "empty_snplocs")
+    if (!identical(sapply(ans, class), sapply(empty_snplocs, class)))
+        stop("internal error: unexpected col names and/or col types\n",
+             "       for the '", objname, "' data set.\n",
+             "       Please contact the maintainer of the ",
+             x@data_pkgname, "\n       package.")
+    if (nrow(ans) != snpcount(x)[seqname])
+        stop("internal error: nb of rows in object '", objname, " ",
+             "doesn't match the\n       nb of SNPs reported by snpcount().\n",
+             "       Please contact the maintainer of the ",
+             x@data_pkgname, "\n       package.")
+    ans
+}
+
+.get_rsid_offsets <- function(x)
+{
+    offsets <- c(0L, cumsum(snpcount(x)))
+    offsets <- offsets[-length(offsets)]
+    names(offsets) <- names(snpcount(x))
+    offsets
+}
+
+### Load rs ids for a given sequence. Return them in an integer vector.
+.load_rsids <- function(x, seqname)
+{
+    all_rsids <- .get_SNPlocs_data(x, "all_rsids")
+    seq_pos <- match(seqname, names(snpcount(x)))
+    offset <- .get_rsid_offsets(x)[seq_pos]
+    idx <- seq_len(snpcount(x)[seq_pos]) + offset
+    all_rsids[idx]
+}
+
+### Get user-friendly snplocs.
+.get_ufsnplocs <- function(x, seqname, caching)
+{
+    rsids <- as.character(.load_rsids(x, seqname))
+    snplocs <- .load_raw_snplocs(x, seqname, caching)
+    alleles <- safeExplode(rawToChar(snplocs$alleles))
+    data.frame(RefSNP_id=rsids,
+               alleles_as_ambig=alleles,
+               loc=snplocs$loc,
+               stringsAsFactors=FALSE)
+}
+
+.SNPlocsAsGranges <- function(x, ufsnplocs, seqname)
+{
+    if (is(seqname, "Rle")) {
+        if (length(seqname) != nrow(ufsnplocs)
+         || !identical(levels(seqname), seqlevels(x)))
+            stop("when an Rle, 'seqname' must be a factor Rle ",
+                 "of length 'nrow(ufsnplocs)' and levels 'SEQNAMES'")
+        ans_seqnames <- seqname
+    } else {
+        if (!is.factor(seqname))
+            seqname <- factor(seqname, levels=seqlevels(x))
+        if (length(seqname) == 1L)
+            ans_seqnames <- Rle(seqname, nrow(ufsnplocs))
+        else if (length(seqname) == nrow(ufsnplocs))
+            ans_seqnames <- Rle(seqname)
+        else
+            stop("'length(seqname)' must be 1 or 'nrow(ufsnplocs)'")
+    }
+    if (nrow(ufsnplocs) == 0L)
+        ans_ranges <- IRanges()
+    else
+        ans_ranges <- IRanges(start=ufsnplocs$loc, width=1L)
+    ans_strand <- Rle(strand("+"), nrow(ufsnplocs))
+    ans <- GRanges(seqnames=ans_seqnames,
+                   ranges=ans_ranges,
+                   strand=ans_strand,
+                   RefSNP_id=ufsnplocs$RefSNP_id,
+                   alleles_as_ambig=ufsnplocs$alleles_as_ambig)
+    seqinfo(ans) <- seqinfo(x)
+    ans
+}
+
+setGeneric("snplocs", signature="x",
+    function(x, seqname, ...) standardGeneric("snplocs")
+)
+
+### Returns a data frame (when 'as.GRanges=FALSE') or a GRanges object
+### (when 'as.GRanges=TRUE').
+setMethod("snplocs", "SNPlocs",
+    function(x, seqname, as.GRanges=FALSE, caching=TRUE)
+    {
+        if (!is.character(seqname) || any(is.na(seqname)))
+            stop("'seqname' must be a character vector with no NAs")
+        if (!all(seqname %in% seqlevels(x)))
+            stop("all 'seqname' elements must be in: ",
+                 paste(seqlevels(x), collapse=", "))
+        if (!isTRUEorFALSE(as.GRanges))
+            stop("'as.GRanges' must be TRUE or FALSE")
+        if (!isTRUEorFALSE(caching))
+            stop("'caching' must be TRUE or FALSE")
+        if (!as.GRanges) {
+            if (length(seqname) != 1L)
+                stop("'seqname' must be of length 1 when 'as.GRanges' is FALSE")
+            return(.get_ufsnplocs(x, seqname, caching))
+        }
+        if (length(seqname) == 0L) {
+            empty_ufsnplocs <- .get_SNPlocs_data(x, "empty_ufsnplocs")
+            ans <- .SNPlocsAsGranges(x, empty_ufsnplocs, character(0))
+            return(ans)
+        }
+        list_of_ufsnplocs <- lapply(seqname,
+                                    .get_ufsnplocs, x=x, caching=caching)
+        ufsnplocs <- do.call(rbind, list_of_ufsnplocs)
+        seqnames <- Rle(factor(seqname, levels=seqlevels(x)),
+                        unlist(lapply(list_of_ufsnplocs, nrow), use.names=FALSE))
+        .SNPlocsAsGranges(x, ufsnplocs, seqnames)
     }
 )
 
