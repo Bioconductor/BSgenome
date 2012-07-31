@@ -97,7 +97,7 @@ setMethod("species", "SNPlocs", function(x) species(referenceGenome(x)))
 
 setMethod("seqinfo", "SNPlocs", function(x) seqinfo(referenceGenome(x)))
 
-setmethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
+setMethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
