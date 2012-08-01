@@ -112,8 +112,8 @@ setMethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
 setMethod("show", "SNPlocs",
     function(object)
     {
-        cat(class(object), " object for ",
-            provider(object), " ", releaseName(object), "\n", sep="")
+        cat(class(object), " object for ", organism(object), " (",
+            provider(object), " ", releaseName(object), ")\n", sep="")
     }
 )
 
