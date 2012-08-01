@@ -53,8 +53,13 @@ newSNPlocs <- function(provider, provider_version,
                        release_date, release_name,
                        download_url, download_date,
                        reference_genome, compatible_genomes,
-                       data_pkgname, data_dirpath, data_serialized_objnames)
+                       data_pkgname, data_dirpath)
 {
+    data_serialized_objnames <- c(
+        "SNPcount",
+        "all_rsids",
+        paste(seqlevels(reference_genome), "_snplocs", sep="")
+    )
     new("SNPlocs",
         provider=provider,
         provider_version=provider_version,
@@ -67,7 +72,7 @@ newSNPlocs <- function(provider, provider_version,
         data_pkgname=data_pkgname,
         data_dirpath=data_dirpath,
         data_serialized_objnames=data_serialized_objnames,
-        .data_cache=new.env(parent=emptyenv()))
+        .data_cache=new.env(hash=TRUE, parent=emptyenv()))
 }
 
 
