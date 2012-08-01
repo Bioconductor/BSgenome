@@ -294,6 +294,57 @@ setMethod("snplocs", "SNPlocs",
 ### snpid2loc(), snpid2alleles(), and snpid2grange()
 ###
 
+.normargSnpid <- function(snpid)
+{
+    if (!is.vector(snpid))
+        stop("'snpid' must be an integer or character vector")
+    if (IRanges:::anyMissing(snpid))
+        stop("'snpid' cannot contain NAs")
+    if (is.numeric(snpid)) {
+        if (!is.integer(snpid))
+            snpid <- as.integer(snpid)
+        return(snpid)
+    }
+    if (!is.character(snpid))
+        stop("'snpid' must be an integer or character vector")
+    prefixes <- unique(substr(snpid, 1L, 2L))
+    if ("rs" %in% prefixes) {
+        if (!setequal(prefixes, "rs"))
+            stop("'snpid' cannot mix ids that are prefixed with \"rs\" ",
+                 "with ids that are not")
+        ## Drop the "rs" prefix.
+        snpid <- substr(snpid, 3, nchar(snpid))
+    }
+    snpid <- suppressWarnings(as.integer(snpid))
+    if (IRanges:::anyMissing(snpid))
+        stop("cannot extract the digital part of some ids in 'snpid'")
+    snpid
+}
+
+### Returns a named integer vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is the row index in the serialized snplocs data
+### frame corresponding to the SNP id.
+.snpid2rowidx <- function(x, snpid)
+{
+    if (length(snpid) == 0L) {
+        idx <- integer(0)
+    } else {
+        all_rsids <- .get_SNPlocs_data(x, "all_rsids")
+        idx <- match(snpid, all_rsids)
+        bad_snpid_idx <- which(is.na(idx))
+        if (length(bad_snpid_idx) != 0L) {
+            bad_snpid <- snpid[bad_snpid_idx]
+            bad_snpid_in1string <- paste(bad_snpid, collapse=", ")
+            stop("SNP id(s) not found: ", bad_snpid_in1string)
+        }
+    }
+    seqidx <- findInterval(idx - 1L, cumsum(snpcount(x))) + 1L
+    rowidx <- idx - .get_rsid_offsets(x)[seqidx]
+    names(rowidx) <- names(snpcount(x))[seqidx]
+    rowidx
+}
+
 ### Returns a named integer vector where each (name, value) pair corresponds
 ### to a supplied SNP id (typically an rs id). The name is the chromosome of
 ### the SNP id and the value is its position on the chromosome.
@@ -304,6 +355,23 @@ setGeneric("snpid2loc", signature="x",
 setMethod("snpid2loc", "SNPlocs",
     function(x, snpid, caching=TRUE)
     {
+        snpid <- .normargSnpid(snpid)
+        if (!isTRUEorFALSE(caching))
+            stop("'caching' must be TRUE or FALSE")
+        rowidx <- .snpid2rowidx(x, snpid)
+        if (length(rowidx) == 0L) {
+            ans <- integer(0)
+        } else {
+            rowidx_list <- split(unname(rowidx), names(rowidx))
+            loc_list <- lapply(names(rowidx_list),
+                function(seqname) {
+                    idx <- rowidx_list[[seqname]]
+                    .load_raw_snplocs(x, seqname, caching)$loc[idx]
+                })
+            ans <- unsplit(loc_list, names(rowidx))
+        }
+        names(ans) <- names(rowidx)
+        ans
     }
 )
 
@@ -318,6 +386,24 @@ setGeneric("snpid2alleles", signature="x",
 setMethod("snpid2alleles", "SNPlocs",
     function(x, snpid, caching=TRUE)
     {
+        snpid <- .normargSnpid(snpid)
+        if (!isTRUEorFALSE(caching))
+            stop("'caching' must be TRUE or FALSE")
+        rowidx <- .snpid2rowidx(x, snpid)
+        if (length(rowidx) == 0L) {
+            ans <- raw(0)
+        } else {
+            rowidx_list <- split(unname(rowidx), names(rowidx))
+            alleles_list <- lapply(names(rowidx_list),
+                function(seqname) {
+                    idx <- rowidx_list[[seqname]]
+                    .load_raw_snplocs(x, seqname, caching)$alleles[idx]
+                })
+            ans <- unsplit(alleles_list, names(rowidx))
+        }
+        ans <- safeExplode(rawToChar(ans))
+        names(ans) <- names(rowidx)
+        ans
     }
 )
 
@@ -328,6 +414,16 @@ setGeneric("snpid2grange", signature="x",
 setMethod("snpid2grange", "SNPlocs",
     function(x, snpid, caching=TRUE)
     {
+        snpid <- .normargSnpid(snpid)
+        if (!isTRUEorFALSE(caching))
+            stop("'caching' must be TRUE or FALSE")
+        loc <- snpid2loc(x, snpid, caching=caching)
+        alleles <- snpid2alleles(x, snpid, caching=caching)
+        ufsnplocs <- data.frame(RefSNP_id=as.character(snpid),
+                                alleles_as_ambig=unname(alleles),
+                                loc=unname(loc),
+                                stringsAsFactors=FALSE)
+        .SNPlocsAsGranges(x, ufsnplocs, names(loc))
     }
 )
 
