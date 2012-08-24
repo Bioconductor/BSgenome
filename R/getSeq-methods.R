@@ -82,8 +82,8 @@
     GRanges(seqnames=names(x), ranges=unname(x), strand=strand)
 }
 
-### Error messages refer to 'x' as "names" because of the context .toGRanges()
-### is used.
+### Error messages refer to 'x' as "names" because of the context in which
+### .toGRanges() is called.
 .toGRanges <- function(x, strand)
 {
     if (is(x, "RangedData")) {
@@ -125,29 +125,55 @@
 ### .extractFromBSgenomeSingleSequences()
 ###
 
+.getSeqsFromDNAString <- function(subject, start, end,
+                                  subject_is_circ, subject_name)
+{
+    if (length(start) == 0L)
+        return(DNAStringSet())
+    subject_len <- length(subject)
+    if (is.na(subject_is_circ) || !subject_is_circ) {
+        if (min(start) < 1L || max(end) > subject_len)
+            stop("cannot extract DNA sequences beyond the ",
+                 "boundaries of non-circular chromosome \"",
+                 subject_name, "\"")
+        return(DNAStringSet(subject, start=start, end=end))
+    }
+    if (max(end - start) >= subject_len)
+        stop("cannot extract DNA sequences that span more than ",
+             "the total length of circular chromosome \"",
+             subject_name, "\"")
+    start0 <- start - 1L  # 0-based start
+    shift <- start0 %% subject_len - start0
+    L_start <- start + shift
+    end1 <- end + shift
+    L_end <- pmin(end1, subject_len)
+    R_start <- 1L
+    R_end <- pmax(end1, subject_len) - subject_len
+    L_ans <- DNAStringSet(subject, start=L_start, end=L_end)
+    R_ans <- DNAStringSet(subject, start=R_start, end=R_end)
+    xscat(L_ans, R_ans)
+}
+
 ### Assumes 'ranges' and 'strand' have the same length and that this
 ### length is >= 1. Also assumes that 'strand' is star-free.
-.extractSeqsFromDNAString <- function(subject, ranges, strand)
+.extractSeqsFromStrandedDNAString <- function(subject, ranges, strand,
+                                              subject_is_circ, subject_name)
 {
     rglist <- split(unname(ranges), strand)
     plus_ranges <- rglist[["+"]]
-    if (length(plus_ranges) == 0L) {
-        plus_dnaset <- DNAStringSet()
-    } else {
-        plus_dnaset <- DNAStringSet(subject,
-                                    start=start(plus_ranges),
-                                    width=width(plus_ranges))
-        plus_dnaset <- xvcopy(plus_dnaset)
-    }
+    plus_dnaset <- .getSeqsFromDNAString(subject,
+                                         start(plus_ranges),
+                                         end(plus_ranges),
+                                         subject_is_circ,
+                                         subject_name)
+    plus_dnaset <- xvcopy(plus_dnaset)
     minus_ranges <- rglist[["-"]]
-    if (length(minus_ranges) == 0L) {
-        minus_dnaset <- DNAStringSet()
-    } else {
-        minus_dnaset <- DNAStringSet(subject,
-                                     start=start(minus_ranges),
-                                     width=width(minus_ranges))
-        minus_dnaset <- reverseComplement(minus_dnaset)
-    }
+    minus_dnaset <- .getSeqsFromDNAString(subject,
+                                          start(minus_ranges),
+                                          end(minus_ranges),
+                                          subject_is_circ,
+                                          subject_name)
+    minus_dnaset <- reverseComplement(minus_dnaset)
     unsplit_list_of_XVectorList("DNAStringSet",
                                 list(plus_dnaset, minus_dnaset),
                                 as.factor(strand))
@@ -176,17 +202,22 @@
     #         "with BSgenome object")
 
     ## Split 'names' by sequence names.
-    grglist <- split(names, seqnames(names))
+    grl <- split(names, seqnames(names))
+    grl_seqlevels <- names(grl)
+
     ## Loop over the sequence names and extract the ranges.
-    dnaset_list <- lapply(seq_len(length(grglist)),
+    dnaset_list <- lapply(seq_len(length(grl)),
         function(i)
         {
-            grg <- grglist[[i]]
-            if (length(grg) == 0L)
+            gr <- grl[[i]]
+            if (length(gr) == 0L)
                 return(DNAStringSet())
-            subject <- x[[names(grglist)[i]]]
+            subject_name <- grl_seqlevels[i]
+            subject <- x[[subject_name]]
             masks(subject) <- NULL
-            .extractSeqsFromDNAString(subject, ranges(grg), strand(grg))
+            subject_is_circ <- isCircular(x)[[subject_name]]
+            .extractSeqsFromStrandedDNAString(subject, ranges(gr), strand(gr),
+                                              subject_is_circ, subject_name)
         }
     )
     ## "unsplit" 'dnaset_list'.
