@@ -355,13 +355,33 @@ setMethod("show", "BSgenome",
 .getBSgenomeSequence <- function(name, bsgenome)
 {
     seqs_cache <- bsgenome@.seqs_cache
-    if (!exists(name, envir=seqs_cache, inherits=FALSE)) {
+    ## Using the 'if (!exists()) assign(); get()' approach is NOT 100%
+    ## reliable:
+    ##
+    ##   if (!exists(name, envir=seqs_cache, inherits=FALSE)) {
+    ##       ...
+    ##       assign(name, ans, envir=seqs_cache)
+    ##   }
+    ##   get(name, envir=seqs_cache, inherits=FALSE)
+    ##
+    ## because the symbol (name) can disappear from the cache between the
+    ## moment we test for its presence and the moment we try to get it.
+    ## It's not me being paranoid, we've seen this happen! One possible
+    ## explanation for this is that the symbol was candidate for removal
+    ## from the cache but that removal didn't happen yet because gc() had
+    ## not yet been called (removal from the cache is implemented thru the
+    ## finalizers registered on the objects that are copied from the cache
+    ## and made available to the user). Then the call to get() would trigger
+    ## garbbage collection and that in turn would trigger the removal of
+    ## the symbol *before* get() had a chance to get to it. So now we use
+    ## the 'try(get(...))' approach, which hopefully is 100% reliable!
+    ans <- try(get(name, envir=seqs_cache, inherits=FALSE), silent=TRUE)
+    if (is(ans, "try-error")) {
         ans <- .loadBSgenomeSequence(name, bsgenome)
         if (getOption("verbose"))
             cat("caching ", name, "\n", sep="")
         assign(name, ans, envir=seqs_cache)
     }
-    ans <- get(name, envir=seqs_cache)
     .linkToCachedObject(ans) <- .newLinkToCachedObject(
                                     name,
                                     seqs_cache,
