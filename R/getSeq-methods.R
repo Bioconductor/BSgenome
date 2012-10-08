@@ -348,9 +348,9 @@ setMethod("getSeq", "BSgenome",
                 names <- .toGRanges(names, strand)
             }
             ## We don't need the result of merge(). By calling merge() here
-            ## we're just making sure that 'x' and 'names' are based on the
-            ## same reference genomes (merge() will raise an error if they
-            ## are not).
+            ## we're just making sure that 'x' and 'names' are based on
+            ## compatible reference genomes (merge() will raise an error if
+            ## they are not).
             merge(seqinfo(x), seqinfo(names))
             strand(names) <- .starfreeStrand(strand(names))
             seqnames <- as.character(seqnames(names))
