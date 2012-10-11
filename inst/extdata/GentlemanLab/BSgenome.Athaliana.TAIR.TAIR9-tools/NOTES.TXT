@@ -10,7 +10,7 @@ R code used to split TAIR9_chr_all.fas into 1 FASTA file per sequence:
   {
     NAMESMAP <- paste("Chr", c(1:5, "M", "C"), sep="")
     names(NAMESMAP) <- c(1:5, "mitochondria", "chloroplast")
-    chr_all <- read.DNAStringSet(filepath)
+    chr_all <- readDNAStringSet(filepath)
     shortnames <- sapply(strsplit(names(chr_all), " ", fixed=TRUE),
                          function(xx) xx[1L])
     if (!identical(shortnames, names(NAMESMAP)))

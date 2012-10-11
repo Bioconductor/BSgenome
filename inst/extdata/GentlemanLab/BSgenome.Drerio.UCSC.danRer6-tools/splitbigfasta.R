@@ -1,6 +1,6 @@
 ###
 library(Biostrings)
-danRer6 <- read.DNAStringSet("danRer6.fa")
+danRer6 <- readDNAStringSet("danRer6.fa")
 idx1 <- grep("chr", names(danRer6), fixed=TRUE)
 idx2 <- grep("Zv8_NA", names(danRer6), fixed=TRUE)
 idx3 <- grep("Zv8_scaffold", names(danRer6), fixed=TRUE)

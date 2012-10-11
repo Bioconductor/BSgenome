@@ -1,6 +1,6 @@
 ###
 library(Biostrings)
-panTro3 <- read.DNAStringSet("panTro3.fa")
+panTro3 <- readDNAStringSet("panTro3.fa")
 
 ### Send each chromosome to a FASTA file.
 seqnames <- paste("chr", c(1, "2A", "2B", 3:22, "X", "Y", "M"), sep="")
