@@ -547,27 +547,32 @@ setMethod("forgeBSgenomeDataPkg", "list",
     }
 )
 
-.removeCommentsFromFile <- function(infile, outfile)
+.removeCommentLines <- function(infile=stdin(), outfile=stdout())
 {
-    if (!isSingleString(infile))
-        stop("'infile' must be a single string")
-    if (!isSingleString(outfile))
-        stop("'outfile' must be a single string")
-    if (file.exists(outfile))
-        stop("file '", outfile, "' already exists")
-    infile <- file(infile, "r")
-    #on.exit(close(infile))
-    outfile <- file(outfile, "w")
-    #on.exit(close(outfile)) # doesn't seem to work
-    while (TRUE) {
-        text <- readLines(infile, n=1)
-        if (length(text) == 0)
-            break
-        if (substr(text, 1, 1) != "#")
-            writeLines(text, outfile)
+    if (is.character(infile)) {
+        infile <- file(infile, "r")
+        on.exit(close(infile))
     }
-    close(outfile)
-    close(infile)
+    if (is.character(outfile)) {
+        outfile <- file(outfile, "w")
+        on.exit({close(infile); close(outfile)})
+    }
+    while (TRUE) {
+        lines <- readLines(infile, n=25000L)
+        if (length(lines) == 0L)
+            return()
+        keep_it <- substr(lines, 1L, 1L) != "#"
+        writeLines(lines[keep_it], outfile)
+    }
+}
+
+### A "comment aware" version of read.dcf().
+read.dcf2 <- function(file, ...)
+{
+    clean_file <- tempfile()
+    .removeCommentLines(file, clean_file)
+    on.exit(file.remove(clean_file))
+    read.dcf(clean_file, ...)
 }
 
 ### Return a named character vector.
@@ -595,10 +600,7 @@ setMethod("forgeBSgenomeDataPkg", "list",
             cat("Seed file '", file0, "' not found, using file '", file, "'\n",
                 sep="")
     }
-    tmp_file <- file.path(tempdir(), "cleanseed9999.dcf")
-    .removeCommentsFromFile(file, tmp_file)
-    on.exit(file.remove(tmp_file))
-    ans <- read.dcf(tmp_file)  # a character matrix
+    ans <- read.dcf2(file)  # a character matrix
     if (nrow(ans) != 1)
         stop("seed file '", file, "' must have exactly 1 record")
     ans[1, , drop=TRUE]
