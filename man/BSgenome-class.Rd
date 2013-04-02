@@ -14,6 +14,9 @@
 \alias{names,BSgenome-method}
 \alias{masknames}
 \alias{masknames,BSgenome-method}
+\alias{seqinfo,BSgenome-method}
+\alias{seqinfo<-,BSgenome-method}
+\alias{seqnames<-,BSgenome-method}
 
 % Constructor-like functions and generics:
 \alias{BSgenome}
@@ -45,8 +48,8 @@
       FASTA files used to produce the sequences contained in \code{x} can
       be found (and downloaded).
     }
-    \item{\code{seqnames(x)}}{
-      Returns the names of the single sequences contained in \code{x}.
+    \item{\code{seqnames(x)}, \code{seqnames(x) <- value}}{
+      Gets or sets the names of the single sequences contained in \code{x}.
       Each single sequence is stored in a \link[Biostrings]{DNAString}
       or \link[Biostrings]{MaskedDNAString} object and typically comes
       from a source file (FASTA) with a single record.
@@ -167,7 +170,7 @@ Celegans
 ## Index of single sequences:
 seqnames(Celegans)
 
-## Lengths (i.e. number of nucleotides) of the sequences:
+## Lengths (i.e. number of nucleotides) of the single sequences:
 seqlengths(Celegans)
 
 ## Load chromosome I from disk to memory (hence takes some time)
@@ -178,6 +181,12 @@ chrI
 
 class(chrI)   # a DNAString instance
 length(chrI)  # with 15080483 nucleotides
+
+## Single sequence can be renamed:
+seqnames(Celegans) <- sub("^chr", "", seqnames(Celegans))
+seqlengths(Celegans)
+Celegans$I
+seqnames(Celegans) <- paste0("chr", seqnames(Celegans))
 
 ## Multiple sequences:
 mseqnames(Celegans) 

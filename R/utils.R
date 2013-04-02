@@ -1,4 +1,7 @@
-## Not exported
+### =========================================================================
+### Some low-level internal (i.e. non-exported) utilities
+### -------------------------------------------------------------------------
+
 getDataAnnotationContribUrl <- function(type=getOption("pkgType"))
 {
     ## Just to avoid codetools "no visible binding" NOTE

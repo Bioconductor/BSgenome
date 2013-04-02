@@ -30,9 +30,11 @@ setMethod("injectSNPs", "BSgenome",
             stop("SNPs were already injected in genome 'x'. ",
                  "Injecting from more than 1 package is not supported.")
         ans <- x
+        ## We want the original sequence names, not the user sequence names,
+        ## so we use 'seqnames(x@seqinfo)' instead of 'seqnames(x)'.
         ans@injectSNPs_handler <- InjectSNPsHandler(SNPlocs_pkgname,
                                                     x@seqs_pkgname,
-                                                    seqnames(x))
+                                                    seqnames(x@seqinfo))
         ans@.seqs_cache <- new.env(parent=emptyenv())
         ans@.link_counts <- new.env(parent=emptyenv())
         ans
