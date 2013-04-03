@@ -1,0 +1,19 @@
+CHANGES IN VERSION 1.28.0
+-------------------------
+
+NEW FEATURES
+
+  o Add seqnames() setter for BSgenome objects so users can rename
+    the single sequences in those objects. This has been a popular user
+    request for a while.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+  o Add sanity check to "getSeq" method for BSgenome objects, raising an
+    error if the supplied BSgenome and GRanges objects are based on
+    incompatible reference genomes.
+
+MISCELLANEOUS
+
+  o Started the NEWS file (this file).
+
