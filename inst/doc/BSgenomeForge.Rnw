@@ -109,7 +109,7 @@ Requirements:
 Refer to the \textit{R Installation and Administration} manual
 \footnote{\url{http://cran.r-project.org/doc/manuals/R-admin.html}}
 if you need to install {\R} or upgrade your {\R} version,
-and to the \textit{Installation Instructions} page
+and to the \textit{Bioconductor - Install} page
 \footnote{\url{http://bioconductor.org/install/}}
 on the Bioconductor website if you need to install or update the
 \Rpackage{Biostrings} or \Rpackage{BSgenome} packages.
@@ -117,12 +117,12 @@ on the Bioconductor website if you need to install or update the
 Questions, comments or bug reports about this document or about the
 BSgenomeForge functions are welcome. Please address them to the author
 (\code{hpages@fhcrc.org}) or post them on The Bioconductor Project Mailing List
-(\code{bioconductor@stat.math.ethz.ch}). Don't forget to visit the
+(\code{bioconductor@r-project.org}). Don't forget to visit the
 Bioconductor website \footnote{\url{http://bioconductor.org/}}
 and subscribe to this list if you've not already done so.
 
 In this document, we call \term{target package} the \term{BSgenome
-data package} package that we want to forge.
+data package} that we want to forge.
 
 
 \section{Obtain and prepare the source data files}
