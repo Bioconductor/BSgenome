@@ -340,10 +340,16 @@ setMethod("getSeq", "BSgenome",
                 stop("'start', 'end' and 'width' can only be specified when ",
                      "'names' is either missing, a character vector/factor, ",
                      "a character-Rle, or a factor-Rle")
-            if (is(names, "GRanges")) {
+            if (is(names, "GRanges") || is(names, "GRangesList")) {
                 if (!identical(strand, "+"))
                     stop("'strand' cannot be specified ",
-                         "when 'names' is a GRanges object")
+                         "when 'names' is a GRanges or GRangesList object")
+                if (is(names, "GRangesList")) {
+                    unlisted_names <- unlist(names, use.names=FALSE)
+                    unlisted_ans <- getSeq(x, unlisted_names,
+                                           as.character=as.character)
+                    return(relist(unlisted_ans, names))
+                }
             } else {
                 names <- .toGRanges(names, strand)
             }

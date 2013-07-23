@@ -24,6 +24,7 @@
     A character vector containing the names of the sequences
     in \code{x} where to get the subsequences from,
     or a \link[GenomicRanges]{GRanges} object,
+    or a \link[GenomicRanges]{GRangesList} object,
     or a \link[IRanges]{RangedData} object,
     or a named \link[IRanges]{RangesList} object,
     or a named \link[IRanges]{Ranges} object.
@@ -40,16 +41,17 @@
   \item{start, end, width}{
     Vector of integers (eventually with NAs) specifying the locations
     of the subsequences to extract.
-    These are not needed (and therefore it's an error to supply them)
+    These are not needed (and it's an error to supply them)
     when \code{names} is a \link[GenomicRanges]{GRanges},
-    \link[IRanges]{RangedData}, \link[IRanges]{RangesList}
-    or \link[IRanges]{Ranges} object.
+    \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangedData},
+    \link[IRanges]{RangesList} or \link[IRanges]{Ranges} object.
   }
   \item{strand}{
     A vector containing \code{"+"}s or/and \code{"-"}s.
-    This is not needed (and therefore it's an error to supply it)
-    when \code{names} is a \link[GenomicRanges]{GRanges} object
-    or a \link[IRanges]{RangedData} object with a strand column.
+    This is not needed (and it's an error to supply it)
+    when \code{names} is a \link[GenomicRanges]{GRanges} or
+    \link[GenomicRanges]{GRangesList} object, or a \link[IRanges]{RangedData}
+    object with a strand column.
   }
   \item{as.character}{
     \code{TRUE} or \code{FALSE}. Should the extracted sequences
@@ -65,8 +67,9 @@
         \link[IRanges]{Ranges} object then L = \code{length(names)}.
   \item If \code{names} is a \link[IRanges]{RangedData} object
         then L = \code{nrow(names)}.
-  \item If \code{names} is a \link[IRanges]{RangesList} object
-        then L = \code{length(unlist(names))}.
+  \item If \code{names} is a \link[GenomicRanges]{GRangesList} or
+        \link[IRanges]{RangesList} object then
+        L = \code{length(unlist(names))}.
   \item Otherwise, L is the length of the longest of \code{names},
         \code{start}, \code{end} and \code{width} and all these
         arguments are recycled to this length.
@@ -76,12 +79,13 @@
         the details).
   }
 
-  If \code{names} is neither a \link[GenomicRanges]{GRanges} object
-  or a \link[IRanges]{RangedData} object with a strand column,
-  then the \code{strand} argument is also recycled to length L.
+  If \code{names} is neither a \link[GenomicRanges]{GRanges} or
+  \link[GenomicRanges]{GRangesList} object, or a \link[IRanges]{RangedData}
+  object with a strand column, then the \code{strand} argument is also
+  recycled to length L.
 
-  Here is how the lookup between the names passed to the \code{names}
-  argument and the sequences in \code{x} is performed.
+  Here is how the names passed to the \code{names} argument are matched
+  to the names of the sequences in \link{BSgenome} object \code{x}.
   For each \code{name} in \code{names}:
   \itemize{
   \item (1): If \code{x} contains a single sequence with that name
@@ -91,22 +95,30 @@
         is a character vector then \code{name} is treated as a regular
         expression and \code{\link[base]{grep}} is used for this search,
         otherwise (i.e. when the names are supplied via a higher level
-        object like \link[GenomicRanges]{GRanges}) \code{name} must match
-        exactly the name of the sequence. If exactly one sequence is found,
-        then it is used for extraction, otherwise an error is raised.
+        object like \link[GenomicRanges]{GRanges} or
+        \link[GenomicRanges]{GRangesList}) then \code{name} must match
+        exactly the name of the sequence. If exactly 1 sequence is found,
+        then it is used for extraction, otherwise (i.e. if no sequence or
+        more than 1 sequence is found) then an error is raised.
   }
 }
 
 \value{
-  A character vector of length L when \code{as.character=TRUE}.
+  Normally a \link[Biostrings]{DNAStringSet} object (or character vector
+  if \code{as.character=TRUE}).
 
-  A \link[Biostrings]{DNAString} or \link[Biostrings]{DNAStringSet}
-  object when \code{as.character=FALSE} (the default).
-  More precisely the returned value is a \link[Biostrings]{DNAString}
-  object if L = 1 and \code{names} is not a \link[GenomicRanges]{GRanges},
-  \link[IRanges]{RangedData}, \link[IRanges]{RangesList} or
-  \link[IRanges]{Ranges} object.
-  Otherwise it's a \link[Biostrings]{DNAStringSet} object.
+  With the 2 following exceptions:
+  \enumerate{
+    \item A \link[Biostrings]{DNAStringSetList} object (or
+          \link[IRanges]{CharacterList} object if \code{as.character=TRUE})
+          of the same shape as \code{names} if \code{names} is a
+          \link[GenomicRanges]{GRangesList} object.
+    \item A \link[Biostrings]{DNAString} object (or single character string
+          if \code{as.character=TRUE}) if L = 1 and \code{names}
+          is not a \link[GenomicRanges]{GRanges},
+          \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangedData},
+          \link[IRanges]{RangesList}, or \link[IRanges]{Ranges} object.
+  }
 }
 
 \note{
@@ -131,6 +143,7 @@
   \link[Biostrings]{DNAStringSet-class},
   \link[Biostrings]{MaskedDNAString-class},
   \link[GenomicRanges]{GRanges-class},
+  \link[GenomicRanges]{GRangesList-class},
   \link[IRanges]{RangedData-class},
   \link[IRanges]{RangesList-class},
   \link[IRanges]{Ranges-class},
@@ -225,7 +238,21 @@ if (interactive()) {
 }
 
 ## ---------------------------------------------------------------------
-## D. EXTRACTING A HIGH NUMBER OF RANDOM 40-MERS FROM A GENOME
+## D. USING A GRangesList OBJECT
+## ---------------------------------------------------------------------
+
+gr1 <- GRanges(seqnames=c("chrI", "chrII", "chrM", "chrII"),
+               ranges=IRanges(start=101:104, width=12),
+               strand="+")
+gr2 <- shift(gr1, 5)
+gr3 <- gr2
+strand(gr3) <- "-"
+
+grl <- GRangesList(gr1, gr2, gr3)
+getSeq(Celegans, grl)
+
+## ---------------------------------------------------------------------
+## E. EXTRACTING A HIGH NUMBER OF RANDOM 40-MERS FROM A GENOME
 ## ---------------------------------------------------------------------
 
 extractRandomReads <- function(x, density, readlength)
@@ -284,7 +311,7 @@ rndreads <- extractRandomReads(Celegans, 0.01, 40)
 ##   reads, even for reads as long as 300 bases.
 
 ## ---------------------------------------------------------------------
-## E. SEE THE BSgenome CACHE IN ACTION
+## F. SEE THE BSgenome CACHE IN ACTION
 ## ---------------------------------------------------------------------
 
 options(verbose=TRUE)
