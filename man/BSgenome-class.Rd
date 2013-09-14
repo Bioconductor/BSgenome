@@ -60,7 +60,7 @@
     \item{\code{seqlengths(x)}}{
       Returns the lengths of the single sequences contained in \code{x}.
 
-      See \code{?`\link[IRanges]{length,XVector-method}`} and
+      See \code{?`\link[XVector]{length,XVector-method}`} and
       \code{?`\link[Biostrings]{length,MaskedXString-method}`} for
       the definition of the length of a \link[Biostrings]{DNAString}
       or \link[Biostrings]{MaskedDNAString} object.
@@ -151,7 +151,7 @@
   \link[Biostrings]{MaskedDNAString-class},
   \code{\link{getSeq,BSgenome-method}},
   \code{\link{injectSNPs}},
-  \link[IRanges]{subseq,XVector-method},
+  \link[XVector]{subseq,XVector-method},
   \code{\link[base]{rm}},
   \code{\link[base]{gc}}
 }
