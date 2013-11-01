@@ -25,7 +25,6 @@
     in \code{x} where to get the subsequences from,
     or a \link[GenomicRanges]{GRanges} object,
     or a \link[GenomicRanges]{GRangesList} object,
-    or a \link[IRanges]{RangedData} object,
     or a named \link[IRanges]{RangesList} object,
     or a named \link[IRanges]{Ranges} object.
     The \link[IRanges]{RangesList} or \link[IRanges]{Ranges} object
@@ -43,15 +42,14 @@
     of the subsequences to extract.
     These are not needed (and it's an error to supply them)
     when \code{names} is a \link[GenomicRanges]{GRanges},
-    \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangedData},
-    \link[IRanges]{RangesList} or \link[IRanges]{Ranges} object.
+    \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangesList},
+    or \link[IRanges]{Ranges} object.
   }
   \item{strand}{
     A vector containing \code{"+"}s or/and \code{"-"}s.
     This is not needed (and it's an error to supply it)
     when \code{names} is a \link[GenomicRanges]{GRanges} or
-    \link[GenomicRanges]{GRangesList} object, or a \link[IRanges]{RangedData}
-    object with a strand column.
+    \link[GenomicRanges]{GRangesList} object.
   }
   \item{as.character}{
     \code{TRUE} or \code{FALSE}. Should the extracted sequences
@@ -65,8 +63,6 @@
   \itemize{
   \item If \code{names} is a \link[GenomicRanges]{GRanges} or
         \link[IRanges]{Ranges} object then L = \code{length(names)}.
-  \item If \code{names} is a \link[IRanges]{RangedData} object
-        then L = \code{nrow(names)}.
   \item If \code{names} is a \link[GenomicRanges]{GRangesList} or
         \link[IRanges]{RangesList} object then
         L = \code{length(unlist(names))}.
@@ -80,9 +76,8 @@
   }
 
   If \code{names} is neither a \link[GenomicRanges]{GRanges} or
-  \link[GenomicRanges]{GRangesList} object, or a \link[IRanges]{RangedData}
-  object with a strand column, then the \code{strand} argument is also
-  recycled to length L.
+  \link[GenomicRanges]{GRangesList} object, then the \code{strand}
+  argument is also recycled to length L.
 
   Here is how the names passed to the \code{names} argument are matched
   to the names of the sequences in \link{BSgenome} object \code{x}.
@@ -116,8 +111,8 @@
     \item A \link[Biostrings]{DNAString} object (or single character string
           if \code{as.character=TRUE}) if L = 1 and \code{names}
           is not a \link[GenomicRanges]{GRanges},
-          \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangedData},
-          \link[IRanges]{RangesList}, or \link[IRanges]{Ranges} object.
+          \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangesList},
+          or \link[IRanges]{Ranges} object.
   }
 }
 
@@ -144,7 +139,6 @@
   \link[Biostrings]{MaskedDNAString-class},
   \link[GenomicRanges]{GRanges-class},
   \link[GenomicRanges]{GRangesList-class},
-  \link[IRanges]{RangedData-class},
   \link[IRanges]{RangesList-class},
   \link[IRanges]{Ranges-class},
   \code{\link[base]{grep}}

@@ -4,8 +4,7 @@ setMethod("vmatchPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
              algorithm="auto", exclude="", maskList=logical(0),
-             userMask=RangesList(), invertUserMask=FALSE,
-             asRangedData=FALSE)
+             userMask=RangesList(), invertUserMask=FALSE)
     {
         matchFUN <- function(posPattern, negPattern, chr,
                              seqlengths,
@@ -53,15 +52,6 @@ setMethod("vmatchPattern", "BSgenome",
           Biostrings:::normargMinMismatch(min.mismatch, max.mismatch)
         with.indels <- Biostrings:::normargWithIndels(with.indels)
         fixed <- Biostrings:::normargFixed(fixed, DNAStringSet())
-        if (!missing(asRangedData)) {
-            msg <- c("the 'asRangedData' argument is deprecated ",
-                     "and will be removed soon")
-            .Deprecated(msg=msg)
-        }
-        if (asRangedData) {
-            msg <- "using 'asRangedData=TRUE' is defunct"
-            .Defunct(msg=msg)
-        }
 
         posPattern <- pattern
         negPattern <- reverseComplement(posPattern)
@@ -149,7 +139,7 @@ setMethod("vmatchPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
              algorithm="auto", verbose=FALSE, exclude="",
-             maskList=logical(0), asRangedData=FALSE)
+             maskList=logical(0))
     {
         matchFUN <- function(posPDict, negPDict, chr,
                              seqlengths,
@@ -203,15 +193,6 @@ setMethod("vmatchPDict", "BSgenome",
                  "for this algorithm")
         if (!isTRUEorFALSE(verbose))
             stop("'verbose' must be TRUE or FALSE")
-        if (!missing(asRangedData)) {
-            msg <- c("the 'asRangedData' argument is deprecated ",
-                     "and will be removed soon")
-            .Deprecated(msg=msg)
-        }
-        if (asRangedData) {
-            msg <- "using 'asRangedData=TRUE' is defunct"
-            .Defunct(msg=msg)
-        }
 
         posPDict <- pdict
         negPDict <- reverseComplement(posPDict)
@@ -311,8 +292,7 @@ setMethod("vcountPDict", "BSgenome",
 
 ## matchPWM/countPWM for BSgenome
 setMethod("matchPWM", "BSgenome",
-    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0),
-             asRangedData=FALSE)
+    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
     {
         matchFUN <- function(posPWM, negPWM, chr, seqlengths, min.score) {
             posMatches <-
@@ -346,15 +326,6 @@ setMethod("matchPWM", "BSgenome",
         pwm <- Biostrings:::.normargPwm(pwm)
         ## checking 'min.score'
         min.score <- Biostrings:::.normargMinScore(min.score, pwm)
-        if (!missing(asRangedData)) {
-            msg <- c("the 'asRangedData' argument is deprecated ",
-                     "and will be removed soon")
-            .Deprecated(msg=msg)
-        }
-        if (asRangedData) {
-            msg <- "using 'asRangedData=TRUE' is defunct"
-            .Defunct(msg=msg)
-        }
 
         posPWM <- pwm[DNA_BASES, , drop = FALSE]
         negPWM <- reverseComplement(posPWM)
@@ -410,89 +381,3 @@ setMethod("countPWM", "BSgenome",
     }
 )
 
-setGeneric("vmatchLRPatterns", signature = "subject",
-           function(Lpattern, Rpattern, max.gaplength, subject,
-                    max.Lmismatch=0, max.Rmismatch=0,
-                    with.Lindels=FALSE, with.Rindels=FALSE,
-                    Lfixed=TRUE, Rfixed=TRUE, ...)
-           standardGeneric("vmatchLRPatterns"))
-
-setMethod("vmatchLRPatterns", "BSgenome",
-          function(Lpattern, Rpattern, max.gaplength, subject,
-                   max.Lmismatch=0, max.Rmismatch=0,
-                   with.Lindels=FALSE, with.Rindels=FALSE,
-                   Lfixed=TRUE, Rfixed=TRUE,
-                   exclude = "", userMask = RangesList(),
-                   invertUserMask = FALSE)
-          {
-            matchFUN <- function(posLPattern, negLPattern,
-                                 posRPattern, negRPattern, chr,
-                                 max.gaplength, subject,
-                                 max.Lmismatch, max.Rmismatch,
-                                 with.Lindels, with.Rindels,
-                                 Lfixed, Rfixed) {
-              posMatches <-
-                matchLRPatterns(posLPattern, posRPattern,
-                               max.gaplength, chr,
-                               max.Lmismatch, max.Rmismatch,
-                               with.Lindels, with.Rindels,
-                               Lfixed, Rfixed)
-              negMatches <- IRanges()
-              if (append(posLPattern, posRPattern) !=
-                  append(negRPattern, negLPattern))
-               negMatches <-
-                matchLRPatterns(negLPattern, negRPattern,
-                               max.gaplength, chr,
-                               max.Lmismatch, max.Rmismatch,
-                               with.Lindels, with.Rindels,
-                               Lfixed, Rfixed)
-              strings <- c(as.character(posMatches), as.character(negMatches))
-              strand <- rep(c("+", "-"),
-                            c(length(posMatches), length(negMatches)))
-              ord <- order(strand, strings)
-              rngs <- c(as(posMatches, "IRanges"), as(negMatches, "IRanges"))
-              RangedData(rngs[ord], string = Rle(strings[ord]),
-                         strand = Rle(strand[ord]),
-                         space = "1")
-            }
-
-            if (!is(Lpattern, "DNAString"))
-              pattern <- DNAString(Lpattern)
-            if (!is(Rpattern, "DNAString"))
-              pattern <- DNAString(Rpattern)
-            
-            Lpattern <- Biostrings:::normargPattern(Lpattern, DNAStringSet())
-            Rpattern <- Biostrings:::normargPattern(Rpattern, DNAStringSet())
-            max.gaplength <- Biostrings:::normargMaxMismatch(max.gaplength)
-            max.Lmismatch <- Biostrings:::normargMaxMismatch(max.Lmismatch)
-            max.Rmismatch <- Biostrings:::normargMaxMismatch(max.Rmismatch)
-            with.Lindels <- Biostrings:::normargWithIndels(with.Lindels)
-            with.Rindels <- Biostrings:::normargWithIndels(with.Rindels)
-            Lfixed <- Biostrings:::normargFixed(Lfixed, DNAStringSet())
-            Rfixed <- Biostrings:::normargFixed(Rfixed, DNAStringSet())
-            
-            posLPattern <- Lpattern
-            negLPattern <- reverseComplement(posLPattern)
-            posRPattern <- Rpattern
-            negRPattern <- reverseComplement(posRPattern)
-            
-            bsParams <-
-              new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-                  simplify = TRUE, userMask = userMask,
-                  invertUserMask = invertUserMask 
-                  )
-            matches <-
-              bsapply(bsParams,
-                      posLPattern = posLPattern, negLPattern = negLPattern,
-                      posRPattern = posRPattern, negRPattern = negRPattern,
-                      max.gaplength = max.gaplength,
-                      max.Lmismatch = max.Lmismatch,
-                      max.Rmismatch = max.Rmismatch, 
-                      with.Lindels = with.Lindels, with.Rindels = with.Rindels,
-                      Lfixed = Lfixed, Rfixed = Rfixed)
-            nms <- names(matches)
-            matches <- do.call(c, unname(matches))
-            names(matches) <- nms
-            matches
-          }
-          )

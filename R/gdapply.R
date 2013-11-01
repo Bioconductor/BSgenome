@@ -1,10 +1,4 @@
 ## An apply-type function for working with GenomeData and GenomeDataList objects:
-gdApply <- function(...) 
-{
-    msg <- "gdApply() is defunct. Use gdapply() instead [all lowercase]."
-    .Defunct(msg=msg)
-}
-
 
 setGeneric("gdapply",
            function(X, FUN, ...) {

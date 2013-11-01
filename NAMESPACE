@@ -39,7 +39,7 @@ export(
     mseqnames,
     masknames,
     injectSNPs,
-    gdapply, gdApply,
+    gdapply,
     gdReduce, gdreduce,
 
     ## BSgenomeForge functions:

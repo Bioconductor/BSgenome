@@ -1,4 +1,4 @@
-gdreduce <- function(...) .Deprecated("gdReduce")
+gdreduce <- function(...) .Defunct("gdReduce")
 
 setGeneric("gdReduce",
            function(f, ..., init, right=FALSE, accumulate=FALSE,

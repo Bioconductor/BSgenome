@@ -4,9 +4,6 @@
 \alias{gdapply,GenomeData,function-method}
 \alias{gdapply,GenomeDataList,function-method}
 
-% Defunct:
-\alias{gdApply}
-
 \title{
   Applies a function to elements of a GenomeData
 }
