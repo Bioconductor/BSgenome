@@ -66,7 +66,7 @@ FastaBSgenome <- function(filepath, circ_seqs=NA,
 .loadFastaSequence <- function(x, seqname)
 {
     param <- GRanges(seqname, IRanges(1L, seqlengths(x)[[seqname]]))
-    scanFa(x@fafile, param=param)
+    scanFa(x@fafile, param=param)[[1L]]
 }
 
 setMethod("loadBSgenomeNakedSequence", "FastaBSgenome",
