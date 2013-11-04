@@ -106,8 +106,8 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 ### The "forgeSeqFiles" function.
 ###
 
-.forgeSeqFile <- function(name, prefix, suffix, seqs_srcdir, seqs_destdir,
-                          is.single.seq=TRUE, verbose=TRUE)
+.forgeRdaSeqFile <- function(name, prefix, suffix, seqs_srcdir, seqs_destdir,
+                             is.single.seq=TRUE, verbose=TRUE)
 {
     if (!isSingleString(name))
         stop("'name' must be a single string")
@@ -129,8 +129,49 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     .saveObject(seq, name, destdir=seqs_destdir, verbose=verbose)
 }
 
+.forgeFastaRzFile <- function(seqnames, prefix, suffix,
+                              seqs_srcdir, seqs_destdir, dest_basename,
+                              verbose=TRUE)
+{
+    if (!is.character(seqnames))
+        stop("'seqnames' must be a character vector")
+    dest_filename <- paste0(dest_basename, ".fa", collapse="")
+    dest_filepath <- file.path(seqs_destdir, dest_filename)
+    for (seqname in seqnames) {
+        srcpath <- getSeqSrcpaths(seqname, prefix=prefix, suffix=suffix,
+                                  seqs_srcdir=seqs_srcdir)
+        if (verbose)
+            cat("Loading '", seqname, "' sequence from FASTA file '", srcpath, "' ... ", sep="")
+        seq <- readDNAStringSet(srcpath, "fasta")
+        if (verbose)
+            cat("DONE\n")
+        if (length(seq) == 0)
+            stop("file contains no DNA sequence")
+        if (length(seq) > 1) {
+            warning("file contains ", length(seq), " sequences, ",
+                    "using the first sequence only")
+            seq <- seq[1]
+        }
+        if (verbose)
+            cat("Appending '", seqname, "' sequence to FASTA file '", dest_filepath, "' ... ", sep="")
+        writeXStringSet(seq, dest_filepath, append=TRUE, format="fasta")
+        if (verbose)
+            cat("DONE\n")
+    }
+    if (verbose)
+        cat("Compress and index FASTA file '", dest_filepath, "' ... ", sep="")
+    rz_filepath <- sprintf("%s.rz", dest_filepath)
+    razip(dest_filepath, dest=rz_filepath)
+    unlink(dest_filepath)
+    indexFa(rz_filepath)
+    if (verbose)
+            cat("DONE\n")
+}
+
 forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
-                          seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+                          seqs_srcdir=".", seqs_destdir=".",
+                          mode=c("rda", "fa.rz"), provider_version,
+                          verbose=TRUE)
 {
     if (length(seqnames) == 0) {
         warning("'seqnames' is empty")
@@ -148,13 +189,19 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     }
     if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
-    for (name in seqnames) {
-        .forgeSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
-                      is.single.seq=TRUE, verbose=verbose)
+    mode <- match.arg(mode)
+    if (mode == "rda") {  # "rda" mode
+        for (name in seqnames) {
+            .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
+                             is.single.seq=TRUE, verbose=verbose)
+        }
+    } else {  # "fa.rz" mode
+        .forgeFastaRzFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
+                          provider_version, verbose=verbose)
     }
     for (name in mseqnames) {
-        .forgeSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
-                      is.single.seq=FALSE, verbose=verbose)
+        .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
+                         is.single.seq=FALSE, verbose=verbose)
     }
 }
 
@@ -453,13 +500,16 @@ BSgenomeDataPkgSeed <- function(x) makeS4FromList("BSgenomeDataPkgSeed", x)
 ###
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+                mode=c("rda", "fa.rz"), verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
 )
 
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+                mode=c("rda", "fa.rz"), verbose=TRUE)
     {
+        mode <- match.arg(mode)
         require(Biobase) || stop("the Biobase package is required")
         template_path <- system.file("BSgenomeDataPkg-template", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
@@ -508,18 +558,24 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         ## Sourcing this file will set the values of the '.seqnames',
         ## '.mseqnames' and '.nmask_per_seq' variables
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
-        ## Forge the "seqlengths.rda" file
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
-        forgeSeqlengthsFile(.seqnames,
-                            prefix=x@seqfiles_prefix, suffix=x@seqfiles_suffix,
-                            seqs_srcdir=seqs_srcdir,
-                            seqs_destdir=seqs_destdir,
-                            verbose=verbose)
-        ## Forge the sequence "*.rda" files
+        if (mode == "rda") {
+            ## Forge the "seqlengths.rda" file
+            forgeSeqlengthsFile(.seqnames,
+                                prefix=x@seqfiles_prefix,
+                                suffix=x@seqfiles_suffix,
+                                seqs_srcdir=seqs_srcdir,
+                                seqs_destdir=seqs_destdir,
+                                verbose=verbose)
+        }
+        ## Forge the sequence files (either "rda" or "fa.rz")
         forgeSeqFiles(.seqnames, mseqnames=.mseqnames,
-                      prefix=x@seqfiles_prefix, suffix=x@seqfiles_suffix,
+                      prefix=x@seqfiles_prefix,
+                      suffix=x@seqfiles_suffix,
                       seqs_srcdir=seqs_srcdir,
                       seqs_destdir=seqs_destdir,
+                      mode=mode,
+                      provider_version=x@provider_version,
                       verbose=verbose)
         if (.nmask_per_seq > 0) {
             ## Forge the "*.masks.rda" files
@@ -537,13 +593,14 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
 )
 
 setMethod("forgeBSgenomeDataPkg", "list",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+                mode=c("rda", "fa.rz"), verbose=TRUE)
     {
         y <- BSgenomeDataPkgSeed(x)
         forgeBSgenomeDataPkg(y,
             seqs_srcdir=seqs_srcdir,
             masks_srcdir=masks_srcdir,
-            destdir=destdir, verbose=verbose)
+            destdir=destdir, mode=mode, verbose=verbose)
     }
 )
 
@@ -607,7 +664,8 @@ read.dcf2 <- function(file, ...)
 }
 
 setMethod("forgeBSgenomeDataPkg", "character",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+                mode=c("rda", "fa.rz"), verbose=TRUE)
     {
         y <- .readSeedFile(x, verbose=verbose)
         y <- as.list(y)
@@ -623,7 +681,7 @@ setMethod("forgeBSgenomeDataPkg", "character",
         forgeBSgenomeDataPkg(y,
             seqs_srcdir=seqs_srcdir,
             masks_srcdir=masks_srcdir,
-            destdir=destdir, verbose=verbose)
+            destdir=destdir, mode=mode, verbose=verbose)
     }
 )
 

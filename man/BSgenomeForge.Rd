@@ -24,7 +24,8 @@
 \usage{
 ## Top-level BSgenomeForge function:
 
-forgeBSgenomeDataPkg(x, seqs_srcdir=".", masks_srcdir=".", destdir=".", verbose=TRUE)
+forgeBSgenomeDataPkg(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+                        mode=c("rda", "fa.rz"), verbose=TRUE)
 
 ## Low-level BSgenomeForge functions:
 
@@ -32,7 +33,8 @@ forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
                     seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
 
 forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
-              seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+              seqs_srcdir=".", seqs_destdir=".",
+              mode=c("rda", "fa.rz"), provider_version, verbose=TRUE)
 
 forgeMasksFiles(seqnames, nmask_per_seq,
                 seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
@@ -61,6 +63,13 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     This directory must already exist.
     See the BSgenomeForge vignette in this package for more information.
   }
+  \item{mode}{
+    Specifies how the single sequences should be stored in the forged package.
+    Can be either \code{"rda"} or \code{"fa.rz"}. If the former, then each
+    single sequence will be stored as a serialized \link[Biostrings]{XString}
+    object (there will be one per sequence). If the latter, then they will all
+    be stored in a single FASTA file compressed in the RAZip format.
+  }
   \item{verbose}{
     \code{TRUE} or \code{FALSE}.
   }
@@ -84,6 +93,13 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     \code{forgeSeqlengthsFile} will produce a single .rda file.
     Both \code{forgeSeqFiles} and \code{forgeMasksFiles} will produce one
     .rda file per sequence.
+  }
+  \item{provider_version}{
+    A single string containing the provider-side version of the genome.
+    See the BSgenomeForge vignette for more information.
+    This string is only required if \code{mode} is \code{"fa.rz"} and, in
+    that case, will be used as the basename of the RAZip-compressed FASTA
+    file where all the single sequences will be stored.
   }
   \item{nmask_per_seq}{
     A single integer indicating the desired number of masks per sequence.

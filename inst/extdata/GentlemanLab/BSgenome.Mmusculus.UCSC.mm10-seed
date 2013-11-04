@@ -1,7 +1,7 @@
 Package: BSgenome.Mmusculus.UCSC.mm10
 Title: Mus musculus (Mouse) full genome (UCSC version mm10)
 Description: Mus musculus (Mouse) full genome as provided by UCSC (mm10, Dec. 2011) and stored in Biostrings objects.
-Version: 1.3.19
+Version: 1.3.99
 organism: Mus musculus
 species: Mouse
 provider: UCSC

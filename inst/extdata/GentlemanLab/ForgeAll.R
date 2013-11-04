@@ -47,7 +47,7 @@ for (pkg in pkgs) {
   cat("============================================================\n")
   cat("START FORGING ", pkg, "\n", sep="")
   cat("\n")
-  forgeBSgenomeDataPkg(pkg)
+  forgeBSgenomeDataPkg(pkg, mode="fa.rz")
   cat("\n")
   cat("END FORGING ", pkg, "\n", sep="")
 }

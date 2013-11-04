@@ -1,7 +1,7 @@
 Package: BSgenome.Athaliana.TAIR.TAIR9
 Title: Arabidopsis thaliana full genome (TAIR9)
 Description: Arabidopsis thaliana full genome as provided by TAIR (TAIR9 Genome Release) and stored in Biostrings objects. Note that TAIR10 is an "annotation release" based on the same genome assembly as TAIR9.
-Version: 1.3.19
+Version: 1.3.99
 organism: Arabidopsis thaliana
 species: Arabidopsis
 provider: TAIR
