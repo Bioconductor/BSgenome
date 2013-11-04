@@ -1,10 +1,13 @@
 ### =========================================================================
-### The "BSgenome" class
+### BSgenome objects
 ### -------------------------------------------------------------------------
+
 
 setClass("BSgenome",
     contains="GenomeDescription",
     representation(
+        #"VIRTUAL",
+
         ## source_url: permanent URL to the place where the FASTA files used
         ## to produce the sequences below can be found (and downloaded)
         source_url="character",
@@ -17,10 +20,6 @@ setClass("BSgenome",
 
         ## mseqnames: names of "multiple" sequences (e.g. upstream)
         mseqnames="character",
-
-        ## where to find the serialized objects containing the sequences
-        seqs_pkgname="character",
-        seqs_dirpath="character",
 
         ## where to find the serialized objects containing the masks
         nmask_per_seq="integer",
@@ -41,7 +40,7 @@ setClass("BSgenome",
 ### sequences.
 ###
 
-.getObjFilepath <- function(objname, objdir)
+getObjFilepath <- function(objname, objdir)
 {
     ## Should never happen.
     if (objdir == "")
@@ -55,9 +54,9 @@ setClass("BSgenome",
     filepath
 }
 
-.loadSingleObject <- function(objname, objdir, objpkgname)
+loadSingleObject <- function(objname, objdir, objpkgname)
 {
-    filepath <- .getObjFilepath(objname, objdir)
+    filepath <- getObjFilepath(objname, objdir)
     tmp_env <- new.env(parent=emptyenv())
     loaded_names <- load(filepath, envir=tmp_env)
     ## Check that we get only 1 object
@@ -262,60 +261,6 @@ setReplaceMethod("seqnames", "BSgenome",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Constructor-like functions and generics
-###
-
-.makeSeqinfo <- function(seqnames, circ_seqs, seqs_pkgname, seqs_dirpath,
-                         provider_version)
-{
-    objname <- "seqlengths"
-    seqlengths <- .loadSingleObject(objname, seqs_dirpath, seqs_pkgname)
-    if (!identical(names(seqlengths), seqnames)) {
-        filepath <- .getObjFilepath(objname, seqs_dirpath)
-        stop("sequence names found in file '", filepath, "' are not ",
-             "identical to 'seqnames'. ",
-             "May be the ", seqs_pkgname, " package is corrupted?")
-    }
-    if (identical(circ_seqs, NA))
-        is_circ <- NA
-    else
-        is_circ <- seqnames %in% circ_seqs
-    Seqinfo(seqnames=seqnames, seqlengths=seqlengths, isCircular=is_circ,
-            genome=provider_version)
-}
-
-BSgenome <- function(organism, species, provider, provider_version,
-                     release_date, release_name, source_url,
-                     seqnames, circ_seqs=NA, mseqnames,
-                     seqs_pkgname, seqs_dirpath,
-                     nmask_per_seq, masks_pkgname, masks_dirpath)
-{
-    seqinfo <- .makeSeqinfo(seqnames, circ_seqs, seqs_pkgname, seqs_dirpath,
-                            provider_version)
-    user_seqnames <- seqnames(seqinfo)
-    names(user_seqnames) <- user_seqnames
-    if (is.null(mseqnames))
-        mseqnames <- character(0)
-    new("BSgenome",
-        GenomeDescription(organism, species,
-                          provider, provider_version,
-                          release_date, release_name,
-                          seqinfo),
-        source_url=source_url,
-        user_seqnames=user_seqnames,
-        mseqnames=mseqnames,
-        seqs_pkgname=seqs_pkgname,
-        seqs_dirpath=seqs_dirpath,
-        nmask_per_seq=as.integer(nmask_per_seq),
-        masks_pkgname=masks_pkgname,
-        masks_dirpath=masks_dirpath,
-        .seqs_cache=new.env(parent=emptyenv()),
-        .link_counts=new.env(parent=emptyenv())
-    )
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The 'show' method
 ###
 
@@ -375,37 +320,37 @@ setMethod("show", "BSgenome",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Subsetting.
+### List-element extraction (with [[).
 ###
 
-.loadBSgenomeSequence <- function(objname, bsgenome, user_seqname)
+setGeneric("loadBSgenomeNakedSequence", signature="x",
+    function(x, seqname) standardGeneric("loadBSgenomeNakedSequence")
+)
+
+.loadBSgenomeSequence <- function(x, seqname, user_seqname)
 {
-    seqs_pkgname <- bsgenome@seqs_pkgname
-    seqs_dirpath <- bsgenome@seqs_dirpath
-    nmask_per_seq <- length(masknames(bsgenome))
-    masks_pkgname <- bsgenome@masks_pkgname
-    masks_dirpath <- bsgenome@masks_dirpath
-    ans <- .loadSingleObject(objname, seqs_dirpath, seqs_pkgname)
+    ans <- loadBSgenomeNakedSequence(x, seqname)
     if (!is(ans, "XString"))
         return(ans)
+    nmask_per_seq <- length(masknames(x))
+    masks_pkgname <- x@masks_pkgname
+    masks_dirpath <- x@masks_dirpath
     ## Check the length of the sequence
-    if (length(ans) != seqlengths(bsgenome)[[user_seqname]]) {
-        seq_filepath <- .getObjFilepath(objname, seqs_dirpath)
-        stop("sequence found in file '", seq_filepath, "' does ",
-             "not have the length reported by seqlengths(). ",
-             "May be the ", seqs_pkgname, " package is corrupted?")
+    if (length(ans) != seqlengths(x)[[user_seqname]]) {
+        stop(user_seqname, " sequence does not have the expected length. ",
+             "May be the data is corrupted?")
     }
     ## Inject the SNPs, if any
-    snps <- SNPlocs(bsgenome, objname)
-    if (!is.null(snps)) 
+    snps <- SNPlocs(x, seqname)
+    if (!is.null(snps))
         .inplaceReplaceLetterAt(ans, snps$loc, snps$alleles_as_ambig)
     ## Load and set the built-in masks, if any
     if (nmask_per_seq > 0L) {
-        masks_objname <- paste(objname, ".masks", sep="")
-        builtinmasks <- .loadSingleObject(masks_objname, masks_dirpath,
-                                          masks_pkgname)
+        masks_objname <- paste(seqname, ".masks", sep="")
+        builtinmasks <- loadSingleObject(masks_objname, masks_dirpath,
+                                         masks_pkgname)
         if (length(builtinmasks) < nmask_per_seq) {
-            masks_filepath <- .getObjFilepath(masks_objname, masks_dirpath)
+            masks_filepath <- getObjFilepath(masks_objname, masks_dirpath)
             stop("expecting ", nmask_per_seq, " built-in masks per ",
                  "single sequence, found only ", length(builtinmasks),
                  " in file '", masks_filepath, "'. ",
@@ -413,8 +358,8 @@ setMethod("show", "BSgenome",
         }
         if (length(builtinmasks) > nmask_per_seq)
             builtinmasks <- builtinmasks[seq_len(nmask_per_seq)]
-        if (!identical(names(builtinmasks), masknames(bsgenome))) {
-            masks_filepath <- .getObjFilepath(masks_objname, masks_dirpath)
+        if (!identical(names(builtinmasks), masknames(x))) {
+            masks_filepath <- getObjFilepath(masks_objname, masks_dirpath)
             stop("mask names found in file '", masks_filepath, "' are not ",
                  "identical to the names returned by masknames(). ",
                  "May be the ", masks_pkgname, " package is corrupted?")
@@ -424,19 +369,19 @@ setMethod("show", "BSgenome",
     ans
 }
 
-.getBSgenomeSequence <- function(objname, bsgenome, user_seqname)
+.getBSgenomeSequence <- function(x, seqname, user_seqname)
 {
-    seqs_cache <- bsgenome@.seqs_cache
+    seqs_cache <- x@.seqs_cache
     ## Using the 'if (!exists()) assign(); get()' approach is NOT 100%
     ## reliable:
     ##
-    ##   if (!exists(objname, envir=seqs_cache, inherits=FALSE)) {
+    ##   if (!exists(seqname, envir=seqs_cache, inherits=FALSE)) {
     ##       ...
-    ##       assign(objname, ans, envir=seqs_cache)
+    ##       assign(seqname, ans, envir=seqs_cache)
     ##   }
-    ##   get(objname, envir=seqs_cache, inherits=FALSE)
+    ##   get(seqname, envir=seqs_cache, inherits=FALSE)
     ##
-    ## because the symbol (objname) can disappear from the cache between
+    ## because the symbol (seqname) can disappear from the cache between
     ## the moment we test for its presence and the moment we try to get it.
     ## It's not me being paranoid, we've seen this happen! One possible
     ## explanation for this is that the symbol was candidate for removal
@@ -447,17 +392,17 @@ setMethod("show", "BSgenome",
     ## garbbage collection and that in turn would trigger the removal of
     ## the symbol *before* get() had a chance to get to it. So now we use
     ## the 'try(get(...))' approach, which hopefully is 100% reliable!
-    ans <- try(get(objname, envir=seqs_cache, inherits=FALSE), silent=TRUE)
+    ans <- try(get(seqname, envir=seqs_cache, inherits=FALSE), silent=TRUE)
     if (is(ans, "try-error")) {
-        ans <- .loadBSgenomeSequence(objname, bsgenome, user_seqname)
+        ans <- .loadBSgenomeSequence(x, seqname, user_seqname)
         if (getOption("verbose"))
-            cat("caching ", objname, "\n", sep="")
-        assign(objname, ans, envir=seqs_cache)
+            cat("caching ", seqname, "\n", sep="")
+        assign(seqname, ans, envir=seqs_cache)
     }
     .linkToCachedObject(ans) <- .newLinkToCachedObject(
-                                    objname,
+                                    seqname,
                                     seqs_cache,
-                                    bsgenome@.link_counts)
+                                    x@.link_counts)
     ans
 }
 
@@ -498,11 +443,11 @@ setMethod("[[", "BSgenome",
         ## Translate user-supplied sequence named back to original name.
         idx <- match(name, x@user_seqnames)
         if (is.na(idx)) {
-            objname <- name
+            seqname <- name
         } else {
-            objname <- names(x@user_seqnames)[[idx]]
+            seqname <- names(x@user_seqnames)[[idx]]
         }
-        .getBSgenomeSequence(objname, x, name)
+        .getBSgenomeSequence(x, seqname, name)
     }
 )
 
@@ -516,3 +461,4 @@ setReplaceMethod("[[", "BSgenome",
 setMethod("$", "BSgenome",
     function(x, name) x[[name]]
 )
+

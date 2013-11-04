@@ -4,12 +4,13 @@ import(BiocGenerics)
 import(IRanges)
 import(GenomicRanges)
 import(Biostrings)
+import(Rsamtools)
 
 exportClasses(
     GenomeDescription,
     SNPlocs,
     InjectSNPsHandler,
-    BSgenome,
+    BSgenome, RdaBSgenome, FastaBSgenome,
     GenomeData, GenomeDataList,
 
     ## BSgenomeForge classes:
@@ -21,7 +22,7 @@ export(
     installed.genomes, available.genomes,
     GenomeDescription,
     newSNPlocs,
-    BSgenome,
+    BSgenome, RdaBSgenome, FastaBSgenome,
     installed.SNPs, available.SNPs,
     bsapply,
     GenomeData, GenomeDataList,
