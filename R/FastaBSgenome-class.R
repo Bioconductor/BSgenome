@@ -13,7 +13,7 @@ setClass("FastaBSgenome",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### FastaBSgenome constructor
+### FastaBSgenome constructor (NOT exported)
 ###
 
 .makeFastaBSgenomeSeqinfo <- function(fafile, circ_seqs, provider_version)
@@ -38,6 +38,7 @@ FastaBSgenome <- function(filepath, circ_seqs=NA,
                           pkgname=NA)
 {
     fafile <- FaFile(filepath)
+    open(fafile)
     seqinfo <- .makeFastaBSgenomeSeqinfo(fafile, circ_seqs, provider_version)
     user_seqnames <- seqnames(seqinfo)
     names(user_seqnames) <- user_seqnames
@@ -56,6 +57,36 @@ FastaBSgenome <- function(filepath, circ_seqs=NA,
         .seqs_cache=new.env(parent=emptyenv()),
         .link_counts=new.env(parent=emptyenv())
     )
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### BSgenome constructor
+###
+### Returns either an RdaBSgenome or a FastaBSgenome object.
+###
+
+BSgenome <- function(organism, species, provider, provider_version,
+                     release_date, release_name, source_url,
+                     seqnames, circ_seqs=NA, mseqnames,
+                     seqs_pkgname, seqs_dirpath,
+                     nmask_per_seq, masks_pkgname, masks_dirpath)
+{
+    fasta_filename <- paste0(provider_version, ".fa.rz")
+    fasta_filepath <- file.path(seqs_dirpath, fasta_filename)
+    if (file.exists(fasta_filepath)) {
+        FastaBSgenome(fasta_filepath, circ_seqs,
+                      nmask_per_seq, masks_dirpath,
+                      organism, species, provider, provider_version,
+                      release_date, release_name, source_url,
+                      masks_pkgname)
+    } else {
+        RdaBSgenome(organism, species, provider, provider_version,
+                    release_date, release_name, source_url,
+                    seqnames, circ_seqs, mseqnames,
+                    seqs_pkgname, seqs_dirpath,
+                    nmask_per_seq, masks_pkgname, masks_dirpath)
+    }
 }
 
 

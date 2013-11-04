@@ -14,7 +14,7 @@ setClass("RdaBSgenome",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### RdaBSgenome constructor
+### RdaBSgenome constructor (NOT exported)
 ###
 
 .makeRdaBSgenomeSeqinfo <- function(seqnames, circ_seqs,
@@ -40,7 +40,7 @@ setClass("RdaBSgenome",
 
 RdaBSgenome <- function(organism, species, provider, provider_version,
                         release_date, release_name, source_url,
-                        seqnames, circ_seqs=NA, mseqnames,
+                        seqnames, circ_seqs, mseqnames,
                         seqs_pkgname, seqs_dirpath,
                         nmask_per_seq, masks_pkgname, masks_dirpath)
 {
@@ -68,9 +68,6 @@ RdaBSgenome <- function(organism, species, provider, provider_version,
         .link_counts=new.env(parent=emptyenv())
     )
 }
-
-### Temporary alias for backward compatibility.
-BSgenome <- RdaBSgenome
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
