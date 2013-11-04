@@ -160,10 +160,10 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     }
     if (verbose)
         cat("Compress and index FASTA file '", dest_filepath, "' ... ", sep="")
-    rz_filepath <- sprintf("%s.rz", dest_filepath)
-    razip(dest_filepath, dest=rz_filepath)
+    farz_filepath <- sprintf("%s.rz", dest_filepath)
+    razip(dest_filepath, dest=farz_filepath)
     unlink(dest_filepath)
-    indexFa(rz_filepath)
+    indexFa(farz_filepath)
     if (verbose)
             cat("DONE\n")
 }
@@ -317,7 +317,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 .forgeMasksFile <- function(seqname, nmask_per_seq,
-                            seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
+                            seqs_destdir=".", mode=c("rda", "fa.rz"), provider_version,
+                            masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
                             RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
@@ -339,10 +340,20 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     if (!isSingleString(masks_destdir))
         stop("'masks_destdir' must be a single string")
 
-    ## Get the length of the sequence.
-    seqfile <- file.path(seqs_destdir, paste(seqname, ".rda", sep=""))
-    load(seqfile)
-    seq <- get(seqname)
+    ## Load the sequence.
+    mode <- match.arg(mode)
+    if (mode == "rda") {  # "rda" mode
+        seqfile <- file.path(seqs_destdir, paste(seqname, ".rda", sep=""))
+        load(seqfile)
+        seq <- get(seqname)
+        remove(list=seqname)
+    } else {  # "fa.rz" mode
+        farz_filename <- paste0(provider_version, ".fa.rz", collapse="")
+        farz_filepath <- file.path(seqs_destdir, farz_filename)
+        fafile <- FaFile(farz_filepath)
+        param <- GRanges(seqname, IRanges(1L, seqlengths(fafile)[[seqname]]))
+        seq <- scanFa(fafile, param=param)[[1L]]
+    }
     mask_width <- length(seq)
 
     ## Start with an empty mask collection (i.e. a MaskCollection of
@@ -358,7 +369,6 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         AMBmask <- .forge.AMBmask(seq, AGAPSmask)
         masks <- append(masks, AMBmask)
     }
-    remove(seq, list=seqname)
     if (nmask_per_seq >= 3) {
         RMmask <- .forge.RMmask(seqname, mask_width, masks_srcdir,
                                 RMfiles_name, RMfiles_prefix, RMfiles_suffix)
@@ -374,7 +384,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
-                            seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
+                            seqs_destdir=".", mode=c("rda", "fa.rz"), provider_version,
+                            masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
                             RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
@@ -385,7 +396,7 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
         warning("'seqnames' is empty")
     for (seqname in seqnames) {
         .forgeMasksFile(seqname, nmask_per_seq,
-                        seqs_destdir=seqs_destdir,
+                        seqs_destdir=seqs_destdir, mode=mode, provider_version=provider_version,
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                         AGAPSfiles_type=AGAPSfiles_type, AGAPSfiles_name=AGAPSfiles_name,
                         AGAPSfiles_prefix=AGAPSfiles_prefix, AGAPSfiles_suffix=AGAPSfiles_suffix,
@@ -581,7 +592,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             ## Forge the "*.masks.rda" files
             masks_destdir <- file.path(pkgdir, "inst", "extdata")
             forgeMasksFiles(.seqnames, .nmask_per_seq,
-                            seqs_destdir=seqs_destdir,
+                            seqs_destdir=seqs_destdir, mode=mode, provider_version=x@provider_version,
                             masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                             AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
                             AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,

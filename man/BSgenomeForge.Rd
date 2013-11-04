@@ -37,7 +37,8 @@ forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
               mode=c("rda", "fa.rz"), provider_version, verbose=TRUE)
 
 forgeMasksFiles(seqnames, nmask_per_seq,
-                seqs_destdir=".", masks_srcdir=".", masks_destdir=".",
+                seqs_destdir=".", mode=c("rda", "fa.rz"), provider_version,
+                masks_srcdir=".", masks_destdir=".",
                 AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                 AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
                 RMfiles_name=NA, RMfiles_prefix="", RMfiles_suffix=".fa.out",
@@ -65,10 +66,11 @@ forgeMasksFiles(seqnames, nmask_per_seq,
   }
   \item{mode}{
     Specifies how the single sequences should be stored in the forged package.
-    Can be either \code{"rda"} or \code{"fa.rz"}. If the former, then each
-    single sequence will be stored as a serialized \link[Biostrings]{XString}
-    object (there will be one per sequence). If the latter, then they will all
-    be stored in a single FASTA file compressed in the RAZip format.
+    Can be either \code{"rda"} or \code{"fa.rz"}. If the former, then
+    \code{forgeBSgenomeDataPkg} and \code{forgeSeqFiles} will store each
+    single sequence as a serialized \link[Biostrings]{XString} object (there
+    will be one per sequence). If the latter, then they will store all of
+    them in a single FASTA file compressed in the RAZip format.
   }
   \item{verbose}{
     \code{TRUE} or \code{FALSE}.
