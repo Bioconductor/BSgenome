@@ -25,7 +25,7 @@ Collate: utils.R
 	InjectSNPsHandler-class.R
 	BSgenome-class.R
 	RdaBSgenome-class.R
-	FastaBSgenome-class.R
+	FaRzBSgenome-class.R
 	injectSNPs.R
 	getSeq-methods.R
 	bsapply.R
