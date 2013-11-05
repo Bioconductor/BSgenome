@@ -20,6 +20,7 @@ License: Artistic-2.0
 LazyLoad: yes
 Collate: utils.R
 	available.genomes.R
+	OnDiskNamedSequences-class.R
 	GenomeDescription-class.R
 	SNPlocs-class.R
 	InjectSNPsHandler-class.R
