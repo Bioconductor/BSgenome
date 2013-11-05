@@ -73,7 +73,7 @@ BSgenome <- function(organism, species, provider, provider_version,
                      seqs_pkgname, seqs_dirpath,
                      nmask_per_seq, masks_pkgname, masks_dirpath)
 {
-    farz_filename <- paste0(provider_version, ".fa.rz")
+    farz_filename <- "single_sequences.fa.rz"
     farz_filepath <- file.path(seqs_dirpath, farz_filename)
     if (file.exists(farz_filepath)) {
         FaRzBSgenome(farz_filepath, circ_seqs,
@@ -95,13 +95,15 @@ BSgenome <- function(organism, species, provider, provider_version,
 ### "loadBSgenomeNakedSequence" method
 ###
 
-.loadFastaSequence <- function(x, seqname)
-{
-    param <- GRanges(seqname, IRanges(1L, seqlengths(x)[[seqname]]))
-    scanFa(x@fafile, param=param)[[1L]]
-}
-
 setMethod("loadBSgenomeNakedSequence", "FaRzBSgenome",
-    function(x, seqname) .loadFastaSequence(x, seqname)
+    function(x, seqname)
+    {
+        fafile <- x@fafile
+        ## TODO: Implement "[[" method for FaFile objects (in Rsamtools) and
+        ## use it here (i.e. do 'fafile[[seqname]]' instead of the 2 lines
+        ## below).
+        param <- GRanges(seqname, IRanges(1L, seqlengths(fafile)[[seqname]]))
+        scanFa(fafile, param=param)[[1L]]
+    }
 )
 

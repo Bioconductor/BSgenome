@@ -158,14 +158,20 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         if (verbose)
             cat("DONE\n")
     }
+
     if (verbose)
-        cat("Compress and index FASTA file '", dest_filepath, "' ... ", sep="")
+        cat("Compressing FASTA file '", dest_filepath, "' ... ", sep="")
     farz_filepath <- sprintf("%s.rz", dest_filepath)
     razip(dest_filepath, dest=farz_filepath)
     unlink(dest_filepath)
+    if (verbose)
+        cat("DONE\n")
+
+    if (verbose)
+        cat("Indexing compressed FASTA file '", farz_filepath, "' ... ", sep="")
     indexFa(farz_filepath)
     if (verbose)
-            cat("DONE\n")
+        cat("DONE\n")
 }
 
 forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
@@ -350,6 +356,9 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         farz_filename <- "single_sequences.fa.rz"
         farz_filepath <- file.path(seqs_destdir, farz_filename)
         fafile <- FaFile(farz_filepath)
+        ## TODO: Implement "[[" method for FaFile objects (in Rsamtools) and
+        ## use it here (i.e. do 'seq <- fafile[[seqname]]' instead of the 2
+        ## lines below).
         param <- GRanges(seqname, IRanges(1L, seqlengths(fafile)[[seqname]]))
         seq <- scanFa(fafile, param=param)[[1L]]
     }
