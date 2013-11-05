@@ -1,6 +1,9 @@
 #######################################################################
 ### Use this R script to forge all the BSgenome data packages
 ###
+### To run this script in batch mode:
+### R-3.1 CMD BATCH --vanilla path/to/ForgeAll.R >ForgeAll.log 2>&1 &
+###
 
 library(BSgenome)
 

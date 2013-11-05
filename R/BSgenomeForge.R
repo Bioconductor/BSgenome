@@ -130,12 +130,12 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 }
 
 .forgeFastaRzFile <- function(seqnames, prefix, suffix,
-                              seqs_srcdir, seqs_destdir, dest_basename,
+                              seqs_srcdir, seqs_destdir,
                               verbose=TRUE)
 {
     if (!is.character(seqnames))
         stop("'seqnames' must be a character vector")
-    dest_filename <- paste0(dest_basename, ".fa", collapse="")
+    dest_filename <- "single_sequences.fa"
     dest_filepath <- file.path(seqs_destdir, dest_filename)
     for (seqname in seqnames) {
         srcpath <- getSeqSrcpaths(seqname, prefix=prefix, suffix=suffix,
@@ -154,7 +154,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         }
         if (verbose)
             cat("Appending '", seqname, "' sequence to FASTA file '", dest_filepath, "' ... ", sep="")
-        writeXStringSet(seq, dest_filepath, append=TRUE, format="fasta")
+        writeXStringSet(seq, dest_filepath, append=TRUE, format="fasta", width=50L)
         if (verbose)
             cat("DONE\n")
     }
@@ -170,8 +170,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 
 forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
-                          mode=c("rda", "fa.rz"), provider_version,
-                          verbose=TRUE)
+                          mode=c("rda", "fa.rz"), verbose=TRUE)
 {
     if (length(seqnames) == 0) {
         warning("'seqnames' is empty")
@@ -197,7 +196,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         }
     } else {  # "fa.rz" mode
         .forgeFastaRzFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
-                          provider_version, verbose=verbose)
+                          verbose=verbose)
     }
     for (name in mseqnames) {
         .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
@@ -317,7 +316,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 .forgeMasksFile <- function(seqname, nmask_per_seq,
-                            seqs_destdir=".", mode=c("rda", "fa.rz"), provider_version,
+                            seqs_destdir=".", mode=c("rda", "fa.rz"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -348,7 +347,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         seq <- get(seqname)
         remove(list=seqname)
     } else {  # "fa.rz" mode
-        farz_filename <- paste0(provider_version, ".fa.rz", collapse="")
+        farz_filename <- "single_sequences.fa.rz"
         farz_filepath <- file.path(seqs_destdir, farz_filename)
         fafile <- FaFile(farz_filepath)
         param <- GRanges(seqname, IRanges(1L, seqlengths(fafile)[[seqname]]))
@@ -384,7 +383,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
-                            seqs_destdir=".", mode=c("rda", "fa.rz"), provider_version,
+                            seqs_destdir=".", mode=c("rda", "fa.rz"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -396,7 +395,7 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
         warning("'seqnames' is empty")
     for (seqname in seqnames) {
         .forgeMasksFile(seqname, nmask_per_seq,
-                        seqs_destdir=seqs_destdir, mode=mode, provider_version=provider_version,
+                        seqs_destdir=seqs_destdir, mode=mode,
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                         AGAPSfiles_type=AGAPSfiles_type, AGAPSfiles_name=AGAPSfiles_name,
                         AGAPSfiles_prefix=AGAPSfiles_prefix, AGAPSfiles_suffix=AGAPSfiles_suffix,
@@ -586,13 +585,12 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                       seqs_srcdir=seqs_srcdir,
                       seqs_destdir=seqs_destdir,
                       mode=mode,
-                      provider_version=x@provider_version,
                       verbose=verbose)
         if (.nmask_per_seq > 0) {
             ## Forge the "*.masks.rda" files
             masks_destdir <- file.path(pkgdir, "inst", "extdata")
             forgeMasksFiles(.seqnames, .nmask_per_seq,
-                            seqs_destdir=seqs_destdir, mode=mode, provider_version=x@provider_version,
+                            seqs_destdir=seqs_destdir, mode=mode,
                             masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                             AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
                             AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,

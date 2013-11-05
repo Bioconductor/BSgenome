@@ -34,10 +34,10 @@ forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
 
 forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
               seqs_srcdir=".", seqs_destdir=".",
-              mode=c("rda", "fa.rz"), provider_version, verbose=TRUE)
+              mode=c("rda", "fa.rz"), verbose=TRUE)
 
 forgeMasksFiles(seqnames, nmask_per_seq,
-                seqs_destdir=".", mode=c("rda", "fa.rz"), provider_version,
+                seqs_destdir=".", mode=c("rda", "fa.rz"),
                 masks_srcdir=".", masks_destdir=".",
                 AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                 AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -95,13 +95,6 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     \code{forgeSeqlengthsFile} will produce a single .rda file.
     Both \code{forgeSeqFiles} and \code{forgeMasksFiles} will produce one
     .rda file per sequence.
-  }
-  \item{provider_version}{
-    A single string containing the provider-side version of the genome.
-    See the BSgenomeForge vignette for more information.
-    This string is only required if \code{mode} is \code{"fa.rz"} and, in
-    that case, will be used as the basename of the RAZip-compressed FASTA
-    file where all the single sequences will be stored.
   }
   \item{nmask_per_seq}{
     A single integer indicating the desired number of masks per sequence.
