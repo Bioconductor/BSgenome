@@ -10,60 +10,19 @@ setGeneric("seqlengthsFilepath",
     function(x) standardGeneric("seqlengthsFilepath")
 )
 
-setGeneric("loadOnDiskNamedSequence", signature="x",
-    function(x, seqname) standardGeneric("loadOnDiskNamedSequence")
-)
-
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### RdaSequences objects
 ###
+### The "dirpath" slot should contain 1 serialized XString object per
+### sequence + a serialized named integer vector ('seqlengths.rda')
+### containing the sequence names and lengths.
+###
 
-setClass("RdaSequences",
-    contains="OnDiskNamedSequences",
-    representation(
-        ## 'dirpath' should contain 1 serialized XString object per sequence
-        ## + a serialized named integer vector ('seqlengths.rda') containing
-        ## the sequence names and lengths.
-        dirpath="character"
-    )
-)
-
-.get_rda_filepath <- function(dirpath, objname)
-{
-    filename <- paste0(objname, ".rda")
-    file.path(dirpath, filename)
-}
-
-.load_serialized_object <- function(dirpath, objname)
-{
-    filepath <- .get_rda_filepath(dirpath, objname)
-    tempenv <- new.env(parent=emptyenv())
-    loaded_names <- load(filepath, envir=tempenv)
-    if (length(loaded_names) != 1L)
-        stop("file '", filepath, "' contains 0 or more ",
-             "than 1 serialized object")
-    if (loaded_names != objname)
-        stop("serialized object in file '", filepath, "' ", 
-             "doesn't have the expected name (expected: ", objname,
-             " -- current: ", loaded_names, ")")
-    get(objname, envir=tempenv)
-}
+setClass("RdaSequences", contains=c("RdaCollection", "OnDiskNamedSequences"))
 
 setMethod("seqlengthsFilepath", "RdaSequences",
-    function(x) .get_rda_filepath(x@dirpath, "seqlengths")
-)
-
-setMethod("seqlengths", "RdaSequences",
-    function(x)
-    {
-        ans <- .load_serialized_object(x@dirpath, "seqlengths")
-        if (!is.integer(ans) || is.null(names(ans)))
-            stop("serialized object in file '", 
-                 seqlengthsFilepath(x),
-                 "' must be a named integer vector")
-        ans
-    }
+    function(x) rdaPath(x, "seqlengths")
 )
 
 setMethod("seqinfo", "RdaSequences",
@@ -75,24 +34,30 @@ setMethod("seqinfo", "RdaSequences",
     }
 )
 
-### 'seqname' is assumed to be a single character string (NOT checked).
-### Returns an XString object.
-setMethod("loadOnDiskNamedSequence", "RdaSequences",
-    function(x, seqname)
+setMethod("[[", "RdaSequences",
+    function(x, i, j, ...)
     {
-        ans <- .load_serialized_object(x@dirpath, seqname)
+        ans <- callNextMethod()
+        if (i == "seqlengths") {
+            if (!is.integer(ans) || is.null(names(ans)))
+                stop("serialized object in file '", rdaPath(x, i), "' ",
+                     "must be a named integer vector")
+            return(ans)
+        }
         if (!is(ans, "XString"))
-            stop("serialized object in file '",
-                 .get_rda_filepath(x@dirpath, seqname),
-                 "' must be an XString object")
+            stop("serialized object in file '", rdaPath(x, i), "' ",
+                 "must be an XString object")
         updateObject(ans)
     }
 )
 
+setMethod("seqlengths", "RdaSequences", function(x) x[["seqlengths"]])
+
 ### Constructor.
-RdaSequences <- function(dirpath)
+RdaSequences <- function(dirpath, seqnames)
 {
-    new("RdaSequences", dirpath=dirpath)
+    rdas <- RdaCollection(dirpath, c("seqlengths", seqnames))
+    new("RdaSequences", rdas)
 }
 
 
@@ -115,17 +80,25 @@ setMethod("seqlengthsFilepath", "FaRzSequences",
 
 setMethod("seqinfo", "FaRzSequences", function(x) seqinfo(x@fafile))
 
-### 'seqname' is assumed to be a single character string (NOT checked).
+### We only support subetting by name.
 ### Returns a DNAString object.
-setMethod("loadOnDiskNamedSequence", "FaRzSequences",
-    function(x, seqname)
+setMethod("[[", "FaRzSequences",
+    function(x, i, j, ...)
     {
+        if (!missing(j) || length(list(...)) > 0L)
+            stop("invalid subsetting")
+        if (!is.character(i))
+            stop("a FaRzSequences object can only be subsetted by name")
+        if (length(i) < 1L)
+            stop("attempt to select less than one element")
+        if (length(i) > 1L)
+            stop("attempt to select more than one element")
         fafile <- x@fafile
         fafile_seqlengths <- seqlengths(fafile)
-        i <- match(seqname, names(fafile_seqlengths))
-        if (is.na(i))
-            stop("invalid sequence name: ", seqname)
-        param <- GRanges(seqname, IRanges(1L, fafile_seqlengths[[i]]))
+        idx <- match(i, names(fafile_seqlengths))
+        if (is.na(idx))
+            stop("invalid sequence name: ", i)
+        param <- GRanges(seqname, IRanges(1L, fafile_seqlengths[[idx]]))
         scanFa(fafile, param=param)[[1L]]
     }
 )
@@ -144,20 +117,4 @@ FaRzSequences <- function(filepath)
 ###
 
 setMethod("seqnames", "OnDiskNamedSequences", function(x) seqlevels(x))
-
-### We only support subetting by name.
-setMethod("[[", "OnDiskNamedSequences",
-    function(x, i, j, ...)
-    {
-        if (!missing(j) || length(list(...)) > 0L)
-            stop("invalid subsetting")
-        if (!is.character(i))
-            stop("an OnDiskNamedSequences can only be subsetted by name")
-        if (length(i) < 1L)
-            stop("attempt to select less than one element")
-        if (length(i) > 1L)
-            stop("attempt to select more than one element")
-        loadOnDiskNamedSequence(x, i)
-    }
-)
 

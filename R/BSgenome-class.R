@@ -305,7 +305,7 @@ BSgenome <- function(organism, species, provider, provider_version,
     if (file.exists(farz_filepath)) {
         single_sequences <- FaRzSequences(farz_filepath)
     } else {
-        single_sequences <- RdaSequences(seqs_dirpath)
+        single_sequences <- RdaSequences(seqs_dirpath, seqnames)
     }
     seqinfo <- .makeBSgenomeSeqinfo(single_sequences,
                                     circ_seqs, provider_version,
