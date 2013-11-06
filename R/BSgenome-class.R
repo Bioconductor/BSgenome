@@ -22,8 +22,7 @@ setClass("BSgenome",
 
         ## where to find the serialized objects containing the masks
         nmask_per_seq="integer",
-        masks_pkgname="character",
-        masks_dirpath="character",
+        masks="RdaCollection",
 
         ## for SNPs injection
         injectSNPs_handler="InjectSNPsHandler",
@@ -39,44 +38,6 @@ setClass("BSgenome",
 ### Low-level helper functions used for delayed-loading/caching/unloading the
 ### sequences.
 ###
-
-getObjFilepath <- function(objname, objdir)
-{
-    ## Should never happen.
-    if (objdir == "")
-        ## TODO: Put this kind of checking in a validity method for BSgenome
-        ## objects (that's what validity methods are for).
-        stop("internal anomaly: objdir is \"\"")
-    filename <- paste(objname, ".rda", sep="")
-    filepath <- file.path(objdir, filename)
-    if (!file.exists(filepath))
-        stop("file '", filepath, "' doesn't exist")
-    filepath
-}
-
-loadSingleObject <- function(objname, objdir, objpkgname)
-{
-    filepath <- getObjFilepath(objname, objdir)
-    tmp_env <- new.env(parent=emptyenv())
-    loaded_names <- load(filepath, envir=tmp_env)
-    ## Check that we get only 1 object
-    if (length(loaded_names) != 1L)
-        stop("file '", filepath, "' contains 0 or more than 1 serialized object. ",
-             "May be the ", objpkgname, " package is corrupted?")
-    ## ... and that it has the expected name
-    if (loaded_names != objname)
-        stop("the serialized object in file '", filepath, "' ",
-             "doesn't have the expected name. ",
-             "May be the ", objpkgname, " package is corrupted?")
-    ans <- get(objname, envir=tmp_env)
-    ## TODO: This is temporary code to make temporarily broken BSgenome
-    ## data packages work despite the big internal renaming I made in
-    ## IRanges >= 1.3.76. Remove it after all the BSgenome data packages
-    ## have been reforged.
-    if (is(ans, "XString") || is(ans, "XStringSet"))
-        ans <- updateObject(ans)
-    return(ans)
-}
 
 ### Return a new link to a cached object.
 ### 'objname' is the name of the cached object.
@@ -270,17 +231,17 @@ setReplaceMethod("seqnames", "BSgenome",
 ### BSgenome constructor
 ###
 
-### 'seqnames' and 'seqs_pkgname' only used for sanity check.
+### 'seqnames' only used for sanity check.
 .makeBSgenomeSeqinfo <- function(single_sequences,
                                  circ_seqs, provider_version,
-                                 seqnames, seqs_pkgname)
+                                 seqnames)
 {
     seqlengths <- seqlengths(single_sequences)
     if (!identical(names(seqlengths), seqnames))
         stop("sequence names found in file '",
              seqlengthsFilepath(single_sequences),
              "' are not identical to 'seqnames'. ",
-             "May be the ", seqs_pkgname, " package is corrupted?")
+             "May be the data on disk is corrupted?")
     if (identical(circ_seqs, NA)) {
         is_circ <- NA
     } else {
@@ -292,6 +253,7 @@ setReplaceMethod("seqnames", "BSgenome",
             genome=provider_version)
 }
 
+### 'seqs_pkgname' and 'masks_pkgname' args not used.
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
@@ -307,7 +269,7 @@ BSgenome <- function(organism, species, provider, provider_version,
     }
     seqinfo <- .makeBSgenomeSeqinfo(single_sequences,
                                     circ_seqs, provider_version,
-                                    seqnames, seqs_pkgname)
+                                    seqnames)
     genome_description <- GenomeDescription(organism, species,
                                             provider, provider_version,
                                             release_date, release_name,
@@ -317,15 +279,20 @@ BSgenome <- function(organism, species, provider, provider_version,
     multiple_sequences <- RdaCollection(seqs_dirpath, mseqnames)
     user_seqnames <- seqnames(seqinfo)
     names(user_seqnames) <- user_seqnames
+    nmask_per_seq <- as.integer(nmask_per_seq)
+    if (nmask_per_seq == 0L || length(seqnames) == 0L) {
+        masks <- RdaCollection(masks_dirpath, character(0))
+    } else {
+        masks <- RdaCollection(masks_dirpath, paste0(seqnames, ".masks"))
+    }
 
     new("BSgenome", genome_description,
         single_sequences=single_sequences,
         multiple_sequences=multiple_sequences,
         source_url=source_url,
         user_seqnames=user_seqnames,
-        nmask_per_seq=as.integer(nmask_per_seq),
-        masks_pkgname=masks_pkgname,
-        masks_dirpath=masks_dirpath,
+        nmask_per_seq=nmask_per_seq,
+        masks=masks,
         .seqs_cache=new.env(parent=emptyenv()),
         .link_counts=new.env(parent=emptyenv())
     )
@@ -404,37 +371,34 @@ setMethod("show", "BSgenome",
     }
     # single sequence
     ans <- x@single_sequences[[seqname]]
-    nmask_per_seq <- length(masknames(x))
-    masks_pkgname <- x@masks_pkgname
-    masks_dirpath <- x@masks_dirpath
     ## Check the length of the sequence
     if (length(ans) != seqlengths(x)[[user_seqname]]) {
         stop(user_seqname, " sequence does not have the expected length. ",
-             "May be the data is corrupted?")
+             "May be the data on disk is corrupted?")
     }
     ## Inject the SNPs, if any
     snps <- SNPlocs(x, seqname)
     if (!is.null(snps))
         .inplaceReplaceLetterAt(ans, snps$loc, snps$alleles_as_ambig)
     ## Load and set the built-in masks, if any
+    nmask_per_seq <- length(masknames(x))
     if (nmask_per_seq > 0L) {
-        masks_objname <- paste(seqname, ".masks", sep="")
-        builtinmasks <- loadSingleObject(masks_objname, masks_dirpath,
-                                         masks_pkgname)
+        masks_objname <- paste0(seqname, ".masks")
+        builtinmasks <- x@masks[[masks_objname]]
         if (length(builtinmasks) < nmask_per_seq) {
-            masks_filepath <- getObjFilepath(masks_objname, masks_dirpath)
+            masks_filepath <- rdaPath(x@masks, masks_objname)
             stop("expecting ", nmask_per_seq, " built-in masks per ",
                  "single sequence, found only ", length(builtinmasks),
                  " in file '", masks_filepath, "'. ",
-                 "May be the ", masks_pkgname, " package is corrupted?")
+                 "May be the data on disk is corrupted?")
         }
         if (length(builtinmasks) > nmask_per_seq)
             builtinmasks <- builtinmasks[seq_len(nmask_per_seq)]
         if (!identical(names(builtinmasks), masknames(x))) {
-            masks_filepath <- getObjFilepath(masks_objname, masks_dirpath)
+            masks_filepath <- rdaPath(x@masks, masks_objname)
             stop("mask names found in file '", masks_filepath, "' are not ",
                  "identical to the names returned by masknames(). ",
-                 "May be the ", masks_pkgname, " package is corrupted?")
+                 "May be the data on disk is corrupted?")
         }
         masks(ans) <- builtinmasks
     }
