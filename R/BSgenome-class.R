@@ -314,6 +314,8 @@ BSgenome <- function(organism, species, provider, provider_version,
                                             provider, provider_version,
                                             release_date, release_name,
                                             seqinfo)
+    if (is.null(mseqnames))
+        mseqnames <- character(0)
     user_seqnames <- seqnames(seqinfo)
     names(user_seqnames) <- user_seqnames
     new("BSgenome", genome_description,
