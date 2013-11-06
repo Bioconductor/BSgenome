@@ -6,6 +6,10 @@
 setClass("OnDiskNamedSequences")  # VIRTUAL class with no slots
 
 
+setGeneric("seqlengthsFilepath",
+    function(x) standardGeneric("seqlengthsFilepath")
+)
+
 setGeneric("loadOnDiskNamedSequence", signature="x",
     function(x, seqname) standardGeneric("loadOnDiskNamedSequence")
 )
@@ -46,14 +50,18 @@ setClass("RdaSequences",
     get(objname, envir=tempenv)
 }
 
+setMethod("seqlengthsFilepath", "RdaSequences",
+    function(x) .get_rda_filepath(x@dirpath, "seqlengths")
+)
+
 setMethod("seqlengths", "RdaSequences",
     function(x)
     {
         ans <- .load_serialized_object(x@dirpath, "seqlengths")
         if (!is.integer(ans) || is.null(names(ans)))
             stop("serialized object in file '", 
-                 .get_rda_filepath(x@dirpath, "seqlengths"), "' ",
-                 "must be a named integer vector")
+                 seqlengthsFilepath(x),
+                 "' must be a named integer vector")
         ans
     }
 )
@@ -75,8 +83,8 @@ setMethod("loadOnDiskNamedSequence", "RdaSequences",
         ans <- .load_serialized_object(x@dirpath, seqname)
         if (!is(ans, "XString"))
             stop("serialized object in file '",
-                 .get_rda_filepath(x@dirpath, seqname), "' ",
-                 "must be an XString object")
+                 .get_rda_filepath(x@dirpath, seqname),
+                 "' must be an XString object")
         updateObject(ans)
     }
 )
@@ -99,6 +107,10 @@ setClass("FaRzSequences",
         ## containing the sequences.
         fafile="FaFile"
     )
+)
+
+setMethod("seqlengthsFilepath", "FaRzSequences",
+    function(x) path(x@fafile)
 )
 
 setMethod("seqinfo", "FaRzSequences", function(x) seqinfo(x@fafile))

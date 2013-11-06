@@ -6,10 +6,20 @@
 setClass("BSgenome",
     contains="GenomeDescription",
     representation(
-        #"VIRTUAL",
+        ## the "single" sequences are represented by an OnDiskNamedSequences
+        ## object
+        single_sequences="OnDiskNamedSequences",
+
+        ## mseqnames: names of "multiple" sequences (e.g. upstream)
+        mseqnames="character",
+
+        ## where to find the "single" and "multiple" sequences
+        seqs_pkgname="character",
+        seqs_dirpath="character",
 
         ## source_url: permanent URL to the place where the FASTA files used
-        ## to produce the sequences below can be found (and downloaded)
+        ## to produce the single- and multiple-sequences above can be found
+        ## (and downloaded)
         source_url="character",
 
         ## named vector representing the translation table from the original
@@ -17,9 +27,6 @@ setClass("BSgenome",
         ## being inherited from the GenomeDescription class) to the user
         ## seqnames
         user_seqnames="character",
-
-        ## mseqnames: names of "multiple" sequences (e.g. upstream)
-        mseqnames="character",
 
         ## where to find the serialized objects containing the masks
         nmask_per_seq="integer",
@@ -29,6 +36,7 @@ setClass("BSgenome",
         ## for SNPs injection
         injectSNPs_handler="InjectSNPsHandler",
 
+        ## used for caching the single and multiple on-disk sequences
         .seqs_cache="environment",
         .link_counts="environment"
     )
@@ -261,6 +269,70 @@ setReplaceMethod("seqnames", "BSgenome",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### BSgenome constructor
+###
+
+### 'seqnames' and 'seqs_pkgname' only used for sanity check.
+.makeBSgenomeSeqinfo <- function(single_sequences,
+                                 circ_seqs, provider_version,
+                                 seqnames, seqs_pkgname)
+{
+    seqlengths <- seqlengths(single_sequences)
+    if (!identical(names(seqlengths), seqnames))
+        stop("sequence names found in file '",
+             seqlengthsFilepath(single_sequences),
+             "' are not identical to 'seqnames'. ",
+             "May be the ", seqs_pkgname, " package is corrupted?")
+    if (identical(circ_seqs, NA)) {
+        is_circ <- NA
+    } else {
+        is_circ <- seqnames %in% circ_seqs
+    }
+    Seqinfo(seqnames=seqnames,
+            seqlengths=seqlengths,
+            isCircular=is_circ,
+            genome=provider_version)
+}
+
+BSgenome <- function(organism, species, provider, provider_version,
+                     release_date, release_name, source_url,
+                     seqnames, circ_seqs=NA, mseqnames,
+                     seqs_pkgname, seqs_dirpath,
+                     nmask_per_seq, masks_pkgname, masks_dirpath)
+{
+    farz_filename <- "single_sequences.fa.rz"
+    farz_filepath <- file.path(seqs_dirpath, farz_filename)
+    if (file.exists(farz_filepath)) {
+        single_sequences <- FaRzSequences(farz_filepath)
+    } else {
+        single_sequences <- RdaSequences(seqs_dirpath)
+    }
+    seqinfo <- .makeBSgenomeSeqinfo(single_sequences,
+                                    circ_seqs, provider_version,
+                                    seqnames, seqs_pkgname)
+    genome_description <- GenomeDescription(organism, species,
+                                            provider, provider_version,
+                                            release_date, release_name,
+                                            seqinfo)
+    user_seqnames <- seqnames(seqinfo)
+    names(user_seqnames) <- user_seqnames
+    new("BSgenome", genome_description,
+        single_sequences=single_sequences,
+        mseqnames=mseqnames,
+        seqs_pkgname=seqs_pkgname,
+        seqs_dirpath=seqs_dirpath,
+        source_url=source_url,
+        user_seqnames=user_seqnames,
+        nmask_per_seq=as.integer(nmask_per_seq),
+        masks_pkgname=masks_pkgname,
+        masks_dirpath=masks_dirpath,
+        .seqs_cache=new.env(parent=emptyenv()),
+        .link_counts=new.env(parent=emptyenv())
+    )
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The 'show' method
 ###
 
@@ -323,15 +395,15 @@ setMethod("show", "BSgenome",
 ### List-element extraction (with [[).
 ###
 
-setGeneric("loadBSgenomeNakedSequence", signature="x",
-    function(x, seqname) standardGeneric("loadBSgenomeNakedSequence")
-)
-
 .loadBSgenomeSequence <- function(x, seqname, user_seqname)
 {
-    ans <- loadBSgenomeNakedSequence(x, seqname)
-    if (!is(ans, "XString"))
+    idx <- match(user_seqname, x@user_seqnames)
+    if (is.na(idx)) {  # multiple sequence
+        ans <- loadSingleObject(seqname, x@seqs_dirpath, x@seqs_pkgname)
         return(ans)
+    }
+    # single sequence
+    ans <- x@single_sequences[[seqname]]
     nmask_per_seq <- length(masknames(x))
     masks_pkgname <- x@masks_pkgname
     masks_dirpath <- x@masks_dirpath
@@ -429,8 +501,8 @@ setMethod("[[", "BSgenome",
         if (length(i) > 1)
             stop("attempt to select more than one element")
         if (is.character(i)) {
-            name <- try(match.arg(i, names(x)), silent=TRUE)
-            if (is(name, "try-error"))
+            user_seqname <- try(match.arg(i, names(x)), silent=TRUE)
+            if (is(user_seqname, "try-error"))
                 stop("no such sequence")
         } else {
             if (!is.numeric(i) || is.na(i))
@@ -438,16 +510,16 @@ setMethod("[[", "BSgenome",
             i <- as.integer(i)
             if (i < 1L || length(x) < i)
                 stop("no such sequence")
-            name <- names(x)[i]
+            user_seqname <- names(x)[i]
         }
         ## Translate user-supplied sequence named back to original name.
-        idx <- match(name, x@user_seqnames)
+        idx <- match(user_seqname, x@user_seqnames)
         if (is.na(idx)) {
-            seqname <- name
+            seqname <- user_seqname  # multiple sequence
         } else {
-            seqname <- names(x@user_seqnames)[[idx]]
+            seqname <- names(x@user_seqnames)[[idx]]  # single sequence
         }
-        .getBSgenomeSequence(x, seqname, name)
+        .getBSgenomeSequence(x, seqname, user_seqname)
     }
 )
 

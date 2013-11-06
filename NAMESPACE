@@ -10,7 +10,7 @@ exportClasses(
     GenomeDescription,
     SNPlocs,
     InjectSNPsHandler,
-    BSgenome, RdaBSgenome, FaRzBSgenome,
+    BSgenome,
     GenomeData, GenomeDataList,
 
     ## BSgenomeForge classes:
