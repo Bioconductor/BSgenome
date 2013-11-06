@@ -20,7 +20,7 @@ setClass("BSgenome",
         ## seqnames
         user_seqnames="character",
 
-        ## where to find the serialized objects containing the masks
+        ## the masks (if any) are on the single sequences only
         nmask_per_seq="integer",
         masks="RdaCollection",
 
