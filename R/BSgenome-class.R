@@ -6,16 +6,8 @@
 setClass("BSgenome",
     contains="GenomeDescription",
     representation(
-        ## the "single" sequences are represented by an OnDiskNamedSequences
-        ## object
         single_sequences="OnDiskNamedSequences",
-
-        ## mseqnames: names of "multiple" sequences (e.g. upstream)
-        mseqnames="character",
-
-        ## where to find the "single" and "multiple" sequences
-        seqs_pkgname="character",
-        seqs_dirpath="character",
+        multiple_sequences="RdaCollection",
 
         ## source_url: permanent URL to the place where the FASTA files used
         ## to produce the single- and multiple-sequences above can be found
@@ -185,7 +177,13 @@ setMethod("SNPlocs", "BSgenome",
 
 setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
 setMethod("mseqnames", "BSgenome",
-    function(x) { if (length(x@mseqnames) == 0L) NULL else x@mseqnames }
+    function(x)
+    {
+        ans <- names(x@multiple_sequences)
+        if (length(ans) == 0L)
+            ans <- NULL
+        ans
+    }
 )
 
 setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
@@ -316,13 +314,13 @@ BSgenome <- function(organism, species, provider, provider_version,
                                             seqinfo)
     if (is.null(mseqnames))
         mseqnames <- character(0)
+    multiple_sequences <- RdaCollection(seqs_dirpath, mseqnames)
     user_seqnames <- seqnames(seqinfo)
     names(user_seqnames) <- user_seqnames
+
     new("BSgenome", genome_description,
         single_sequences=single_sequences,
-        mseqnames=mseqnames,
-        seqs_pkgname=seqs_pkgname,
-        seqs_dirpath=seqs_dirpath,
+        multiple_sequences=multiple_sequences,
         source_url=source_url,
         user_seqnames=user_seqnames,
         nmask_per_seq=as.integer(nmask_per_seq),
@@ -401,7 +399,7 @@ setMethod("show", "BSgenome",
 {
     idx <- match(user_seqname, x@user_seqnames)
     if (is.na(idx)) {  # multiple sequence
-        ans <- loadSingleObject(seqname, x@seqs_dirpath, x@seqs_pkgname)
+        ans <- x@multiple_sequences[[seqname]]
         return(ans)
     }
     # single sequence
