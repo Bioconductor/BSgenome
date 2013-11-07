@@ -33,7 +33,7 @@ setMethod("injectSNPs", "BSgenome",
         ## We want the original sequence names, not the user sequence names,
         ## so we use 'seqnames(x@seqinfo)' instead of 'seqnames(x)'.
         ans@injectSNPs_handler <- InjectSNPsHandler(SNPlocs_pkgname,
-                                                    x@seqs_pkgname,
+                                                    x@pkgname,
                                                     seqnames(x@seqinfo))
         ans@.seqs_cache <- new.env(parent=emptyenv())
         ans@.link_counts <- new.env(parent=emptyenv())

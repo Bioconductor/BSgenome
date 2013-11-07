@@ -6,28 +6,33 @@
 setClass("BSgenome",
     contains="GenomeDescription",
     representation(
+        ## Name of the BSgenome data package where the BSgenome object is
+        ## defined.
+        pkgname="character",
+
+        ## On-disk "single" and "multiple" sequences.
         single_sequences="OnDiskNamedSequences",
         multiple_sequences="RdaCollection",
 
-        ## source_url: permanent URL to the place where the FASTA files used
-        ## to produce the single- and multiple-sequences above can be found
-        ## (and downloaded)
+        ## Permanent URL to the place where the FASTA files that were used
+        ## to produce the "single" and "multiple" sequences above can be
+        ## found (and downloaded).
         source_url="character",
 
-        ## named vector representing the translation table from the original
+        ## Named vector representing the translation table from the original
         ## seqnames (as stored in self@seqinfo@seqnames, the 'seqinfo' slot
         ## being inherited from the GenomeDescription class) to the user
-        ## seqnames
+        ## seqnames.
         user_seqnames="character",
 
-        ## the masks (if any) are on the single sequences only
+        ## The masks (if any) are on the single sequences only.
         nmask_per_seq="integer",
         masks="RdaCollection",
 
-        ## for SNPs injection
+        ## For SNPs injection.
         injectSNPs_handler="InjectSNPsHandler",
 
-        ## used for caching the single and multiple on-disk sequences
+        ## Used for caching the single and multiple on-disk sequences.
         .seqs_cache="environment",
         .link_counts="environment"
     )
@@ -253,7 +258,9 @@ setReplaceMethod("seqnames", "BSgenome",
             genome=provider_version)
 }
 
-### 'seqs_pkgname' and 'masks_pkgname' args not used.
+### NOTE: In BioC 2.14, the 'seqs_pkgname' and 'masks_pkgname' BSgenome slots
+### have been replaced the 'pkgname' slot but the 2 corresponding arguments
+### have been kept for backward compatibility.
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
@@ -287,6 +294,7 @@ BSgenome <- function(organism, species, provider, provider_version,
     }
 
     new("BSgenome", genome_description,
+        pkgname=seqs_pkgname,
         single_sequences=single_sequences,
         multiple_sequences=multiple_sequences,
         source_url=source_url,
