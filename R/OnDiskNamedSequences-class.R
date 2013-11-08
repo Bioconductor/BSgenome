@@ -98,7 +98,7 @@ setMethod("[[", "FaRzSequences",
         idx <- match(i, names(fafile_seqlengths))
         if (is.na(idx))
             stop("invalid sequence name: ", i)
-        param <- GRanges(seqname, IRanges(1L, fafile_seqlengths[[idx]]))
+        param <- GRanges(i, IRanges(1L, fafile_seqlengths[[idx]]))
         scanFa(fafile, param=param)[[1L]]
     }
 )
