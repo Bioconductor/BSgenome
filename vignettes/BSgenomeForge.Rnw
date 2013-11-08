@@ -520,8 +520,8 @@ Depending on the size of the genome and your hardware, this can take between
 create the source tree of the \term{target package} in the current directory.
 
 The \code{mode} argument was added in Bioconductor 2.14 and can be either
-\code{"rda"} or \code{"fa.rz"}. See \code{?forgeBSgenomeDataPkg} for the
-details.
+\code{"rda"}, \code{"fa"}, or \code{"fa.rz"}. See \code{?forgeBSgenomeDataPkg}
+for the details.
 %Starting with Bioconductor 2.14, \code{"fa.rz"} is the recommended mode.
 
 Once \Rfunction{forgeBSgenomeDataPkg} is done, ignore the warnings (if any),

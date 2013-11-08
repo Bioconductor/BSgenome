@@ -267,10 +267,14 @@ BSgenome <- function(organism, species, provider, provider_version,
                      seqs_pkgname, seqs_dirpath,
                      nmask_per_seq, masks_pkgname, masks_dirpath)
 {
-    farz_filename <- "single_sequences.fa.rz"
+    fa_filename <- "single_sequences.fa"
+    fa_filepath <- file.path(seqs_dirpath, fa_filename)
+    farz_filename <- paste0(fa_filename, ".rz")
     farz_filepath <- file.path(seqs_dirpath, farz_filename)
     if (file.exists(farz_filepath)) {
         single_sequences <- FaRzSequences(farz_filepath)
+    } else if (file.exists(fa_filepath)) {
+        single_sequences <- FaRzSequences(fa_filepath)
     } else {
         single_sequences <- RdaSequences(seqs_dirpath, seqnames)
     }

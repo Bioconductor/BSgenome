@@ -131,7 +131,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 
 .forgeFastaRzFile <- function(seqnames, prefix, suffix,
                               seqs_srcdir, seqs_destdir,
-                              verbose=TRUE)
+                              mode, verbose=TRUE)
 {
     if (!is.character(seqnames))
         stop("'seqnames' must be a character vector")
@@ -159,24 +159,34 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
             cat("DONE\n")
     }
 
-    if (verbose)
-        cat("Compressing FASTA file '", dest_filepath, "' ... ", sep="")
-    farz_filepath <- sprintf("%s.rz", dest_filepath)
-    razip(dest_filepath, dest=farz_filepath)
-    unlink(dest_filepath)
-    if (verbose)
-        cat("DONE\n")
-
-    if (verbose)
-        cat("Indexing compressed FASTA file '", farz_filepath, "' ... ", sep="")
-    indexFa(farz_filepath)
-    if (verbose)
-        cat("DONE\n")
+    if (mode == "fa") {
+        ## "fa" mode
+        if (verbose)
+            cat("Indexing FASTA file '", dest_filepath, "' ... ", sep="")
+        indexFa(dest_filepath)
+        if (verbose)
+            cat("DONE\n")
+    } else {
+        ## "fa.rz" mode
+        if (verbose)
+            cat("Compressing FASTA file '", dest_filepath, "' ... ", sep="")
+        farz_filepath <- sprintf("%s.rz", dest_filepath)
+        razip(dest_filepath, dest=farz_filepath)
+        unlink(dest_filepath)
+        if (verbose)
+            cat("DONE\n")
+        if (verbose)
+            cat("Indexing compressed FASTA file '", farz_filepath,
+                "' ... ", sep="")
+        indexFa(farz_filepath)
+        if (verbose)
+            cat("DONE\n")
+    }
 }
 
 forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
-                          mode=c("rda", "fa.rz"), verbose=TRUE)
+                          mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
 {
     if (length(seqnames) == 0) {
         warning("'seqnames' is empty")
@@ -200,9 +210,9 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
             .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
                              is.single.seq=TRUE, verbose=verbose)
         }
-    } else {  # "fa.rz" mode
+    } else {  # "fa" and "fa.rz" modes
         .forgeFastaRzFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
-                          verbose=verbose)
+                          mode, verbose=verbose)
     }
     for (name in mseqnames) {
         .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
@@ -322,7 +332,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 .forgeMasksFile <- function(seqname, nmask_per_seq,
-                            seqs_destdir=".", mode=c("rda", "fa.rz"),
+                            seqs_destdir=".", mode=c("rda", "fa", "fa.rz"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -352,7 +362,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         load(seqfile)
         seq <- get(seqname)
         remove(list=seqname)
-    } else {  # "fa.rz" mode
+    } else {  # "fa" and "fa.rz" modes
         farz_filename <- "single_sequences.fa.rz"
         farz_filepath <- file.path(seqs_destdir, farz_filename)
         fafile <- FaFile(farz_filepath)
@@ -392,7 +402,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
-                            seqs_destdir=".", mode=c("rda", "fa.rz"),
+                            seqs_destdir=".", mode=c("rda", "fa", "fa.rz"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -520,13 +530,13 @@ BSgenomeDataPkgSeed <- function(x) makeS4FromList("BSgenomeDataPkgSeed", x)
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
-                mode=c("rda", "fa.rz"), verbose=TRUE)
+                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
 )
 
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
-                mode=c("rda", "fa.rz"), verbose=TRUE)
+                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         mode <- match.arg(mode)
         require(Biobase) || stop("the Biobase package is required")
@@ -587,7 +597,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                                 seqs_destdir=seqs_destdir,
                                 verbose=verbose)
         }
-        ## Forge the sequence files (either "rda" or "fa.rz")
+        ## Forge the sequence files (either "rda", "fa", or "fa.rz")
         forgeSeqFiles(.seqnames, mseqnames=.mseqnames,
                       prefix=x@seqfiles_prefix,
                       suffix=x@seqfiles_suffix,
@@ -612,7 +622,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
 
 setMethod("forgeBSgenomeDataPkg", "list",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
-                mode=c("rda", "fa.rz"), verbose=TRUE)
+                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         y <- BSgenomeDataPkgSeed(x)
         forgeBSgenomeDataPkg(y,
@@ -683,7 +693,7 @@ read.dcf2 <- function(file, ...)
 
 setMethod("forgeBSgenomeDataPkg", "character",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
-                mode=c("rda", "fa.rz"), verbose=TRUE)
+                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         y <- .readSeedFile(x, verbose=verbose)
         y <- as.list(y)

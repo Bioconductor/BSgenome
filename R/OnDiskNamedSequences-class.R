@@ -68,8 +68,8 @@ RdaSequences <- function(dirpath, seqnames)
 setClass("FaRzSequences",
     contains="OnDiskNamedSequences",
     representation(
-        ## FaFile object pointing to the .fa.rz file (and .fa.rz.fai index)
-        ## containing the sequences.
+        ## FaFile object pointing to the .fa/.fa.fai (or .fa.rz/.fa.rz.fai
+        ## if RAZip compressed) files containing the sequences/index.
         fafile="FaFile"
     )
 )
