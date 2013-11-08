@@ -363,9 +363,11 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         seq <- get(seqname)
         remove(list=seqname)
     } else {  # "fa" and "fa.rz" modes
-        farz_filename <- "single_sequences.fa.rz"
-        farz_filepath <- file.path(seqs_destdir, farz_filename)
-        fafile <- FaFile(farz_filepath)
+        fa_filename <- "single_sequences.fa"
+        if (mode == "fa.rz")
+            fa_filename <- paste0(fa_filename, ".rz")
+        fa_filepath <- file.path(seqs_destdir, fa_filename)
+        fafile <- FaFile(fa_filepath)
         ## TODO: Implement "[[" method for FaFile objects (in Rsamtools) and
         ## use it here (i.e. do 'seq <- fafile[[seqname]]' instead of the 2
         ## lines below).
