@@ -5,6 +5,13 @@
 
 setClass("OnDiskNamedSequences")  # VIRTUAL class with no slots
 
+### OnDiskNamedSequences API:
+###   - length()
+###   - names()
+###   - [[
+###   - seqlengthsFilepath()
+###   - seqinfo API (seqinfo(), seqlengths(), seqlevels(), etc...)
+###   - seqnames()
 
 setGeneric("seqlengthsFilepath",
     function(x) standardGeneric("seqlengthsFilepath")
@@ -19,31 +26,17 @@ setGeneric("seqlengthsFilepath",
 ### containing the sequence names and lengths.
 ###
 
-setClass("RdaSequences", contains=c("RdaCollection", "OnDiskNamedSequences"))
-
-setMethod("seqlengthsFilepath", "RdaSequences",
-    function(x) rdaPath(x, "seqlengths")
-)
-
-setMethod("seqinfo", "RdaSequences",
-    function(x)
-    {
-        x_seqlengths <- seqlengths(x)
-        x_seqnames <- names(x_seqlengths)
-        Seqinfo(x_seqnames, x_seqlengths)
-    }
+setClass("RdaSequences",
+    contains=c("RdaCollection", "OnDiskNamedSequences"),
+    representation(
+        seqlengths="RdaCollection"
+    )
 )
 
 setMethod("[[", "RdaSequences",
     function(x, i, j, ...)
     {
         ans <- callNextMethod()
-        if (i == "seqlengths") {
-            if (!is.integer(ans) || is.null(names(ans)))
-                stop("serialized object in file '", rdaPath(x, i), "' ",
-                     "must be a named integer vector")
-            return(ans)
-        }
         if (!is(ans, "XString"))
             stop("serialized object in file '", rdaPath(x, i), "' ",
                  "must be an XString object")
@@ -51,13 +44,38 @@ setMethod("[[", "RdaSequences",
     }
 )
 
-setMethod("seqlengths", "RdaSequences", function(x) x[["seqlengths"]])
+setMethod("seqlengthsFilepath", "RdaSequences",
+    function(x) rdaPath(x@seqlengths, "seqlengths")
+)
+
+setMethod("seqlevels", "RdaSequences", function(x) names(x))
+
+setMethod("seqlengths", "RdaSequences",
+    function(x)
+    {
+        ans <- x@seqlengths[["seqlengths"]]
+        if (!is.integer(ans) || is.null(names(ans)))
+            stop("serialized object in file '", seqlengthsFilepath(x), "' ",
+                 "must be a named integer vector")
+        ans
+    }
+)
+
+setMethod("seqinfo", "RdaSequences",
+    function(x)
+    {
+        x_seqlengths <- seqlengths(x)
+        x_seqlevels <- seqlevels(x)
+        Seqinfo(x_seqlevels, x_seqlengths)
+    }
+)
 
 ### Constructor.
 RdaSequences <- function(dirpath, seqnames)
 {
-    rdas <- RdaCollection(dirpath, c("seqlengths", seqnames))
-    new("RdaSequences", rdas)
+    sequences <- RdaCollection(dirpath, seqnames)
+    seqlengths <- RdaCollection(dirpath, "seqlengths")
+    new("RdaSequences", sequences, seqlengths=seqlengths)
 }
 
 
@@ -73,12 +91,6 @@ setClass("FaRzSequences",
         fafile="FaFile"
     )
 )
-
-setMethod("seqlengthsFilepath", "FaRzSequences",
-    function(x) path(x@fafile)
-)
-
-setMethod("seqinfo", "FaRzSequences", function(x) seqinfo(x@fafile))
 
 ### We only support subetting by name.
 ### Returns a DNAString object.
@@ -102,6 +114,14 @@ setMethod("[[", "FaRzSequences",
         scanFa(fafile, param=param)[[1L]]
     }
 )
+
+setMethod("seqlengthsFilepath", "FaRzSequences",
+    function(x) path(x@fafile)
+)
+
+setMethod("seqinfo", "FaRzSequences", function(x) seqinfo(x@fafile))
+
+setMethod("names", "FaRzSequences", function(x) seqlevels(x@fafile))
 
 ### Constructor.
 FaRzSequences <- function(filepath)
