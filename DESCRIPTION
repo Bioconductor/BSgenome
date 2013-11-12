@@ -8,7 +8,7 @@ Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
 Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.1.2), IRanges (>= 1.13.6),
-	GenomicRanges (>= 1.11.46), Biostrings (>= 2.23.3)
+	GenomicRanges (>= 1.15.9), Biostrings (>= 2.23.3)
 Imports: methods, BiocGenerics, IRanges, GenomicRanges,
 	XVector, Biostrings, Rsamtools
 Suggests: RUnit,

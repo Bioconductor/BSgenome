@@ -12,6 +12,7 @@ setClass("OnDiskNamedSequences")  # VIRTUAL class with no slots
 ###   - seqlengthsFilepath()
 ###   - seqinfo API (seqinfo(), seqlengths(), seqlevels(), etc...)
 ###   - seqnames()
+###   - show()
 
 setGeneric("seqlengthsFilepath",
     function(x) standardGeneric("seqlengthsFilepath")
@@ -139,4 +140,12 @@ FastaNamedSequences <- function(filepath)
 ###
 
 setMethod("seqnames", "OnDiskNamedSequences", function(x) seqlevels(x))
+
+setMethod("show", "OnDiskNamedSequences",
+    function(object)
+    {
+        cat(class(object), "instance:\n")
+        GenomicRanges:::compactPrintNamedAtomicVector(seqlengths(object))
+    }
+)
 
