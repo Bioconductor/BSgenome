@@ -19,21 +19,21 @@ setGeneric("seqlengthsFilepath",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### RdaSequences objects
+### RdaNamedSequences objects
 ###
 ### The "dirpath" slot should contain 1 serialized XString object per
 ### sequence + a serialized named integer vector ('seqlengths.rda')
 ### containing the sequence names and lengths.
 ###
 
-setClass("RdaSequences",
+setClass("RdaNamedSequences",
     contains=c("RdaCollection", "OnDiskNamedSequences"),
     representation(
         seqlengths="RdaCollection"
     )
 )
 
-setMethod("[[", "RdaSequences",
+setMethod("[[", "RdaNamedSequences",
     function(x, i, j, ...)
     {
         ans <- callNextMethod()
@@ -44,13 +44,13 @@ setMethod("[[", "RdaSequences",
     }
 )
 
-setMethod("seqlengthsFilepath", "RdaSequences",
+setMethod("seqlengthsFilepath", "RdaNamedSequences",
     function(x) rdaPath(x@seqlengths, "seqlengths")
 )
 
-setMethod("seqlevels", "RdaSequences", function(x) names(x))
+setMethod("seqlevels", "RdaNamedSequences", function(x) names(x))
 
-setMethod("seqlengths", "RdaSequences",
+setMethod("seqlengths", "RdaNamedSequences",
     function(x)
     {
         ans <- x@seqlengths[["seqlengths"]]
@@ -61,7 +61,7 @@ setMethod("seqlengths", "RdaSequences",
     }
 )
 
-setMethod("seqinfo", "RdaSequences",
+setMethod("seqinfo", "RdaNamedSequences",
     function(x)
     {
         x_seqlengths <- seqlengths(x)
@@ -71,19 +71,19 @@ setMethod("seqinfo", "RdaSequences",
 )
 
 ### Constructor.
-RdaSequences <- function(dirpath, seqnames)
+RdaNamedSequences <- function(dirpath, seqnames)
 {
     sequences <- RdaCollection(dirpath, seqnames)
     seqlengths <- RdaCollection(dirpath, "seqlengths")
-    new("RdaSequences", sequences, seqlengths=seqlengths)
+    new("RdaNamedSequences", sequences, seqlengths=seqlengths)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### FaRzSequences objects
+### FastaNamedSequences objects
 ###
 
-setClass("FaRzSequences",
+setClass("FastaNamedSequences",
     contains="OnDiskNamedSequences",
     representation(
         ## FaFile object pointing to the .fa/.fa.fai (or .fa.rz/.fa.rz.fai
@@ -92,15 +92,19 @@ setClass("FaRzSequences",
     )
 )
 
+setMethod("names", "FastaNamedSequences", function(x) seqlevels(x@fafile))
+
+setMethod("length", "FastaNamedSequences", function(x) length(names(x)))
+
 ### We only support subetting by name.
 ### Returns a DNAString object.
-setMethod("[[", "FaRzSequences",
+setMethod("[[", "FastaNamedSequences",
     function(x, i, j, ...)
     {
         if (!missing(j) || length(list(...)) > 0L)
             stop("invalid subsetting")
         if (!is.character(i))
-            stop("a FaRzSequences object can only be subsetted by name")
+            stop("a FastaNamedSequences object can only be subsetted by name")
         if (length(i) < 1L)
             stop("attempt to select less than one element")
         if (length(i) > 1L)
@@ -115,20 +119,18 @@ setMethod("[[", "FaRzSequences",
     }
 )
 
-setMethod("seqlengthsFilepath", "FaRzSequences",
+setMethod("seqlengthsFilepath", "FastaNamedSequences",
     function(x) path(x@fafile)
 )
 
-setMethod("seqinfo", "FaRzSequences", function(x) seqinfo(x@fafile))
-
-setMethod("names", "FaRzSequences", function(x) seqlevels(x@fafile))
+setMethod("seqinfo", "FastaNamedSequences", function(x) seqinfo(x@fafile))
 
 ### Constructor.
-FaRzSequences <- function(filepath)
+FastaNamedSequences <- function(filepath)
 {
     fafile <- FaFile(filepath)
     open(fafile)
-    new("FaRzSequences", fafile=fafile)
+    new("FastaNamedSequences", fafile=fafile)
 }
 
 

@@ -272,11 +272,11 @@ BSgenome <- function(organism, species, provider, provider_version,
     farz_filename <- paste0(fa_filename, ".rz")
     farz_filepath <- file.path(seqs_dirpath, farz_filename)
     if (file.exists(farz_filepath)) {
-        single_sequences <- FaRzSequences(farz_filepath)
+        single_sequences <- FastaNamedSequences(farz_filepath)
     } else if (file.exists(fa_filepath)) {
-        single_sequences <- FaRzSequences(fa_filepath)
+        single_sequences <- FastaNamedSequences(fa_filepath)
     } else {
-        single_sequences <- RdaSequences(seqs_dirpath, seqnames)
+        single_sequences <- RdaNamedSequences(seqs_dirpath, seqnames)
     }
     seqinfo <- .makeBSgenomeSeqinfo(single_sequences,
                                     circ_seqs, provider_version,
