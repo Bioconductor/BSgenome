@@ -144,7 +144,8 @@ setMethod("seqnames", "OnDiskNamedSequences", function(x) seqlevels(x))
 setMethod("show", "OnDiskNamedSequences",
     function(object)
     {
-        cat(class(object), "instance:\n")
+        cat(class(object), " instance of length ", length(object),
+            ":\n", sep="")
         GenomicRanges:::compactPrintNamedAtomicVector(seqlengths(object))
     }
 )
