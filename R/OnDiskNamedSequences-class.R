@@ -12,25 +12,20 @@ setClass("OnDiskNamedSequences")  # VIRTUAL class with no slots
 ###   - seqlengthsFilepath()
 ###   - seqinfo API (implementing seqinfo() is enough to make seqlengths(),
 ###                  seqlevels(), etc... work)
-###   - [[                  -- load full sequence as XString object
+###   - [[ -- load full sequence as XString object
 ### Default methods are provided for the following:
 ###   - length()
 ###   - seqnames()
 ###   - show()
-###   - loadSubsequences()  -- load sequence regions as XStringSet object
-###   - loadSubsequencesFromCircularSequence()
+###   - loadSubseqsFromLinearSequence()
 
 setGeneric("seqlengthsFilepath",
     function(x) standardGeneric("seqlengthsFilepath")
 )
 
-setGeneric("loadSubsequences",
-    function(x, seqname, ranges) standardGeneric("loadSubsequences")
-)
-
-setGeneric("loadSubsequencesFromCircularSequence",
+setGeneric("loadSubseqsFromLinearSequence",
     function(x, seqname, ranges)
-        standardGeneric("loadSubsequencesFromCircularSequence")
+        standardGeneric("loadSubseqsFromLinearSequence")
 )
 
 
@@ -38,11 +33,14 @@ setGeneric("loadSubsequencesFromCircularSequence",
 ### Low-level utilities
 ###
 
-### Works on any object 'x' for which seqlengths() is defined.
+### Works on an XString object or any object 'x' for which seqlengths() is
+### defined.
 .get_seqlength <- function(x, seqname)
 {
     if (!isSingleString(seqname))
         stop("'seqname' must be a single string")
+    if (is(x, "XString"))
+        return(length(x))
     x_seqlengths <- seqlengths(x)
     idx <- match(seqname, names(x_seqlengths))
     if (is.na(idx))
@@ -166,7 +164,7 @@ setMethod("[[", "FastaNamedSequences",
 ### TODO: Try the following optimization: reduce 'ranges' before calling
 ### scanFa(), then extract the regions from the DNAStringSet returned by
 ### scanFa(). This way, a given nucleotide is loaded only once.
-setMethod("loadSubsequences", "FastaNamedSequences",
+setMethod("loadSubseqsFromLinearSequence", "FastaNamedSequences",
     function(x, seqname, ranges)
     {
         if (!is(ranges, "Ranges"))
@@ -184,7 +182,7 @@ setMethod("loadSubsequences", "FastaNamedSequences",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Default methods.
+### Default methods
 ###
 
 setMethod("length", "OnDiskNamedSequences", function(x) length(names(x)))
@@ -201,32 +199,62 @@ setMethod("show", "OnDiskNamedSequences",
 )
 
 ### Load regions from a single sequence as an XStringSet object.
-setMethod("loadSubsequences", "OnDiskNamedSequences",
+
+### 'seqname' is ignored.
+setMethod("loadSubseqsFromLinearSequence", "XString",
     function(x, seqname, ranges)
-        extractAt(x[[seqname]], ranges)
+        xvcopy(extractAt(x, ranges))
 )
 
-setMethod("loadSubsequencesFromCircularSequence", "OnDiskNamedSequences",
+setMethod("loadSubseqsFromLinearSequence", "OnDiskNamedSequences",
     function(x, seqname, ranges)
-    {
-        if (!is(ranges, "Ranges"))
-            stop("'ranges' must be a Ranges object")
-        seqlength <- .get_seqlength(x, seqname)
-        ranges_start <- start(ranges)
-        ranges_end <- end(ranges)
-        if (max(ranges_end - ranges_start) >= seqlength)
-            stop("loading regions that are longer than the whole circular ",
-                 "sequence \"", seqname, "\" is not supported")
-        start0 <- ranges_start - 1L  # 0-based start
-        shift <- start0 %% seqlength - start0
-        L_start <- ranges_start + shift
-        end1 <- ranges_end + shift
-        L_end <- pmin(end1, seqlength)
-        R_start <- 1L
-        R_end <- pmax(end1, seqlength) - seqlength
-        L_ans <- loadSubsequences(x, seqname, IRanges(L_start, L_end))
-        R_ans <- loadSubsequences(x, seqname, IRanges(R_start, end=R_end))
-        xscat(L_ans, R_ans)
-    }
+        loadSubseqsFromLinearSequence(x[[seqname]], seqname, ranges)
 )
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### loadSubseqsFromStrandedSequence()
+###
+
+.loadSubseqsFromCircularSequence <- function(x, seqname, ranges)
+{
+    if (!is(ranges, "Ranges"))
+        stop("'ranges' must be a Ranges object")
+    seqlength <- .get_seqlength(x, seqname)
+    ranges_start <- start(ranges)
+    ranges_end <- end(ranges)
+    if (max(ranges_end - ranges_start) >= seqlength)
+        stop("loading regions that are longer than the whole circular ",
+             "sequence \"", seqname, "\" is not supported")
+    start0 <- ranges_start - 1L  # 0-based start
+    shift <- start0 %% seqlength - start0
+    L_start <- ranges_start + shift
+    end1 <- ranges_end + shift
+    L_end <- pmin(end1, seqlength)
+    R_start <- 1L
+    R_end <- pmax(end1, seqlength) - seqlength
+    L_ans <- loadSubseqsFromLinearSequence(x, seqname,
+                                           IRanges(L_start, L_end))
+    R_ans <- loadSubseqsFromLinearSequence(x, seqname,
+                                           IRanges(R_start, R_end))
+    xscat(L_ans, R_ans)
+}
+
+loadSubseqsFromStrandedSequence <- function(x, seqname, ranges, strand,
+                                            is_circular=NA)
+{
+    if (length(ranges) != length(strand))
+        stop("'ranges' and 'strand' must have the same length")
+    if (!is.logical(is_circular) || length(is_circular) != 1L)
+        stop("'is_circular' must be a single logical")
+    if (is_circular %in% c(NA, FALSE)) {
+        loadFUN <- loadSubseqsFromLinearSequence
+    } else {
+        loadFUN <- .loadSubseqsFromCircularSequence
+    }
+    ans <- loadFUN(x, seqname, ranges)
+    idx <- which(strand == "-")
+    ans[idx] <- reverseComplement(ans[idx])
+    ans
+}
 

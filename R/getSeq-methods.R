@@ -135,60 +135,6 @@
 ### .extractFromBSgenomeSingleSequences()
 ###
 
-.getSeqsFromDNAString <- function(subject, start, end,
-                                  subject_is_circ, subject_name)
-{
-    if (length(start) == 0L)
-        return(DNAStringSet())
-    subject_len <- length(subject)
-    if (is.na(subject_is_circ) || !subject_is_circ) {
-        if (min(start) < 1L || max(end) > subject_len)
-            stop("cannot extract DNA sequences beyond the ",
-                 "boundaries of non-circular chromosome \"",
-                 subject_name, "\"")
-        return(DNAStringSet(subject, start=start, end=end))
-    }
-    if (max(end - start) >= subject_len)
-        stop("cannot extract DNA sequences that span more than ",
-             "the total length of circular chromosome \"",
-             subject_name, "\"")
-    start0 <- start - 1L  # 0-based start
-    shift <- start0 %% subject_len - start0
-    L_start <- start + shift
-    end1 <- end + shift
-    L_end <- pmin(end1, subject_len)
-    R_start <- 1L
-    R_end <- pmax(end1, subject_len) - subject_len
-    L_ans <- DNAStringSet(subject, start=L_start, end=L_end)
-    R_ans <- DNAStringSet(subject, start=R_start, end=R_end)
-    xscat(L_ans, R_ans)
-}
-
-### Assumes 'ranges' and 'strand' have the same length and that this
-### length is >= 1. Also assumes that 'strand' is star-free.
-.extractSeqsFromStrandedDNAString <- function(subject, ranges, strand,
-                                              subject_is_circ, subject_name)
-{
-    rglist <- split(unname(ranges), strand)
-    plus_ranges <- rglist[["+"]]
-    plus_dnaset <- .getSeqsFromDNAString(subject,
-                                         start(plus_ranges),
-                                         end(plus_ranges),
-                                         subject_is_circ,
-                                         subject_name)
-    plus_dnaset <- xvcopy(plus_dnaset)
-    minus_ranges <- rglist[["-"]]
-    minus_dnaset <- .getSeqsFromDNAString(subject,
-                                          start(minus_ranges),
-                                          end(minus_ranges),
-                                          subject_is_circ,
-                                          subject_name)
-    minus_dnaset <- reverseComplement(minus_dnaset)
-    unsplit_list_of_XVectorList("DNAStringSet",
-                                list(plus_dnaset, minus_dnaset),
-                                as.factor(strand))
-}
-
 ### 'names' must be a character vector or a GRanges object.
 ### If 'names' is character vector, then 'start', 'end', 'width', and 'strand'
 ### are assumed to be already normalized (and star-free for 'strand').
@@ -222,12 +168,37 @@
             gr <- grl[[i]]
             if (length(gr) == 0L)
                 return(DNAStringSet())
-            subject_name <- grl_seqlevels[i]
-            subject <- x[[subject_name]]
+            seqlevel <- grl_seqlevels[i]
+            is_circular <- isCircular(x)[[seqlevel]]
+            idx <- match(seqlevel, x@user_seqnames)
+            if (is.na(idx))
+                stop("invalid sequence name: ", seqlevel)
+            seqname <- names(x@user_seqnames)[[idx]]
+            if (is.null(SNPlocs(x, seqname))) {
+                ## Try to grab the subject sequence from the cache.
+                subject <- try(get(seqname, envir=x@.seqs_cache,
+                                   inherits=FALSE), silent=TRUE)
+                if (is(subject, "try-error")) {
+                    ## The subject sequence was not in the cache.
+                    ans <- loadSubseqsFromStrandedSequence(
+                                   x@single_sequences,
+                                   seqname, ranges(gr), strand(gr),
+                                   is_circular)
+                    return(ans)
+                }
+                ## The subject sequence was in the cache.
+                .linkToCachedObject(subject) <- .newLinkToCachedObject(
+                                                    seqname,
+                                                    x@.seqs_cache,
+                                                    x@.link_counts)
+            } else {
+                subject <- x[[seqlevel]]
+            }
             masks(subject) <- NULL
-            subject_is_circ <- isCircular(x)[[subject_name]]
-            .extractSeqsFromStrandedDNAString(subject, ranges(gr), strand(gr),
-                                              subject_is_circ, subject_name)
+            loadSubseqsFromStrandedSequence(
+                                   subject,
+                                   seqlevel, ranges(gr), strand(gr),
+                                   is_circular)
         }
     )
     ## "unsplit" 'dnaset_list'.
