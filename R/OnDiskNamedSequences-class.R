@@ -154,7 +154,7 @@ setMethod("[[", "FastaNamedSequences",
         if (length(i) > 1L)
             stop("attempt to select more than one element")
         fafile <- x@fafile
-        seqlengths <- .get_seqlength(fafile, i)
+        seqlength <- .get_seqlength(fafile, i)
         param <- GRanges(i, IRanges(1L, seqlength))
         scanFa(fafile, param=param)[[1L]]
     }
@@ -170,7 +170,7 @@ setMethod("loadSubseqsFromLinearSequence", "FastaNamedSequences",
         if (!is(ranges, "Ranges"))
             stop("'ranges' must be a Ranges object")
         fafile <- x@fafile
-        seqlengths <- .get_seqlength(fafile, seqname)
+        seqlength <- .get_seqlength(fafile, seqname)
         if (length(ranges) != 0L &&
             (min(start(ranges)) < 1L || max(end(ranges)) > seqlength))
             stop("trying to load regions beyond the boundaries ",
