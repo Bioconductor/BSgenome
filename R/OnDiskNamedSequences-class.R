@@ -5,18 +5,50 @@
 
 setClass("OnDiskNamedSequences")  # VIRTUAL class with no slots
 
-### OnDiskNamedSequences API:
-###   - length()
+### OnDiskNamedSequences API
+### ------------------------
+### Concrete subclasses need to implement the following:
 ###   - names()
-###   - [[
 ###   - seqlengthsFilepath()
-###   - seqinfo API (seqinfo(), seqlengths(), seqlevels(), etc...)
+###   - seqinfo API (implementing seqinfo() is enough to make seqlengths(),
+###                  seqlevels(), etc... work)
+###   - [[                  -- load full sequence as XString object
+### Default methods are provided for the following:
+###   - length()
 ###   - seqnames()
 ###   - show()
+###   - loadSubsequences()  -- load sequence regions as XStringSet object
+###   - loadSubsequencesFromCircularSequence()
 
 setGeneric("seqlengthsFilepath",
     function(x) standardGeneric("seqlengthsFilepath")
 )
+
+setGeneric("loadSubsequences",
+    function(x, seqname, ranges) standardGeneric("loadSubsequences")
+)
+
+setGeneric("loadSubsequencesFromCircularSequence",
+    function(x, seqname, ranges)
+        standardGeneric("loadSubsequencesFromCircularSequence")
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Low-level utilities
+###
+
+### Works on any object 'x' for which seqlengths() is defined.
+.get_seqlength <- function(x, seqname)
+{
+    if (!isSingleString(seqname))
+        stop("'seqname' must be a single string")
+    x_seqlengths <- seqlengths(x)
+    idx <- match(seqname, names(x_seqlengths))
+    if (is.na(idx))
+        stop("invalid sequence name: ", seqname)
+    x_seqlengths[[idx]]
+}
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -32,17 +64,6 @@ setClass("RdaNamedSequences",
     representation(
         seqlengths="RdaCollection"
     )
-)
-
-setMethod("[[", "RdaNamedSequences",
-    function(x, i, j, ...)
-    {
-        ans <- callNextMethod()
-        if (!is(ans, "XString"))
-            stop("serialized object in file '", rdaPath(x, i), "' ",
-                 "must be an XString object")
-        updateObject(ans)
-    }
 )
 
 setMethod("seqlengthsFilepath", "RdaNamedSequences",
@@ -79,6 +100,18 @@ RdaNamedSequences <- function(dirpath, seqnames)
     new("RdaNamedSequences", sequences, seqlengths=seqlengths)
 }
 
+### Load a full sequence as an XString object.
+setMethod("[[", "RdaNamedSequences",
+    function(x, i, j, ...)
+    {
+        ans <- callNextMethod()
+        if (!is(ans, "XString"))
+            stop("serialized object in file '", rdaPath(x, i), "' ",
+                 "must be an XString object")
+        updateObject(ans)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### FastaNamedSequences objects
@@ -95,31 +128,6 @@ setClass("FastaNamedSequences",
 
 setMethod("names", "FastaNamedSequences", function(x) seqlevels(x@fafile))
 
-setMethod("length", "FastaNamedSequences", function(x) length(names(x)))
-
-### We only support subetting by name.
-### Returns a DNAString object.
-setMethod("[[", "FastaNamedSequences",
-    function(x, i, j, ...)
-    {
-        if (!missing(j) || length(list(...)) > 0L)
-            stop("invalid subsetting")
-        if (!is.character(i))
-            stop("a FastaNamedSequences object can only be subsetted by name")
-        if (length(i) < 1L)
-            stop("attempt to select less than one element")
-        if (length(i) > 1L)
-            stop("attempt to select more than one element")
-        fafile <- x@fafile
-        fafile_seqlengths <- seqlengths(fafile)
-        idx <- match(i, names(fafile_seqlengths))
-        if (is.na(idx))
-            stop("invalid sequence name: ", i)
-        param <- GRanges(i, IRanges(1L, fafile_seqlengths[[idx]]))
-        scanFa(fafile, param=param)[[1L]]
-    }
-)
-
 setMethod("seqlengthsFilepath", "FastaNamedSequences",
     function(x) path(x@fafile)
 )
@@ -134,10 +142,52 @@ FastaNamedSequences <- function(filepath)
     new("FastaNamedSequences", fafile=fafile)
 }
 
+### We only support subetting by name.
+### Load a full sequence as a DNAString object.
+setMethod("[[", "FastaNamedSequences",
+    function(x, i, j, ...)
+    {
+        if (!missing(j) || length(list(...)) > 0L)
+            stop("invalid subsetting")
+        if (!is.character(i))
+            stop("a FastaNamedSequences object can only be subsetted by name")
+        if (length(i) < 1L)
+            stop("attempt to select less than one element")
+        if (length(i) > 1L)
+            stop("attempt to select more than one element")
+        fafile <- x@fafile
+        seqlengths <- .get_seqlength(fafile, i)
+        param <- GRanges(i, IRanges(1L, seqlength))
+        scanFa(fafile, param=param)[[1L]]
+    }
+)
+
+### Load regions from a single sequence as a DNAStringSet object.
+### TODO: Try the following optimization: reduce 'ranges' before calling
+### scanFa(), then extract the regions from the DNAStringSet returned by
+### scanFa(). This way, a given nucleotide is loaded only once.
+setMethod("loadSubsequences", "FastaNamedSequences",
+    function(x, seqname, ranges)
+    {
+        if (!is(ranges, "Ranges"))
+            stop("'ranges' must be a Ranges object")
+        fafile <- x@fafile
+        seqlengths <- .get_seqlength(fafile, seqname)
+        if (length(ranges) != 0L &&
+            (min(start(ranges)) < 1L || max(end(ranges)) > seqlength))
+            stop("trying to load regions beyond the boundaries ",
+                 "of non-circular sequence \"", seqname, "\"")
+        param <- GRanges(seqname, ranges)
+        scanFa(fafile, param=param)
+    }
+)
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### OnDiskNamedSequences methods
+### Default methods.
 ###
+
+setMethod("length", "OnDiskNamedSequences", function(x) length(names(x)))
 
 setMethod("seqnames", "OnDiskNamedSequences", function(x) seqlevels(x))
 
@@ -147,6 +197,36 @@ setMethod("show", "OnDiskNamedSequences",
         cat(class(object), " instance of length ", length(object),
             ":\n", sep="")
         GenomicRanges:::compactPrintNamedAtomicVector(seqlengths(object))
+    }
+)
+
+### Load regions from a single sequence as an XStringSet object.
+setMethod("loadSubsequences", "OnDiskNamedSequences",
+    function(x, seqname, ranges)
+        extractAt(x[[seqname]], ranges)
+)
+
+setMethod("loadSubsequencesFromCircularSequence", "OnDiskNamedSequences",
+    function(x, seqname, ranges)
+    {
+        if (!is(ranges, "Ranges"))
+            stop("'ranges' must be a Ranges object")
+        seqlength <- .get_seqlength(x, seqname)
+        ranges_start <- start(ranges)
+        ranges_end <- end(ranges)
+        if (max(ranges_end - ranges_start) >= seqlength)
+            stop("loading regions that are longer than the whole circular ",
+                 "sequence \"", seqname, "\" is not supported")
+        start0 <- ranges_start - 1L  # 0-based start
+        shift <- start0 %% seqlength - start0
+        L_start <- ranges_start + shift
+        end1 <- ranges_end + shift
+        L_end <- pmin(end1, seqlength)
+        R_start <- 1L
+        R_end <- pmax(end1, seqlength) - seqlength
+        L_ans <- loadSubsequences(x, seqname, IRanges(L_start, L_end))
+        R_ans <- loadSubsequences(x, seqname, IRanges(R_start, end=R_end))
+        xscat(L_ans, R_ans)
     }
 )
 
