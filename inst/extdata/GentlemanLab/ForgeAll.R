@@ -33,6 +33,7 @@ pkgs <- c(
   "BSgenome.Hsapiens.UCSC.hg18",
   "BSgenome.Hsapiens.UCSC.hg19",
   "BSgenome.Mmulatta.UCSC.rheMac2",
+  "BSgenome.Mmulatta.UCSC.rheMac3",
   "BSgenome.Mmusculus.UCSC.mm8",
   "BSgenome.Mmusculus.UCSC.mm9",
   "BSgenome.Mmusculus.UCSC.mm10",
