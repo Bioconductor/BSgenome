@@ -25,16 +25,32 @@ setClass("BSgenome",
         ## seqnames.
         user_seqnames="character",
 
-        ## The masks (if any) are on the single sequences only.
-        nmask_per_seq="integer",
-        masks="RdaCollection",
-
         ## For SNPs injection.
         injectSNPs_handler="InjectSNPsHandler",
 
         ## Used for caching the single and multiple on-disk sequences.
         .seqs_cache="environment",
-        .link_counts="environment"
+        .link_counts="environment",
+
+        ## TODO: Remove the 2 slots below once all the BSgenome data packages
+        ## with masks have been split in 2 packages (naked BSgenome +
+        ## MaskedBSgenome).
+        nmask_per_seq="integer",
+        masks="RdaCollection"
+    )
+)
+
+setClass("MaskedBSgenome",
+    contains="BSgenome",
+    representation(
+        ## Name of the BSgenome data package where the MaskedBSgenome object
+        ## is defined.
+        masks_pkgname="character",
+
+        ## Only the single sequences can be masked. They should all have the
+        ## same set of masks.
+        nmask_per_seq="integer",
+        masks="RdaCollection"
     )
 )
 
@@ -259,8 +275,8 @@ setReplaceMethod("seqnames", "BSgenome",
 }
 
 ### NOTE: In BioC 2.14, the 'seqs_pkgname' and 'masks_pkgname' BSgenome slots
-### have been replaced the 'pkgname' slot but the 2 corresponding arguments
-### have been kept for backward compatibility.
+### have been replaced with the 'pkgname' slot but the 2 corresponding
+### arguments have been kept for backward compatibility.
 BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
@@ -303,11 +319,24 @@ BSgenome <- function(organism, species, provider, provider_version,
         multiple_sequences=multiple_sequences,
         source_url=source_url,
         user_seqnames=user_seqnames,
-        nmask_per_seq=nmask_per_seq,
-        masks=masks,
         .seqs_cache=new.env(parent=emptyenv()),
-        .link_counts=new.env(parent=emptyenv())
+        .link_counts=new.env(parent=emptyenv()),
+        nmask_per_seq=nmask_per_seq,
+        masks=masks
     )
+}
+
+MaskedBSgenome <- function(ref_bsgenome,
+                           masks_pkgname, nmask_per_seq, masks_dirpath)
+{
+    masks <- RdaCollection(masks_dirpath,
+                           paste0(seqnames(ref_bsgenome), ".masks"))
+    new("MaskedBSgenome", ref_bsgenome,
+        .seqs_cache=new.env(parent=emptyenv()),
+        .link_counts=new.env(parent=emptyenv()),
+        masks_pkgname=masks_pkgname,
+        nmask_per_seq=nmask_per_seq,
+        masks=masks) 
 }
 
 

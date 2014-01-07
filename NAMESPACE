@@ -11,7 +11,7 @@ exportClasses(
     GenomeDescription,
     SNPlocs,
     InjectSNPsHandler,
-    BSgenome,
+    BSgenome, MaskedBSgenome,
     GenomeData, GenomeDataList,
 
     ## BSgenomeForge classes:
@@ -23,7 +23,7 @@ export(
     installed.genomes, available.genomes,
     GenomeDescription,
     newSNPlocs,
-    BSgenome,
+    BSgenome, MaskedBSgenome,
     installed.SNPs, available.SNPs,
     bsapply,
     GenomeData, GenomeDataList,

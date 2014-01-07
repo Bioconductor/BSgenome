@@ -542,7 +542,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     {
         mode <- match.arg(mode)
         require(Biobase) || stop("the Biobase package is required")
-        template_path <- system.file("BSgenomeDataPkg-template", package="BSgenome")
+        template_path <- system.file("pkgtemplates", "BSgenome_datapkg", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
         symvals <- list(
             PKGTITLE=x@Title,

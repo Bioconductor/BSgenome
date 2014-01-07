@@ -1,0 +1,8 @@
+import(BSgenome)
+import(@REFPKGNAME@)
+
+### Don't export @PKGNAME@ (the name of the MaskedBSgenome object defined in
+### this package): the object is created and its name is dynamically exported
+### at load time (refer to R/zzz.R for the details).
+#export(@PKGNAME@)
+
