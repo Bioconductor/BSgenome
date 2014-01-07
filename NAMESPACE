@@ -48,7 +48,8 @@ export(
     forgeSeqlengthsFile,
     forgeSeqFiles,
     forgeMasksFiles,
-    forgeBSgenomeDataPkg
+    forgeBSgenomeDataPkg,
+    forgeMaskedBSgenomeDataPkg
 )
 
 exportMethods(

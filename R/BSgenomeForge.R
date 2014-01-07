@@ -428,11 +428,11 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "BSgenomeDataPkgSeed" class and its low-level constructor.
+### The BSgenomeDataPkgSeed and MaskedBSgenomeDataPkgSeed classes and their
+### low-level constructors.
 ###
 
-setClass(
-    "BSgenomeDataPkgSeed",
+setClass("BSgenomeDataPkgSeed",
     representation(
         Package="character",
         Title="character",
@@ -499,6 +499,63 @@ setClass(
     )
 )   
 
+setClass("MaskedBSgenomeDataPkgSeed",
+    representation(
+        Package="character",
+        Title="character",
+        Description="character",
+        Version="character",
+        Author="character",
+        Maintainer="character",
+        RefPkgname="character",
+        License="character",
+        organism="character",
+        species="character",
+        provider="character",
+        provider_version="character",
+        release_date="character",
+        release_name="character",
+        source_url="character",
+        organism_biocview="character",
+        nmask_per_seq="integer",      # a single integer
+        PkgDetails="character",
+        SrcDataFiles1="character",
+        SrcDataFiles2="character",
+        PkgExamples="character",
+        AGAPSfiles_type="character",
+        AGAPSfiles_name="character",
+        AGAPSfiles_prefix="character",
+        AGAPSfiles_suffix="character",
+        RMfiles_name="character",
+        RMfiles_prefix="character",
+        RMfiles_suffix="character",
+        TRFfiles_name="character",
+        TRFfiles_prefix="character",
+        TRFfiles_suffix="character"
+    ),
+    prototype(
+        Author="The Bioconductor Dev Team",
+        Maintainer="Bioconductor Package Maintainer <maintainer@bioconductor.org>",
+        License="Artistic-2.0",
+        source_url="-- information not available --",
+        nmask_per_seq=0L,
+        PkgDetails="",
+        SrcDataFiles1="-- information not available --",
+        SrcDataFiles2="",
+        PkgExamples="",
+        AGAPSfiles_type="gap",
+        AGAPSfiles_name=as.character(NA),
+        AGAPSfiles_prefix="",
+        AGAPSfiles_suffix="_gap.txt",
+        RMfiles_name=as.character(NA),
+        RMfiles_prefix="",
+        RMfiles_suffix=".fa.out",
+        TRFfiles_name=as.character(NA),
+        TRFfiles_prefix="",
+        TRFfiles_suffix=".bed"
+    )
+)   
+
 ### Generic transformation of a named list into an S4 object with automatic
 ### coercion of the list elements to the required types.
 makeS4FromList <- function(Class, x)
@@ -523,7 +580,11 @@ makeS4FromList <- function(Class, x)
     do.call(new, y)
 }
 
-BSgenomeDataPkgSeed <- function(x) makeS4FromList("BSgenomeDataPkgSeed", x)
+BSgenomeDataPkgSeed <- function(x)
+    makeS4FromList("BSgenomeDataPkgSeed", x)
+
+MaskedBSgenomeDataPkgSeed <- function(x)
+    makeS4FromList("MaskedBSgenomeDataPkgSeed", x)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -540,8 +601,9 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
                 mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
+        require(Biobase) ||
+            stop("the Biobase package is required")
         mode <- match.arg(mode)
-        require(Biobase) || stop("the Biobase package is required")
         template_path <- system.file("pkgtemplates", "BSgenome_datapkg", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
         symvals <- list(
@@ -712,6 +774,106 @@ setMethod("forgeBSgenomeDataPkg", "character",
             seqs_srcdir=seqs_srcdir,
             masks_srcdir=masks_srcdir,
             destdir=destdir, mode=mode, verbose=verbose)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### The "forgeMaskedBSgenomeDataPkg" generic and methods.
+###
+
+setGeneric("forgeMaskedBSgenomeDataPkg", signature="x",
+    function(x, masks_srcdir=".", destdir=".", verbose=TRUE)
+        standardGeneric("forgeMaskedBSgenomeDataPkg")
+)
+
+setMethod("forgeMaskedBSgenomeDataPkg", "MaskedBSgenomeDataPkgSeed",
+    function(x, masks_srcdir=".", destdir=".", verbose=TRUE)
+    {
+        require(Biobase) ||
+            stop("the Biobase package is required")
+        require(x@RefPkgname, character.only=TRUE) ||
+            stop("the ", x@RefPkgname, " package is required")
+        ref_envir <- as.environment(paste0("package:", x@RefPkgname))
+        ref_bsgenome <- get(x@RefPkgname, envir=ref_envir)
+        template_path <- system.file("pkgtemplates", "MaskedBSgenome_datapkg", package="BSgenome")
+        BSgenome_version <- installed.packages()['BSgenome','Version']
+        symvals <- list(
+            PKGTITLE=x@Title,
+            PKGDESCRIPTION=x@Description,
+            PKGVERSION=x@Version,
+            AUTHOR=x@Author,
+            MAINTAINER=x@Maintainer,
+            BSGENOMEVERSION=BSgenome_version,
+            REFPKGNAME=x@RefPkgname,
+            LIC=x@License,
+            ORGANISM=x@organism,
+            SPECIES=x@species,
+            PROVIDER=x@provider,
+            PROVIDERVERSION=x@provider_version,
+            RELEASEDATE=x@release_date,
+            RELEASENAME=x@release_name,
+            SOURCEURL=x@source_url,
+            ORGANISMBIOCVIEW=x@organism_biocview,
+            NMASKPERSEQ=as.character(x@nmask_per_seq),
+            PKGDETAILS=x@PkgDetails,
+            SRCDATAFILES1=x@SrcDataFiles1,
+            SRCDATAFILES2=x@SrcDataFiles2,
+            PKGEXAMPLES=x@PkgExamples
+        )
+        ## Should never happen
+        if (any(duplicated(names(symvals)))) {
+            str(symvals)
+            stop("'symvals' contains duplicated symbols")
+        }
+        ## All symvals should by single strings (non-NA)
+        is_OK <- sapply(symvals, isSingleString)
+        if (!all(is_OK)) {
+            bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
+            stop("values for symbols ", bad_syms, " are not single strings")
+        }
+        createPackage(x@Package, destdir, template_path, symvals)
+        ## Forge the "*.masks.rda" files
+        seqs_destdir <- dirname(seqlengthsFilepath(ref_bsgenome@single_sequences))
+        pkgdir <- file.path(destdir, x@Package)
+        masks_destdir <- file.path(pkgdir, "inst", "extdata")
+        forgeMasksFiles(seqnames(ref_bsgenome), x@nmask_per_seq,
+                        seqs_destdir=seqs_destdir, mode="fa.rz",
+                        masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
+                        AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
+                        AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,
+                        RMfiles_name=x@RMfiles_name, RMfiles_prefix=x@RMfiles_prefix, RMfiles_suffix=x@RMfiles_suffix,
+                        TRFfiles_name=x@TRFfiles_name, TRFfiles_prefix=x@TRFfiles_prefix, TRFfiles_suffix=x@TRFfiles_suffix,
+                        verbose=verbose)
+        }
+    }
+)
+
+setMethod("forgeMaskedBSgenomeDataPkg", "list",
+    function(x, masks_srcdir=".", destdir=".", verbose=TRUE)
+    {
+        y <- MaskedBSgenomeDataPkgSeed(x)
+        forgeMaskedBSgenomeDataPkg(y,
+            masks_srcdir=masks_srcdir,
+            destdir=destdir, verbose=verbose)
+    }
+)
+
+setMethod("forgeMaskedBSgenomeDataPkg", "character",
+    function(x, masks_srcdir=".", destdir=".", verbose=TRUE)
+    {
+        y <- .readSeedFile(x, verbose=verbose)
+        y <- as.list(y)
+        if (missing(masks_srcdir)) {
+            masks_srcdir <- y[["masks_srcdir"]]
+            if (is.null(masks_srcdir))
+                stop("'masks_srcdir' argument is missing, and the ",
+                     "'masks_srcdir' field is missing in seed file")
+        }
+        y <- y[!(names(y) %in% "masks_srcdir")]
+        forgeMaskedBSgenomeDataPkg(y,
+            masks_srcdir=masks_srcdir,
+            destdir=destdir, verbose=verbose)
     }
 )
 
