@@ -1,0 +1,19 @@
+Package: BSgenome.Dmelanogaster.UCSC.dm3.masked
+Title: Drosophila melanogaster (Fly) full genome (UCSC version dm3)
+Description: Drosophila melanogaster (Fly) full genome as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects.
+Version: 1.3.99
+RefPkgname: BSgenome.Dmelanogaster.UCSC.dm3
+organism: Drosophila melanogaster
+species: Fly
+provider: UCSC
+provider_version: dm3
+release_date: Apr. 2006
+release_name: BDGP Release 5
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/
+organism_biocview: Drosophila_melanogaster
+nmask_per_seq: 4
+SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm3/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/chromTrf.tar.gz
+PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm3/masks
