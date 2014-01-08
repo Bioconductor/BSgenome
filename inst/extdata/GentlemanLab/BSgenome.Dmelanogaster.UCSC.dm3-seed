@@ -1,6 +1,6 @@
 Package: BSgenome.Dmelanogaster.UCSC.dm3
-Title: Drosophila melanogaster (Fly) full genome (UCSC version dm3)
-Description: Drosophila melanogaster (Fly) full genome as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects.
+Title: Full genome sequences for Drosophila melanogaster (UCSC version dm3)
+Description: Full genome sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects.
 Version: 1.3.99
 organism: Drosophila melanogaster
 species: Fly

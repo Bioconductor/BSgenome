@@ -1,0 +1,19 @@
+Package: BSgenome.Cfamiliaris.UCSC.canFam2.masked
+Title: Full masked genome sequences for Canis lupus familiaris (UCSC version canFam2)
+Description: Full genome sequences for Canis lupus familiaris (Dog) as provided by UCSC (canFam2, May 2005) and stored in Biostrings objects. The sequences are the same as in BSgenome.Cfamiliaris.UCSC.canFam2, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Version: 1.3.99
+RefPkgname: BSgenome.Cfamiliaris.UCSC.canFam2
+organism: Canis lupus familiaris
+species: Dog
+provider: UCSC
+provider_version: canFam2
+release_date: May 2005
+release_name: Broad Institute v2.0
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/
+organism_biocview: Canis_familiaris
+nmask_per_seq: 4
+SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/canFam2/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/chromTrf.tar.gz
+PkgExamples: genome$chr1  # a MaskedDNAString object!
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/masks
