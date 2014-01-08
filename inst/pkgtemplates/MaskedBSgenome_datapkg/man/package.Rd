@@ -15,23 +15,37 @@
 }
 
 \note{
-  This BSgenome data package was made from the following source data files:
+  The masks in this BSgenome data package were made from the following
+  source data files:
   \preformatted{
 @SRCDATAFILES1@
 @SRCDATAFILES2@
   }
+
+  See \code{?\link[@REFPKGNAME@]{@REFPKGNAME@}} in the
+  \pkg{@REFPKGNAME@} package for information about how the sequences
+  were obtained.
+
   See \code{?\link[BSgenome]{BSgenomeForge}} and the BSgenomeForge
-  vignette (\code{vignette("BSgenomeForge")}) in the BSgenome software
-  package for how to make a BSgenome data package.
+  vignette (\code{vignette("BSgenomeForge")}) in the \pkg{BSgenome}
+  software package for how to make a BSgenome data package.
 }
 
 \author{@AUTHOR@}
 
 \seealso{
-  \link[BSgenome]{BSgenome-class},
-  \link[Biostrings]{DNAString-class},
-  \code{\link[BSgenome]{available.genomes}},
-  \link[BSgenome]{BSgenomeForge}
+  \itemize{
+    \item \link[@REFPKGNAME@]{@REFPKGNAME@} in the \pkg{@REFPKGNAME@} package
+          for information about how the sequences were obtained.
+    \item \link[BSgenome]{BSgenome} objects and the
+          the \code{\link[BSgenome]{available.genomes}} function
+          in the \pkg{BSgenome} software package.
+    \item \link[Biostrings]{MaskedDNAString} objects in the \pkg{Biostrings}
+          package.
+    \item The BSgenomeForge vignette (\code{vignette("BSgenomeForge")})
+          in the \pkg{BSgenome} software package for how to make a BSgenome
+          data package.
+  }
 }
 
 \examples{

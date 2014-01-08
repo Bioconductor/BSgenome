@@ -1,6 +1,6 @@
 Package: BSgenome.Dmelanogaster.UCSC.dm3.masked
-Title: Drosophila melanogaster (Fly) full genome (UCSC version dm3)
-Description: Drosophila melanogaster (Fly) full genome as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects.
+Title: Full masked genome sequences for Drosophila melanogaster (UCSC version dm3)
+Description: Full genome sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Dmelanogaster.UCSC.dm3 except that they have masks on them.
 Version: 1.3.99
 RefPkgname: BSgenome.Dmelanogaster.UCSC.dm3
 organism: Drosophila melanogaster
@@ -15,5 +15,5 @@ nmask_per_seq: 4
 SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm3/database/
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/chromOut.tar.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/chromTrf.tar.gz
-PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
+PkgExamples: genome$chr2L  # a MaskedDNAString object!
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm3/masks

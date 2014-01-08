@@ -335,7 +335,7 @@ MaskedBSgenome <- function(ref_bsgenome,
         .seqs_cache=new.env(parent=emptyenv()),
         .link_counts=new.env(parent=emptyenv()),
         masks_pkgname=masks_pkgname,
-        nmask_per_seq=nmask_per_seq,
+        nmask_per_seq=as.integer(nmask_per_seq),
         masks=masks) 
 }
 
