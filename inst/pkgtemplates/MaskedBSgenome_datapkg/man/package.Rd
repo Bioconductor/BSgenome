@@ -38,7 +38,7 @@
     \item \link[@REFPKGNAME@]{@REFPKGNAME@} in the \pkg{@REFPKGNAME@} package
           for information about how the sequences were obtained.
     \item \link[BSgenome]{BSgenome} objects and the
-          the \code{\link[BSgenome]{available.genomes}} function
+          \code{\link[BSgenome]{available.genomes}} function
           in the \pkg{BSgenome} software package.
     \item \link[Biostrings]{MaskedDNAString} objects in the \pkg{Biostrings}
           package.

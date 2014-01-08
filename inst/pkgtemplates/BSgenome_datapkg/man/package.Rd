@@ -32,7 +32,7 @@
 \seealso{
   \itemize{
     \item \link[BSgenome]{BSgenome} objects and the
-          the \code{\link[BSgenome]{available.genomes}} function
+          \code{\link[BSgenome]{available.genomes}} function
           in the \pkg{BSgenome} software package.
     \item \link[Biostrings]{DNAString} objects in the \pkg{Biostrings}
           package.
