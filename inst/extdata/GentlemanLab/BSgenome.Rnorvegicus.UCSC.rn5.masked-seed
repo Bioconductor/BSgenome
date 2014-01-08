@@ -17,7 +17,7 @@ SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn5/databa
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn5/bigZips/rn5.trf.bed.gz
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
-	unmasked(genome$chr1)  # BSgenome.Rnorvegicus.UCSC.rn5$chr1
+	unmasked(genome$chr1)  # same as BSgenome.Rnorvegicus.UCSC.rn5$chr1
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn5/masks
 AGAPSfiles_name: gap.txt
 RMfiles_name: rn5.fa.out

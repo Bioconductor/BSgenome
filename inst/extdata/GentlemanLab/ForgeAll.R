@@ -7,7 +7,7 @@
 
 library(BSgenome)
 
-pkgs <- c(
+BSgenome_datapkgs <- c(
   "BSgenome.Amellifera.BeeBase.assembly4",
   "BSgenome.Amellifera.UCSC.apiMel2",
   "BSgenome.Athaliana.TAIR.04232008",
@@ -47,12 +47,51 @@ pkgs <- c(
   "BSgenome.Scerevisiae.UCSC.sacCer3"
 )
 
-for (pkg in pkgs) {
+for (pkg in BSgenome_datapkgs) {
   cat("\n")
   cat("============================================================\n")
   cat("START FORGING ", pkg, "\n", sep="")
   cat("\n")
   forgeBSgenomeDataPkg(pkg, mode="fa.rz")
+  cat("\n")
+  cat("END FORGING ", pkg, "\n", sep="")
+}
+
+MaskedBSgenome_datapkgs <- c(
+  "BSgenome.Amellifera.UCSC.apiMel2.masked",
+  "BSgenome.Btaurus.UCSC.bosTau3.masked",
+  "BSgenome.Btaurus.UCSC.bosTau4.masked",
+  "BSgenome.Btaurus.UCSC.bosTau6.masked",
+  "BSgenome.Cfamiliaris.UCSC.canFam2.masked",
+  "BSgenome.Cfamiliaris.UCSC.canFam3.masked",
+  "BSgenome.Dmelanogaster.UCSC.dm2.masked",
+  "BSgenome.Dmelanogaster.UCSC.dm3.masked",
+  "BSgenome.Drerio.UCSC.danRer5.masked",
+  "BSgenome.Drerio.UCSC.danRer6.masked",
+  "BSgenome.Drerio.UCSC.danRer7.masked",
+  "BSgenome.Gaculeatus.UCSC.gasAcu1.masked",
+  "BSgenome.Ggallus.UCSC.galGal3.masked",
+  "BSgenome.Ggallus.UCSC.galGal4.masked",
+  "BSgenome.Hsapiens.UCSC.hg17.masked",
+  "BSgenome.Hsapiens.UCSC.hg18.masked",
+  "BSgenome.Hsapiens.UCSC.hg19.masked",
+  "BSgenome.Mmulatta.UCSC.rheMac2.masked",
+  "BSgenome.Mmulatta.UCSC.rheMac3.masked",
+  "BSgenome.Mmusculus.UCSC.mm8.masked",
+  "BSgenome.Mmusculus.UCSC.mm9.masked",
+  "BSgenome.Mmusculus.UCSC.mm10.masked",
+  "BSgenome.Ptroglodytes.UCSC.panTro2.masked",
+  "BSgenome.Ptroglodytes.UCSC.panTro3.masked",
+  "BSgenome.Rnorvegicus.UCSC.rn4.masked",
+  "BSgenome.Rnorvegicus.UCSC.rn5.masked"
+)
+
+for (pkg in MaskedBSgenome_datapkgs) {
+  cat("\n")
+  cat("============================================================\n")
+  cat("START FORGING ", pkg, "\n", sep="")
+  cat("\n")
+  forgeMaskedBSgenomeDataPkg(pkg)
   cat("\n")
   cat("END FORGING ", pkg, "\n", sep="")
 }
