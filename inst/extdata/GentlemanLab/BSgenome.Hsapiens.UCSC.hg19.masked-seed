@@ -1,0 +1,20 @@
+Package: BSgenome.Hsapiens.UCSC.hg19.masked
+Title: Full masked genome sequences for Homo sapiens (UCSC version hg19)
+Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg19, Feb. 2009) and stored in Biostrings objects. The sequences are the same as in BSgenome.Hsapiens.UCSC.hg19, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Version: 1.3.99
+RefPkgname: BSgenome.Hsapiens.UCSC.hg19
+organism: Homo sapiens
+species: Human
+provider: UCSC
+provider_version: hg19
+release_date: Feb. 2009
+release_name: Genome Reference Consortium GRCh37
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/
+organism_biocview: Homo_sapiens
+nmask_per_seq: 4
+SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromTrf.tar.gz
+PkgExamples: genome$chr1  # a MaskedDNAString object!
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg19/masks
+AGAPSfiles_name: gap.txt
