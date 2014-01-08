@@ -1,0 +1,21 @@
+Package: BSgenome.Rnorvegicus.UCSC.rn4.masked
+Title: Full masked genome sequences for Rattus norvegicus (UCSC version rn4)
+Description: Full genome sequences for Rattus norvegicus (Rat) as provided by UCSC (rn4, Nov. 2004) and stored in Biostrings objects. The sequences are the same as in BSgenome.Rnorvegicus.UCSC.rn4, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Version: 1.3.99
+RefPkgname: BSgenome.Rnorvegicus.UCSC.rn4
+organism: Rattus norvegicus
+species: Rat
+provider: UCSC
+provider_version: rn4
+release_date: Nov. 2004
+release_name: Baylor College of Medicine HGSC v3.4
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
+organism_biocview: Rattus_norvegicus
+nmask_per_seq: 4
+SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/
+	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/chromOut.tar.gz
+	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/chromTrf.tar.gz
+PkgExamples: genome$chr1  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+	unmasked(genome$chr1)  # same as BSgenome.Rnorvegicus.UCSC.rn4$chr1
+masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/masks
