@@ -1,7 +1,7 @@
 Package: BSgenome.Mmulatta.UCSC.rheMac3
 Title: Full genome sequences for Macaca mulatta (UCSC version rheMac3)
 Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac3, Oct. 2010) and stored in Biostrings objects.
-Version: 1.3.19
+Version: 1.3.99
 organism: Macaca mulatta
 species: Rhesus
 provider: UCSC
