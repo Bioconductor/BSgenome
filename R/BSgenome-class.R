@@ -281,7 +281,7 @@ BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
                      seqs_pkgname, seqs_dirpath,
-                     nmask_per_seq=0L, masks_pkgname, masks_dirpath)
+                     nmask_per_seq=0, masks_pkgname=NA, masks_dirpath=NA)
 {
     fa_filename <- "single_sequences.fa"
     fa_filepath <- file.path(seqs_dirpath, fa_filename)
@@ -307,6 +307,7 @@ BSgenome <- function(organism, species, provider, provider_version,
     user_seqnames <- seqnames(seqinfo)
     names(user_seqnames) <- user_seqnames
     nmask_per_seq <- as.integer(nmask_per_seq)
+    masks_dirpath <- as.character(masks_dirpath)
     if (nmask_per_seq == 0L || length(seqnames) == 0L) {
         masks <- RdaCollection(masks_dirpath, character(0))
     } else {
