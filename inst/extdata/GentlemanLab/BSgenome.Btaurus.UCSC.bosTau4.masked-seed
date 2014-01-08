@@ -16,6 +16,8 @@ SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau4/da
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau4/bigZips/bosTau4.fa.out.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau4/bigZips/bosTau4.trf.bed.gz
 PkgExamples: genome$chr1  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+	unmasked(genome$chr1)  # same as BSgenome.Btaurus.UCSC.bosTau4$chr1
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau4/masks
 AGAPSfiles_name: gap.txt
 RMfiles_name: bosTau4.fa.out

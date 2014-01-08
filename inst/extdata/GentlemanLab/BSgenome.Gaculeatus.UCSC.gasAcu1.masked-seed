@@ -16,6 +16,8 @@ SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/da
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/chromOut.tar.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/chromTrf.tar.gz
 PkgExamples: genome$chrI  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+	unmasked(genome$chrI)  # same as BSgenome.Gaculeatus.UCSC.gasAcu1$chrI
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .fa.out

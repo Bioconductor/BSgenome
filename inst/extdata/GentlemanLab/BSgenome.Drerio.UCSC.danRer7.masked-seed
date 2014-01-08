@@ -16,6 +16,8 @@ SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer7/da
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer7/bigZips/danRer7.fa.out.gz
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer7/bigZips/danRer7.trf.bed.gz
 PkgExamples: genome$chr1  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+	unmasked(genome$chr1)  # same as BSgenome.Drerio.UCSC.danRer7$chr1
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer7/masks
 AGAPSfiles_name: gap.txt
 RMfiles_name: danRer7.fa.out

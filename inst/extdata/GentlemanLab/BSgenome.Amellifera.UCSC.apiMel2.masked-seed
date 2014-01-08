@@ -15,6 +15,8 @@ nmask_per_seq: 3
 SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/database/gap.txt.gz
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/GroupOut.zip
 PkgExamples: genome$Group1  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+        unmasked(genome$Group1)  # same as BSgenome.Amellifera.UCSC.apiMel2$Group1
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .out

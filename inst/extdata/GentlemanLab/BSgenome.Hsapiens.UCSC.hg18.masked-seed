@@ -16,4 +16,6 @@ SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg18/bigZips/chromOut.zip
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg18/bigZips/chromTrf.zip
 PkgExamples: genome$chr1  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+	unmasked(genome$chr1)  # same as BSgenome.Hsapiens.UCSC.hg18$chr1
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/masks

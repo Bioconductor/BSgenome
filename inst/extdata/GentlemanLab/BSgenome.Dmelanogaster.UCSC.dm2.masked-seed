@@ -16,4 +16,6 @@ SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.
 	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromOut.zip
 	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromTrf.zip
 PkgExamples: genome$chr2L  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+	unmasked(genome$chr2L)  # same as BSgenome.Dmelanogaster.UCSC.dm2$$chr2L
 masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm2/masks

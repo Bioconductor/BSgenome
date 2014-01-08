@@ -1,6 +1,6 @@
 Package: BSgenome.Ptroglodytes.UCSC.panTro3
-Title: Pan troglodytes (Chimp) full genome (UCSC version panTro3)
-Description: Pan troglodytes (Chimp) full genome as provided by UCSC (panTro3, Oct. 2010) and stored in Biostrings objects.
+Title: Full genome sequences for Pan troglodytes (UCSC version panTro3)
+Description: Full genome sequences for Pan troglodytes (Chimp) as provided by UCSC (panTro3, Oct. 2010) and stored in Biostrings objects.
 Version: 1.3.99
 organism: Pan troglodytes
 species: Chimp
