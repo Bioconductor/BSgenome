@@ -67,14 +67,6 @@
 \tableofcontents
 
 
-IMPORTANT NOTE: Starting with Bioconductor 2.14, the
-\Rfunction{forgeBSgenomeDataPkg} function doesn't handle masks anymore
-i.e. now it produces a \term{BSgenome data package} that contains only
-the bare sequences. A new function \Rfunction{forgeMaskedBSgenomeDataPkg}
-has been added to forge a \term{BSgenome data package} with masked
-sequences. This vignette has been updated to reflect these changes.
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -83,7 +75,14 @@ sequences. This vignette has been updated to reflect these changes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-This document describes the process of forging a \term{BSgenome data package}.
+IMPORTANT NOTE: Starting with Bioconductor 2.14, the
+\Rfunction{forgeBSgenomeDataPkg} function doesn't handle masks anymore
+i.e. now it produces a \term{BSgenome data package} that contains only
+the bare sequences. A new function \Rfunction{forgeMaskedBSgenomeDataPkg}
+has been added to forge a \term{BSgenome data package} with masked
+sequences. This vignette has been updated to reflect these changes.
+
+This vignette describes the process of forging a \term{BSgenome data package}.
 It is intended for Bioconductor users who want to make a new \term{BSgenome
 data package}, not for regular users of these packages.
 
@@ -92,7 +91,7 @@ Start {\R} (make sure you are using the latest release version), load the
 function to get the list of \term{BSgenome data packages} available
 in the current release version of Bioconductor.
 So you confirm that none of those genomes suits your needs? And you want to
-make your own package? If your answer is yes to these 2 questions, then you've
+make your own package? If you answer yes to these 2 questions, then you've
 come to the right place.
 
 Requirements:
@@ -116,7 +115,7 @@ Requirements:
       containing the mask data (those files are optional).
       For most organisms, these files have been made publicly available on the
       internet by genome providers like UCSC, NCBI, FlyBase, TAIR, etc.
-      The next section of this document explains how to obtain and prepare
+      The next section of this vignette explains how to obtain and prepare
       these files.
 \end{itemize}
 
@@ -128,7 +127,7 @@ and to the \textit{Bioconductor - Install} page
 on the Bioconductor website if you need to install or update the
 \Rpackage{Biostrings} or \Rpackage{BSgenome} packages.
 
-Questions, comments or bug reports about this document or about the
+Questions, comments or bug reports about this vignette or about the
 BSgenomeForge functions are welcome. Please address them to the author
 (\code{hpages@fhcrc.org}) or post them on The Bioconductor Project Mailing List
 (\code{bioconductor@r-project.org}). Don't forget to visit the
@@ -142,9 +141,9 @@ then you'll be done at the end of the section. Only if you need to forge a
 package with masked sequences, you'll have to keep reading but you'll have
 to forge a \term{BSgenome data package} with bare sequences first.
 
-In this document, we call \term{target packages} the \term{BSgenome
+In this vignette, we call \term{target packages} the \term{BSgenome
 data packages} that we're going to forge (one target package with
-bare sequences and a 2nd target package with masked sequences).
+bare sequences and possibly a 2nd target package with masked sequences).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,11 +156,13 @@ bare sequences and a 2nd target package with masked sequences).
 
 \subsection{Obtain and prepare the sequence data}
 
+\subsubsection{What do I need?}
+
 The sequence data must be in FASTA files. You need 1 file per sequence that
 you want to put in the \term{target package}. The name of each file must be
 of the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>} where
 \textit{<seqname>} is the name of the sequence in it and \textit{<prefix>}
-and \textit{<suffix>} are a prefix and a suffix (eventually empty) that are
+and \textit{<suffix>} are a prefix and a suffix (possibly empty) that are
 the same for all the files.
 
 For example the FASTA files available at UCSC in the ``Data set by
@@ -214,7 +215,7 @@ Here is how the \term{sequence data files} for the
 \subsubsection{The \textit{<seqs\_srcdir>} folder}
 
 From now we assume that you've downloaded (checking the md5sums is always a
-good idea), extracted, and eventually renamed all the \term{sequence data
+good idea), extracted, and possibly renamed all the \term{sequence data
 files}, and that they are located in the \textit{<seqs\_srcdir>} folder.
 
 Note that all the \term{sequence data files} should be located directly in the
@@ -381,7 +382,7 @@ sub-subsection of this subsection for an example of \term{seed file}.
       \code{SrcDataFiles2} can contain any extra information and/or URLs.
       Permanent URLs are a must.
 
-\item \code{PkgExamples}: [OPTIONAL] Some {\R} code (eventually with comments)
+\item \code{PkgExamples}: [OPTIONAL] Some {\R} code (possibly with comments)
       that will be added to the \code{Examples} section of the man page of the
       \term{target package}.
 
@@ -402,8 +403,8 @@ are included in the \Rpackage{BSgenome} package:
 <<>>=
 library(BSgenome)
 seed_files <- system.file("extdata", "GentlemanLab", package="BSgenome")
-list.files(seed_files, pattern="-seed$")
-rn4_seed <- list.files(seed_files, pattern="rn4", full.names=TRUE)
+tail(list.files(seed_files, pattern="-seed$"))
+rn4_seed <- list.files(seed_files, pattern="\\.rn4-seed$", full.names=TRUE)
 cat(readLines(rn4_seed), sep="\n")
 @
 
@@ -463,6 +464,8 @@ and use it!
 
 \subsection{Obtain and prepare the mask data}
 
+\subsubsection{What do I need?}
+
 The mask data are not available for all organisms. What you download exactly
 depends of course on what's available and also on what built-in masks you
 want to have in the \term{2nd target package}.
@@ -484,7 +487,7 @@ be of the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>}. Like for
 the FASTA files in group 1, \textit{<seqname>} must be the name of the sequence
 (sequence names for FASTA files and AGAPS masks must match) and
 \textit{<prefix>} and \textit{<suffix>} must be a prefix and a suffix
-(eventually empty) that are the same for all the files (this prefix/suffix
+(possibly empty) that are the same for all the files (this prefix/suffix
 doesn't need to be, and typically is not, the same as for the FASTA files in
 group 1).
 
@@ -542,7 +545,7 @@ Here is how the \term{mask data files} for the
 \subsubsection{The \textit{<masks\_srcdir>} folder}
 
 From now we assume that you've downloaded (checking the md5sums is always a
-good idea) and eventually extracted all the \term{mask data files},
+good idea) and possibly extracted all the \term{mask data files},
 and that they are located in the \textit{<masks\_srcdir>} folder.
 
 Note that all the \term{mask data files} should be located directly in the
@@ -652,8 +655,8 @@ are included in the \Rpackage{BSgenome} package:
 <<>>=
 library(BSgenome)
 seed_files <- system.file("extdata", "GentlemanLab", package="BSgenome")
-list.files(seed_files, pattern="\\.masked-seed$")
-rn4_masked_seed <- list.files(seed_files, pattern="rn4\\.masked", full.names=TRUE)
+tail(list.files(seed_files, pattern="\\.masked-seed$"))
+rn4_masked_seed <- list.files(seed_files, pattern="\\.rn4\\.masked-seed$", full.names=TRUE)
 cat(readLines(rn4_masked_seed), sep="\n")
 @
 
