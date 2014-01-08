@@ -14,15 +14,7 @@ BSgenomeObjname: Rnorvegicus
 seqnames: paste("chr", c(1:20, "X", "M"), sep="")
 circ_seqs: "chrM"
 mseqnames: c("random", "chrUn", paste("upstream", c("1000", "2000", "5000"), sep=""))
-nmask_per_seq: 4
 SrcDataFiles1: sequences: rn5.fa.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/rn5/bigZips/
-SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn5/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn5/bigZips/rn5.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn5/bigZips/rn5.trf.bed.gz
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn5/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn5/masks
-AGAPSfiles_name: gap.txt
-RMfiles_name: rn5.fa.out
-TRFfiles_name: rn5.trf.bed

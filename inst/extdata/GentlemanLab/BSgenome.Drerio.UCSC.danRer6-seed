@@ -14,15 +14,7 @@ BSgenomeObjname: Drerio
 seqnames: paste("chr", c(1:25, "M"), sep="")
 circ_seqs: "chrM"
 mseqnames: c("Zv8_NA", "Zv8_scaffold", paste("upstream", c("1000", "2000", "5000"), sep=""))
-nmask_per_seq: 4
 SrcDataFiles1: sequences: danRer6.fa.gz, upstream1000.fa.gz, upstream2000.fa.gz and upstream5000.fa.gz files
 	from http://hgdownload.cse.ucsc.edu/goldenPath/danRer6/bigZips/
-SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer6/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer6/bigZips/danRer6.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer6/bigZips/danRer6.trf.bed.gz
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer6/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer6/masks
-AGAPSfiles_name: gap.txt
-RMfiles_name: danRer6.fa.out
-TRFfiles_name: danRer6.trf.bed

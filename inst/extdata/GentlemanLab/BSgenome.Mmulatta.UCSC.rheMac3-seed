@@ -14,17 +14,7 @@ BSgenomeObjname: Mmulatta
 seqnames: paste("chr", c(1:20, "X", "M"), sep="")
 circ_seqs: "chrM"
 mseqnames: c("chrUn", paste("upstream", c(1:2, 5), "000", sep=""))
-nmask_per_seq: 4
 SrcDataFiles1: sequences: rheMac3.fa.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/bigZips/
-SrcDataFiles2: AGAPS masks: gap.txt.gz from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac2/database/
-	RM and TRF masks: rheMac3.fa.out.gz and rheMac3.trf.bed.gz
-	from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-	## To get rid of the masks altogether:
-	unmasked(genome$chr1)
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac3/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac3/masks
-AGAPSfiles_name: gap.txt.gz
-RMfiles_name: rheMac3.fa.out.gz
-TRFfiles_name: rheMac3.trf.bed.gz

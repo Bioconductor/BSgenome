@@ -453,23 +453,12 @@ setClass("BSgenomeDataPkgSeed",
         seqnames="character",         # a single string containing R source code
         circ_seqs="character",        # a single string containing R source code
         mseqnames="character",        # a single string containing R source code
-        nmask_per_seq="integer",      # a single integer
         PkgDetails="character",
         SrcDataFiles1="character",
         SrcDataFiles2="character",
         PkgExamples="character",
         seqfiles_prefix="character",
-        seqfiles_suffix="character",
-        AGAPSfiles_type="character",
-        AGAPSfiles_name="character",
-        AGAPSfiles_prefix="character",
-        AGAPSfiles_suffix="character",
-        RMfiles_name="character",
-        RMfiles_prefix="character",
-        RMfiles_suffix="character",
-        TRFfiles_name="character",
-        TRFfiles_prefix="character",
-        TRFfiles_suffix="character"
+        seqfiles_suffix="character"
     ),
     prototype(
         Author="The Bioconductor Dev Team",
@@ -479,23 +468,12 @@ setClass("BSgenomeDataPkgSeed",
         seqnames="NULL",              # equivalent to "character(0)"
         circ_seqs="NULL",             # equivalent to "character(0)"
         mseqnames="NULL",             # equivalent to "character(0)"
-        nmask_per_seq=0L,
         PkgDetails="",
         SrcDataFiles1="-- information not available --",
         SrcDataFiles2="",
         PkgExamples="",
         seqfiles_prefix="",
-        seqfiles_suffix=".fa",
-        AGAPSfiles_type="gap",
-        AGAPSfiles_name=as.character(NA),
-        AGAPSfiles_prefix="",
-        AGAPSfiles_suffix="_gap.txt",
-        RMfiles_name=as.character(NA),
-        RMfiles_prefix="",
-        RMfiles_suffix=".fa.out",
-        TRFfiles_name=as.character(NA),
-        TRFfiles_prefix="",
-        TRFfiles_suffix=".bed"
+        seqfiles_suffix=".fa"
     )
 )   
 
@@ -592,13 +570,13 @@ MaskedBSgenomeDataPkgSeed <- function(x)
 ###
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+    function(x, seqs_srcdir=".", destdir=".",
                 mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
 )
 
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+    function(x, seqs_srcdir=".", destdir=".",
                 mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         require(Biobase) ||
@@ -626,7 +604,6 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             SEQNAMES=x@seqnames,
             CIRCSEQS=x@circ_seqs,
             MSEQNAMES=x@mseqnames,
-            NMASKPERSEQ=as.character(x@nmask_per_seq),
             PKGDETAILS=x@PkgDetails,
             SRCDATAFILES1=x@SrcDataFiles1,
             SRCDATAFILES2=x@SrcDataFiles2,
@@ -647,9 +624,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         pkgdir <- file.path(destdir, x@Package)
         ## Just to avoid codetools "no visible binding" NOTEs
         .seqnames <- .mseqnames <- NULL
-        .nmask_per_seq <- 0
-        ## Sourcing this file will set the values of the '.seqnames',
-        ## '.mseqnames' and '.nmask_per_seq' variables
+        ## Sourcing this file will set the values of the '.seqnames' and
+        ## '.mseqnames' variables
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
         if (mode == "rda") {
@@ -669,30 +645,17 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                       seqs_destdir=seqs_destdir,
                       mode=mode,
                       verbose=verbose)
-        if (.nmask_per_seq > 0) {
-            ## Forge the "*.masks.rda" files
-            masks_destdir <- file.path(pkgdir, "inst", "extdata")
-            forgeMasksFiles(.seqnames, .nmask_per_seq,
-                            seqs_destdir=seqs_destdir, mode=mode,
-                            masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
-                            AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
-                            AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,
-                            RMfiles_name=x@RMfiles_name, RMfiles_prefix=x@RMfiles_prefix, RMfiles_suffix=x@RMfiles_suffix,
-                            TRFfiles_name=x@TRFfiles_name, TRFfiles_prefix=x@TRFfiles_prefix, TRFfiles_suffix=x@TRFfiles_suffix,
-                            verbose=verbose)
-        }
     }
 )
 
 setMethod("forgeBSgenomeDataPkg", "list",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+    function(x, seqs_srcdir=".", destdir=".",
                 mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         y <- BSgenomeDataPkgSeed(x)
         forgeBSgenomeDataPkg(y,
-            seqs_srcdir=seqs_srcdir,
-            masks_srcdir=masks_srcdir,
-            destdir=destdir, mode=mode, verbose=verbose)
+            seqs_srcdir=seqs_srcdir, destdir=destdir,
+            mode=mode, verbose=verbose)
     }
 )
 
@@ -756,7 +719,7 @@ read.dcf2 <- function(file, ...)
 }
 
 setMethod("forgeBSgenomeDataPkg", "character",
-    function(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+    function(x, seqs_srcdir=".", destdir=".",
                 mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         y <- .readSeedFile(x, verbose=verbose)
@@ -767,13 +730,10 @@ setMethod("forgeBSgenomeDataPkg", "character",
                 stop("'seqs_srcdir' argument is missing, and the ",
                      "'seqs_srcdir' field is missing in seed file")
         }
-        if (missing(masks_srcdir) && !is.null(y[["masks_srcdir"]]))
-            masks_srcdir <- y[["masks_srcdir"]]
-        y <- y[!(names(y) %in% c("seqs_srcdir", "masks_srcdir"))]
+        y <- y[!(names(y) %in% "seqs_srcdir")]
         forgeBSgenomeDataPkg(y,
-            seqs_srcdir=seqs_srcdir,
-            masks_srcdir=masks_srcdir,
-            destdir=destdir, mode=mode, verbose=verbose)
+            seqs_srcdir=seqs_srcdir, destdir=destdir,
+            mode=mode, verbose=verbose)
     }
 )
 
@@ -853,8 +813,8 @@ setMethod("forgeMaskedBSgenomeDataPkg", "list",
     {
         y <- MaskedBSgenomeDataPkgSeed(x)
         forgeMaskedBSgenomeDataPkg(y,
-            masks_srcdir=masks_srcdir,
-            destdir=destdir, verbose=verbose)
+            masks_srcdir=masks_srcdir, destdir=destdir,
+            verbose=verbose)
     }
 )
 
@@ -871,8 +831,8 @@ setMethod("forgeMaskedBSgenomeDataPkg", "character",
         }
         y <- y[!(names(y) %in% "masks_srcdir")]
         forgeMaskedBSgenomeDataPkg(y,
-            masks_srcdir=masks_srcdir,
-            destdir=destdir, verbose=verbose)
+            masks_srcdir=masks_srcdir, destdir=destdir,
+            verbose=verbose)
     }
 )
 

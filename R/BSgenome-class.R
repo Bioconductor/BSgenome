@@ -281,7 +281,7 @@ BSgenome <- function(organism, species, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
                      seqs_pkgname, seqs_dirpath,
-                     nmask_per_seq, masks_pkgname, masks_dirpath)
+                     nmask_per_seq=0L, masks_pkgname, masks_dirpath)
 {
     fa_filename <- "single_sequences.fa"
     fa_filepath <- file.path(seqs_dirpath, fa_filename)

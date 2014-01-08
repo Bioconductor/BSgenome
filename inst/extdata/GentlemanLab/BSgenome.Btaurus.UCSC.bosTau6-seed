@@ -14,15 +14,7 @@ BSgenomeObjname: Btaurus
 seqnames: paste("chr", c(1:29, "X", "M"), sep="")
 circ_seqs: "chrM"
 mseqnames: c("chrUn", "upstream1000", "upstream2000", "upstream5000")
-nmask_per_seq: 4
 SrcDataFiles1: sequences: http://hgdownload.soe.ucsc.edu/goldenPath/bosTau6/bigZips/bosTau6.fa.gz
 	+ the upstream*.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/bigZips/
-SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/bigZips/bosTau6.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/bigZips/bosTau6.trf.bed.gz
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau6/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau6/masks
-AGAPSfiles_name: gap.txt
-RMfiles_name: bosTau6.fa.out
-TRFfiles_name: bosTau6.trf.bed

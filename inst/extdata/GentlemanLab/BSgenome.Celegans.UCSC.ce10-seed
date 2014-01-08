@@ -14,7 +14,6 @@ BSgenomeObjname: Celegans
 seqnames: paste("chr", c("I", "II", "III", "IV", "V", "X", "M"), sep="")
 circ_seqs: "chrM"
 mseqnames: c("upstream1000", "upstream2000", "upstream5000")
-nmask_per_seq: 0
 SrcDataFiles1: chromFa.tar.gz
 	upstream1000.fa.gz
 	upstream2000.fa.gz

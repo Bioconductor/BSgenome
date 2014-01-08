@@ -13,7 +13,6 @@ organism_biocview: Arabidopsis_thaliana
 BSgenomeObjname: Athaliana
 seqnames: paste("Chr", c(1:5, "M", "C"), sep="")
 circ_seqs: c("ChrM", "ChrC")
-nmask_per_seq: 0
 SrcDataFiles1: ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR9_genome_release/TAIR9_chr_all.fas
 PkgExamples: genome$Chr1  # same as genome[["Chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.TAIR9/seqs

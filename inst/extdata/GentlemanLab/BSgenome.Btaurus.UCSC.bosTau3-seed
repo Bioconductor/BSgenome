@@ -13,14 +13,6 @@ organism_biocview: Bos_taurus
 BSgenomeObjname: Btaurus
 seqnames: paste("chr", c(1:29, "X"), sep="")
 mseqnames: "chrUn.scaffolds"
-nmask_per_seq: 4
 SrcDataFiles1: sequences: all the *.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/chromosomes/
-SrcDataFiles2: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/bosTau3.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/bosTau3.trf.bed.gz
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/masks
-AGAPSfiles_name: gap.txt
-RMfiles_name: bosTau3.fa.out
-TRFfiles_name: bosTau3.trf.bed

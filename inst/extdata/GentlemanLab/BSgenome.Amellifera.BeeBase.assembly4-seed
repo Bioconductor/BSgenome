@@ -13,6 +13,5 @@ organism_biocview: Apis_mellifera
 BSgenomeObjname: Amellifera
 seqnames: paste("Group", 1:16, sep="")
 mseqnames: "GroupUn"
-nmask_per_seq: 0
 PkgExamples: genome$Group1  # same as genome[["Group1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.BeeBase.assembly4/seqs

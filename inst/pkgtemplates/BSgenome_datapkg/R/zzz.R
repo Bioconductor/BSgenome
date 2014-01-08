@@ -9,8 +9,6 @@
 
 .mseqnames <- @MSEQNAMES@
 
-.nmask_per_seq <- @NMASKPERSEQ@
-
 .onLoad <- function(libname, pkgname)
 {
     if (pkgname != .pkgname)
@@ -32,10 +30,7 @@
         circ_seqs=.circ_seqs,
         mseqnames=.mseqnames,
         seqs_pkgname=pkgname,
-        seqs_dirpath=extdata_dirpath,
-        nmask_per_seq=.nmask_per_seq,
-        masks_pkgname=pkgname,
-        masks_dirpath=extdata_dirpath
+        seqs_dirpath=extdata_dirpath
     )
 
     ns <- asNamespace(pkgname)

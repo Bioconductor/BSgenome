@@ -24,7 +24,7 @@
 \usage{
 ## Top-level BSgenomeForge function:
 
-forgeBSgenomeDataPkg(x, seqs_srcdir=".", masks_srcdir=".", destdir=".",
+forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".",
                         mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
 
 ## Low-level BSgenomeForge functions:

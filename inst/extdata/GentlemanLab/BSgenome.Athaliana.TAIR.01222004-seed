@@ -13,7 +13,6 @@ organism_biocview: Arabidopsis_thaliana
 BSgenomeObjname: Athaliana
 seqnames: c("chr1", "chr2", "chr3", "chr4", "chr5", "mitochondria", "chloroplast")
 circ_seqs: c("mitochondria", "chloroplast")
-nmask_per_seq: 0
 SrcDataFiles1: ATH1_chr1.1con.01222004
 	ATH1_chr2.1con.01222004
 	ATH1_chr3.1con.01222004

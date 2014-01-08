@@ -1,6 +1,6 @@
 Package: BSgenome.Mmulatta.UCSC.rheMac2
 Title: Full genome sequences for Macaca mulatta (UCSC version rheMac2)
-Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac2, Jan. 2006) and stored in Biostrings objects.  NOTE: In most assemblies available at UCSC, Tandem Repeats Finder repeats were filtered to retain only the repeats with period <= 12.  However, the filtering was omitted for this assembly, so the TRF masks contain all Tandem Repeats Finder results.
+Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac2, Jan. 2006) and stored in Biostrings objects.
 Version: 1.3.99
 organism: Macaca mulatta
 species: Rhesus
@@ -14,22 +14,7 @@ BSgenomeObjname: Mmulatta
 seqnames: paste("chr", c(1:20, "X", "Ur"), sep="")
 circ_seqs: character(0)
 mseqnames: paste("upstream", c(1:2, 5), "000", sep="")
-nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
-SrcDataFiles2: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/database/
-	RM and TRF masks: chromOut.tar.gz and chromTrf.tar.gz
-	from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-	## NOTE: In most assemblies available at UCSC, Tandem Repeats
-	## Finder repeats were filtered to retain only the repeats
-	## with period <= 12.  However, the filtering was omitted for
-	## this assembly, so, despite the description being displayed
-	## for this mask, it contains all the Tandem Repeats Finder
-	## results.
-	masks(genome$chr1)$TRF
-	## To get rid of the masks altogether:
-	unmasked(genome$chr1)
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac2/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac2/masks
-AGAPSfiles_name: gap.txt.gz

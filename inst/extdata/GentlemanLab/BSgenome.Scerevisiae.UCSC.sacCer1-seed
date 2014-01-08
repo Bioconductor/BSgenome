@@ -13,7 +13,6 @@ organism_biocview: Saccharomyces_cerevisiae
 BSgenomeObjname: Scerevisiae
 seqnames: paste("chr", c(1:16, "M"), sep="")
 circ_seqs: "chrM"
-nmask_per_seq: 0
 SrcDataFiles1: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/sacCer1/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Scerevisiae.UCSC.sacCer1/seqs

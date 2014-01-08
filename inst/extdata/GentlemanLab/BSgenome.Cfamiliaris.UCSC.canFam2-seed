@@ -13,12 +13,7 @@ organism_biocview: Canis_familiaris
 BSgenomeObjname: Cfamiliaris
 seqnames: paste("chr", c(1:38, "X", "M", "Un"), sep="")
 circ_seqs: "chrM"
-nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.tar.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/
-SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/canFam2/database/
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/chromOut.tar.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/chromTrf.tar.gz
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/masks

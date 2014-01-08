@@ -14,12 +14,7 @@ BSgenomeObjname: Dmelanogaster
 seqnames: paste("chr", c("2L", "2R", "3L", "3R", "4", "X", "U", "M", "2h", "3h", "4h", "Xh", "Yh"), sep="")
 circ_seqs: "chrM"
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
-nmask_per_seq: 4
 SrcDataFiles1: sequences: chromFa.zip, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/
-SrcDataFiles2: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm2/database/
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromOut.zip
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromTrf.zip
 PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm2/seqs
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm2/masks
