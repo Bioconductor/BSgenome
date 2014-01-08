@@ -1,6 +1,6 @@
 Package: BSgenome.Drerio.UCSC.danRer7
-Title: Danio rerio (Zebrafish) full genome (UCSC version danRer7)
-Description: Danio rerio (Zebrafish) full genome as provided by UCSC (danRer7, 	Jul. 2010) and stored in Biostrings objects.
+Title: Full genome sequences for Danio rerio (UCSC version danRer7)
+Description: Full genome sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer7, Jul. 2010) and stored in Biostrings objects.
 Version: 1.3.99
 organism: Danio rerio
 species: Zebrafish
