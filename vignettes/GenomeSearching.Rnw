@@ -113,12 +113,13 @@ Then load the package and display the single object defined in it:
 <<b1>>=
 library(BSgenome.Celegans.UCSC.ce2)
 ls("package:BSgenome.Celegans.UCSC.ce2")
-Celegans
+genome <- BSgenome.Celegans.UCSC.ce2
+genome
 @
 
-\Robject{Celegans} is a \Rclass{BSgenome} object:
+\Robject{genome} is a \Rclass{BSgenome} object:
 <<b2>>=
-class(Celegans)
+class(genome)
 @
 
 When displayed, some basic information about the origin of the
@@ -128,11 +129,11 @@ an additional index of {\it multiple} sequences.
 Methods (adequately called {\it accessor methods}) are defined
 for individual access to this information:
 <<b3>>=
-organism(Celegans)
-provider(Celegans)
-providerVersion(Celegans)
-seqnames(Celegans)
-mseqnames(Celegans)
+organism(genome)
+provider(genome)
+providerVersion(genome)
+seqnames(genome)
+mseqnames(genome)
 @
 
 See the man page for the \Rclass{BSgenome} class (\Rfunction{?BSgenome})
@@ -140,7 +141,7 @@ for a complete list of accessor methods and their descriptions.
 
 Now we are ready to display chromosome I:
 <<b4>>=
-Celegans$chrI
+genome$chrI
 @
 
 Note that this chrI sequence corresponds to the {\it forward} strand
@@ -172,7 +173,7 @@ of a chromosome.
 
 The number of bases in this sequence can be retrieved with:
 <<b5>>=
-chrI <- Celegans$chrI
+chrI <- genome$chrI
 length(chrI)
 @
 
@@ -252,7 +253,7 @@ More precisely, here is the analysis we want to perform:
   It is stored in a FASTA file called \Robject{"ce2dict0.fa"}.
 % ce2dict0.fa was generated with
 %   > set.seed(23)
-%   > ce2dict0 <- sapply(1:50, function(i) { x <- Celegans[[sample(seqnames(Celegans), 1)]]; start <- as.integer(runif(1, min=1, length(x)-20)); end <- start + as.integer(runif(1, min=14, max=25)); x <- subXString(x, start, end); if (sample(1:2, 1) == 2) x <- reverseComplement(x); as.character(x) })
+%   > ce2dict0 <- sapply(1:50, function(i) { x <- genome[[sample(seqnames(genome), 1)]]; start <- as.integer(runif(1, min=1, length(x)-20)); end <- start + as.integer(runif(1, min=14, max=25)); x <- subXString(x, start, end); if (sample(1:2, 1) == 2) x <- reverseComplement(x); as.character(x) })
 %   > names(ce2dict0) <- paste("pattern", 1:50, sep="")
 %   > write.XStringViews(XStringViews(ce2dict0, "DNAString"), file="ce2dict0.fa", format="fasta")
   See the {\it Finding all the patterns of a constant width dictionary
@@ -324,13 +325,14 @@ writeHits <- function(seqname, matches, strand, file="", append=FALSE)
 runAnalysis1 <- function(dict0, outfile="")
 {
     library(BSgenome.Celegans.UCSC.ce2)
-    seqnames <- seqnames(Celegans)
+    genome <- BSgenome.Celegans.UCSC.ce2
+    seqnames <- seqnames(genome)
     seqnames_in1string <- paste(seqnames, collapse=", ")
-    cat("Target:", providerVersion(Celegans),
+    cat("Target:", providerVersion(genome),
         "chromosomes", seqnames_in1string, "\n")
     append <- FALSE
     for (seqname in seqnames) {
-        subject <- Celegans[[seqname]]
+        subject <- genome[[seqname]]
         cat(">>> Finding all hits in chromosome", seqname, "...\n")
         for (i in seq_len(length(dict0))) {
             patternID <- names(dict0)[i]
@@ -353,7 +355,7 @@ Some important notes about the implementation of the \Rfunction{runAnalysis1}
 function:
 \begin{itemize}
   \item{}
-  \Robject{subject <- Celegans[[seqname]]} is the code that actually loads a
+  \Robject{subject <- genome[[seqname]]} is the code that actually loads a
   chromosome sequence into memory.
   Using only one sequence at a time is a good practice to avoid memory
   allocation problems on a machine with a limited amount of memory.
@@ -443,7 +445,7 @@ plotGenomeHits <- function(bsgenome, seqnames, hits)
 @
 Plot the hits found by \Rfunction{runAnalysis1} with:
 <<c10,eval=false>>=
-plotGenomeHits(Celegans, seqnames(Celegans), hits1)
+plotGenomeHits(genome, seqnames(genome), hits1)
 @
 \end{itemize}
 
@@ -527,10 +529,11 @@ For a given package, all the sequences will always have the same number of
 masks.
 
 <<f1>>=
-library(BSgenome.Hsapiens.UCSC.hg19)
-chrY <- Hsapiens$chrY
+library(BSgenome.Hsapiens.UCSC.hg19.masked)
+genome <- BSgenome.Hsapiens.UCSC.hg19.masked
+chrY <- genome$chrY
 chrY
-chrM <- Hsapiens$chrM
+chrM <- genome$chrM
 chrM
 @
 
@@ -684,7 +687,7 @@ countPattern(Ebox, chrY, fixed=FALSE)
 
 Note that some chromosomes can have Ns outside the assembly gaps:
 <<f13>>=
-chr2 <- Hsapiens$chr2
+chr2 <- genome$chr2
 active(masks(chr2))[-2] <- FALSE
 alphabetFrequency(gaps(chr2))
 @
@@ -753,9 +756,10 @@ runOneStrandAnalysis <- function(dict0, bsgenome, seqnames, strand,
 runAnalysis2 <- function(dict0, outfile="")
 {
     library(BSgenome.Celegans.UCSC.ce2)
-    seqnames <- seqnames(Celegans)
-    runOneStrandAnalysis(dict0, Celegans, seqnames, "+", outfile=outfile, append=FALSE)
-    runOneStrandAnalysis(dict0, Celegans, seqnames, "-", outfile=outfile, append=TRUE)
+    genome <- BSgenome.Celegans.UCSC.ce2
+    seqnames <- seqnames(genome)
+    runOneStrandAnalysis(dict0, genome, seqnames, "+", outfile=outfile, append=FALSE)
+    runOneStrandAnalysis(dict0, genome, seqnames, "-", outfile=outfile, append=TRUE)
 }
 @
 
