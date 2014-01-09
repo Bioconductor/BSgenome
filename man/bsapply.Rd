@@ -75,11 +75,12 @@ bsapply(BSParams, ...)
 
 
   ## Examples on how to use the masks
-  library("BSgenome.Hsapiens.UCSC.hg19")
+  library("BSgenome.Hsapiens.UCSC.hg19.masked")
+  genome <- BSgenome.Hsapiens.UCSC.hg19.masked
   ## I can make things verbose if I want to see the chromosomes getting processed.
   options(verbose=TRUE)
   ## For the 1st example, lets use default masks
-  params <- new("BSParams", X = Hsapiens, FUN = alphabetFrequency,
+  params <- new("BSParams", X = genome, FUN = alphabetFrequency,
   exclude = c(1:8,"M","X","random","hap"), simplify = TRUE)
   bsapply(params)
 
