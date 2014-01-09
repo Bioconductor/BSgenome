@@ -99,47 +99,47 @@ installed.SNPs()
 }
 
 \examples{
-  ## What SNPlocs data packages are already installed:
-  installed.SNPs()
+## What SNPlocs data packages are already installed:
+installed.SNPs()
 
-  ## What SNPlocs data packages are available:
-  available.SNPs()
+## What SNPlocs data packages are available:
+available.SNPs()
 
-  if (interactive()) {
-    ## Make your choice and install with:
-    source("http://bioconductor.org/biocLite.R")
-    biocLite("SNPlocs.Hsapiens.dbSNP.20100427")
-  }
+if (interactive()) {
+  ## Make your choice and install with:
+  source("http://bioconductor.org/biocLite.R")
+  biocLite("SNPlocs.Hsapiens.dbSNP.20100427")
+}
 
-  ## Inject SNPs from dbSNP into the Human genome:
-  library(BSgenome.Hsapiens.UCSC.hg19)
-  Hsapiens
-  SNPlocs_pkgname(Hsapiens)
+## Inject SNPs from dbSNP into the Human genome:
+library(BSgenome.Hsapiens.UCSC.hg19.masked)
+genome <- BSgenome.Hsapiens.UCSC.hg19.masked
+SNPlocs_pkgname(genome)
 
-  SNP_Hsapiens <- injectSNPs(Hsapiens, "SNPlocs.Hsapiens.dbSNP.20100427")
-  SNP_Hsapiens  # note the extra "with SNPs injected from ..." line
-  SNPlocs_pkgname(SNP_Hsapiens)
-  SNPcount(SNP_Hsapiens)
-  head(SNPlocs(SNP_Hsapiens, "chr1"))
+genome2 <- injectSNPs(genome, "SNPlocs.Hsapiens.dbSNP.20100427")
+genome2  # note the extra "with SNPs injected from ..." line
+SNPlocs_pkgname(genome2)
+SNPcount(genome2)
+head(SNPlocs(genome2, "chr1"))
 
-  alphabetFrequency(Hsapiens$chr1)
-  alphabetFrequency(SNP_Hsapiens$chr1)
+alphabetFrequency(genome$chr1)
+alphabetFrequency(genome2$chr1)
 
-  ## Find runs of SNPs of length at least 25 in chr1. Might require
-  ## more memory than some platforms can handle (e.g. 32-bit Windows
-  ## and maybe some Mac OS X machines with little memory):
-  is_32bit_windows <- .Platform$OS.type == "windows" &&
-                      .Platform$r_arch == "i386"
-  is_macosx <- substr(R.version$os, start=1, stop=6) == "darwin"
-  if (!is_32bit_windows && !is_macosx) {
-      chr1 <- injectHardMask(SNP_Hsapiens$chr1)
-      ambiguous_letters <- paste(DNA_ALPHABET[5:15], collapse="")
-      lf <- letterFrequencyInSlidingView(chr1, 25, ambiguous_letters)
-      sl <- slice(as.integer(lf), lower=25)
-      v1 <- Views(chr1, start(sl), end(sl)+24)
-      v1
-      max(width(v1))  # length of longest SNP run
-  }
+## Find runs of SNPs of length at least 25 in chr1. Might require
+## more memory than some platforms can handle (e.g. 32-bit Windows
+## and maybe some Mac OS X machines with little memory):
+is_32bit_windows <- .Platform$OS.type == "windows" &&
+                    .Platform$r_arch == "i386"
+is_macosx <- substr(R.version$os, start=1, stop=6) == "darwin"
+if (!is_32bit_windows && !is_macosx) {
+    chr1 <- injectHardMask(genome2$chr1)
+    ambiguous_letters <- paste(DNA_ALPHABET[5:15], collapse="")
+    lf <- letterFrequencyInSlidingView(chr1, 25, ambiguous_letters)
+    sl <- slice(as.integer(lf), lower=25)
+    v1 <- Views(chr1, start(sl), end(sl)+24)
+    v1
+    max(width(v1))  # length of longest SNP run
+}
 }
 
 \keyword{manip}
