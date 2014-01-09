@@ -360,10 +360,12 @@ setMethod("getSeq", "BSgenome",
                                    mseq_args$end,
                                    mseq_args$width,
                                    mseq_args$strand)
+        if (is(names, "GRanges"))
+            names(ans) <- names(names)
         if (as.character)
-            ans <- as.character(ans)
-        else if (length(ans) == 1L && is.character(names))
-            ans <- ans[[1L]]  # turn 1st and unique element into DNAString
+            return(as.character(ans))
+        if (length(ans) == 1L && is.character(names))
+            return(ans[[1L]])  # turn 1st and unique element into DNAString
         ans
     }
 )

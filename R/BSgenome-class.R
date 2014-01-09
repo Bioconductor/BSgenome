@@ -408,6 +408,33 @@ setMethod("show", "BSgenome",
 {
     idx <- match(user_seqname, x@user_seqnames)
     if (is.na(idx)) {  # multiple sequence
+        if (substr(seqname, 1L, 8L) == "upstream") {
+            msg <- c(
+                "  Starting with BioC 2.14, upstream sequences ",
+                "are deprecated.\n",
+                "  However they can easily be extracted ",
+                "from the full genome\n  sequences with something like ",
+                "(for example for hg19):\n\n",
+                "      library(TxDb.Hsapiens.UCSC.hg19.knownGene)\n",
+                "      txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene\n",
+                "      gn <- sort(genes(txdb))\n",
+                "      up1000 <- promoters(gn, upstream=1000, downstream=0)\n",
+                "      library(BSgenome.Hsapiens.UCSC.hg19)\n",
+                "      genome <- BSgenome.Hsapiens.UCSC.hg19\n",
+                "      up1000seqs <- getSeq(genome, up1000)\n\n",
+                "  IMPORTANT: Make sure you use a TxDb package (or ",
+                "TranscriptDb object)\n  that contains a gene model ",
+                "based on the exact same reference genome\n",
+                "  as the BSgenome object you pass to getSeq(). Note that ",
+                "you can make\n  your own custom TranscriptDb object from ",
+                "various annotation resources.\n",
+                "  See the makeTranscriptDbFromUCSC(), ",
+                "makeTranscriptDbFromBiomart(), and\n",
+                "  makeTranscriptDbFromGFF() functions in the ",
+                "GenomicFeatures package."
+            )
+            .Deprecated(msg=paste0(msg, collapse=""))
+        }
         ans <- x@multiple_sequences[[seqname]]
         return(ans)
     }
