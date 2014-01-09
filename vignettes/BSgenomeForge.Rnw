@@ -702,6 +702,9 @@ Finally install the package with
 \end{verbatim}
 and use it!
 
+If you want to distribute this package, you need to distribute it with
+the \term{reference target package} since it depends on it.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
