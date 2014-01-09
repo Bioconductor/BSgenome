@@ -21,7 +21,7 @@ installed.genomes(splitNameParts=FALSE)
 \arguments{
   \item{splitNameParts}{
     Whether to split or not the package names in parts. In that case
-    the result is returned in a data frame.
+    the result is returned in a data frame with 5 columns.
   }
   \item{type}{
     Character string indicating the type of package (\code{"source"},
@@ -30,17 +30,22 @@ installed.genomes(splitNameParts=FALSE)
 }
 
 \details{
-  A BSgenome data package contains the full genome for a given organism.
-  Its name has 4 parts separated by a dot (e.g. BSgenome.Celegans.UCSC.ce2).
-  The 1st part is always BSgenome, the 2nd part is the name of the organism
-  (abbreviated), the 3rd part is the name of the organisation who assembled
-  the genome and the 4th part is the release string or number used by this
-  organisation for this genome.
+  A BSgenome data package contains the full genome sequences for a given
+  organism.
+
+  Its name typically has 4 parts (5 parts if it contains masked sequences)
+  separated by a dot e.g. \code{BSgenome.Celegans.UCSC.ce2}.
+  The 1st part is always \code{BSgenome}, the 2nd part is the name of the
+  organism (abbreviated), the 3rd part is the name of the organisation who
+  provided the genome sequences, and the 4th part is the release string or
+  number used by this organisation for this particular assembly.
+
+  If the package contains masked sequences, its name has the \code{.masked}
+  suffix added to it, which is typically the 5th part.
+
   A BSgenome data package contains a single top-level object (a
-  \link[BSgenome:BSgenome-class]{BSgenome} object) named like the second
-  part of the package name 
-  (e.g. Celegans in the case of BSgenome.Celegans.UCSC.ce2) where all the
-  sequences for this genome are stored.
+  \link[BSgenome]{BSgenome} object) named like the package itself that
+  can be used to access the genome sequences.
 }
 
 \value{
@@ -57,26 +62,26 @@ installed.genomes(splitNameParts=FALSE)
 }
 
 \examples{
-  # What genomes are already installed:
-  installed.genomes()
+# What genomes are already installed:
+installed.genomes()
 
-  # What genomes are available:
-  available.genomes()
+# What genomes are available:
+available.genomes()
 
-  # Split the package names in parts:
-  ag <- available.genomes(TRUE)
-  table(ag$organism)
-  table(ag$provider)
+# Split the package names in parts:
+ag <- available.genomes(TRUE)
+table(ag$organism)
+table(ag$provider)
 
-  # Make your choice and install with:
-  source("http://bioconductor.org/biocLite.R")
-  biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
+# Make your choice and install with:
+source("http://bioconductor.org/biocLite.R")
+biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
 
-  # Have a coffee ;-)
+# Have a coffee ;-)
 
-  # Load the package and display the index of sequences for this genome:
-  library(BSgenome.Scerevisiae.UCSC.sacCer1)
-  Scerevisiae
+# Load the package and display the index of sequences for this genome:
+library(BSgenome.Scerevisiae.UCSC.sacCer1)
+BSgenome.Scerevisiae.UCSC.sacCer1
 }
 
 \keyword{manip}

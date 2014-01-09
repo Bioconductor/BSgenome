@@ -1,6 +1,12 @@
 .splitNameParts <- function(pkgs)
 {
-    parts <- strsplit(pkgs, ".", fixed=TRUE)
+    ## Remove ".masked" suffix.
+    pkgs2 <- pkgs
+    is_masked <- substr(pkgs2, nchar(pkgs2) - 6L, nchar(pkgs2)) == ".masked"
+    idx <- which(is_masked)
+    pkgs2[idx] <- substr(pkgs2[idx], 1L, nchar(pkgs2)[idx] - 7L)
+
+    parts <- strsplit(pkgs2, ".", fixed=TRUE)
     nparts <- elementLengths(parts)
     ## Some packages like BSgenome.Tgondii.ToxoDB.7.0 don't follow the rules
     ## and are made of more than 4 parts.
@@ -24,6 +30,7 @@
                organism=factor(uparts[idx4 - 2L]),
                provider=factor(uparts[idx4 - 1L]),
                provider_version=uparts[idx4],
+               masked=is_masked,
                stringsAsFactors=FALSE)
 }
 
