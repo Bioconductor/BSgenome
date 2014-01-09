@@ -3,12 +3,6 @@ Title: Full masked genome sequences for Danio rerio (UCSC version danRer6)
 Description: Full genome sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer6, Dec. 2008) and stored in Biostrings objects. The sequences are the same as in BSgenome.Drerio.UCSC.danRer6, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Drerio.UCSC.danRer6
-organism: Danio rerio
-species: Zebrafish
-provider: UCSC
-provider_version: danRer6
-release_date: Dec. 2008
-release_name: Sanger Institute Zv8
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/danRer6/bigZips/
 organism_biocview: Danio_rerio
 nmask_per_seq: 4

@@ -3,12 +3,6 @@ Title: Full masked genome sequences for Mus musculus (UCSC version mm9)
 Description: Full genome sequences for Mus musculus (Mouse) as provided by UCSC (mm9, Jul. 2007) and stored in Biostrings objects. The sequences are the same as in BSgenome.Mmusculus.UCSC.mm9, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Mmusculus.UCSC.mm9
-organism: Mus musculus
-species: Mouse
-provider: UCSC
-provider_version: mm9
-release_date: Jul. 2007
-release_name: NCBI Build 37
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/mm9/bigZips/
 organism_biocview: Mus_musculus
 nmask_per_seq: 4

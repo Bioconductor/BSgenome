@@ -3,12 +3,6 @@ Title: Full masked genome sequences for Apis mellifera (UCSC version apiMel2)
 Description: Full genome sequences for Apis mellifera (Honey Bee) as provided by UCSC (apiMel2, Jan. 2005) and stored in Biostrings objects. The sequences are the same as in BSgenome.Amellifera.UCSC.apiMel2, except that each of them has the 3 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), and (3) the mask of repeats from RepeatMasker (RM mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Amellifera.UCSC.apiMel2
-organism: Apis mellifera
-species: Honey Bee
-provider: UCSC
-provider_version: apiMel2
-release_date: Jan. 2005
-release_name: Baylor College of Medicine HGSC v.Amel_2.0
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 organism_biocview: Apis_mellifera
 nmask_per_seq: 3

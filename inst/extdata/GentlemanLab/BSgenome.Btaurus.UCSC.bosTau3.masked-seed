@@ -3,12 +3,6 @@ Title: Full masked genome sequences for Bos taurus (UCSC version bosTau3)
 Description: Full genome sequences for Bos taurus (Cow) as provided by UCSC (bosTau3, Aug. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Btaurus.UCSC.bosTau3, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Btaurus.UCSC.bosTau3
-organism: Bos taurus
-species: Cow
-provider: UCSC
-provider_version: bosTau3
-release_date: Aug. 2006
-release_name: Baylor College of Medicine HGSC Btau_3.1
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 organism_biocview: Bos_taurus
 nmask_per_seq: 4

@@ -3,12 +3,6 @@ Title: Full masked genome sequences for Macaca mulatta (UCSC version rheMac2)
 Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac2, Jan. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Mmulatta.UCSC.rheMac2, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.  NOTE: In most assemblies available at UCSC, Tandem Repeats Finder repeats were filtered to retain only the repeats with period <= 12.  However, the filtering was omitted for this assembly, so the TRF masks contain all Tandem Repeats Finder results.
 Version: 1.3.99
 RefPkgname: BSgenome.Mmulatta.UCSC.rheMac2
-organism: Macaca mulatta
-species: Rhesus
-provider: UCSC
-provider_version: rheMac2
-release_date: Jan. 2006
-release_name: Baylor College of Medicine HGSC v1.0 Mmul_051212
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/
 organism_biocview: Macaca_mulatta
 nmask_per_seq: 4
