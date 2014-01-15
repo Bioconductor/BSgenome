@@ -145,15 +145,16 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         seq <- readDNAStringSet(srcpath, "fasta")
         if (verbose)
             cat("DONE\n")
-        if (length(seq) == 0)
+        if (length(seq) == 0L)
             stop("file contains no DNA sequence")
-        if (length(seq) > 1) {
+        if (length(seq) > 1L) {
             warning("file contains ", length(seq), " sequences, ",
                     "using the first sequence only")
-            seq <- seq[1]
+            seq <- seq[1L]
         }
         if (verbose)
             cat("Appending '", seqname, "' sequence to FASTA file '", dest_filepath, "' ... ", sep="")
+        names(seq) <- seqname
         writeXStringSet(seq, dest_filepath, append=TRUE, format="fasta", width=50L)
         if (verbose)
             cat("DONE\n")
