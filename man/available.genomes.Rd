@@ -81,7 +81,7 @@ biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
 
 # Load the package and display the index of sequences for this genome:
 library(BSgenome.Scerevisiae.UCSC.sacCer1)
-BSgenome.Scerevisiae.UCSC.sacCer1
+Scerevisiae  # same as BSgenome.Scerevisiae.UCSC.sacCer1
 }
 
 \keyword{manip}
