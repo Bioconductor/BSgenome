@@ -14,7 +14,7 @@ BSgenomeObjname: Mmulatta
 seqnames: paste("chr", c(1:20, "X", "Ur"), sep="")
 circ_seqs: character(0)
 mseqnames: paste("upstream", c(1:2, 5), "000", sep="")
-SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
+SrcDataFiles1: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac2/seqs

@@ -14,7 +14,7 @@ BSgenomeObjname: Hsapiens
 seqnames: paste("chr", c(1:22, "X", "Y", "M", "6_hla_hap1", "6_hla_hap2", paste(c((1:22)[-c(11, 14, 20, 21)], "X"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
-SrcDataFiles1: sequences: chromFa.zip, upstream1000.zip, upstream2000.zip, upstream5000.zip
+SrcDataFiles1: chromFa.zip, upstream1000.zip, upstream2000.zip, upstream5000.zip
 	from http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg17/seqs

@@ -14,7 +14,7 @@ BSgenomeObjname: Rnorvegicus
 seqnames: paste("chr", c(1:20, "X", "M"), sep="")
 circ_seqs: "chrM"
 mseqnames: c("random", "chrUn", paste("upstream", c("1000", "2000", "5000"), sep=""))
-SrcDataFiles1: sequences: rn5.fa.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
+SrcDataFiles1: rn5.fa.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/rn5/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn5/seqs

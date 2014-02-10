@@ -14,7 +14,7 @@ BSgenomeObjname: Ptroglodytes
 seqnames: paste("chr", c(1, "2a", "2b", 3:22, "X", "Y", "M", "Un", "6_hla_hap1", paste(c(1, "2a", "2b", 3:20, 22, "X", "Y"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
-SrcDataFiles1: sequences: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
+SrcDataFiles1: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
 	from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/seqs

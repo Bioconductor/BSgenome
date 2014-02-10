@@ -14,7 +14,7 @@ BSgenomeObjname: Gaculeatus
 seqnames: paste("chr", c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "M", "Un"), sep="")
 circ_seqs: "chrM"
 mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
-SrcDataFiles1: sequences: chromFa.tar.gz + upstream*.fa.gz files
+SrcDataFiles1: chromFa.tar.gz + upstream*.fa.gz files
 	from http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/
 PkgExamples: genome$chrI # same as genome[["chrI"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/seqs

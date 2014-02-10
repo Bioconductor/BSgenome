@@ -12,6 +12,7 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 organism_biocview: Apis_mellifera
 BSgenomeObjname: Amellifera
 seqnames: paste("Group", c(1:16, "Un"), sep="")
-SrcDataFiles1: sequences: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/GroupFa.zip
+SrcDataFiles1: GroupFa.zip
+	from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 PkgExamples: genome$Group1  # same as genome[["Group1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs

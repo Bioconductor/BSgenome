@@ -1,0 +1,20 @@
+Package: BSgenome.Sscrofa.UCSC.susScr3
+Title: Full genome sequences for Sus scrofa (UCSC version susScr3)
+Description: Full genome sequences for Sus scrofa (Pig) as provided by UCSC (susScr3, Aug. 2011) and stored in Biostrings objects.
+Version: 1.3.99
+organism: Sus scrofa
+species: Pig
+provider: UCSC
+provider_version: susScr3
+release_date: Aug. 2011
+release_name: Swine Genome Sequencing Consortium Sscrofa10.2
+source_url: http://hgdownload.soe.ucsc.edu/goldenPath/susScr3/bigZips/
+organism_biocview: Sus_scrofa
+BSgenomeObjname: Sscrofa
+seqnames: paste0("chr", c(1:18, "X", "Y", "M"))
+circ_seqs: "chrM"
+mseqnames: "unplaced_scaffolds"
+SrcDataFiles1: susScr3.fa.gz
+	from http://hgdownload.soe.ucsc.edu/goldenPath/susScr3/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Sscrofa.UCSC.susScr3/seqs
