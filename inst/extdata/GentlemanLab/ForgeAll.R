@@ -84,7 +84,8 @@ MaskedBSgenome_datapkgs <- c(
   "BSgenome.Ptroglodytes.UCSC.panTro2.masked",
   "BSgenome.Ptroglodytes.UCSC.panTro3.masked",
   "BSgenome.Rnorvegicus.UCSC.rn4.masked",
-  "BSgenome.Rnorvegicus.UCSC.rn5.masked"
+  "BSgenome.Rnorvegicus.UCSC.rn5.masked",
+  "BSgenome.Sscrofa.UCSC.susScr3.masked"
 )
 
 for (pkg in MaskedBSgenome_datapkgs) {
