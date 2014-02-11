@@ -45,7 +45,8 @@ BSgenome_datapkgs <- c(
   "BSgenome.Scerevisiae.UCSC.sacCer1",
   "BSgenome.Scerevisiae.UCSC.sacCer2",
   "BSgenome.Scerevisiae.UCSC.sacCer3",
-  "BSgenome.Sscrofa.UCSC.susScr3"
+  "BSgenome.Sscrofa.UCSC.susScr3",
+  "BSgenome.Tguttata.UCSC.taeGut1"
 )
 
 for (pkg in BSgenome_datapkgs) {
