@@ -32,7 +32,7 @@
 \title{BSgenome objects}
 
 \description{
-  The BSgenome class is a container for the complete genome sequence
+  The BSgenome class is a container for storing the full genome sequences
   of a given organism.
 }
 

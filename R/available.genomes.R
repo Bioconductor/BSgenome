@@ -74,14 +74,14 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
 ### getBSgenome()
 ###
 
-.stopIfPkgIsAvailable <- function(genome, is.source=FALSE)
+.stopOnAvailablePkg <- function(genome, is.source=FALSE)
     stop(genome, " package is not currently installed.\n",
          "  You first need to install it, which you can do with:\n",
          "      library(BiocInstaller)\n",
          "      biocLite(\"", genome, "\"",
          ifelse(is.source, ", type=\"source\"", ""), ")")
 
-.stopIfMoreThanOnePkgIsAvailable <- function(genome, masked, is.source=FALSE)
+.stopOnMoreThanOneAvailablePkg <- function(genome, masked, is.source=FALSE)
     stop("Looks like there is more than one available ",
          ifelse(masked, "masked ", ""), "BSgenome data package\n",
          "  that matches genome assembly (a.k.a. provider version): ",
@@ -98,30 +98,30 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
     av_pkgs <- available.genomes(splitNameParts=TRUE)
     ## 1) Try full match.
     if (genome %in% av_pkgs[ , "pkgname"])
-        .stopIfPkgIsAvailable(genome)
+        .stopOnAvailablePkg(genome)
     if (getOption("pkgType") != "source") {
         av_srcpkgs <- available.genomes(splitNameParts=TRUE, type="source")
         if (genome %in% av_srcpkgs[ , "pkgname"])
-            .stopIfPkgIsAvailable(genome, is.source=TRUE)
+            .stopOnAvailablePkg(genome, is.source=TRUE)
     }
     ## 2) Try match on "provider_version".
     av_pkgs <- av_pkgs[av_pkgs[ , "masked"] == masked, ]
     idx <- which(genome == av_pkgs[ , "provider_version"])
     if (length(idx) == 1L) {
         genome <- av_pkgs[idx , "pkgname"]
-        .stopIfPkgIsAvailable(genome)
+        .stopOnAvailablePkg(genome)
     }
     if (length(idx) >= 2L)
-        .stopIfMoreThanOnePkgIsAvailable(genome, masked)
+        .stopOnMoreThanOneAvailablePkg(genome, masked)
     if (getOption("pkgType") != "source") {
         av_srcpkgs <- av_srcpkgs[av_srcpkgs[ , "masked"] == masked, ]
         idx <- which(genome == av_srcpkgs[ , "provider_version"])
         if (length(idx) == 1L) {
             genome <- av_srcpkgs[idx , "pkgname"]
-            .stopIfPkgIsAvailable(genome, is.source=TRUE)
+            .stopOnAvailablePkg(genome, is.source=TRUE)
         }
         if (length(idx) >= 2L)
-            .stopIfMoreThanOnePkgIsAvailable(genome, masked, is.source=TRUE)
+            .stopOnMoreThanOneAvailablePkg(genome, masked, is.source=TRUE)
     }
     ## 1) and 2) have failed.
     stop(ifelse(masked, "Masked ", ""), "BSgenome data package ", genome,
