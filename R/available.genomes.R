@@ -84,7 +84,8 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
 .stopIfMoreThanOnePkgIsAvailable <- function(genome, masked, is.source=FALSE)
     stop("Looks like there is more than one available ",
          ifelse(masked, "masked ", ""), "BSgenome data package\n",
-         "  that matches genome assembly ", genome, ".\n",
+         "  that matches genome assembly (a.k.a. provider version): ",
+         genome, "\n",
          "  You first need to choose one (use 'available.genomes(",
          ifelse(is.source, "type=\"source\"", ""), ")' to get\n  the list). ",
          "Then install it, which you can do with:\n",
@@ -126,7 +127,8 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
     stop(ifelse(masked, "Masked ", ""), "BSgenome data package ", genome,
          " is not available.\n",
          "  See the BSgenomeForge vignette in the BSgenome software package ",
-         "for how to\n  forge a BSgenome data package for this genome.")
+         "for how to\n  forge a ", ifelse(masked, "masked ", ""),
+         "BSgenome data package for this genome.")
 }
 
 .getBSgenomeObjectFromInstalledPkg <- function(genome, masked=FALSE)
@@ -138,7 +140,8 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
         if (masked)
             warning("'masked' is only used to disambiguate between valid ",
                     "BSgenome data packages\n  when 'genome' is specifying ",
-                    "a genome assembly. Otherwise it's ignored.")
+                    "a genome assembly (a.k.a. provider version).\n",
+                    "  Otherwise it's ignored.")
         ans <- try(get(genome, envir=pkgenvir, inherits=FALSE), silent=TRUE)
         if (!is(ans, "BSgenome"))
             stop(genome, " doesn't look like a valid BSgenome data package")
@@ -162,7 +165,8 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
     if (length(idx) >= 2L)
         stop("Looks like you have more than one installed ",
              ifelse(masked, "masked ", ""), "BSgenome data package\n",
-             "  that matches genome assembly ", genome, ".\n",
+             "  that matches genome assembly (a.k.a. provider version): ",
+             genome, "\n",
              "  Please disambiguate by specifying the full name of the ",
              "package you want\n  to use (use 'installed.genomes()' to ",
              "get the list).")
@@ -181,8 +185,9 @@ getBSgenome <- function(genome, masked=FALSE)
     if (!isSingleString(genome))
         stop("'genome' must be a BSgenome object, or the full name of an ",
              "installed\n  BSgenome data package, or a short string ",
-             "specifying a genome assembly that\n  refers unambiguously ",
-             "to an installed BSgenome data package")
+             "specifying a genome assembly (a.k.a.\n  provider version) ",
+             "that refers unambiguously to an installed BSgenome data\n",
+             "  package")
     .getBSgenomeObjectFromInstalledPkg(genome, masked=masked)
 }
 
