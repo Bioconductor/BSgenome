@@ -9,8 +9,8 @@
 
 \description{
   \code{available.genomes} gets the list of BSgenome data packages that
-  are currently available on the Bioconductor repositories for your
-  version of R/Bioconductor.
+  are available in the Bioconductor repositories for your version of
+  R/Bioconductor.
 
   \code{installed.genomes} gets the list of BSgenome data packages that
   are currently installed on your system.
@@ -111,25 +111,6 @@ getBSgenome(genome, masked=FALSE)
 
 \examples{
 ## ---------------------------------------------------------------------
-## getBSgenome()
-## ---------------------------------------------------------------------
-
-## Specify the full name of an installed BSgenome data package:
-genome <- getBSgenome("BSgenome.Celegans.UCSC.ce2")
-genome
-
-## Specify a genome assembly (a.k.a. provider version):
-genome <- getBSgenome("hg19")
-class(genome)  # BSgenome object
-providerVersion(genome)
-genome$chrM
-
-genome <- getBSgenome("hg19", masked=TRUE)
-class(genome)  # MaskedBSgenome object
-providerVersion(genome)
-genome$chr22
-
-## ---------------------------------------------------------------------
 ## available.genomes() and installed.genomes()
 ## ---------------------------------------------------------------------
 
@@ -153,6 +134,25 @@ biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
 # Load the package and display the index of sequences for this genome:
 library(BSgenome.Scerevisiae.UCSC.sacCer1)
 Scerevisiae  # same as BSgenome.Scerevisiae.UCSC.sacCer1
+
+## ---------------------------------------------------------------------
+## getBSgenome()
+## ---------------------------------------------------------------------
+
+## Specify the full name of an installed BSgenome data package:
+genome <- getBSgenome("BSgenome.Celegans.UCSC.ce2")
+genome
+
+## Specify a genome assembly (a.k.a. provider version):
+genome <- getBSgenome("hg19")
+class(genome)  # BSgenome object
+providerVersion(genome)
+genome$chrM
+
+genome <- getBSgenome("hg19", masked=TRUE)
+class(genome)  # MaskedBSgenome object
+providerVersion(genome)
+genome$chr22
 }
 
 \keyword{manip}

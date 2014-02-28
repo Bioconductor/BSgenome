@@ -4,6 +4,12 @@
 ###
 
 
+.BSGENOME_PREFIX <- "BSgenome."
+
+.has_BSgenome_prefix <- function(x)
+    substr(x, 1L, nchar(.BSGENOME_PREFIX)) == .BSGENOME_PREFIX
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### installed.genomes() and available.genomes()
 ###
@@ -49,11 +55,11 @@ installed.genomes <- function(splitNameParts=FALSE)
     if (!isTRUEorFALSE(splitNameParts))
         stop("'splitNameParts' must be TRUE or FALSE")
     pkgs <- installed.packages()[ , "Package"]
-    pkgs <- pkgs[substr(pkgs, 1, 9) == "BSgenome."]
+    pkgs <- pkgs[.has_BSgenome_prefix(pkgs)]
     names(pkgs) <- NULL
     if (splitNameParts)
         pkgs <- .splitNameParts(pkgs)
-    return(pkgs)
+    pkgs
 }
 
 available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
@@ -62,11 +68,11 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
         stop("'splitNameParts' must be TRUE or FALSE")
     url <- getDataAnnotationContribUrl(type)
     pkgs <- available.packages(url)[, "Package"]
-    pkgs <- pkgs[substr(pkgs, 1, 9) == "BSgenome."]
+    pkgs <- pkgs[.has_BSgenome_prefix(pkgs)]
     names(pkgs) <- NULL
     if (splitNameParts)
         pkgs <- .splitNameParts(pkgs)
-    return(pkgs)
+    pkgs
 }
 
 
@@ -93,75 +99,14 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
          "      biocLite(\"<pkgname>\"",
          ifelse(is.source, ", type=\"source\"", ""), ")")
 
-.stopWithHelpfulMsgAboutAvailablePkgs <- function(genome, masked=FALSE)
+.getInstalledPkgnameFromProviderVersion <- function(genome, masked=FALSE)
 {
-    av_pkgs <- available.genomes(splitNameParts=TRUE)
-    ## 1) Try full match.
-    if (genome %in% av_pkgs[ , "pkgname"])
-        .stopOnAvailablePkg(genome)
-    if (getOption("pkgType") != "source") {
-        av_srcpkgs <- available.genomes(splitNameParts=TRUE, type="source")
-        if (genome %in% av_srcpkgs[ , "pkgname"])
-            .stopOnAvailablePkg(genome, is.source=TRUE)
-    }
-    ## 2) Try match on "provider_version".
-    av_pkgs <- av_pkgs[av_pkgs[ , "masked"] == masked, ]
-    idx <- which(genome == av_pkgs[ , "provider_version"])
-    if (length(idx) == 1L) {
-        genome <- av_pkgs[idx , "pkgname"]
-        .stopOnAvailablePkg(genome)
-    }
-    if (length(idx) >= 2L)
-        .stopOnMoreThanOneAvailablePkg(genome, masked)
-    if (getOption("pkgType") != "source") {
-        av_srcpkgs <- av_srcpkgs[av_srcpkgs[ , "masked"] == masked, ]
-        idx <- which(genome == av_srcpkgs[ , "provider_version"])
-        if (length(idx) == 1L) {
-            genome <- av_srcpkgs[idx , "pkgname"]
-            .stopOnAvailablePkg(genome, is.source=TRUE)
-        }
-        if (length(idx) >= 2L)
-            .stopOnMoreThanOneAvailablePkg(genome, masked, is.source=TRUE)
-    }
-    ## 1) and 2) have failed.
-    stop(ifelse(masked, "Masked ", ""), "BSgenome data package ", genome,
-         " is not available.\n",
-         "  See the BSgenomeForge vignette in the BSgenome software package ",
-         "for how to\n  forge a ", ifelse(masked, "masked ", ""),
-         "BSgenome data package for this genome.")
-}
-
-.getBSgenomeObjectFromInstalledPkg <- function(genome, masked=FALSE)
-{
-    pkgenvir <- try(as.environment(paste("package", genome, sep=":")),
-                    silent=TRUE)
-    if (!is(pkgenvir, "try-error")) {
-        ## 'genome' package is on the search list.
-        if (masked)
-            warning("'masked' is only used to disambiguate between valid ",
-                    "BSgenome data packages\n  when 'genome' is specifying ",
-                    "a genome assembly (a.k.a. provider version).\n",
-                    "  Otherwise it's ignored.")
-        ans <- try(get(genome, envir=pkgenvir, inherits=FALSE), silent=TRUE)
-        if (!is(ans, "BSgenome"))
-            stop(genome, " doesn't look like a valid BSgenome data package")
-        return(ans)
-    }
-
-    ## Try to find an installed BSgenome data package that matches 'genome'.
+    ## 1) Search installed packages.
     inst_pkgs <- installed.genomes(splitNameParts=TRUE)
-    ##   1) Try full match.
-    if (genome %in% inst_pkgs[ , "pkgname"]) {
-        library(genome, character.only=TRUE)
-        return(.getBSgenomeObjectFromInstalledPkg(genome, masked=masked))
-    }
-    ##   2) Try match on "provider_version".
     inst_pkgs <- inst_pkgs[inst_pkgs[ , "masked"] == masked, ]
     idx <- which(genome == inst_pkgs[ , "provider_version"])
-    if (length(idx) == 1L) {
-        genome <- inst_pkgs[idx , "pkgname"]
-        return(.getBSgenomeObjectFromInstalledPkg(genome))
-    }
+    if (length(idx) == 1L)
+        return(inst_pkgs[idx , "pkgname"])
     if (length(idx) >= 2L)
         stop("Looks like you have more than one installed ",
              ifelse(masked, "masked ", ""), "BSgenome data package\n",
@@ -171,9 +116,68 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
              "package you want\n  to use (use 'installed.genomes()' to ",
              "get the list).")
 
-    ## Try to find an available BSgenome data package that matches 'genome'
-    ## and fail gracefully with a helpful error message.
-    .stopWithHelpfulMsgAboutAvailablePkgs(genome, masked)
+    ## 2) Search available packages.
+    av_pkgs <- available.genomes(splitNameParts=TRUE)
+    av_pkgs <- av_pkgs[av_pkgs[ , "masked"] == masked, ]
+    idx <- which(genome == av_pkgs[ , "provider_version"])
+    if (length(idx) == 1L) {
+        genome <- av_pkgs[idx , "pkgname"]
+        .stopOnAvailablePkg(genome)
+    }
+    if (length(idx) >= 2L)
+        .stopOnMoreThanOneAvailablePkg(genome, masked)
+
+    ## 3) Search available source packages.
+    if (getOption("pkgType") != "source") {
+        av_srcpkgs <- available.genomes(splitNameParts=TRUE, type="source")
+        av_srcpkgs <- av_srcpkgs[av_srcpkgs[ , "masked"] == masked, ]
+        idx <- which(genome == av_srcpkgs[ , "provider_version"])
+        if (length(idx) == 1L) {
+            genome <- av_srcpkgs[idx , "pkgname"]
+            .stopOnAvailablePkg(genome, is.source=TRUE)
+        }
+        if (length(idx) >= 2L)
+            .stopOnMoreThanOneAvailablePkg(genome, masked, is.source=TRUE)
+    }
+
+    ## All searches have failed.
+    stop("Couldn't find a ",
+         ifelse(masked, "masked ", ""), "BSgenome data package ",
+         "that matches genome assembly\n  (a.k.a. provider version): ",
+         genome, "\n\n",
+         "  Please use 'available.genomes()' ",
+         "(or 'available.genomes(type=\"source\")')\n",
+         "  to check the list of BSgenome data packages that are available ",
+         "in the\n  Bioconductor repositories for your version of ",
+         "R/Bioconductor.\n  If you don't find what you are looking for, ",
+         "please see the BSgenomeForge\n  vignette in the BSgenome software ",
+         "package for how to forge a ",
+         ifelse(masked, "masked ", ""), "BSgenome\n  data package ",
+         "for your organism of interest.")
+}
+
+.getBSgenomeObjectFromInstalledPkgname <- function(genome)
+{
+    if (suppressWarnings(require(genome, quietly=TRUE, character.only=TRUE))) {
+        ## 'genome' package is on the search list.
+        pkgenvir <- as.environment(paste("package", genome, sep=":"))
+        ans <- try(get(genome, envir=pkgenvir, inherits=FALSE), silent=TRUE)
+        if (!is(ans, "BSgenome"))
+            stop(genome, " doesn't look like a valid BSgenome data package")
+        return(ans)
+    }
+    av_pkgs <- available.genomes()
+    if (genome %in% av_pkgs)
+        .stopOnAvailablePkg(genome)
+    if (getOption("pkgType") != "source") {
+        av_srcpkgs <- available.genomes(type="source")
+        if (genome %in% av_srcpkgs)
+            .stopOnAvailablePkg(genome, is.source=TRUE)
+    }
+    stop("Package ", genome, " is not available.\n",
+         "  Please see the BSgenomeForge vignette in the BSgenome software ",
+         "package\n  for how to forge a BSgenome data package for ",
+         "your organism of interest.")
 }
 
 getBSgenome <- function(genome, masked=FALSE)
@@ -188,6 +192,11 @@ getBSgenome <- function(genome, masked=FALSE)
              "specifying a genome assembly (a.k.a.\n  provider version) ",
              "that refers unambiguously to an installed BSgenome data\n",
              "  package")
-    .getBSgenomeObjectFromInstalledPkg(genome, masked=masked)
+    if (!.has_BSgenome_prefix(genome)) {
+        genome <- .getInstalledPkgnameFromProviderVersion(genome, masked=masked)
+    } else if (masked)
+        warning("'masked' is ignored when 'genome' is supplied as ",
+                "a full package name")
+    .getBSgenomeObjectFromInstalledPkgname(genome)
 }
 
