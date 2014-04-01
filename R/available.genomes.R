@@ -194,9 +194,10 @@ getBSgenome <- function(genome, masked=FALSE)
              "  package")
     if (!.has_BSgenome_prefix(genome)) {
         genome <- .getInstalledPkgnameFromProviderVersion(genome, masked=masked)
-    } else if (masked)
+    } else if (masked) {
         warning("'masked' is ignored when 'genome' is supplied as ",
                 "a full package name")
+    }
     .getBSgenomeObjectFromInstalledPkgname(genome)
 }
 
