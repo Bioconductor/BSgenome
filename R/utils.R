@@ -4,10 +4,12 @@
 
 getDataAnnotationContribUrl <- function(type=getOption("pkgType"))
 {
-    ## Just to avoid codetools "no visible binding" NOTE
-    biocinstallRepos <- NULL
-    ## Sourcing this file will define the 'biocinstallRepos' function
-    suppressWarnings(source("http://bioconductor.org/biocLite.R", local=TRUE))
+    if (!suppressWarnings(suppressMessages(require(BiocInstaller,
+                                                   quietly=TRUE)))) {
+        ## Sourcing this file will install and load the BiocInstaller package.
+        suppressWarnings(source("http://bioconductor.org/biocLite.R",
+                                local=TRUE))
+    }
     contrib.url(biocinstallRepos()["BioCann"], type=type)
 }
 
