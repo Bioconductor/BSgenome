@@ -18,6 +18,7 @@ Suggests: BiocInstaller,
 	SNPlocs.Hsapiens.dbSNP.20100427,
 	hgu95av2probe,
 	Biobase,
+	GenomeInfoDb,
 	RUnit
 License: Artistic-2.0
 LazyLoad: yes
