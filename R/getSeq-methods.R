@@ -23,7 +23,7 @@
     if (length(strand) < length) {
         if (length(strand) == 0L)
             stop("cannot recycle zero-length 'strand'")
-        strand <- IRanges:::recycleVector(strand, length)
+        strand <- S4Vectors:::recycleVector(strand, length)
     }
     strand
 }
@@ -58,10 +58,10 @@
     l3 <- length(width)
     max0123 <- max(l0, l1, l2, l3)
     ## Recycling will fail for vectors of length 0.
-    names <- IRanges:::recycleVector(names, max0123)
-    start <- IRanges:::recycleVector(start, max0123)
-    end <- IRanges:::recycleVector(end, max0123)
-    width <- IRanges:::recycleVector(width, max0123)
+    names <- S4Vectors:::recycleVector(names, max0123)
+    start <- S4Vectors:::recycleVector(start, max0123)
+    end <- S4Vectors:::recycleVector(end, max0123)
+    width <- S4Vectors:::recycleVector(width, max0123)
     strand <- .starfreeStrand(.normargStrand(strand, max0123))
     list(names=names, start=start, end=end, width=width, strand=strand)
 }

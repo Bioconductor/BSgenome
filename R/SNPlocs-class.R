@@ -303,7 +303,7 @@ setMethod("snplocs", "SNPlocs",
 {
     if (!is.vector(snpid))
         stop("'snpid' must be an integer or character vector")
-    if (IRanges:::anyMissing(snpid))
+    if (S4Vectors:::anyMissing(snpid))
         stop("'snpid' cannot contain NAs")
     if (is.numeric(snpid)) {
         if (!is.integer(snpid))
@@ -321,7 +321,7 @@ setMethod("snplocs", "SNPlocs",
         snpid <- substr(snpid, 3, nchar(snpid))
     }
     snpid <- suppressWarnings(as.integer(snpid))
-    if (IRanges:::anyMissing(snpid))
+    if (S4Vectors:::anyMissing(snpid))
         stop("cannot extract the digital part of some ids in 'snpid'")
     snpid
 }

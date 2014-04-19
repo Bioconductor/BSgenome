@@ -2,14 +2,15 @@ Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages
 Description: Infrastructure shared by all the Biostrings-based genome data
              packages 
-Version: 1.33.0
+Version: 1.33.1
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
-Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.1.2), IRanges (>= 1.13.6),
-	GenomicRanges (>= 1.15.9), Biostrings (>= 2.23.3)
-Imports: methods, BiocGenerics, IRanges, GenomicRanges,
+Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.1.2),
+	S4Vectors (>= 0.0.1), IRanges (>= 1.99.1),
+	GenomicRanges (>= 1.17.7), Biostrings (>= 2.33.3)
+Imports: methods, BiocGenerics, S4Vectors, IRanges, GenomicRanges,
 	XVector, Biostrings, Rsamtools
 Suggests: BiocInstaller,
 	BSgenome.Celegans.UCSC.ce2 (>= 1.3.11),
