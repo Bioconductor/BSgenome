@@ -11,7 +11,8 @@ fasta_headers <- matrix(unlist(m_data, use.names=FALSE), ncol=length(m_data))
 GRCh38_accns <- fasta_headers[4L, ]
 stopifnot(!any(duplicated(GRCh38_accns)))
 
-GRCh38_accn2seqlevel <- GenomeInfoDb:::fetch_GenBankAccn2seqlevel_for_GRCh38()
+GRCh38_accn2seqlevel <-
+    GenomeInfoDb:::fetch_GenBankAccn2seqlevel_from_NCBI("GCF_000001405.26")
 
 stopifnot(setequal(GRCh38_accns, names(GRCh38_accn2seqlevel)))
 GRCh38_seqlevels <- GRCh38_accn2seqlevel[GRCh38_accns]
