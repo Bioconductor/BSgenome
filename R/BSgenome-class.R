@@ -377,7 +377,8 @@ setMethod("show", "BSgenome",
             cat(object@species, "genome\n")
             cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         }
-        showGenomeDescription(object, margin=.SHOW_BSGENOME_PREFIX)
+        GenomeInfoDb:::showGenomeDescription(object,
+                                             margin=.SHOW_BSGENOME_PREFIX)
         if (!is.null(SNPlocs_pkgname(object)))
             cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")

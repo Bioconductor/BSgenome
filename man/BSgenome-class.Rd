@@ -39,8 +39,9 @@
 \section{Accessor methods}{
   In the code snippets below, \code{x} is a BSgenome object.
   Note that, because the BSgenome class contains the
-  \code{\link{GenomeDescription}} class, then all the accessor methods
-  for \code{\link{GenomeDescription}} objects can also be used on \code{x}.
+  \link[GenomeInfoDb]{GenomeDescription} class, then all the accessor methods
+  for \link[GenomeInfoDb]{GenomeDescription} objects can also be used on
+  \code{x}.
 
   \describe{
     \item{\code{sourceUrl(x)}}{
@@ -144,7 +145,7 @@
 
 \seealso{
   \code{\link{available.genomes}},
-  \link{GenomeDescription-class},
+  \link[GenomeInfoDb]{GenomeDescription-class},
   \link{BSgenome-utils},
   \link[Biostrings]{DNAString-class},
   \link[Biostrings]{DNAStringSet-class},

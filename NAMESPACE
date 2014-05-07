@@ -10,7 +10,6 @@ import(Biostrings)
 import(Rsamtools)
 
 exportClasses(
-    GenomeDescription,
     SNPlocs,
     InjectSNPsHandler,
     BSgenome, MaskedBSgenome,
@@ -22,7 +21,6 @@ exportClasses(
 
 export(
     ## Non-generic functions:
-    GenomeDescription,
     newSNPlocs,
     BSgenome, MaskedBSgenome,
     installed.genomes, available.genomes, getBSgenome,
@@ -31,9 +29,6 @@ export(
     GenomeData, GenomeDataList,
 
     ## Generic functions:
-    organism, species, provider, providerVersion,
-    releaseDate, releaseName, bsgenomeName,
-
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
@@ -57,13 +52,11 @@ export(
 exportMethods(
     ## Methods for generics defined elsewhere:
     names, show, length, "[[", "$", score,
+    seqinfo, "seqinfo<-", seqnames, "seqnames<-",
+    organism, species, provider, providerVersion, releaseDate, releaseName,
     getSeq, matchPWM, countPWM, vmatchPattern, vcountPattern,
 
     ## Methods for generics defined in this package:
-    organism, species, provider, providerVersion,
-    releaseDate, releaseName, bsgenomeName,
-    seqinfo, "seqinfo<-", seqnames,
-
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
