@@ -34,15 +34,16 @@ setMethod("export", c("BSgenome", "TwoBitFile"),
     function(object, con, format, ...)
     {
         if (!missing(format))
-            checkArgFormat(con, format)
+            rtracklayer:::checkArgFormat(con, format)
         i <- 0L
         twoBits <- bsapply(
             new("BSParams", X=object, FUN=function(chr) {
                 i <<- i + 1
                 rtracklayer:::.DNAString_to_twoBit(chr, seqnames(object)[i])
             }, ...))
-        invisible(rtracklayer:::.TwoBits_export(as.list(twoBits),
-                                                twoBitPath(path(con))))
+        object <- as.list(twoBits)
+        con <- rtracklayer:::twoBitPath(path(con))
+        invisible(rtracklayer:::.TwoBits_export(object, con))
     }
 )
 

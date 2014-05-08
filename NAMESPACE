@@ -52,7 +52,8 @@ export(
 
 exportMethods(
     ## Methods for generics defined elsewhere:
-    names, show, length, "[[", "$", score,
+    length, names, as.list, show, "[[", "$",
+    score,
     seqinfo, "seqinfo<-", seqnames, "seqnames<-",
     organism, species, provider, providerVersion, releaseDate, releaseName,
     getSeq, matchPWM, countPWM, vmatchPattern, vcountPattern,

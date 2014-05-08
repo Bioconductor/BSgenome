@@ -342,6 +342,15 @@ MaskedBSgenome <- function(ref_bsgenome,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Coercion
+###
+
+setMethod("as.list", "BSgenome",
+    function(x) lapply(seqnames(x), function(seqname) x[[seqname]])
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The 'show' method
 ###
 

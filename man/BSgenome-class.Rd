@@ -22,6 +22,7 @@
 \alias{BSgenome}
 
 % Standard generic methods:
+\alias{as.list,BSgenome-method}
 \alias{show,BSgenome-method}
 \alias{length,BSgenome-method}
 \alias{[[,BSgenome-method}

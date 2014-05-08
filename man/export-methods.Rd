@@ -65,5 +65,29 @@
 
 \author{Michael Lawrence}
 
+\examples{
+library(BSgenome.Celegans.UCSC.ce2)
+genome <- BSgenome.Celegans.UCSC.ce2
+
+## Export as FASTA file.
+out1_file <- file.path(tempdir(), "Celegans.fasta")
+export(genome, out1_file)
+
+## Export as twoBit file.
+out2_file <- file.path(tempdir(), "Celegans.2bit")
+export(genome, out2_file)
+
+## Sanity checks:
+dna0 <- DNAStringSet(as.list(genome))
+
+system.time(dna1 <- import(out1_file))
+stopifnot(all(dna0 == dna1))
+
+system.time(dna2 <- import(out2_file))  # importing twoBit is 10-20x
+                                        # faster than importing non
+                                        # compressed FASTA 
+stopifnot(all(dna0 == dna2))
+}
+
 \keyword{methods}
 \keyword{utilities}
