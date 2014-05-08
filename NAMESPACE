@@ -8,6 +8,7 @@ import(GenomicRanges)
 import(XVector)
 import(Biostrings)
 import(Rsamtools)
+import(rtracklayer)
 
 exportClasses(
     SNPlocs,
