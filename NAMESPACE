@@ -40,7 +40,7 @@ export(
     masknames,
     injectSNPs,
     gdapply,
-    gdReduce, gdreduce,
+    gdReduce,
 
     ## BSgenomeForge functions:
     forgeSeqlengthsFile,

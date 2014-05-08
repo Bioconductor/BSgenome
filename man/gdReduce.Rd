@@ -4,9 +4,6 @@
 \alias{gdReduce,GenomeData-method}
 \alias{gdReduce,GenomeDataList-method}
 
-% Deprecated
-\alias{gdreduce}
-
 \title{
   Reduces arguments to a single GenomeData instance
 }
