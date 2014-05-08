@@ -87,8 +87,8 @@
 .toGRanges <- function(x, strand)
 {
     if (is(x, "RangedData")) {
-        msg <- c("Starting with BioC 2.14, passing a RangedData object ",
-                 "to getSeq() is deprecated. Please use a GRanges object ",
+        msg <- c("Starting with BioC 2.14, passing a RangedData object to ",
+                 "getSeq() is no more supported. Please use a GRanges object ",
                  "instead. Note that you can obtain a GRanges object by ",
                  "simply coercing the RangedData object with ",
                  "'as(..., \"RangedData\")'. However, we strongly recommend ",
@@ -96,16 +96,7 @@
                  "objects instead of RangedData objects. Please ask on the ",
                  "bioc-devel mailing list if you have questions or concerns ",
                  "about this (http://bioconductor.org/help/mailing-list/).")
-        .Deprecated(msg=msg)
-        if ("strand" %in% colnames(x)) {
-            if (!identical(strand, "+"))
-                stop("'strand' cannot be specified when 'names' ",
-                     "is a RangedData object with a strand column")
-        } else {
-            strand <- Rle(strand(.normargStrand(strand, nrow(x))))
-            values(x) <- DataFrame(strand=strand)
-        }
-        return(as(x, "GRanges"))
+        .Defunct(msg=msg)
     }
     if (is(x, "RangesList") || is(x, "Ranges")) {
         if (is.null(names(x)))
