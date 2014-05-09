@@ -25,7 +25,7 @@
 ## Top-level BSgenomeForge function:
 
 forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".",
-                        ondisk_seq_format=c("rda", "fa", "fa.rz"),
+                        ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                         verbose=TRUE)
 
 ## Low-level BSgenomeForge functions:
@@ -35,10 +35,12 @@ forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
 
 forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
               seqs_srcdir=".", seqs_destdir=".",
-              ondisk_seq_format=c("rda", "fa", "fa.rz"), verbose=TRUE)
+              ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
+              verbose=TRUE)
 
 forgeMasksFiles(seqnames, nmask_per_seq,
-                seqs_destdir=".", ondisk_seq_format=c("rda", "fa", "fa.rz"),
+                seqs_destdir=".",
+                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                 masks_srcdir=".", masks_destdir=".",
                 AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                 AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -67,12 +69,14 @@ forgeMasksFiles(seqnames, nmask_per_seq,
   }
   \item{ondisk_seq_format}{
     Specifies how the single sequences should be stored in the forged package.
-    Can be either \code{"rda"}, \code{"fa"} or \code{"fa.rz"}. If \code{"rda"},
-    then \code{forgeBSgenomeDataPkg} and \code{forgeSeqFiles} will store each
-    single sequence as a serialized \link[Biostrings]{XString} object (there
-    will be one per sequence). If \code{"fa"} or \code{"fa.rz"}, then they will
-    store all of them in a single FASTA file (compressed in the RAZip format
-    if \code{"fa.rz"}).
+    Can be either \code{"2bit"}, \code{"rda"}, \code{"fa.rz"} or \code{"fa"}.
+    If \code{"2bit"}, then \code{forgeBSgenomeDataPkg} and \code{forgeSeqFiles}
+    will store all the single sequences in a single twoBit file.
+    If \code{"rda"}, then they will store each single sequence in a separated
+    serialized \link[Biostrings]{XString} object (there will be one per
+    single sequence). If \code{"fa"} or \code{"fa.rz"}, then they will
+    store all the single sequences in a single FASTA file (compressed in the
+    RAZip format if \code{"fa.rz"}).
   }
   \item{verbose}{
     \code{TRUE} or \code{FALSE}.

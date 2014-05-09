@@ -114,7 +114,8 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     srcpath <- getSeqSrcpaths(name, prefix=prefix, suffix=suffix,
                               seqs_srcdir=seqs_srcdir)
     if (verbose)
-        cat("Loading FASTA file '", srcpath, "' in '", name, "' object ... ", sep="")
+        cat("Loading FASTA file '", srcpath, "' in '", name,
+            "' object ... ", sep="")
     seq <- readDNAStringSet(srcpath, "fasta")
     if (verbose)
         cat("DONE\n")
@@ -141,7 +142,8 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         srcpath <- getSeqSrcpaths(seqname, prefix=prefix, suffix=suffix,
                                   seqs_srcdir=seqs_srcdir)
         if (verbose)
-            cat("Loading '", seqname, "' sequence from FASTA file '", srcpath, "' ... ", sep="")
+            cat("Loading '", seqname, "' sequence from FASTA file '",
+                srcpath, "' ... ", sep="")
         seq <- readDNAStringSet(srcpath, "fasta")
         if (verbose)
             cat("DONE\n")
@@ -153,7 +155,8 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
             seq <- seq[1L]
         }
         if (verbose)
-            cat("Appending '", seqname, "' sequence to FASTA file '", dest_filepath, "' ... ", sep="")
+            cat("Appending '", seqname, "' sequence to FASTA file '",
+                dest_filepath, "' ... ", sep="")
         names(seq) <- seqname
         writeXStringSet(seq, dest_filepath, append=TRUE,
                         format="fasta", width=50L)
@@ -161,6 +164,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
             cat("DONE\n")
     }
 
+    ## Create the index.
     if (ondisk_seq_format == "fa") {
         ## "fa" format
         if (verbose)
@@ -186,9 +190,44 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     }
 }
 
+.forgeTwobitFile <- function(seqnames, prefix, suffix,
+                             seqs_srcdir, seqs_destdir,
+                             verbose=TRUE)
+{
+    if (!is.character(seqnames))
+        stop("'seqnames' must be a character vector")
+    dest_filename <- "single_sequences.2bit"
+    dest_filepath <- file.path(seqs_destdir, dest_filename)
+    seqs <- setNames(vector(mode="list", length(seqnames)), seqnames)
+    for (seqname in seqnames) {
+        srcpath <- getSeqSrcpaths(seqname, prefix=prefix, suffix=suffix,
+                                  seqs_srcdir=seqs_srcdir)
+        if (verbose)
+            cat("Loading '", seqname, "' sequence from FASTA file '",
+                srcpath, "' ... ", sep="")
+        seq <- readDNAStringSet(srcpath, "fasta")
+        if (verbose)
+            cat("DONE\n")
+        if (length(seq) == 0L)
+            stop("file contains no DNA sequence")
+        if (length(seq) > 1L) {
+            warning("file contains ", length(seq), " sequences, ",
+                    "using the first sequence only")
+            seq <- seq[1L]
+        }
+        seqs[[seqname]] <- seq
+    }
+    seqs <- DNAStringSet(seqs)
+    if (verbose)
+        cat("Writing all sequences to '", dest_filename, "' ... ", sep="")
+    export(seqs, dest_filename, format="2bit")
+    if (verbose)
+        cat("DONE\n")
+}
+
 forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
-                          ondisk_seq_format=c("rda", "fa", "fa.rz"),
+                          ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                           verbose=TRUE)
 {
     if (length(seqnames) == 0) {
@@ -213,6 +252,9 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
             .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
                              is.single.seq=TRUE, verbose=verbose)
         }
+    } else if (ondisk_seq_format == "2bit") {  # "2bit" format
+        .forgeTwobitFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
+                         verbose=verbose)
     } else {  # "fa" and "fa.rz" formats
         .forgeFastaRzFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
                           ondisk_seq_format, verbose=verbose)
@@ -336,7 +378,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 .forgeMasksFile <- function(seqname, nmask_per_seq,
                             seqs_destdir=".",
-                            ondisk_seq_format=c("rda", "fa", "fa.rz"),
+                            ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -366,6 +408,12 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         load(seqfile)
         seq <- get(seqname)
         remove(list=seqname)
+    } else if (ondisk_seq_format == "2bit") {  # "2bit" format
+        twobit_filename <- "single_sequences.2bit"
+        twobit_filepath <- file.path(seqs_destdir, twobit_filename)
+        twobitfile <- TwoBitFile(twobit_filepath)
+        which <- GRanges(seqname, IRanges(1L, seqlengths(twobitfile)[[seqname]]))
+        seq <- import(twobitfile, which=which)[[1L]]
     } else {  # "fa" and "fa.rz" formats
         fa_filename <- "single_sequences.fa"
         if (ondisk_seq_format == "fa.rz")
@@ -409,7 +457,7 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
                             seqs_destdir=".",
-                            ondisk_seq_format=c("rda", "fa", "fa.rz"),
+                            ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -571,13 +619,15 @@ MaskedBSgenomeDataPkgSeed <- function(x)
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",
     function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
+                verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
 )
 
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
+                verbose=TRUE)
     {
         require(Biobase) ||
             stop("the Biobase package is required")
@@ -650,7 +700,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
 
 setMethod("forgeBSgenomeDataPkg", "list",
     function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
+                verbose=TRUE)
     {
         y <- BSgenomeDataPkgSeed(x)
         forgeBSgenomeDataPkg(y,
@@ -720,7 +771,8 @@ read.dcf2 <- function(file, ...)
 
 setMethod("forgeBSgenomeDataPkg", "character",
     function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
+                verbose=TRUE)
     {
         y <- .readSeedFile(x, verbose=verbose)
         y <- as.list(y)
@@ -798,7 +850,7 @@ setMethod("forgeMaskedBSgenomeDataPkg", "MaskedBSgenomeDataPkgSeed",
         pkgdir <- file.path(destdir, x@Package)
         masks_destdir <- file.path(pkgdir, "inst", "extdata")
         forgeMasksFiles(seqnames(ref_bsgenome), x@nmask_per_seq,
-                        seqs_destdir=seqs_destdir, ondisk_seq_format="fa.rz",
+                        seqs_destdir=seqs_destdir, ondisk_seq_format="2bit",
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                         AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
                         AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,
