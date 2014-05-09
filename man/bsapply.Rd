@@ -29,17 +29,16 @@ bsapply(BSParams, ...)
 }
 
 \value{
-  If \code{BSParams} sets \code{simplify = FALSE}, a GenomeData object is returned
+  If \code{BSParams} sets \code{simplify=FALSE}, an ordinary list is returned
   containing the results generated using the remaining BSParams specifications.
-  If \code{BSParams} sets \code{simplify = TRUE}, an \code{sapply}-like
-  simplification is used on the results.
+  If \code{BSParams} sets \code{simplify=TRUE}, an \code{sapply}-like
+  simplification is performed on the results.
 }
 
 \author{Marc Carlson}
 
 \seealso{
-  \link{BSParams-class}, \link{BSgenome-class}, \link{BSgenome-utils},
-  \link{GenomeData-class}
+  \link{BSParams-class}, \link{BSgenome-class}, \link{BSgenome-utils}
 }
 
 \examples{
@@ -94,14 +93,12 @@ bsapply(BSParams, ...)
   }
 
   ##Enable all standard masks
-  params@maskList <- c("RM"=TRUE,"TRF"=TRUE)
+  params@maskList <- c(RM=TRUE,TRF=TRUE)
   bsapply(params)
 
   ##Disable all standard masks
-  params@maskList <- c("AGAPS"=FALSE,"AMB"=FALSE)
+  params@maskList <- c(AGAPS=FALSE,AMB=FALSE)
   bsapply(params)
-
-
 }
 
 

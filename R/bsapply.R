@@ -81,12 +81,5 @@ function(BSParams, ...)
 
     userMask <- reduce(BSParams@userMask)
 
-    if (BSParams@simplify) {
-        sapply(seqnames, processSeqname, ...)
-    } else {
-        GenomeData(lapply(structure(seqnames, names = seqnames), processSeqname, ...),
-                   providerVersion = providerVersion(BSParams@X),
-                   organism = organism(BSParams@X),
-                   provider = provider(BSParams@X))
-    }
+    sapply(seqnames, processSeqname, ..., simplify=BSParams@simplify)
 }
