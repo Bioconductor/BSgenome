@@ -81,12 +81,12 @@ export(genome, out2_file)
 dna0 <- DNAStringSet(as.list(genome))
 
 system.time(dna1 <- import(out1_file))
-stopifnot(all(dna0 == dna1))
+stopifnot(identical(names(dna0), names(dna1)) && all(dna0 == dna1))
 
 system.time(dna2 <- import(out2_file))  # importing twoBit is 10-20x
                                         # faster than importing non
                                         # compressed FASTA 
-stopifnot(all(dna0 == dna2))
+stopifnot(identical(names(dna0), names(dna2)) && all(dna0 == dna2))
 }
 
 \keyword{methods}

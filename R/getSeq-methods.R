@@ -134,8 +134,7 @@
                                                 start, end, width, strand)
 {
     if (is.character(names)) {
-        refwidths <- seqlengths(x)[names]
-        ranges <- solveUserSEW(refwidths, start=start, end=end, width=width)
+        ranges <- IRanges(start=start, end=end, width=width)
         names <- GRanges(seqnames=names, ranges=ranges, strand=strand)
     }
 

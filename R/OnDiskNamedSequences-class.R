@@ -28,10 +28,7 @@ setGeneric("loadSubseqsFromLinearSequence",
         standardGeneric("loadSubseqsFromLinearSequence")
 )
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Low-level utilities
-###
 
 ### Works on an XString object or any object 'x' for which seqlengths() is
 ### defined.
@@ -47,6 +44,34 @@ setGeneric("loadSubseqsFromLinearSequence",
         stop("invalid sequence name: ", seqname)
     x_seqlengths[[idx]]
 }
+
+### Default methods
+
+setMethod("length", "OnDiskNamedSequences", function(x) length(names(x)))
+
+setMethod("seqnames", "OnDiskNamedSequences", function(x) seqlevels(x))
+
+setMethod("show", "OnDiskNamedSequences",
+    function(object)
+    {
+        cat(class(object), " instance of length ", length(object),
+            ":\n", sep="")
+        GenomicRanges:::compactPrintNamedAtomicVector(seqlengths(object))
+    }
+)
+
+### Load regions from a single sequence as an XStringSet object.
+
+### 'seqname' is ignored.
+setMethod("loadSubseqsFromLinearSequence", "XString",
+    function(x, seqname, ranges)
+        xvcopy(extractAt(x, ranges))  # ignores 'seqname'
+)
+
+setMethod("loadSubseqsFromLinearSequence", "OnDiskNamedSequences",
+    function(x, seqname, ranges)
+        loadSubseqsFromLinearSequence(x[[seqname]], seqname, ranges)
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -182,33 +207,68 @@ setMethod("loadSubseqsFromLinearSequence", "FastaNamedSequences",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Default methods
+### TwobitNamedSequences objects
 ###
 
-setMethod("length", "OnDiskNamedSequences", function(x) length(names(x)))
+setClass("TwobitNamedSequences",
+    contains="OnDiskNamedSequences",
+    representation(
+        ## TwoBitFile object pointing to the .2bit file containing the
+        ## sequences.
+        twobitfile="TwoBitFile"
+    )
+)
 
-setMethod("seqnames", "OnDiskNamedSequences", function(x) seqlevels(x))
+setMethod("names", "TwobitNamedSequences", function(x) seqlevels(x@twobitfile))
 
-setMethod("show", "OnDiskNamedSequences",
-    function(object)
+setMethod("seqlengthsFilepath", "TwobitNamedSequences",
+    function(x) path(x@twobitfile)
+)
+
+setMethod("seqinfo", "TwobitNamedSequences", function(x) seqinfo(x@twobitfile))
+
+### Constructor.
+TwobitNamedSequences <- function(filepath)
+{
+    twobitfile <- TwoBitFile(filepath)
+    new("TwobitNamedSequences", twobitfile=twobitfile)
+}
+
+### We only support subetting by name.
+### Load a full sequence as a DNAString object.
+setMethod("[[", "TwobitNamedSequences",
+    function(x, i, j, ...)
     {
-        cat(class(object), " instance of length ", length(object),
-            ":\n", sep="")
-        GenomicRanges:::compactPrintNamedAtomicVector(seqlengths(object))
+        if (!missing(j) || length(list(...)) > 0L)
+            stop("invalid subsetting")
+        if (!is.character(i))
+            stop("a FastaNamedSequences object can only be subsetted by name")
+        if (length(i) < 1L)
+            stop("attempt to select less than one element")
+        if (length(i) > 1L)
+            stop("attempt to select more than one element")
+        twobitfile <- x@twobitfile
+        seqlength <- .get_seqlength(twobitfile, i)
+        which <- GRanges(i, IRanges(1L, seqlength))
+        import(twobitfile, which=which)[[1L]]
     }
 )
 
-### Load regions from a single sequence as an XStringSet object.
-
-### 'seqname' is ignored.
-setMethod("loadSubseqsFromLinearSequence", "XString",
+### Load regions from a single sequence as a DNAStringSet object.
+setMethod("loadSubseqsFromLinearSequence", "TwobitNamedSequences",
     function(x, seqname, ranges)
-        xvcopy(extractAt(x, ranges))
-)
-
-setMethod("loadSubseqsFromLinearSequence", "OnDiskNamedSequences",
-    function(x, seqname, ranges)
-        loadSubseqsFromLinearSequence(x[[seqname]], seqname, ranges)
+    {
+        if (!is(ranges, "Ranges"))
+            stop("'ranges' must be a Ranges object")
+        twobitfile <- x@twobitfile
+        seqlength <- .get_seqlength(twobitfile, seqname)
+        if (length(ranges) != 0L &&
+            (min(start(ranges)) < 1L || max(end(ranges)) > seqlength))
+            stop("trying to load regions beyond the boundaries ",
+                 "of non-circular sequence \"", seqname, "\"")
+        which <- GRanges(seqname, ranges)
+        import(twobitfile, which=which)
+    }
 )
 
 

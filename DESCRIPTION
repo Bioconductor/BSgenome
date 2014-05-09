@@ -11,7 +11,7 @@ Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.1.2),
 	S4Vectors (>= 0.0.1), IRanges (>= 1.99.1),
 	GenomeInfoDb (>= 1.1.4), GenomicRanges (>= 1.17.12),
 	Biostrings (>= 2.33.3), rtracklayer (>= 1.25.8)
-Imports: methods, BiocGenerics, S4Vectors, IRanges, XVector,
+Imports: methods, stats, BiocGenerics, S4Vectors, IRanges, XVector,
         GenomeInfoDb, GenomicRanges, Biostrings, Rsamtools, rtracklayer
 Suggests: BiocInstaller,
 	BSgenome.Celegans.UCSC.ce2 (>= 1.3.11),

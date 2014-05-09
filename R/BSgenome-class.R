@@ -283,16 +283,22 @@ BSgenome <- function(organism, species, provider, provider_version,
                      seqs_pkgname, seqs_dirpath,
                      nmask_per_seq=0, masks_pkgname=NA, masks_dirpath=NA)
 {
-    fa_filename <- "single_sequences.fa"
-    fa_filepath <- file.path(seqs_dirpath, fa_filename)
-    farz_filename <- paste0(fa_filename, ".rz")
-    farz_filepath <- file.path(seqs_dirpath, farz_filename)
-    if (file.exists(farz_filepath)) {
-        single_sequences <- FastaNamedSequences(farz_filepath)
-    } else if (file.exists(fa_filepath)) {
-        single_sequences <- FastaNamedSequences(fa_filepath)
+    twobit_filename <- "single_sequences.2bit"
+    twobit_filepath <- file.path(seqs_dirpath, twobit_filename)
+    if (file.exists(twobit_filepath)) {
+        single_sequences <- TwobitNamedSequences(twobit_filepath)
     } else {
-        single_sequences <- RdaNamedSequences(seqs_dirpath, seqnames)
+        fa_filename <- "single_sequences.fa"
+        fa_filepath <- file.path(seqs_dirpath, fa_filename)
+        farz_filename <- paste0(fa_filename, ".rz")
+        farz_filepath <- file.path(seqs_dirpath, farz_filename)
+        if (file.exists(farz_filepath)) {
+            single_sequences <- FastaNamedSequences(farz_filepath)
+        } else if (file.exists(fa_filepath)) {
+            single_sequences <- FastaNamedSequences(fa_filepath)
+        } else {
+            single_sequences <- RdaNamedSequences(seqs_dirpath, seqnames)
+        }
     }
     seqinfo <- .makeBSgenomeSeqinfo(single_sequences,
                                     circ_seqs, provider_version,
@@ -346,7 +352,9 @@ MaskedBSgenome <- function(ref_bsgenome,
 ###
 
 setMethod("as.list", "BSgenome",
-    function(x) lapply(seqnames(x), function(seqname) x[[seqname]])
+    function(x)
+        lapply(setNames(seqnames(x), seqnames(x)),
+               function(seqname) x[[seqname]])
 )
 
 
