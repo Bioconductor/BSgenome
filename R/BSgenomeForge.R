@@ -131,7 +131,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 
 .forgeFastaRzFile <- function(seqnames, prefix, suffix,
                               seqs_srcdir, seqs_destdir,
-                              mode, verbose=TRUE)
+                              storage.mode, verbose=TRUE)
 {
     if (!is.character(seqnames))
         stop("'seqnames' must be a character vector")
@@ -160,7 +160,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
             cat("DONE\n")
     }
 
-    if (mode == "fa") {
+    if (storage.mode == "fa") {
         ## "fa" mode
         if (verbose)
             cat("Indexing FASTA file '", dest_filepath, "' ... ", sep="")
@@ -187,7 +187,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 
 forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
-                          mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                          storage.mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
 {
     if (length(seqnames) == 0) {
         warning("'seqnames' is empty")
@@ -205,15 +205,15 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
     }
     if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
-    mode <- match.arg(mode)
-    if (mode == "rda") {  # "rda" mode
+    storage.mode <- match.arg(storage.mode)
+    if (storage.mode == "rda") {  # "rda" mode
         for (name in seqnames) {
             .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
                              is.single.seq=TRUE, verbose=verbose)
         }
     } else {  # "fa" and "fa.rz" modes
         .forgeFastaRzFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
-                          mode, verbose=verbose)
+                          storage.mode, verbose=verbose)
     }
     for (name in mseqnames) {
         .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
@@ -333,7 +333,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 .forgeMasksFile <- function(seqname, nmask_per_seq,
-                            seqs_destdir=".", mode=c("rda", "fa", "fa.rz"),
+                            seqs_destdir=".",
+                            storage.mode=c("rda", "fa", "fa.rz"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -357,15 +358,15 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
         stop("'masks_destdir' must be a single string")
 
     ## Load the sequence.
-    mode <- match.arg(mode)
-    if (mode == "rda") {  # "rda" mode
+    storage.mode <- match.arg(storage.mode)
+    if (storage.mode == "rda") {  # "rda" mode
         seqfile <- file.path(seqs_destdir, paste(seqname, ".rda", sep=""))
         load(seqfile)
         seq <- get(seqname)
         remove(list=seqname)
     } else {  # "fa" and "fa.rz" modes
         fa_filename <- "single_sequences.fa"
-        if (mode == "fa.rz")
+        if (storage.mode == "fa.rz")
             fa_filename <- paste0(fa_filename, ".rz")
         fa_filepath <- file.path(seqs_destdir, fa_filename)
         fafile <- FaFile(fa_filepath)
@@ -405,7 +406,8 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
 }
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
-                            seqs_destdir=".", mode=c("rda", "fa", "fa.rz"),
+                            seqs_destdir=".",
+                            storage.mode=c("rda", "fa", "fa.rz"),
                             masks_srcdir=".", masks_destdir=".",
                             AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                             AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -417,7 +419,7 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
         warning("'seqnames' is empty")
     for (seqname in seqnames) {
         .forgeMasksFile(seqname, nmask_per_seq,
-                        seqs_destdir=seqs_destdir, mode=mode,
+                        seqs_destdir=seqs_destdir, storage.mode=storage.mode,
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                         AGAPSfiles_type=AGAPSfiles_type, AGAPSfiles_name=AGAPSfiles_name,
                         AGAPSfiles_prefix=AGAPSfiles_prefix, AGAPSfiles_suffix=AGAPSfiles_suffix,
@@ -566,17 +568,17 @@ MaskedBSgenomeDataPkgSeed <- function(x)
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",
     function(x, seqs_srcdir=".", destdir=".",
-                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                storage.mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
 )
 
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     function(x, seqs_srcdir=".", destdir=".",
-                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                storage.mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         require(Biobase) ||
             stop("the Biobase package is required")
-        mode <- match.arg(mode)
+        storage.mode <- match.arg(storage.mode)
         template_path <- system.file("pkgtemplates", "BSgenome_datapkg", package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
         symvals <- list(
@@ -623,7 +625,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         ## '.mseqnames' variables
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
-        if (mode == "rda") {
+        if (storage.mode == "rda") {
             ## Forge the "seqlengths.rda" file
             forgeSeqlengthsFile(.seqnames,
                                 prefix=x@seqfiles_prefix,
@@ -638,19 +640,19 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                       suffix=x@seqfiles_suffix,
                       seqs_srcdir=seqs_srcdir,
                       seqs_destdir=seqs_destdir,
-                      mode=mode,
+                      storage.mode=storage.mode,
                       verbose=verbose)
     }
 )
 
 setMethod("forgeBSgenomeDataPkg", "list",
     function(x, seqs_srcdir=".", destdir=".",
-                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                storage.mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         y <- BSgenomeDataPkgSeed(x)
         forgeBSgenomeDataPkg(y,
             seqs_srcdir=seqs_srcdir, destdir=destdir,
-            mode=mode, verbose=verbose)
+            storage.mode=storage.mode, verbose=verbose)
     }
 )
 
@@ -715,7 +717,7 @@ read.dcf2 <- function(file, ...)
 
 setMethod("forgeBSgenomeDataPkg", "character",
     function(x, seqs_srcdir=".", destdir=".",
-                mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                storage.mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
     {
         y <- .readSeedFile(x, verbose=verbose)
         y <- as.list(y)
@@ -728,7 +730,7 @@ setMethod("forgeBSgenomeDataPkg", "character",
         y <- y[!(names(y) %in% "seqs_srcdir")]
         forgeBSgenomeDataPkg(y,
             seqs_srcdir=seqs_srcdir, destdir=destdir,
-            mode=mode, verbose=verbose)
+            storage.mode=storage.mode, verbose=verbose)
     }
 )
 
@@ -793,7 +795,7 @@ setMethod("forgeMaskedBSgenomeDataPkg", "MaskedBSgenomeDataPkgSeed",
         pkgdir <- file.path(destdir, x@Package)
         masks_destdir <- file.path(pkgdir, "inst", "extdata")
         forgeMasksFiles(seqnames(ref_bsgenome), x@nmask_per_seq,
-                        seqs_destdir=seqs_destdir, mode="fa.rz",
+                        seqs_destdir=seqs_destdir, storage.mode="fa.rz",
                         masks_srcdir=masks_srcdir, masks_destdir=masks_destdir,
                         AGAPSfiles_type=x@AGAPSfiles_type, AGAPSfiles_name=x@AGAPSfiles_name,
                         AGAPSfiles_prefix=x@AGAPSfiles_prefix, AGAPSfiles_suffix=x@AGAPSfiles_suffix,
