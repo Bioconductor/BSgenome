@@ -420,17 +420,17 @@ For example, if the path to your \term{seed file} is
 \texttt{"path/to/my/seed"}, do:
 <<eval=false>>=
 library(BSgenome)
-#forgeBSgenomeDataPkg("path/to/my/seed", mode="fa.rz")  # not ready yet
-forgeBSgenomeDataPkg("path/to/my/seed", mode="rda")
+#forgeBSgenomeDataPkg("path/to/my/seed", storage.mode="fa.rz")  # not ready yet
+forgeBSgenomeDataPkg("path/to/my/seed", storage.mode="rda")
 @
 
 Depending on the size of the genome and your hardware, this can take between
 2 minutes and 1 or 2 hours. By default \Rfunction{forgeBSgenomeDataPkg} will
 create the source tree of the \term{target package} in the current directory.
 
-The \code{mode} argument was added in Bioconductor 2.14 and can be either
-\code{"rda"}, \code{"fa"}, or \code{"fa.rz"}. See \code{?forgeBSgenomeDataPkg}
-for the details.
+The \code{storage.mode} argument was added in Bioconductor 2.14 and can be
+either \code{"rda"}, \code{"fa"}, or \code{"fa.rz"}.
+See \code{?forgeBSgenomeDataPkg} for the details.
 %Starting with Bioconductor 2.14, \code{"fa.rz"} is the recommended mode.
 
 Once \Rfunction{forgeBSgenomeDataPkg} is done, ignore the warnings (if any),

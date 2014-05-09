@@ -25,7 +25,7 @@
 ## Top-level BSgenomeForge function:
 
 forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".",
-                        mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
+                        storage.mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
 
 ## Low-level BSgenomeForge functions:
 
@@ -34,10 +34,10 @@ forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
 
 forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
               seqs_srcdir=".", seqs_destdir=".",
-              mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
+              storage.mode=c("rda", "fa", "fa.rz"), verbose=TRUE)
 
 forgeMasksFiles(seqnames, nmask_per_seq,
-                seqs_destdir=".", mode=c("rda", "fa", "fa.rz"),
+                seqs_destdir=".", storage.mode=c("rda", "fa", "fa.rz"),
                 masks_srcdir=".", masks_destdir=".",
                 AGAPSfiles_type="gap", AGAPSfiles_name=NA,
                 AGAPSfiles_prefix="", AGAPSfiles_suffix="_gap.txt",
@@ -64,7 +64,7 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     This directory must already exist.
     See the BSgenomeForge vignette in this package for more information.
   }
-  \item{mode}{
+  \item{storage.mode}{
     Specifies how the single sequences should be stored in the forged package.
     Can be either \code{"rda"}, \code{"fa"} or \code{"fa.rz"}. If \code{"rda"},
     then \code{forgeBSgenomeDataPkg} and \code{forgeSeqFiles} will store each
