@@ -1,3 +1,5 @@
+### DEPRECATED!!!
+
 ## Conceptually a list of GenomeData objects
 
 setClass("GenomeDataList", prototype = prototype(elementType = "GenomeData"),
@@ -5,6 +7,7 @@ setClass("GenomeDataList", prototype = prototype(elementType = "GenomeData"),
 
 setValidity("GenomeDataList",
             function(object) {
+              .Deprecated(msg=GenomeData_deprecation_msg)
               ## each element must be a "GenomeData"
                 if (!identical(elementType(object), "GenomeData"))
                     return("The elementType(object) is not 'GenomeData'")
@@ -14,6 +17,7 @@ setValidity("GenomeDataList",
 GenomeDataList <- function(listData = list(), metadata = list(),
                            elementMetadata = NULL)
 {
+  .Deprecated(msg=GenomeData_deprecation_msg)
   new("GenomeDataList", listData = listData, metadata = metadata,
       elementMetadata = elementMetadata)
 }

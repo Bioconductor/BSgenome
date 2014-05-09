@@ -10,7 +10,20 @@
 \alias{coerce,GenomeDataList,data.frame-method}
 
 \title{List of GenomeData objects}
-\description{\code{GenomeDataList} is a list of
+\description{
+  WARNING: Starting with BioC 3.0, GenomeData and GenomeDataList objects 
+  are deprecated. Note that the GenomeData/GenomeDataList containers
+  predate the \link[GenomicRanges]{GRanges}/\link[GenomicRanges]{GRangesList} 
+  containers and, most of the times, the latters can be used instead of
+  the formers.
+  Please let us know on the bioc-devel mailing list
+  (\url{http://bioconductor.org/help/mailing-list/}) if you have
+  a use case where you think there are significant benefits in
+  using GenomeData/GenomeDataList over
+  \link[GenomicRanges]{GRanges}/\link[GenomicRanges]{GRangesList},
+  or if you have questions or concerns about this.
+
+  \code{GenomeDataList} is a list of
   \code{\linkS4class{GenomeData}} objects. It could be useful for
   storing data on multiple experiments or samples.} 
 
@@ -49,17 +62,22 @@
 \author{ Michael Lawrence }
 
 \seealso{
+  The \link[GenomicRanges]{GRanges} and \link[GenomicRanges]{GRangesList}
+  classes defined and documented in the \pkg{GenomicRanges} package.
+
   \linkS4class{GenomeData}, the type of elements stored in this class.
 
   \linkS4class{SimpleList}
 }
 
 \examples{
+\dontrun{
 gd <- GenomeData(list(chr1 = IRanges(1, 10), chrX = IRanges(2, 5)),
                  organism = "Mmusculus", provider = "UCSC",
                  providerVersion = "mm9")
 gdl <- GenomeDataList(list(gd), elementMetadata = DataFrame(induced = TRUE))
 gdl[[1]] # get first element
+}
 }
 
 \keyword{methods}

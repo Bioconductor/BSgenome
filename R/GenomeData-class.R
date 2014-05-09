@@ -1,3 +1,20 @@
+### =========================================================================
+### GenomeData objects
+### -------------------------------------------------------------------------
+
+### DEPRECATED!!!
+GenomeData_deprecation_msg <- wmsg(
+    "Starting with BioC 3.0, GenomeData and GenomeDataList objects ",
+    "are deprecated. Note that the GenomeData/GenomeDataList containers ",
+    "predate the GRanges/GRangesList containers and, most of the times, ",
+    "the latters can be used instead of the formers. ",
+    "Please let us know on the bioc-devel mailing list ",
+    "(http://bioconductor.org/help/mailing-list/) if you have ",
+    "a use case where you think there are significant benefits in using ",
+    "GenomeData/GenomeDataList over GRanges/GRangesList, or if you have ",
+    "questions or concerns about this."
+)
+
 ## A container for data in the form of a list of chromosomes.  Each
 ## sub-element can be anything
 
@@ -8,9 +25,20 @@ setClass("GenomeData", contains = "SimpleList")
 ### the metadata fields in the SimpleList metadata list.
 ### At least that way, all the metadata is in one place.
 setMethod("providerVersion", "GenomeData",
-          function(x) metadata(x)$providerVersion)
-setMethod("organism", "GenomeData", function(x) metadata(x)$organism)
-setMethod("provider", "GenomeData", function(x) metadata(x)$provider)
+          function(x) {
+            .Deprecated(msg=GenomeData_deprecation_msg)
+            metadata(x)$providerVersion
+          })
+setMethod("organism", "GenomeData",
+          function(x) {
+            .Deprecated(msg=GenomeData_deprecation_msg)
+            metadata(x)$organism
+          })
+setMethod("provider", "GenomeData",
+          function(x) {
+            .Deprecated(msg=GenomeData_deprecation_msg)
+            metadata(x)$provider
+          })
 
 GenomeData <- function(listData = list(),
                        providerVersion = metadata[["providerVersion"]],
@@ -19,6 +47,7 @@ GenomeData <- function(listData = list(),
                        metadata = list(),
                        elementMetadata = NULL, ...)
 {
+  .Deprecated(msg=GenomeData_deprecation_msg)
   if (!is.list(metadata))
     stop("'metadata' must be a list")
   md <- list(organism = organism, provider = provider,
@@ -29,6 +58,7 @@ GenomeData <- function(listData = list(),
 }
 
 setMethod("show", "GenomeData", function(object) {
+  .Deprecated(msg=GenomeData_deprecation_msg)
   cat("A GenomeData instance")
   if (!is.null(organism(object)))
     cat(" for", organism(object))
@@ -48,6 +78,7 @@ setMethod("show", "GenomeData", function(object) {
 
 setValidity("GenomeData",
             function(object) {
+              .Deprecated(msg=GenomeData_deprecation_msg)
               org <- organism(object)
               prov <- provider(object)
               provVer <- providerVersion(object)

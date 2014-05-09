@@ -21,7 +21,20 @@
 
 
 \title{Data on the genome}
-\description{\code{GenomeData} formally represents genomic data as a
+\description{
+  WARNING: Starting with BioC 3.0, GenomeData and GenomeDataList objects
+  are deprecated. Note that the GenomeData/GenomeDataList containers
+  predate the \link[GenomicRanges]{GRanges}/\link[GenomicRanges]{GRangesList}
+  containers and, most of the times, the latters can be used instead of
+  the formers.
+  Please let us know on the bioc-devel mailing list
+  (\url{http://bioconductor.org/help/mailing-list/}) if you have
+  a use case where you think there are significant benefits in
+  using GenomeData/GenomeDataList over
+  \link[GenomicRanges]{GRanges}/\link[GenomicRanges]{GRangesList},
+  or if you have questions or concerns about this.
+
+  \code{GenomeData} formally represents genomic data as a
   list, with one element per chromosome in the genome.} 
 
 \details{
@@ -106,6 +119,9 @@
 \author{ Michael Lawrence }
 
 \seealso{
+  The \link[GenomicRanges]{GRanges} and \link[GenomicRanges]{GRangesList}
+  classes defined and documented in the \pkg{GenomicRanges} package.
+
   \link{GenomeDataList-class}, a container for storing a
   list of GenomeData objects and useful e.g. for storing data
   on multiple samples.
@@ -120,6 +136,7 @@
 }
 
 \examples{
+\dontrun{
 gd <- GenomeData(list(chr1 = IRanges(1, 10), chrX = IRanges(2, 5)),
                  organism = "Mmusculus", provider = "UCSC",
                  providerVersion = "mm9")
@@ -127,6 +144,7 @@ organism(gd)
 providerVersion(gd)
 provider(gd)
 gd[["chr1"]] # get data for chromsome 1
+}
 }
 
 \keyword{methods}

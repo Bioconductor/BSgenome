@@ -8,10 +8,21 @@
   Reduces arguments to a single GenomeData instance
 }
 \description{
+  WARNING: Starting with BioC 3.0, GenomeData and GenomeDataList objects
+  are deprecated. Note that the GenomeData/GenomeDataList containers
+  predate the \link[GenomicRanges]{GRanges}/\link[GenomicRanges]{GRangesList}
+  containers and, most of the times, the latters can be used instead of
+  the formers.
+  Please let us know on the bioc-devel mailing list
+  (\url{http://bioconductor.org/help/mailing-list/}) if you have
+  a use case where you think there are significant benefits in
+  using GenomeData/GenomeDataList over
+  \link[GenomicRanges]{GRanges}/\link[GenomicRanges]{GRangesList},
+  or if you have questions or concerns about this.
+
   This function accepts one or more objects that are reduced, with a
   user-specified function, to a single \code{\linkS4class{GenomeData}}
   instance.
-
 }
 \usage{
 gdReduce(f, ..., init, right = FALSE, accumulate = FALSE, gdArgs = list()) 
@@ -79,6 +90,7 @@ gdReduce(f, ..., init, right = FALSE, accumulate = FALSE, gdArgs = list())
   \link{GenomeDataList-class}
 }
 \examples{
+\dontrun{
 gdReduce
 showMethods("gdReduce")
 
@@ -92,5 +104,6 @@ gdr <- gdReduce(function(x, y) {
 }, GenomeDataList(list(gd, gd[2])))
 gdr[["chr1"]]
 gdr[["chrX"]]
+}
 }
 \keyword{manip}
