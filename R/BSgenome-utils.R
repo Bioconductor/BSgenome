@@ -69,7 +69,7 @@ setMethod("vmatchPattern", "BSgenome",
                   algorithm = algorithm)
         nms <- factor(names(matches), levels = names(seqlengths))
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
-        matches <- do.call(c, unname(as.list(matches)))
+        matches <- do.call(c, unname(matches))
         runValue(seqnames(matches)) <- nms
         matches
     }
@@ -129,7 +129,7 @@ setMethod("vcountPattern", "BSgenome",
         cbind(data.frame(seqname =
                          rep(factor(names(counts), levels = names(counts)),
                              each = 2)),
-              do.call(rbind, unname(as.list(counts))))
+              do.call(rbind, unname(counts)))
     }
 )
 
@@ -210,7 +210,7 @@ setMethod("vmatchPDict", "BSgenome",
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
         nms <- factor(names(matches), levels = names(seqlengths))
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
-        matches <- do.call(c, unname(as.list(matches)))
+        matches <- do.call(c, unname(matches))
         runValue(seqnames(matches)) <- nms
         matches
     }
@@ -286,7 +286,7 @@ setMethod("vcountPDict", "BSgenome",
                             Rle(factor(names(counts), levels = names(counts)),
                                 unlist(lapply(counts, nrow),
                                        use.names = FALSE))),
-                  do.call(rbind, unname(as.list(counts))))
+                  do.call(rbind, unname(counts)))
     }
 )
 
@@ -339,11 +339,11 @@ setMethod("matchPWM", "BSgenome",
                   seqlengths = seqlengths, min.score = min.score)
         nms <- factor(names(matches), levels = names(seqlengths))
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
-        matches <- do.call(c, unname(as.list(matches)))
+        matches <- do.call(c, unname(matches))
         runValue(seqnames(matches)) <- nms
         ## create compact DNAStringSet
-        string <- factor(elementMetadata(matches)[["string"]])
-        elementMetadata(matches)[["string"]] <-
+        string <- factor(mcols(matches)[["string"]])
+        mcols(matches)[["string"]] <-
           DNAStringSet(levels(string))[as.integer(string)]
         matches
     }
@@ -377,7 +377,7 @@ setMethod("countPWM", "BSgenome",
         cbind(data.frame(seqname =
                          rep(factor(names(counts), levels = names(counts)),
                              each = 2)),
-              do.call(rbind, unname(as.list(counts))))
+              do.call(rbind, unname(counts)))
     }
 )
 
