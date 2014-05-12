@@ -1,7 +1,7 @@
 Package: BSgenome.Gaculeatus.UCSC.gasAcu1
 Title: Full genome sequences for Gasterosteus aculeatus (UCSC version gasAcu1)
 Description: Full genome sequences for Gasterosteus aculeatus (Stickleback) as provided by UCSC (gasAcu1, Feb. 2006) and stored in Biostrings objects.
-Version: 1.3.99
+Version: 1.4.0
 organism: Gasterosteus aculeatus 
 species: Stickleback 
 provider: UCSC

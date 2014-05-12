@@ -1,7 +1,7 @@
 Package: BSgenome.Celegans.UCSC.ce2
 Title: Full genome sequences for Caenorhabditis elegans (UCSC version ce2)
 Description: Full genome sequences for Caenorhabditis elegans (Worm) as provided by UCSC (ce2, Mar. 2004) and stored in Biostrings objects.
-Version: 1.3.99
+Version: 1.4.0
 organism: Caenorhabditis elegans
 species: Worm
 provider: UCSC

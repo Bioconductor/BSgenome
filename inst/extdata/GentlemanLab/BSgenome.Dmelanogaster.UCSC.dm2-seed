@@ -1,7 +1,7 @@
 Package: BSgenome.Dmelanogaster.UCSC.dm2
 Title: Full genome sequences for Drosophila melanogaster (UCSC version dm2)
 Description: Full genome sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm2, Apr. 2004) and stored in Biostrings objects.
-Version: 1.3.99
+Version: 1.4.0
 organism: Drosophila melanogaster
 species: Fly
 provider: UCSC
