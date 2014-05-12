@@ -198,7 +198,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         stop("'seqnames' must be a character vector")
     dest_filename <- "single_sequences.2bit"
     dest_filepath <- file.path(seqs_destdir, dest_filename)
-    seqs <- setNames(vector(mode="list", length(seqnames)), seqnames)
+    seqs <- setNames(vector(mode="list", length=length(seqnames)), seqnames)
     for (seqname in seqnames) {
         srcpath <- getSeqSrcpaths(seqname, prefix=prefix, suffix=suffix,
                                   seqs_srcdir=seqs_srcdir)
@@ -215,12 +215,12 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
                     "using the first sequence only")
             seq <- seq[1L]
         }
-        seqs[[seqname]] <- seq
+        seqs[[seqname]] <- seq[[1L]]
     }
     seqs <- DNAStringSet(seqs)
     if (verbose)
         cat("Writing all sequences to '", dest_filename, "' ... ", sep="")
-    export(seqs, dest_filename, format="2bit")
+    export(seqs, dest_filepath, format="2bit")
     if (verbose)
         cat("DONE\n")
 }

@@ -126,11 +126,27 @@ forgeMasksFiles(seqnames, nmask_per_seq,
 \author{H. Pages}
 
 \examples{
-  forgeSeqFiles("chrM", prefix="ce2", suffix=".fa",
-                seqs_srcdir=system.file("extdata", package="BSgenome"),
-                seqs_destdir=tempdir())
-  load(file.path(tempdir(), "chrM.rda"))
-  chrM
+seqs_srcdir <- system.file("extdata", package="BSgenome")
+seqnames <- c("chrX", "chrM")
+
+## Forge .rda sequence files:
+forgeSeqFiles(seqnames, prefix="ce2", suffix=".fa",
+              seqs_srcdir=seqs_srcdir,
+              seqs_destdir=tempdir(), ondisk_seq_format="rda")
+load(file.path(tempdir(), "chrX.rda"))
+load(file.path(tempdir(), "chrM.rda"))
+ce2_sequences <- DNAStringSet(list(chrX=chrX, chrM=chrM))
+
+
+## Forge .2bit sequence files:
+forgeSeqFiles(seqnames, prefix="ce2", suffix=".fa",
+              seqs_srcdir=seqs_srcdir,
+              seqs_destdir=tempdir(), ondisk_seq_format="2bit")
+ce2_sequences2 <- import(file.path(tempdir(), "single_sequences.2bit"))
+
+## Sanity check:
+stopifnot(identical(names(ce2_sequences), names(ce2_sequences2)) &&
+          all(ce2_sequences == ce2_sequences2))
 }
 
 \keyword{manip}
