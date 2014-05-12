@@ -190,6 +190,21 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     }
 }
 
+.replace_non_ACGTN_with_N <- function(x)
+{
+    non_ACGTN <- setdiff(names(af), c(DNA_BASES, "N"))
+    af <- alphabetFrequency(x)
+    if (sum(af[non_ACGTN]) == 0L)
+        return(x)
+    warning("DNA sequence contains letters not supported by UCSC twoBit ",
+            "format (the format\n  only supports A, C, G, T, and N). ",
+            "Replacing them with Ns.")
+    old <- paste(non_ACGTN, collapse="")
+    new <- paste(rep.int("N", length(non_ACGTN)), collapse="")
+    chartr(old, new, x)
+}
+
+
 .forgeTwobitFile <- function(seqnames, prefix, suffix,
                              seqs_srcdir, seqs_destdir,
                              verbose=TRUE)
@@ -215,7 +230,8 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
                     "using the first sequence only")
             seq <- seq[1L]
         }
-        seqs[[seqname]] <- seq[[1L]]
+        seq <- .replace_non_ACGTN_with_N(seq[[1L]])
+        seqs[[seqname]] <- seq
     }
     seqs <- DNAStringSet(seqs)
     if (verbose)
