@@ -192,8 +192,8 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
 
 .replace_non_ACGTN_with_N <- function(x)
 {
-    non_ACGTN <- setdiff(names(af), c(DNA_BASES, "N"))
     af <- alphabetFrequency(x)
+    non_ACGTN <- setdiff(names(af), c(DNA_BASES, "N"))
     if (sum(af[non_ACGTN]) == 0L)
         return(x)
     warning("DNA sequence contains letters not supported by UCSC twoBit ",
