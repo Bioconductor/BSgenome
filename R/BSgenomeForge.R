@@ -204,7 +204,6 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     chartr(old, new, x)
 }
 
-
 .forgeTwobitFile <- function(seqnames, prefix, suffix,
                              seqs_srcdir, seqs_destdir,
                              verbose=TRUE)
@@ -235,7 +234,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     }
     seqs <- DNAStringSet(seqs)
     if (verbose)
-        cat("Writing all sequences to '", dest_filename, "' ... ", sep="")
+        cat("Writing all sequences to '", dest_filepath, "' ... ", sep="")
     export(seqs, dest_filepath, format="2bit")
     if (verbose)
         cat("DONE\n")
