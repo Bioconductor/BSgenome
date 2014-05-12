@@ -130,23 +130,28 @@ seqs_srcdir <- system.file("extdata", package="BSgenome")
 seqnames <- c("chrX", "chrM")
 
 ## Forge .rda sequence files:
-forgeSeqFiles(seqnames, prefix="ce2", suffix=".fa",
+forgeSeqFiles(seqnames, prefix="ce2", suffix=".fa.gz",
               seqs_srcdir=seqs_srcdir,
               seqs_destdir=tempdir(), ondisk_seq_format="rda")
-load(file.path(tempdir(), "chrX.rda"))
-load(file.path(tempdir(), "chrM.rda"))
-ce2_sequences <- DNAStringSet(list(chrX=chrX, chrM=chrM))
-
 
 ## Forge .2bit sequence files:
-forgeSeqFiles(seqnames, prefix="ce2", suffix=".fa",
+forgeSeqFiles(seqnames, prefix="ce2", suffix=".fa.gz",
               seqs_srcdir=seqs_srcdir,
               seqs_destdir=tempdir(), ondisk_seq_format="2bit")
-ce2_sequences2 <- import(file.path(tempdir(), "single_sequences.2bit"))
 
-## Sanity check:
-stopifnot(identical(names(ce2_sequences), names(ce2_sequences2)) &&
-          all(ce2_sequences == ce2_sequences2))
+## Sanity checks:
+library(BSgenome.Celegans.UCSC.ce2)
+genome <- BSgenome.Celegans.UCSC.ce2
+
+load(file.path(tempdir(), "chrX.rda"))
+stopifnot(genome$chrX == chrX)
+load(file.path(tempdir(), "chrM.rda"))
+stopifnot(genome$chrM == chrM)
+
+ce2_sequences <- import(file.path(tempdir(), "single_sequences.2bit"))
+ce2_sequences0 <- DNAStringSet(list(chrX=genome$chrX, chrM=genome$chrM))
+stopifnot(identical(names(ce2_sequences0), names(ce2_sequences)) &&
+          all(ce2_sequences0 == ce2_sequences))
 }
 
 \keyword{manip}

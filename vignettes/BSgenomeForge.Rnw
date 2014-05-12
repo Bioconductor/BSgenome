@@ -186,7 +186,7 @@ You can use the \Rfunction{fasta.info} function from the \Rpackage{Biostrings}
 package to see what's in a FASTA file:
 <<>>=
 library(Biostrings)
-file <- system.file("extdata", "ce2chrM.fa", package="BSgenome")
+file <- system.file("extdata", "ce2chrM.fa.gz", package="BSgenome")
 fasta.info(file)
 @
 
