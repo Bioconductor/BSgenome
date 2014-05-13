@@ -288,6 +288,11 @@ sub-subsection of this subsection for an example of \term{seed file}.
       If you plan to distribute the package that you are going to forge, please
       pickup the license carefully and make sure that it is compatible with the
       license of the \term{sequence data files} if any.
+
+\item \code{Suggests}: [OPTIONAL] If you're going to add examples to the
+      \code{Examples} section of the \term{target package} (see
+      \code{PkgExamples} field below for how to do this), use this field
+      to list the packages used in these examples.
 \end{itemize}
 
 \subsubsection{Non-standard \texttt{DESCRIPTION} fields}
@@ -376,7 +381,8 @@ sub-subsection of this subsection for an example of \term{seed file}.
 
 \item \code{PkgExamples}: [OPTIONAL] Some {\R} code (possibly with comments)
       that will be added to the \code{Examples} section of the man page of the
-      \term{target package}.
+      \term{target package}. Don't forget to list the packages used in these
+      examples in the \code{Suggests} field.
 
 \item \code{seqs\_srcdir}: The path to the \textit{<seqs\_srcdir>} folder.
 

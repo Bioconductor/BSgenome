@@ -2,6 +2,7 @@ Package: BSgenome.Rnorvegicus.UCSC.rn5
 Title: Full genome sequences for Rattus norvegicus (UCSC version rn5)
 Description: Full genome sequences for Rattus norvegicus (Rat) as provided by UCSC (rn5, Mar. 2012) and stored in Biostrings objects.
 Version: 1.4.0
+Suggests: TxDb.Rnorvegicus.UCSC.rn5.refGene
 organism: Rattus norvegicus
 species: Rat
 provider: UCSC

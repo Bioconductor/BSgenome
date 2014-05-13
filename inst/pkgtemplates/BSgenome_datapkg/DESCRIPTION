@@ -6,7 +6,8 @@ Author: @AUTHOR@
 Maintainer: @MAINTAINER@
 Depends: BSgenome (>= @BSGENOMEVERSION@)
 Imports: BSgenome
-License: @LIC@
+Suggests: @SUGGESTS@
+License: @LICENSE@
 organism: @ORGANISM@
 species: @SPECIES@
 provider: @PROVIDER@
