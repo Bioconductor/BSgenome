@@ -15,7 +15,7 @@ seqnames: paste("chr", c(1:22, "X", "Y", "M", "1_gl000191_random", "1_gl000192_r
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-	
+	##
 	## ---------------------------------------------------------------------
 	## Upstream sequences
 	## ---------------------------------------------------------------------
@@ -23,7 +23,7 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## upstream5000 sequences are not included in the BSgenome data
 	## package anymore. However they can easily be extracted from the full
 	## genome sequences with something like:
-	
+	##
 	library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 	txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 	gn <- sort(genes(txdb))
