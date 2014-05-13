@@ -15,5 +15,29 @@ seqnames: paste("chr", c(1:22, "X", "Y", "M", "5_h2_hap1", "6_cox_hap1", "6_qbl_
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg18/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Upstream sequences
+	## ---------------------------------------------------------------------
+	## Starting with BioC 3.0, the upstream1000, upstream2000, and
+	## upstream5000 sequences are not included in the BSgenome data
+	## package anymore. However they can easily be extracted from the full
+	## genome sequences with something like:
+	.
+	library(TxDb.Hsapiens.UCSC.hg18.knownGene)
+	txdb <- TxDb.Hsapiens.UCSC.hg18.knownGene
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	library(BSgenome.Hsapiens.UCSC.hg18)
+	genome <- BSgenome.Hsapiens.UCSC.hg18
+	up1000seqs <- getSeq(genome, up1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## that contains a gene model based on the exact same reference genome
+	## as the BSgenome object you pass to getSeq(). Note that you can make
+	## your own custom TranscriptDb object from various annotation resources.
+	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
+	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## package.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/seqs
 ondisk_seq_format: rda
