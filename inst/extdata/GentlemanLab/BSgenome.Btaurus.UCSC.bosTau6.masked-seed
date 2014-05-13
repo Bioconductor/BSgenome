@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Btaurus.UCSC.bosTau6
 source_url: http://hgdownload.soe.ucsc.edu/goldenPath/bosTau6/bigZips/
 organism_biocview: Bos_taurus
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/bigZips/bosTau6.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/bigZips/bosTau6.trf.bed.gz
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/database/
+	RM masks: bosTau6.fa.out.gz from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/bigZips/
+	TRF masks: bosTau6.trf.bed.gz from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau6/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Btaurus.UCSC.bosTau6$chr1

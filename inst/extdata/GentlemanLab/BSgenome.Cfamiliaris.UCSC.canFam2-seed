@@ -13,7 +13,6 @@ organism_biocview: Canis_familiaris
 BSgenomeObjname: Cfamiliaris
 seqnames: paste("chr", c(1:38, "X", "M", "Un"), sep="")
 circ_seqs: "chrM"
-SrcDataFiles1: chromFa.tar.gz
-	from http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/
+SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/seqs

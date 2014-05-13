@@ -191,13 +191,18 @@ Celegans$I
 seqnames(Celegans) <- paste0("chr", seqnames(Celegans))
 
 ## Multiple sequences:
-mseqnames(Celegans) 
-upstream1000 <- Celegans$upstream1000
-upstream1000
-class(upstream1000)  # a DNAStringSet instance
+library(BSgenome.Rnorvegicus.UCSC.rn5)
+rn5 <- BSgenome.Rnorvegicus.UCSC.rn5
+rn5
+seqnames(rn5)
+rn5_chr1 <- rn5$chr1
+mseqnames(rn5) 
+rn5_random  <- Rnorvegicus$random
+rn5_random
+class(rn5_random)  # a DNAStringSet instance
 ## Character vector containing the description lines of the first
 ## 4 sequences in the original FASTA file:
-names(upstream1000)[1:4]
+names(rn5_random)[1:4]
 
 ## ---------------------------------------------------------------------
 ## PASS-BY-ADDRESS SEMANTIC, CACHING AND MEMORY USAGE
@@ -208,8 +213,8 @@ names(upstream1000)[1:4]
 options(verbose=TRUE)
 
 gc()  # nothing seems to be removed from the cache
-rm(chrI, upstream1000)
-gc()  # chrI and upstream1000 are removed from the cache (they are
+rm(rn5_chr1, rn5_random)
+gc()  # rn5_chr1 and rn5_random are removed from the cache (they are
       # not in use anymore)
 
 options(verbose=FALSE)
@@ -217,12 +222,12 @@ options(verbose=FALSE)
 ## Get the current amount of data in memory (in Mb):
 mem0 <- gc()["Vcells", "(Mb)"]
 
-system.time(chrV <- Celegans[["chrV"]])  # read from disk
+system.time(rn5_chr2 <- rn5$chr2)  # read from disk
   
-gc()["Vcells", "(Mb)"] - mem0  # chrV occupies 20Mb in memory
+gc()["Vcells", "(Mb)"] - mem0  # 'rn5_chr2' occupies 20Mb in memory
 
-system.time(tmp <- Celegans[["chrV"]])  # much faster! (sequence
-                                        # is in the cache)
+system.time(tmp <- rn5$chr2)  # much faster! (sequence
+                              # is in the cache)
 
 gc()["Vcells", "(Mb)"] - mem0  # we're still using 20Mb (sequences
                                # have a pass-by-address semantic
@@ -231,17 +236,18 @@ gc()["Vcells", "(Mb)"] - mem0  # we're still using 20Mb (sequences
   
 ## subseq() doesn't copy the sequence data either, hence it is very
 ## fast and memory efficient (but the returned object will hold a
-## reference to chrV):
-y <- subseq(chrV, 10, 8000000) 
+## reference to 'rn5_chr2'):
+y <- subseq(rn5_chr2, 10, 8000000) 
 gc()["Vcells", "(Mb)"] - mem0
 
-## We must remove all references to chrV before it can be removed from
-## the cache (so the 20Mb of memory used by this sequence are freed).
+## We must remove all references to 'rn5_chr2' before it can be
+## removed from the cache (so the 20Mb of memory used by this
+## sequence are freed):
 options(verbose=TRUE)
-rm(chrV, tmp)
+rm(rn5_chr2, tmp)
 gc()
 
-## Remember that 'y' holds a reference to chrV too:
+## Remember that 'y' holds a reference to 'rn5_chr2' too:
 rm(y)
 gc()
 

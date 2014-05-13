@@ -203,13 +203,6 @@ Here is how the \term{sequence data files} for the
         \begin{verbatim}
             tar zxf chromFa.tar.gz
         \end{verbatim}
-  \item Multiple sequences: files \texttt{upstream1000.fa.gz},
-        \texttt{upstream2000.fa.gz} and \texttt{upstream5000.fa.gz} were
-        downloaded from the same \textit{bigZips} folder and uncompressed
-        with:
-        \begin{verbatim}
-            for file in upstream*.fa.gz; do gunzip $file ; done
-        \end{verbatim}
 \end{itemize}
 
 \subsubsection{The \textit{<seqs\_srcdir>} folder}
@@ -367,7 +360,7 @@ sub-subsection of this subsection for an example of \term{seed file}.
 
 \item \code{mseqnames}: [OPTIONAL] An {\R} expression returning the names of
       the multiple sequences to forge (in a character vector).
-      E.g. \code{paste("upstream", c("1000", "2000", "5000"), sep="")}.
+      E.g. \code{c("random", "chrUn")} for \code{rn5}.
       The default value for \code{mseqnames} is \code{NULL} (no multiple
       sequence).
 
@@ -375,12 +368,11 @@ sub-subsection of this subsection for an example of \term{seed file}.
       to the \code{Details} section of the man page of the \term{target
       package}.
 
-\item \code{SrcDataFiles1}, \code{SrcDataFiles2}: [OPTIONAL] Some arbitrary
-      text that will be copied to the \code{Note} section of the man pages of
-      the \term{target package}. \code{SrcDataFiles1} should describe briefly
-      where the \term{sequence data files} are coming from.
-      \code{SrcDataFiles2} can contain any extra information and/or URLs.
-      Permanent URLs are a must.
+\item \code{SrcDataFiles}: [OPTIONAL] Some arbitrary text that will be copied
+      to the \code{Note} section of the man pages of the \term{target package}.
+      \code{SrcDataFiles} should describe briefly where the \term{sequence
+      data files} are coming from. Will typically contain URLs (permanent
+      URLs are a must).
 
 \item \code{PkgExamples}: [OPTIONAL] Some {\R} code (possibly with comments)
       that will be added to the \code{Examples} section of the man page of the
@@ -608,12 +600,11 @@ sub-subsection of this subsection for an example of \term{seed file}.
 
 \item \code{PkgDetails}, \code{PkgExamples}: See previous section.
 
-\item \code{SrcDataFiles1}, \code{SrcDataFiles2}: [OPTIONAL] Some arbitrary
-      text that will be copied to the \code{Note} section of the man pages of
-      the \term{target package}. \code{SrcDataFiles1} should describe briefly
-      where the \term{mask data files} are coming from.
-      \code{SrcDataFiles2} can contain any extra information and/or URLs.
-      Permanent URLs are a must.
+\item \code{SrcDataFiles}: [OPTIONAL] Some arbitrary text that will be copied
+      to the \code{Note} section of the man pages of the \term{target package}.
+      \code{SrcDataFiles} should describe briefly where the \term{mask data
+      files} are coming from. Will typically contain URLs (permanent
+      URLs are a must).
 
 \item \code{masks\_srcdir}: The path to the \textit{<masks\_srcdir>} folder.
 

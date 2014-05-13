@@ -428,8 +428,8 @@ setMethod("show", "BSgenome",
     if (is.na(idx)) {  # multiple sequence
         if (substr(seqname, 1L, 8L) == "upstream") {
             msg <- c(
-                "  Starting with BioC 2.14, upstream sequences ",
-                "are deprecated.\n",
+                "  Starting with BioC 3.0, the upstream sequences ",
+                "are defunct.\n",
                 "  However they can easily be extracted ",
                 "from the full genome\n  sequences with something like ",
                 "(for example for hg19):\n\n",
@@ -451,7 +451,7 @@ setMethod("show", "BSgenome",
                 "  makeTranscriptDbFromGFF() functions in the ",
                 "GenomicFeatures package."
             )
-            .Deprecated(msg=paste0(msg, collapse=""))
+            .Defunct(msg=paste0(msg, collapse=""))
         }
         ans <- x@multiple_sequences[[seqname]]
         return(ans)

@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Rnorvegicus.UCSC.rn4
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
 organism_biocview: Rattus_norvegicus
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/chromOut.tar.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/chromTrf.tar.gz
+SrcDataFiles: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/
+	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
+	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Rnorvegicus.UCSC.rn4$chr1

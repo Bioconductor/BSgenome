@@ -13,6 +13,6 @@ organism_biocview: Bos_taurus
 BSgenomeObjname: Btaurus
 seqnames: paste("chr", c(1:29, "X"), sep="")
 mseqnames: "chrUn.scaffolds"
-SrcDataFiles1: all the *.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/chromosomes/
+SrcDataFiles: all the *.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/chromosomes/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs

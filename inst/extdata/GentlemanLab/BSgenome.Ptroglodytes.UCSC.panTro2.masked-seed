@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Ptroglodytes.UCSC.panTro2
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
 organism_biocview: Pan_troglodytes
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro2/database/
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/chromOut.tar.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/chromTrf.tar.gz
+SrcDataFiles: AGAPS masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro2/database/
+	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
+	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Ptroglodytes.UCSC.panTro2$chr1

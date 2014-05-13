@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Drerio.UCSC.danRer5
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/danRer5/bigZips/
 organism_biocview: Danio_rerio
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer5/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer5/bigZips/danRer5.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/danRer5/bigZips/danRer5.trf.bed.gz
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/danRer5/database/
+	RM masks: danRer5.fa.out.gz from http://hgdownload.cse.ucsc.edu/goldenPath/danRer5/bigZips/
+	TRF masks: danRer5.trf.bed.gz from http://hgdownload.cse.ucsc.edu/goldenPath/danRer5/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Drerio.UCSC.danRer5$chr1

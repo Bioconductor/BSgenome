@@ -171,7 +171,7 @@ PkgDetails: The genome of Escherichia coli is made of a single circular DNA sequ
 	  File: ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Escherichia_coli_W3110/AC_000091.fna
 	}}
 	}
-SrcDataFiles1: Escherichia_coli_536/NC_008253.fna
+SrcDataFiles: Escherichia_coli_536/NC_008253.fna
 	Escherichia_coli_APEC_O1/NC_008563.fna
 	Escherichia_coli_C_ATCC_8739/NC_010468.fna
 	Escherichia_coli_CFT073/NC_004431.fna

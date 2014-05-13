@@ -18,8 +18,7 @@
 \note{
   This BSgenome data package was made from the following source data files:
   \preformatted{
-@SRCDATAFILES1@
-@SRCDATAFILES2@
+@SRCDATAFILES@
   }
 
   See \code{?\link[BSgenome]{BSgenomeForge}} and the BSgenomeForge

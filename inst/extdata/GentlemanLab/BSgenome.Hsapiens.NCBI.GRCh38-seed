@@ -446,9 +446,7 @@ seqnames: c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
 	"HSCHR19KIR_FH15_A_HAP_CTG3_1",
 	"HSCHR19KIR_RP5_B_HAP_CTG3_1")
 circ_seqs: "MT"
-mseqnames: character(0)
-SrcDataFiles1: GCA_000001405.15_GRCh38_top-level.fna.gz
-	from ftp://ftp.ncbi.nlm.nih.gov/genbank/genomes/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh38
+SrcDataFiles: GCA_000001405.15_GRCh38_top-level.fna.gz from ftp://ftp.ncbi.nlm.nih.gov/genbank/genomes/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh38
 PkgExamples: genome[["1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.NCBI.GRCh38/seqs
 ondisk_seq_format: rda

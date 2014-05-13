@@ -13,8 +13,7 @@ organism_biocview: Canis_familiaris
 BSgenomeObjname: Cfamiliaris
 seqnames: paste("chr", c(1:38, "X", "M"), sep="")
 circ_seqs: "chrM"
-mseqnames: c("chrUn", paste("upstream", c("1000", "2000", "5000"), sep=""))
-SrcDataFiles1: canFam3.fa.gz and the upstream*.fa.gz files
-	from http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/
+mseqnames: "chrUn"
+SrcDataFiles: canFam3.fa.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam3/seqs

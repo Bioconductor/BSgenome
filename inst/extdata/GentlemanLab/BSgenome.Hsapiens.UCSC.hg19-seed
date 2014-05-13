@@ -13,8 +13,22 @@ organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
 seqnames: paste("chr", c(1:22, "X", "Y", "M", "1_gl000191_random", "1_gl000192_random", "4_ctg9_hap1", "4_gl000193_random", "4_gl000194_random", "6_apd_hap1", "6_cox_hap2", "6_dbb_hap3", "6_mann_hap4", "6_mcf_hap5", "6_qbl_hap6", "6_ssto_hap7", "7_gl000195_random" , "8_gl000196_random", "8_gl000197_random", "9_gl000198_random", "9_gl000199_random", "9_gl000200_random", "9_gl000201_random", "11_gl000202_random", "17_ctg5_hap1", "17_gl000203_random", "17_gl000204_random", "17_gl000205_random", "17_gl000206_random", "18_gl000207_random", "19_gl000208_random", "19_gl000209_random", "21_gl000210_random", paste("Un_gl000", 211:249, sep="")), sep="")
 circ_seqs: "chrM"
-mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
-SrcDataFiles1: chromFa.zip, upstream1000.zip, upstream2000.zip, upstream5000.zip
-	from http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/
+SrcDataFiles: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	## Starting with BioC 3.0, the upstream1000, upstream2000, and upstream5000
+	## sequences are defunct. However they can easily be extracted from the
+	## full genome sequences with something like:
+	library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+	txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	library(BSgenome.Hsapiens.UCSC.hg19)
+	genome <- BSgenome.Hsapiens.UCSC.hg19
+	up1000seqs <- getSeq(genome, up1000)
+	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## that contains a gene model based on the exact same reference genome as
+	## the BSgenome object you pass to getSeq(). Note that you can make your
+	## own custom TranscriptDb object from various annotation resources. See
+	## the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(), and
+	## makeTranscriptDbFromGFF() functions in the GenomicFeatures package.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg19/seqs

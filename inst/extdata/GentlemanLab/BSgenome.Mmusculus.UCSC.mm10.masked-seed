@@ -6,7 +6,7 @@ RefPkgname: BSgenome.Mmusculus.UCSC.mm10
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/mm10/chromosomes/
 organism_biocview: Mus_musculus
 nmask_per_seq: 2
-SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/gap.txt.gz
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Mmusculus.UCSC.mm10$chr1

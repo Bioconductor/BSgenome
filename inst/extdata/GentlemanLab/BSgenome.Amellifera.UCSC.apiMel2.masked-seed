@@ -6,8 +6,8 @@ RefPkgname: BSgenome.Amellifera.UCSC.apiMel2
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 organism_biocview: Apis_mellifera
 nmask_per_seq: 3
-SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/GroupOut.zip
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/database/
+	RM masks: GroupOut.zip from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 PkgExamples: genome$Group1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
         unmasked(genome$Group1)  # same as BSgenome.Amellifera.UCSC.apiMel2$Group1

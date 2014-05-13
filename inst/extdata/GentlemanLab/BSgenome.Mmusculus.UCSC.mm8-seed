@@ -13,8 +13,6 @@ organism_biocview: Mus_musculus
 BSgenomeObjname: Mmusculus
 seqnames: paste("chr", c(1:19, "X", "Y", "M", paste(c(1, 5, 7, 8, 9, 10, 13, 15, 17, "X", "Y", "Un"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
-mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
-SrcDataFiles1: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
-	from http://hgdownload.cse.ucsc.edu/goldenPath/mm8/bigZips/
+SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/mm8/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmusculus.UCSC.mm8/seqs

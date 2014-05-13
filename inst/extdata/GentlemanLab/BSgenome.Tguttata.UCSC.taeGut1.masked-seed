@@ -6,7 +6,7 @@ RefPkgname: BSgenome.Tguttata.UCSC.taeGut1
 source_url: http://hgdownload.soe.ucsc.edu/goldenPath/taeGut1/database/
 organism_biocview: Taeniopygia_guttata
 nmask_per_seq: 2
-SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/taeGut1/database/
+SrcDataFiles: AGAPS masks: all the chr*_gap.txt.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/taeGut1/database/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Tguttata.UCSC.taeGut1$chr1

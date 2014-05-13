@@ -13,7 +13,7 @@ organism_biocview: Arabidopsis_thaliana
 BSgenomeObjname: Athaliana
 seqnames: paste("chr", c(1:5, "C", "M"), sep="")
 circ_seqs: c("chrC", "chrM")
-SrcDataFiles1: all the chr*.fas file from ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/
+SrcDataFiles: all the chr*.fas file from ftp://ftp.arabidopsis.org/home/tair/Sequences/whole_chromosomes/
 	WARNING: This is where things are today (Oct 1st, 2008) but is probably
 	NOT aimed to be the permanent URL for the 04232008 snapshot of the genome.
 	TAIR might update the content of this folder in the future with a new

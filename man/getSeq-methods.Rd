@@ -173,21 +173,6 @@ getSeq(Celegans, end=20)
 ## Get the last 20 bases of each chromosome:
 getSeq(Celegans, start=-20)
 
-## Get the "NM_058280_up_1000" sequence (belongs to the upstream1000
-## multiple sequence) as a DNAString object:
-s1 <- getSeq(Celegans, "NM_058280_up_1000")
-stopifnot(identical(getSeq(Celegans, "NM_058280_up_5000", start=-1000), s1))
-
-\dontrun{
-  ## Fails because there is more than one sequence across
-  ## Celegans$upstream1000, Celegans$upstream2000 and Celegans$upstream5000
-  ## with "NM_058280" in its name:
-  getSeq(Celegans, "NM_058280")
-
-  ## Fails because there is no sequence named exactly "NM_058280":
-  getSeq(Celegans, "^NM_058280$")
-}
-
 ## ---------------------------------------------------------------------
 ## B. EXTRACTING SMALL SEQUENCES FROM DIFFERENT CHROMOSOMES
 ## ---------------------------------------------------------------------

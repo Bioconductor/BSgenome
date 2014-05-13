@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Hsapiens.UCSC.hg17
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/
 organism_biocview: Homo_sapiens
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/hg17/database/
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/chromOut.zip
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/chromTrf.zip
+SrcDataFiles: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/hg17/database/
+	RM masks: chromOut.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/
+	TRF masks: chromTrf.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Hsapiens.UCSC.hg17$chr1

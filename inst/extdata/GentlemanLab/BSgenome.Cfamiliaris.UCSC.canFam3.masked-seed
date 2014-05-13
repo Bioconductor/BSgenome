@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Cfamiliaris.UCSC.canFam3
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/
 organism_biocview: Canis_familiaris
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/canFam3.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/canFam3.trf.bed.gz
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/database/
+	RM masks: canFam3.fa.out.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/
+	TRF masks: canFam3.trf.bed.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam3/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Cfamiliaris.UCSC.canFam3$chr1

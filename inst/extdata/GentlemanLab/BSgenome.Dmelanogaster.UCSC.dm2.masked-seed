@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Dmelanogaster.UCSC.dm2
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/
 organism_biocview: Drosophila_melanogaster
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm2/database/
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromOut.zip
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/chromTrf.zip
+SrcDataFiles: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm2/database/
+	RM masks: chromOut.zip from http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/
+	TRF masks: chromTrf.zip from http://hgdownload.cse.ucsc.edu/goldenPath/dm2/bigZips/
 PkgExamples: genome$chr2L  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr2L)  # same as BSgenome.Dmelanogaster.UCSC.dm2$$chr2L

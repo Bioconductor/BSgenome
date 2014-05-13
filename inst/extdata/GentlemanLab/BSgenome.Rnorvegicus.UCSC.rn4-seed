@@ -13,8 +13,6 @@ organism_biocview: Rattus_norvegicus
 BSgenomeObjname: Rnorvegicus
 seqnames: paste("chr", c(1:20, "X", "M", "Un", paste(c(1:20, "X", "Un"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
-mseqnames: paste("upstream", c("1000", "2000", "5000"), sep="")
-SrcDataFiles1: chromFa.tar.gz, upstream1000.fa.gz, upstream2000.fa.gz, upstream5000.fa.gz
-	from http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
+SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/seqs

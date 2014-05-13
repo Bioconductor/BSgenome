@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Ggallus.UCSC.galGal4
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/galGal4/bigZips/
 organism_biocview: Gallus_gallus
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: http://hgdownload.cse.ucsc.edu/goldenPath/galGal4/database/gap.txt.gz
-	RM masks: http://hgdownload.cse.ucsc.edu/goldenPath/galGal4/bigZips/galGal4.fa.out.gz
-	TRF masks: http://hgdownload.cse.ucsc.edu/goldenPath/galGal4/bigZips/galGal4.trf.bed.gz
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/galGal4/database/
+	RM masks: galGal4.fa.out.gz from http://hgdownload.cse.ucsc.edu/goldenPath/galGal4/bigZips/
+	TRF masks: galGal4.trf.bed.gz from http://hgdownload.cse.ucsc.edu/goldenPath/galGal4/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Ggallus.UCSC.galGal4$chr1

@@ -18,8 +18,7 @@
   The masks in this BSgenome data package were made from the following
   source data files:
   \preformatted{
-@SRCDATAFILES1@
-@SRCDATAFILES2@
+@SRCDATAFILES@
   }
 
   See \code{?\link[@REFPKGNAME@]{@REFPKGNAME@}} in the

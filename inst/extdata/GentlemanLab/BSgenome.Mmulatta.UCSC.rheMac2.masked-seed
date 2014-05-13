@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Mmulatta.UCSC.rheMac2
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/
 organism_biocview: Macaca_mulatta
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/database/
-	RM and TRF masks: chromOut.tar.gz and chromTrf.tar.gz
-	from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/database/
+	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
+	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## NOTE: In most assemblies available at UCSC, Tandem Repeats
 	## Finder repeats were filtered to retain only the repeats

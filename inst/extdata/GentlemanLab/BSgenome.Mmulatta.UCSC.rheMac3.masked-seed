@@ -6,9 +6,9 @@ RefPkgname: BSgenome.Mmulatta.UCSC.rheMac3
 source_url: http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/
 organism_biocview: Macaca_mulatta
 nmask_per_seq: 4
-SrcDataFiles1: AGAPS masks: gap.txt.gz from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac2/database/
-	RM and TRF masks: rheMac3.fa.out.gz and rheMac3.trf.bed.gz
-	from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/bigZips/
+SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/database/
+	RM masks: rheMac3.fa.out.gz from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/bigZips/
+	TRF masks: rheMac3.trf.bed.gz from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/bigZips/
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Mmulatta.UCSC.rheMac3$chr1
