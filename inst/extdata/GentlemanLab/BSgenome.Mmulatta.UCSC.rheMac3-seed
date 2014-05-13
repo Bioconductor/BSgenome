@@ -2,6 +2,7 @@ Package: BSgenome.Mmulatta.UCSC.rheMac3
 Title: Full genome sequences for Macaca mulatta (UCSC version rheMac3)
 Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac3, Oct. 2010) and stored in Biostrings objects.
 Version: 1.4.0
+Suggests: GenomicFeatures
 organism: Macaca mulatta
 species: Rhesus
 provider: UCSC
@@ -16,4 +17,26 @@ circ_seqs: "chrM"
 mseqnames: "chrUn"
 SrcDataFiles: rheMac3.fa.gz from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac3/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Upstream sequences
+	## ---------------------------------------------------------------------
+	## Starting with BioC 3.0, the upstream1000, upstream2000, and
+	## upstream5000 sequences for rheMac3 are not included in the BSgenome
+	## data package anymore. However they can easily be extracted from the
+	## full genome sequences with something like:
+	.
+	library(GenomicFeatures)
+	txdb <- makeTranscriptDbFromUCSC("rheMac3", "refGene")
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	up1000seqs <- getSeq(genome, up1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## that contains a gene model based on the exact same reference genome
+	## as the BSgenome object you pass to getSeq(). Note that you can make
+	## your own custom TranscriptDb object from various annotation resources.
+	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
+	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## package.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac3/seqs
