@@ -2,6 +2,7 @@ Package: BSgenome.Dmelanogaster.UCSC.dm3
 Title: Full genome sequences for Drosophila melanogaster (UCSC version dm3)
 Description: Full genome sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects.
 Version: 1.4.0
+Suggests: TxDb.Dmelanogaster.UCSC.dm3.ensGene
 organism: Drosophila melanogaster
 species: Fly
 provider: UCSC
@@ -15,4 +16,26 @@ seqnames: paste("chr", c("2L", "2R", "3L", "3R", "4", "X", "U", "M", "2LHet", "2
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/
 PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
+	.
+	## ---------------------------------------------------------------------
+	## Upstream sequences
+	## ---------------------------------------------------------------------
+	## Starting with BioC 3.0, the upstream1000, upstream2000, and
+	## upstream5000 sequences for dm3 are not included in the BSgenome data
+	## package anymore. However they can easily be extracted from the full
+	## genome sequences with something like:
+	.
+	library(TxDb.Dmelanogaster.UCSC.dm3.ensGene)
+	txdb <- TxDb.Dmelanogaster.UCSC.dm3.ensGene
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	up1000seqs <- getSeq(genome, up1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## that contains a gene model based on the exact same reference genome
+	## as the BSgenome object you pass to getSeq(). Note that you can make
+	## your own custom TranscriptDb object from various annotation resources.
+	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
+	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## package.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm3/seqs
