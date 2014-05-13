@@ -47,6 +47,9 @@ genome <- @PKGNAME@
 seqlengths(genome)
 @PKGEXAMPLES@
 
+## ---------------------------------------------------------------------
+## Genome-wide motif searching
+## ---------------------------------------------------------------------
 ## See the GenomeSearching vignette in the BSgenome software
 ## package for some examples of genome-wide motif searching using
 ## Biostrings and the BSgenome data packages:
