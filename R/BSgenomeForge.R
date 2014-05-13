@@ -527,7 +527,8 @@ setClass("BSgenomeDataPkgSeed",
         SrcDataFiles2="character",
         PkgExamples="character",
         seqfiles_prefix="character",
-        seqfiles_suffix="character"
+        seqfiles_suffix="character",
+        ondisk_seq_format="character"
     ),
     prototype(
         Author="The Bioconductor Dev Team",
@@ -542,7 +543,8 @@ setClass("BSgenomeDataPkgSeed",
         SrcDataFiles2="",
         PkgExamples="",
         seqfiles_prefix="",
-        seqfiles_suffix=".fa"
+        seqfiles_suffix=".fa",
+        ondisk_seq_format="2bit"
     )
 )   
 
@@ -633,21 +635,17 @@ MaskedBSgenomeDataPkgSeed <- function(x)
 ###
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",
-    function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
-                verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
 )
 
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
-    function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
-                verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
     {
         require(Biobase) ||
             stop("the Biobase package is required")
-        ondisk_seq_format <- match.arg(ondisk_seq_format)
-        template_path <- system.file("pkgtemplates", "BSgenome_datapkg", package="BSgenome")
+        template_path <- system.file("pkgtemplates", "BSgenome_datapkg",
+                                     package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
         symvals <- list(
             PKGTITLE=x@Title,
@@ -693,7 +691,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         ## '.mseqnames' variables
         source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
-        if (ondisk_seq_format == "rda") {
+        if (x@ondisk_seq_format == "rda") {
             ## Forge the "seqlengths.rda" file
             forgeSeqlengthsFile(.seqnames,
                                 prefix=x@seqfiles_prefix,
@@ -708,20 +706,17 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                       suffix=x@seqfiles_suffix,
                       seqs_srcdir=seqs_srcdir,
                       seqs_destdir=seqs_destdir,
-                      ondisk_seq_format=ondisk_seq_format,
+                      ondisk_seq_format=x@ondisk_seq_format,
                       verbose=verbose)
     }
 )
 
 setMethod("forgeBSgenomeDataPkg", "list",
-    function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
-                verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
     {
         y <- BSgenomeDataPkgSeed(x)
-        forgeBSgenomeDataPkg(y,
-            seqs_srcdir=seqs_srcdir, destdir=destdir,
-            ondisk_seq_format=ondisk_seq_format, verbose=verbose)
+        forgeBSgenomeDataPkg(y, seqs_srcdir=seqs_srcdir, destdir=destdir,
+                                verbose=verbose)
     }
 )
 
@@ -785,9 +780,7 @@ read.dcf2 <- function(file, ...)
 }
 
 setMethod("forgeBSgenomeDataPkg", "character",
-    function(x, seqs_srcdir=".", destdir=".",
-                ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
-                verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
     {
         y <- .readSeedFile(x, verbose=verbose)
         y <- as.list(y)
@@ -798,9 +791,8 @@ setMethod("forgeBSgenomeDataPkg", "character",
                      "'seqs_srcdir' field is missing in seed file")
         }
         y <- y[!(names(y) %in% "seqs_srcdir")]
-        forgeBSgenomeDataPkg(y,
-            seqs_srcdir=seqs_srcdir, destdir=destdir,
-            ondisk_seq_format=ondisk_seq_format, verbose=verbose)
+        forgeBSgenomeDataPkg(y, seqs_srcdir=seqs_srcdir, destdir=destdir,
+                                verbose=verbose)
     }
 )
 

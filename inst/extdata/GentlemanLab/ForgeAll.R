@@ -54,7 +54,7 @@ for (pkg in BSgenome_datapkgs) {
   cat("============================================================\n")
   cat("START FORGING ", pkg, "\n", sep="")
   cat("\n")
-  forgeBSgenomeDataPkg(pkg, ondisk_seq_format="2bit")
+  forgeBSgenomeDataPkg(pkg)
   cat("\n")
   cat("END FORGING ", pkg, "\n", sep="")
 }

@@ -24,9 +24,7 @@
 \usage{
 ## Top-level BSgenomeForge function:
 
-forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".",
-                        ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
-                        verbose=TRUE)
+forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
 
 ## Low-level BSgenomeForge functions:
 
@@ -69,14 +67,13 @@ forgeMasksFiles(seqnames, nmask_per_seq,
   }
   \item{ondisk_seq_format}{
     Specifies how the single sequences should be stored in the forged package.
-    Can be either \code{"2bit"}, \code{"rda"}, \code{"fa.rz"} or \code{"fa"}.
-    If \code{"2bit"}, then \code{forgeBSgenomeDataPkg} and \code{forgeSeqFiles}
-    will store all the single sequences in a single twoBit file.
-    If \code{"rda"}, then they will store each single sequence in a separated
-    serialized \link[Biostrings]{XString} object (there will be one per
-    single sequence). If \code{"fa"} or \code{"fa.rz"}, then they will
-    store all the single sequences in a single FASTA file (compressed in the
-    RAZip format if \code{"fa.rz"}).
+    Can be \code{"2bit"}, \code{"rda"}, \code{"fa.rz"}, or \code{"fa"}.
+    If \code{"2bit"} (the default), then all the single sequences are stored
+    in a single twoBit file.
+    If \code{"rda"}, then each single sequence is stored in a separated
+    serialized \link[Biostrings]{XString} object (one per single sequence).
+    If \code{"fa.rz"} or \code{"fa"}, then all the single sequences are stored
+    in a single FASTA file (compressed in the RAZip format if \code{"fa.rz"}).
   }
   \item{verbose}{
     \code{TRUE} or \code{FALSE}.

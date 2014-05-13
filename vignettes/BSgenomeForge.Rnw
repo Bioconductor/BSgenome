@@ -394,6 +394,16 @@ sub-subsection of this subsection for an example of \term{seed file}.
       corresponding FASTA file.
       Default values are the empty prefix for \code{seqfiles\_prefix} and
       \code{.fa} for \code{seqfiles\_suffix}.
+
+\item \code{ondisk\_seq\_format}: [OPTIONAL] Specifies how the single sequences
+      should be stored in the forged package. Can be \code{2bit}, \code{rda},
+      \code{fa.rz}, or \code{fa}.
+      If \code{2bit} (the default), then all the single sequences are stored
+      in a single twoBit file.
+      If \code{rda}, then each single sequence is stored in a separated
+      serialized \Rclass{XString} object (one per single sequence).
+      If \code{fa.rz} or \code{fa}, then all the single sequences are stored
+      in a single FASTA file (compressed in the RAZip format if \code{fa.rz}).
 \end{itemize}
 
 \subsubsection{An example}
@@ -420,16 +430,12 @@ For example, if the path to your \term{seed file} is
 \texttt{"path/to/my/seed"}, do:
 <<eval=false>>=
 library(BSgenome)
-forgeBSgenomeDataPkg("path/to/my/seed", ondisk_seq_format="2bit")
+forgeBSgenomeDataPkg("path/to/my/seed")
 @
 
 Depending on the size of the genome and your hardware, this can take between
 2 minutes and 1 or 2 hours. By default \Rfunction{forgeBSgenomeDataPkg} will
 create the source tree of the \term{target package} in the current directory.
-
-The \code{ondisk\_seq\_format} argument can be either \code{"2bit"},
-\code{"rda"}, \code{"fa.rz"}, or \code{"fa"}. See \code{?forgeBSgenomeDataPkg}
-for the details.
 
 Once \Rfunction{forgeBSgenomeDataPkg} is done, ignore the warnings (if any),
 quit \R, and build the source package (tarball) with
