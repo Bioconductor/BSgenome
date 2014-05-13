@@ -2,6 +2,7 @@ Package: BSgenome.Celegans.UCSC.ce10
 Title: Full genome sequences for Caenorhabditis elegans (UCSC version ce10)
 Description: Full genome sequences for Caenorhabditis elegans (Worm) as provided by UCSC (ce10, Oct. 2010) and stored in Biostrings objects.
 Version: 1.4.0
+Suggests: GenomicFeatures
 organism: Caenorhabditis elegans
 species: Worm
 provider: UCSC
@@ -15,4 +16,25 @@ seqnames: paste("chr", c("I", "II", "III", "IV", "V", "X", "M"), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/ce10/bigZips/
 PkgExamples: genome$chrI  # same as genome[["chrI"]]
+	.
+	## ---------------------------------------------------------------------	## Upstream sequences
+	## ---------------------------------------------------------------------
+	## Starting with BioC 3.0, the upstream1000, upstream2000, and
+	## upstream5000 sequences for ce10 are not included in the BSgenome data
+	## package anymore. However they can easily be extracted from the full
+	## genome sequences with something like:
+	.
+	library(GenomicFeatures)
+	txdb <- makeTranscriptDbFromUCSC("ce10", "refGene")
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	up1000seqs <- getSeq(genome, up1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## that contains a gene model based on the exact same reference genome
+	## as the BSgenome object you pass to getSeq(). Note that you can make
+	## your own custom TranscriptDb object from various annotation resources.
+	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
+	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## package.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Celegans.UCSC.ce10/seqs

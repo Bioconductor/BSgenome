@@ -21,9 +21,9 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## ---------------------------------------------------------------------
 	## Upstream sequences
 	## ---------------------------------------------------------------------
-	## The upstream sequences (i.e. sequences 1000 bases upstream of
-	## annotated transcription starts) can easily be extracted from the full
-	## genome sequences with something like:
+	## The upstream sequences for mm10 (i.e. the sequences 1000 bases
+	## upstream of annotated transcription starts) can easily be extracted
+	## from the full genome sequences with something like:
 	.
 	library(TxDb.Mmusculus.UCSC.mm10.knownGene)
 	txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene

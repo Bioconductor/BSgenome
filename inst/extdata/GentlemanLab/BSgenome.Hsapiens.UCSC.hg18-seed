@@ -21,7 +21,7 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## Upstream sequences
 	## ---------------------------------------------------------------------
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
-	## upstream5000 sequences are not included in the BSgenome data
+	## upstream5000 sequences for hg18 are not included in the BSgenome data
 	## package anymore. However they can easily be extracted from the full
 	## genome sequences with something like:
 	.
