@@ -23,7 +23,6 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## upstream5000 sequences are not included in the BSgenome data
 	## package anymore. However they can easily be extracted from the full
 	## genome sequences with something like:
-	##
 	library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 	txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 	gn <- sort(genes(txdb))
@@ -31,7 +30,6 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	library(BSgenome.Hsapiens.UCSC.hg19)
 	genome <- BSgenome.Hsapiens.UCSC.hg19
 	up1000seqs <- getSeq(genome, up1000)
-	
 	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
