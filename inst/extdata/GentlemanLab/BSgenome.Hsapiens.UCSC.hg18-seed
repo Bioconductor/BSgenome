@@ -28,8 +28,6 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	txdb <- TxDb.Hsapiens.UCSC.hg18.knownGene
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
-	library(BSgenome.Hsapiens.UCSC.hg18)
-	genome <- BSgenome.Hsapiens.UCSC.hg18
 	up1000seqs <- getSeq(genome, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
