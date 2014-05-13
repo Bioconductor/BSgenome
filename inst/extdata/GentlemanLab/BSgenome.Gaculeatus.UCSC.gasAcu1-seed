@@ -2,6 +2,7 @@ Package: BSgenome.Gaculeatus.UCSC.gasAcu1
 Title: Full genome sequences for Gasterosteus aculeatus (UCSC version gasAcu1)
 Description: Full genome sequences for Gasterosteus aculeatus (Stickleback) as provided by UCSC (gasAcu1, Feb. 2006) and stored in Biostrings objects.
 Version: 1.4.0
+Suggests: GenomicFeatures
 organism: Gasterosteus aculeatus 
 species: Stickleback 
 provider: UCSC
@@ -15,4 +16,26 @@ seqnames: paste("chr", c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX",
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/
 PkgExamples: genome$chrI # same as genome[["chrI"]]
+	.
+	## ---------------------------------------------------------------------
+	## Upstream sequences
+	## ---------------------------------------------------------------------
+	## Starting with BioC 3.0, the upstream1000, upstream2000, and
+	## upstream5000 sequences for gasAcu1 are not included in the BSgenome
+	## data package anymore. However they can easily be extracted from the
+	## full genome sequences with something like:
+	.
+	library(GenomicFeatures)
+	txdb <- makeTranscriptDbFromUCSC("gasAcu1", "refGene")
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	up1000seqs <- getSeq(genome, up1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## that contains a gene model based on the exact same reference genome
+	## as the BSgenome object you pass to getSeq(). Note that you can make
+	## your own custom TranscriptDb object from various annotation resources.
+	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
+	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## package.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/seqs

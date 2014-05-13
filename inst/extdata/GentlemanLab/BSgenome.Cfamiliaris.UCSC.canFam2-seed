@@ -2,6 +2,7 @@ Package: BSgenome.Cfamiliaris.UCSC.canFam2
 Title: Full genome sequences for Canis lupus familiaris (UCSC version canFam2)
 Description: Full genome sequences for Canis lupus familiaris (Dog) as provided by UCSC (canFam2, May 2005) and stored in Biostrings objects.
 Version: 1.4.0
+Suggests: GenomicFeatures
 organism: Canis lupus familiaris
 species: Dog
 provider: UCSC
@@ -15,4 +16,25 @@ seqnames: paste("chr", c(1:38, "X", "M", "Un"), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam2/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Upstream sequences
+	## ---------------------------------------------------------------------
+	## The upstream sequences for canFam2 (i.e. the sequences 1000 bases
+	## upstream of annotated transcription starts) can easily be extracted
+	## from the full genome sequences with something like:
+	.
+	library(GenomicFeatures)
+	txdb <- makeTranscriptDbFromUCSC("canFam2", "refGene")
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	up1000seqs <- getSeq(genome, up1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## that contains a gene model based on the exact same reference genome
+	## as the BSgenome object you pass to getSeq(). Note that you can make
+	## your own custom TranscriptDb object from various annotation resources.
+	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
+	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## package.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Cfamiliaris.UCSC.canFam2/seqs
