@@ -111,14 +111,10 @@
     stop("invalid 'names'")
 }
 
-.dropUnusedGRangesSeqnamesLevels <- function(x)
+.drop_unused_seqlevels <- function(x)
 {
-    ## There should be a better way to drop unused levels!
-    seqnames <- as.character(seqnames(x))
-    GRanges(seqnames=seqnames,
-            ranges=ranges(x),
-            strand=strand(x),
-            seqlengths=seqlengths(x)[unique(seqnames)])
+    seqlevels(x) <- seqlevelsInUse(x)
+    x
 }
 
 
@@ -340,8 +336,7 @@ setMethod("getSeq", "BSgenome",
             strand(names) <- .starfreeStrand(strand(names))
             seqnames <- as.character(seqnames(names))
             sseq_idx <- seqnames %in% seqnames(x)
-            sseq_args <- list(names=.dropUnusedGRangesSeqnamesLevels(
-                                    names[sseq_idx]))
+            sseq_args <- list(names=.drop_unused_seqlevels(names[sseq_idx]))
             mseq_idx <- !sseq_idx
             mseq_args <- list(names=names[mseq_idx])
         }

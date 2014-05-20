@@ -36,7 +36,7 @@ PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 	exclude <- c("chrU", "chrUextra")
 	seqlevels(gn, force=TRUE) <- setdiff(seqlevels(gn), exclude)
 	.
-	up1000 <- flank(gn, width=1000)
+	up1000 <- trim(suppressWarnings(flank(gn, width=1000)))
 	up1000seqs <- getSeq(genome, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
