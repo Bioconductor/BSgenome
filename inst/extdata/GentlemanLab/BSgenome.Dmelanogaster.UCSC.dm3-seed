@@ -27,17 +27,14 @@ PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 	.
 	library(TxDb.Dmelanogaster.UCSC.dm3.ensGene)
 	txdb <- TxDb.Dmelanogaster.UCSC.dm3.ensGene
-	gn <- sort(genes(txdb))
 	.
 	## Because the chrU and chrUextra sequences are made of concatenated
 	## scaffolds (see http://genome.ucsc.edu/cgi-bin/hgGateway?db=dm3),
 	## extracting the upstream sequences for genes located on these
 	## scaffolds is not reliable. So we exclude them:
 	exclude <- c("chrU", "chrUextra")
-	seqlevels(gn, force=TRUE) <- setdiff(seqlevels(gn), exclude)
-	.
-	up1000 <- trim(suppressWarnings(flank(gn, width=1000)))
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- extractUpstreamSeqs(genome, txdb, width=1000,
+	                                  exclude.seqlevels=exclude)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
 	## that contains a gene model based on the exact same reference genome
@@ -45,5 +42,5 @@ PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 	## your own custom TranscriptDb object from various annotation resources.
 	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
 	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
-	## package.
+	## package for more information.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm3/seqs
