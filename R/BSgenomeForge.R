@@ -240,13 +240,30 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         cat("DONE\n")
 }
 
-forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
+.copySeqFile <- function(seqfile_name,
+                         seqs_srcdir, seqs_destdir,
+                         verbose=TRUE)
+{
+    src_filepath <- file.path(seqs_srcdir, seqfile_name)
+    dest_filename <- "single_sequences.2bit"
+    dest_filepath <- file.path(seqs_destdir, dest_filename)
+    if (verbose)
+        cat("Copying '", src_filepath, "' to '", dest_filepath, "' ... ",
+            sep="")
+    file.copy(src_filepath, dest_filepath, copy.mode=FALSE, copy.date=FALSE)
+    if (verbose)
+        cat("DONE\n")
+}
+
+forgeSeqFiles <- function(seqnames, mseqnames=NULL,
+                          seqfile_name=NA, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
                           ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                           verbose=TRUE)
 {
     if (length(seqnames) == 0) {
-        warning("'seqnames' is empty")
+        if (is.na(seqfile_name))
+            warning("'seqnames' is empty")
     } else {
         ## just for the side effect of checking the arguments
         getSeqSrcpaths(seqnames, prefix=prefix, suffix=suffix,
@@ -268,8 +285,15 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
                              is.single.seq=TRUE, verbose=verbose)
         }
     } else if (ondisk_seq_format == "2bit") {  # "2bit" format
-        .forgeTwobitFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
+        if (is.na(seqfile_name)) {
+            .forgeTwobitFile(seqnames, prefix, suffix,
+                             seqs_srcdir, seqs_destdir,
+                             verbose=verbose)
+        } else {
+            .copySeqFile(seqfile_name,
+                         seqs_srcdir, seqs_destdir,
                          verbose=verbose)
+        }
     } else {  # "fa" and "fa.rz" formats
         .forgeFastaRzFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
                           ondisk_seq_format, verbose=verbose)
@@ -520,12 +544,13 @@ setClass("BSgenomeDataPkgSeed",
         source_url="character",
         organism_biocview="character",
         BSgenomeObjname="character",
-        seqnames="character",         # a single string containing R source code
-        circ_seqs="character",        # a single string containing R source code
-        mseqnames="character",        # a single string containing R source code
+        seqnames="character",        # a single string containing R source code
+        circ_seqs="character",       # a single string containing R source code
+        mseqnames="character",       # a single string containing R source code
         PkgDetails="character",
         SrcDataFiles="character",
         PkgExamples="character",
+        seqfile_name="character",
         seqfiles_prefix="character",
         seqfiles_suffix="character",
         ondisk_seq_format="character"
@@ -536,12 +561,13 @@ setClass("BSgenomeDataPkgSeed",
         Suggests="",
         License="Artistic-2.0",
         source_url="-- information not available --",
-        seqnames="NULL",              # equivalent to "character(0)"
-        circ_seqs="NULL",             # equivalent to "character(0)"
-        mseqnames="NULL",             # equivalent to "character(0)"
+        seqnames="NULL",             # equivalent to "character(0)"
+        circ_seqs="NULL",            # equivalent to "character(0)"
+        mseqnames="NULL",            # equivalent to "character(0)"
         PkgDetails="",
         SrcDataFiles="-- information not available --",
         PkgExamples="",
+        seqfile_name=NA_character_,
         seqfiles_prefix="",
         seqfiles_suffix=".fa",
         ondisk_seq_format="2bit"
@@ -561,7 +587,7 @@ setClass("MaskedBSgenomeDataPkgSeed",
         License="character",
         source_url="character",
         organism_biocview="character",
-        nmask_per_seq="integer",      # a single integer
+        nmask_per_seq="integer",     # a single integer
         PkgDetails="character",
         SrcDataFiles="character",
         PkgExamples="character",
@@ -702,6 +728,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         }
         ## Forge the sequence files (either "rda", "fa", or "fa.rz")
         forgeSeqFiles(.seqnames, mseqnames=.mseqnames,
+                      seqfile_name=x@seqfile_name,
                       prefix=x@seqfiles_prefix,
                       suffix=x@seqfiles_suffix,
                       seqs_srcdir=seqs_srcdir,

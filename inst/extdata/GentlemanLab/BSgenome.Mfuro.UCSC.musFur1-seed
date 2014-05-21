@@ -1,0 +1,17 @@
+Package: BSgenome.Mfuro.UCSC.musFur1
+Title: Full genome sequences for Mustela putorius furo (UCSC version musFur1)
+Description: Full genome sequences for Mustela putorius furo (Ferret) as provided by UCSC (musFur1, Apr. 2011) and stored in Biostrings objects.
+Version: 1.4.0
+organism: Mustela putorius furo
+species: Ferret
+provider: UCSC
+provider_version: musFur1
+release_date: Apr. 2011
+release_name: Ferret Genome Sequencing Consortium MusPutFur1.0
+source_url: http://hgdownload.soe.ucsc.edu/goldenPath/musFur1/bigZips/
+organism_biocview: Mustela_furo
+BSgenomeObjname: Mfuro
+SrcDataFiles: musFur1.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/musFur1/bigZips/
+PkgExamples: genome$GL896898  # same as genome[["GL896898"]]
+seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mfuro.UCSC.musFur1/seqs
+seqfile_name: musFur1.2bit

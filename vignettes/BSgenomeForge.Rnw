@@ -115,7 +115,7 @@ Requirements:
       containing the mask data (those files are optional).
       For most organisms, these files have been made publicly available on the
       internet by genome providers like UCSC, NCBI, FlyBase, TAIR, etc.
-      The next section of this vignette explains how to obtain and prepare
+      The next sections of this vignette explain how to obtain and prepare
       these files.
 \end{itemize}
 
@@ -129,8 +129,8 @@ on the Bioconductor website if you need to install or update the
 
 Questions, comments or bug reports about this vignette or about the
 BSgenomeForge functions are welcome. Please address them to the author
-(\code{hpages@fhcrc.org}) or post them on The Bioconductor Project Mailing List
-(\code{bioconductor@r-project.org}). Don't forget to visit the
+(\code{hpages@fhcrc.org}) or post them on The Bioconductor Project Mailing
+List (\code{bioconductor@r-project.org}). Don't forget to visit the
 Bioconductor website \footnote{\url{http://bioconductor.org/}}
 and subscribe to this list if you've not already done so.
 
@@ -158,29 +158,36 @@ bare sequences and possibly a 2nd target package with masked sequences).
 
 \subsubsection{What do I need?}
 
-The sequence data must be in FASTA files. You need 1 file per sequence that
-you want to put in the \term{target package}. The name of each file must be
-of the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>} where
+The sequence data must be in a single twoBit file (e.g. \textit{musFur1.2bit})
+or in a collection of FASTA files (possibly gzip-compressed).
+
+If the latter, then you need 1 FASTA file per sequence that you want to put
+in the \term{target package}. In that case the name of each FASTA file must
+be of the form \textit{<prefix>}\textit{<seqname>}\textit{<suffix>} where
 \textit{<seqname>} is the name of the sequence in it and \textit{<prefix>}
 and \textit{<suffix>} are a prefix and a suffix (possibly empty) that are
-the same for all the files.
+the same for all the FASTA files.
 
-For example the FASTA files available at UCSC in the ``Data set by
-chromosome'' section for Stickleback
-(\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/chromosomes/})
-could already be considered to have names of this form (\texttt{chrI.fa.gz},
+\subsubsection{Examples}
+
+UCSC provides the genome sequences for Stickleback (gasAcu1) in various forms:
+(a) as a twoBit file (\textit{gasAcu1.2bit} located in
+\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/},
+(b) as a big compressed tarball containing one file per chromosome
+(\textit{chromFa.tar.gz} located in the same folder), and (c) as a
+collection of compressed FASTA files (\texttt{chrI.fa.gz},
 \texttt{chrII.fa.gz}, \texttt{chrIII.fa.gz}, ..., \texttt{chrXXI.fa.gz},
-\texttt{chrM.fa.gz} and \texttt{chrUn.fa.gz}). However, because the files
-will need to be uncompressed after download and before they can be used
-by the forging process, the suffix will need to be set to \texttt{.fa},
-not \texttt{.fa.gz}. Also the prefix here is empty, not \texttt{chr},
-because \texttt{chr} is considered to be part of the sequence names
-(a chromosome naming convention commonly used at UCSC).
-Note that, alternatively, you can download and extract the big
-\texttt{chromFa.tar.gz} tarball located in the ``Full data set'' section
-(aka the \textit{bigZips} folder) for Stickleback
-(\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/}):
-it should contain the same files as the ``Data set by chromosome'' folder.
+\texttt{chrM.fa.gz} and \texttt{chrUn.fa.gz} located in
+\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/chromosomes/}).
+To forge a \term{BSgenome data package} for gasAcu1, the easiest would be
+to use (a) (the twoBit file). However it would also be possible to use (c)
+(the collection of compressed FASTA files). In that case the suffix would
+need to be set to \texttt{.fa.gz}. Note that the prefix here is empty and
+not \texttt{chr}, because \texttt{chr} is considered to be part of the
+sequence names (a commonly used chromosome naming convention at UCSC).
+Alternatively, the big compressed tarball (\texttt{chromFa.tar.gz}) could
+be used. After downloading and extracting it, we should end up with the same
+files as with (c).
 
 You can use the \Rfunction{fasta.info} function from the \Rpackage{Biostrings}
 package to see what's in a FASTA file:
@@ -190,27 +197,28 @@ file <- system.file("extdata", "ce2chrM.fa.gz", package="BSgenome")
 fasta.info(file)
 @
 
-\subsubsection{An example}
+For the \Rpackage{BSgenome.Mfuro.UCSC.musFur1} package, the twoBit file was
+used and downloaded with:
+\begin{verbatim}
+    wget http://hgdownload.soe.ucsc.edu/goldenPath/musFur1/bigZips/musFur1.2bit
+\end{verbatim}
 
-Here is how the \term{sequence data files} for the
-\Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package were obtained and prepared:
-
-\begin{itemize}
-  \item Single sequences: file \texttt{chromFa.tar.gz} was downloaded
-        from the UCSC \textit{bigZips} folder
-        \footnote{\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/}}
-        for \code{rn4} and extracted with:
-        \begin{verbatim}
-            tar zxf chromFa.tar.gz
-        \end{verbatim}
-\end{itemize}
+For the \Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package, the big compressed
+tarball was used. It was downloaded and extracted with:
+\begin{verbatim}
+    wget http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/chromFa.tar.gz
+    tar zxf chromFa.tar.gz
+\end{verbatim}
 
 \subsubsection{The \textit{<seqs\_srcdir>} folder}
 
-From now we assume that you've downloaded (checking the md5sums is always a
-good idea), extracted, and possibly renamed all the \term{sequence data
-files}, and that they are located in the \textit{<seqs\_srcdir>} folder.
+So we assume that you've downloaded the \term{sequence data files} and that
+they are now located in a folder on your machine\footnote{Note that checking
+the md5sums after download is always a good idea.}.
+From now on, we'll refer to this folder as the \textit{<seqs\_srcdir>} folder.
 
+Depending on what data files you downloaded (see previous sub-subsection),
+you might also need to extract and possibly rename the files.
 Note that all the \term{sequence data files} should be located directly in the
 \textit{<seqs\_srcdir>} folder, not in subfolders of this folder. For example,
 depending on the genome, UCSC provides either a big \texttt{chromFa.tar.gz}
@@ -275,8 +283,8 @@ sub-subsection of this subsection for an example of \term{seed file}.
       Part 4 is the release string or number used by this organisation
       to identify this version of the genome (e.g. \code{rn4}).
 
-\item \code{Title}: The title of the package. E.g. \code{Full genome sequences
-      for Rattus norvegicus (UCSC version rn4)}.
+\item \code{Title}: The title of the \term{target package}. E.g. \code{Full
+      genome sequences for Rattus norvegicus (UCSC version rn4)}.
 
 \item \code{Description}, \code{Version}, \code{Author}, \code{Maintainer},
       \code{License}: Like the 2 previous fields, these are mandatory fields
@@ -285,9 +293,9 @@ sub-subsection of this subsection for an example of \term{seed file}.
       of the \textit{Writing R Extensions} manual
       \footnote{\url{http://cran.r-project.org/doc/manuals/R-exts.html\#The-DESCRIPTION-file}}
       for more information about these fields.
-      If you plan to distribute the package that you are going to forge, please
-      pickup the license carefully and make sure that it is compatible with the
-      license of the \term{sequence data files} if any.
+      If you plan to distribute the \term{target package} that you are about
+      to forge, please pickup the license carefully and make sure that it is
+      compatible with the license of the \term{sequence data files} if any.
 
 \item \code{Suggests}: [OPTIONAL] If you're going to add examples to the
       \code{Examples} section of the \term{target package} (see
@@ -329,7 +337,7 @@ sub-subsection of this subsection for an example of \term{seed file}.
       \textit{List of UCSC genome releases} table.
 
 \item \code{source\_url}: The permanent URL where the \term{sequence data
-      files} used to forge this package can be found.
+      files} used to forge the \term{target package} can be found.
 
 \item \code{organism\_biocview}: The official biocViews term for this organism.
       This is generally the same as the \code{organism} field except that spaces
@@ -340,8 +348,8 @@ sub-subsection of this subsection for an example of \term{seed file}.
       \footnote{\url{http://bioconductor.org/packages/release/Organism.html}}
       the package will appear.
       Note that this is the only field in this category that won't be stored
-      in the \Rclass{BSgenome} object that will be contained in the \term{target
-      package}.
+      in the \Rclass{BSgenome} object that will be contained in the
+      \term{target package}.
 \end{itemize}
 
 \subsubsection{Other fields}
@@ -350,14 +358,16 @@ sub-subsection of this subsection for an example of \term{seed file}.
 \item \code{BSgenomeObjname}: Should match part 2 of the package name (see
       \code{Package} field above).
 
-\item \code{seqnames}: An {\R} expression returning the names of the single
-      sequences to forge (in a character vector).
+\item \code{seqnames}: [OPTIONAL] Needed only if you are using a collection
+      of \term{sequence data files}. In that case \code{seqnames} must be an
+      {\R} expression returning the names of the single sequences to forge
+      (in a character vector).
       E.g. \code{paste("chr", c(1:20, "X", "M", "Un", paste(c(1:20, "X", "Un"),
       "\_random", sep="")), sep="")}.
 
 \item \code{circ\_seqs}: [OPTIONAL] An {\R} expression returning the names of
-      the circular sequences (in a character vector). This must be a subset
-      of the \code{seqnames} specified above.
+      the circular sequences (in a character vector). If the \code{seqnames}
+      field is specified, then \code{circ\_seqs} must be a subset of it.
       E.g. \code{"chrM"} for rn4 or \code{c("chrM", "2micron")} for the sacCer2
       genome (Yeast) from UCSC.
       The default value for \code{circ\_seqs} is \code{NULL} (no circular
@@ -384,18 +394,23 @@ sub-subsection of this subsection for an example of \term{seed file}.
       \term{target package}. Don't forget to list the packages used in these
       examples in the \code{Suggests} field.
 
-\item \code{seqs\_srcdir}: The path to the \textit{<seqs\_srcdir>} folder.
+\item \code{seqs\_srcdir}: The absolute path to the folder containing the
+      \term{sequence data files}.
 
-\item \code{seqfiles\_prefix}, \code{seqfiles\_suffix}: [OPTIONAL] The common
-      prefix and suffix that need to be added to all the sequence names
-      (fields \code{seqnames} and \code{mseqnames}) to get the name of the
-      corresponding FASTA file.
+\item \code{seqfile\_name}: Required if the \term{sequence data files} is a
+      single twoBit file (e.g. \code{musFur1.2bit}). Ignored otherwise.
+
+\item \code{seqfiles\_prefix}, \code{seqfiles\_suffix}: [OPTIONAL] Needed only
+      if you are using a collection of \term{sequence data files}.
+      The common prefix and suffix that need to be added to all the sequence
+      names (fields \code{seqnames} and \code{mseqnames}) to get the name of
+      the corresponding FASTA file.
       Default values are the empty prefix for \code{seqfiles\_prefix} and
       \code{.fa} for \code{seqfiles\_suffix}.
 
 \item \code{ondisk\_seq\_format}: [OPTIONAL] Specifies how the single sequences
-      should be stored in the forged package. Can be \code{2bit}, \code{rda},
-      \code{fa.rz}, or \code{fa}.
+      should be stored in the \term{target package}. Can be \code{2bit},
+      \code{rda}, \code{fa.rz}, or \code{fa}.
       If \code{2bit} (the default), then all the single sequences are stored
       in a single twoBit file.
       If \code{rda}, then each single sequence is stored in a separated
@@ -412,19 +427,25 @@ are included in the \Rpackage{BSgenome} package:
 library(BSgenome)
 seed_files <- system.file("extdata", "GentlemanLab", package="BSgenome")
 tail(list.files(seed_files, pattern="-seed$"))
+
+## Display seed file for musFur1:
+musFur1_seed <- list.files(seed_files, pattern="\\.musFur1-seed$", full.names=TRUE)
+cat(readLines(musFur1_seed), sep="\n")
+
+## Display seed file for rn4:
 rn4_seed <- list.files(seed_files, pattern="\\.rn4-seed$", full.names=TRUE)
 cat(readLines(rn4_seed), sep="\n")
 @
 
 From now we assume that you have managed to prepare the \term{seed file} for
-your package.
+your \term{target package}.
 
 
 \subsection{Forge the \term{target package}}
 
-To forge the package, start \R, load the \Rpackage{BSgenome} package, and call
-the \Rfunction{forgeBSgenomeDataPkg} function on your \term{seed file}.
-For example, if the path to your \term{seed file} is
+To forge the \term{target package}, start \R, load the \Rpackage{BSgenome}
+package, and call the \Rfunction{forgeBSgenomeDataPkg} function on your
+\term{seed file}. For example, if the path to your \term{seed file} is
 \texttt{"path/to/my/seed"}, do:
 <<eval=false>>=
 library(BSgenome)

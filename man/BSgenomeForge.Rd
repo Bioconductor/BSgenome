@@ -31,7 +31,8 @@ forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
 forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
                     seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
 
-forgeSeqFiles(seqnames, mseqnames=NULL, prefix="", suffix=".fa",
+forgeSeqFiles(seqnames, mseqnames=NULL,
+              seqfile_name=NA, prefix="", suffix=".fa",
               seqs_srcdir=".", seqs_destdir=".",
               ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
               verbose=TRUE)
@@ -83,10 +84,11 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     and multiple (for \code{mseqnames}) sequences to forge.
     See the BSgenomeForge vignette in this package for more information.
   }
-  \item{prefix, suffix}{
+  \item{seqfile_name, prefix, suffix}{
     See the BSgenomeForge vignette in this package for more information,
-    in particular the description of the \code{seqfiles_prefix} and
-    \code{seqfiles_suffix} fields of a BSgenome data package seed file.
+    in particular the description of the \code{seqfile_name},
+    \code{seqfiles_prefix} and \code{seqfiles_suffix} fields of a BSgenome
+    data package seed file.
   }
   \item{seqs_destdir, masks_destdir}{
     During the forging process the source data files are converted into

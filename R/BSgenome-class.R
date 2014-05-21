@@ -258,11 +258,14 @@ setReplaceMethod("seqnames", "BSgenome",
                                  seqnames)
 {
     seqlengths <- seqlengths(single_sequences)
-    if (!identical(names(seqlengths), seqnames))
+    if (length(seqnames) == 0L) {
+        seqnames <- names(seqlengths)
+    } else if (!identical(names(seqlengths), seqnames)) {
         stop("sequence names found in file '",
              seqlengthsFilepath(single_sequences),
              "' are not identical to 'seqnames'. ",
              "May be the data on disk is corrupted?")
+    }
     if (identical(circ_seqs, NA)) {
         is_circ <- NA
     } else {
@@ -303,6 +306,7 @@ BSgenome <- function(organism, species, provider, provider_version,
     seqinfo <- .makeBSgenomeSeqinfo(single_sequences,
                                     circ_seqs, provider_version,
                                     seqnames)
+    seqnames <- seqnames(seqinfo)
     genome_description <- GenomeDescription(organism, species,
                                             provider, provider_version,
                                             release_date, release_name,
@@ -310,8 +314,7 @@ BSgenome <- function(organism, species, provider, provider_version,
     if (is.null(mseqnames))
         mseqnames <- character(0)
     multiple_sequences <- RdaCollection(seqs_dirpath, mseqnames)
-    user_seqnames <- seqnames(seqinfo)
-    names(user_seqnames) <- user_seqnames
+    names(user_seqnames) <- user_seqnames <- seqnames
     nmask_per_seq <- as.integer(nmask_per_seq)
     masks_dirpath <- as.character(masks_dirpath)
     if (nmask_per_seq == 0L || length(seqnames) == 0L) {
