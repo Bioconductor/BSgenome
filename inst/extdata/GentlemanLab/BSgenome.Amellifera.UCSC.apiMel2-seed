@@ -11,7 +11,7 @@ release_name: Baylor College of Medicine HGSC v.Amel_2.0
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 organism_biocview: Apis_mellifera
 BSgenomeObjname: Amellifera
-seqnames: paste("Group", c(1:16, "Un"), sep="")
-SrcDataFiles: GroupFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
+SrcDataFiles: apiMel2.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 PkgExamples: genome$Group1  # same as genome[["Group1"]]
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
+seqfile_name: apiMel2.2bit
