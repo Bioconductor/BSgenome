@@ -383,26 +383,31 @@ setMethod("show", "BSgenome",
         if (!is.null(SNPlocs_pkgname(object)))
             cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         if (length(mseqnames(object)) == 0L) {
-            what <- "sequences"
+            what <- "sequence"
         } else {
             cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
-            what <- "single sequences"
+            what <- "single sequence"
         }
-        mystrwrap(paste(length(seqnames(object)), what,
-                        "(use 'seqnames()' to see all the sequence names,",
-                        "use the '$' or '[[' operator to access a given ",
-                        "sequence):"))
+        mystrwrap(paste0(length(seqnames(object)), " ", what, "s:"))
         if (length(seqnames(object)) != 0L) {
             printAtomicVectorInAGrid(seqnames(object),
                                      prefix=.SHOW_SEQSECTION_PREFIX)
+            mystrwrap(paste0("(use 'seqnames()' to see all the ",
+                             what, " names, ",
+                             "use the '$' or '[[' operator to access a given ",
+                             what, ")"))
         } else {
             cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
         }
         if (length(mseqnames(object)) != 0L) {
             cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
-            mystrwrap("multiple sequences (see '?mseqnames'):")
+            mystrwrap("multiple sequences:")
             printAtomicVectorInAGrid(mseqnames(object),
                                      prefix=.SHOW_SEQSECTION_PREFIX)
+            mystrwrap(paste0("(use 'mseqnames()' to see all the ",
+                             "multiple sequence names, ",
+                             "use the '$' or '[[' operator to access a given ",
+                             "multiple sequence)"))
         }
     }
 )
