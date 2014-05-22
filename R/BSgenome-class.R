@@ -374,25 +374,6 @@ setMethod("show", "BSgenome",
         mystrwrap <- function(line)
             writeLines(strwrap(line, width=getOption("width")+1,
                                exdent=0L, prefix=.SHOW_BSGENOME_PREFIX))
-        showSequenceIndex <- function(names, prefix)
-        {
-            index_width <- getOption("width") + 2L - nchar(prefix)
-            col_width <- max(nchar(names))
-            ncols <- index_width %/% (col_width + 2L)
-            col <- 1L
-            for (name in names) {
-                if (col == 1L) cat(prefix)
-                cat(format(name, width=col_width))
-                if (col == ncols) {
-                    cat("\n")
-                    col <- 1L
-                } else {
-                    cat("  ")
-                    col <- col + 1L
-                }
-            }
-            if (col != 1L) cat("\n")
-        }
         if (!is.na(object@species)) {
             cat(object@species, "genome\n")
             cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
@@ -403,17 +384,20 @@ setMethod("show", "BSgenome",
             cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0L)
-            mystrwrap("single sequences (see '?seqnames'):")
+            what <- "single sequences"
         else
-            mystrwrap("sequences (see '?seqnames'):")
+            what <- "sequences"
+        mystrwrap(paste(length(seqnames(object)), what, "(see '?seqnames'):"))
         if (length(seqnames(object)) != 0L)
-            showSequenceIndex(seqnames(object), .SHOW_SEQSECTION_PREFIX)
+            printAtomicVectorInAGrid(seqnames(object),
+                                     prefix=.SHOW_SEQSECTION_PREFIX)
         else
             cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
         cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         if (length(mseqnames(object)) != 0L) {
             mystrwrap("multiple sequences (see '?mseqnames'):")
-            showSequenceIndex(mseqnames(object), .SHOW_SEQSECTION_PREFIX)
+            printAtomicVectorInAGrid(mseqnames(object),
+                                     prefix=.SHOW_SEQSECTION_PREFIX)
             cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
         }
         mystrwrap("(use the '$' or '[[' operator to access a given sequence)")
