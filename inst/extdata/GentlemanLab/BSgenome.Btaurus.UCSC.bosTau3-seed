@@ -1,7 +1,7 @@
 Package: BSgenome.Btaurus.UCSC.bosTau3
 Title: Full genome sequences for Bos taurus (UCSC version bosTau3)
 Description: Full genome sequences for Bos taurus (Cow) as provided by UCSC (bosTau3, Aug. 2006) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.1
 Suggests: GenomicFeatures
 organism: Bos taurus
 species: Cow
@@ -12,29 +12,22 @@ release_name: Baylor College of Medicine HGSC Btau_3.1
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 organism_biocview: Bos_taurus
 BSgenomeObjname: Btaurus
-seqnames: paste("chr", c(1:29, "X"), sep="")
-mseqnames: "chrUn.scaffolds"
-SrcDataFiles: all the *.fa.gz files from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/chromosomes/
+SrcDataFiles: bosTau3.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/bosTau3/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	.
 	## ---------------------------------------------------------------------
 	## Upstream sequences
 	## ---------------------------------------------------------------------
-	## The upstream sequences for bosTau3 (i.e. the sequences 1000 bases
-	## upstream of annotated transcription starts) can easily be extracted
-	## from the full genome sequences with something like:
+	## UCSC makes the upstream sequences for bosTau3 available for download
+	## here http://hgdownload.soe.ucsc.edu/goldenPath/bosTau3/bigZips/
+	## Alternatively, the upstream sequences can be extracted from the full
+	## genome sequences with something like:
 	.
 	library(GenomicFeatures)
 	txdb <- makeTranscriptDbFromUCSC("bosTau3", "refGene")
-	gn <- sort(genes(txdb))
-	up1000 <- flank(gn, width=1000)
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- extractUpstreamSeqs(genome, txdb, width=1000)
 	.
-	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
-	## that contains a gene model based on the exact same reference genome
-	## as the BSgenome object you pass to getSeq(). Note that you can make
-	## your own custom TranscriptDb object from various annotation resources.
-	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
-	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
-	## package.
+	## See ?extractUpstreamSeqs in the GenomicFeatures package for more
+	## information about this.
 seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
+seqfile_name: bosTau3.2bit

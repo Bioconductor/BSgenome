@@ -60,7 +60,6 @@ for (pkg in BSgenome_datapkgs) {
   cat("END FORGING ", pkg, "\n", sep="")
 }
 
-if (FALSE) {
 MaskedBSgenome_datapkgs <- c(
   "BSgenome.Amellifera.UCSC.apiMel2.masked",
   "BSgenome.Btaurus.UCSC.bosTau3.masked",
@@ -100,6 +99,5 @@ for (pkg in MaskedBSgenome_datapkgs) {
   forgeMaskedBSgenomeDataPkg(pkg)
   cat("\n")
   cat("END FORGING ", pkg, "\n", sep="")
-}
 }
 
