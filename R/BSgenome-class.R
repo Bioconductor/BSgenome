@@ -137,25 +137,13 @@ BUILTIN_MASKNAMES <- c("AGAPS", "AMB", "RM", "TRF")
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Accessor methods.
+### Accessors.
 ###
 
 setMethod("length", "BSgenome", function(x) length(names(x)))
 
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
 setMethod("sourceUrl", "BSgenome", function(x) x@source_url)
-
-setMethod("SNPlocs_pkgname", "BSgenome",
-    function(x) SNPlocs_pkgname(x@injectSNPs_handler)
-)
-
-setMethod("SNPcount", "BSgenome",
-    function(x) SNPcount(x@injectSNPs_handler)
-)
-
-setMethod("SNPlocs", "BSgenome",
-    function(x, seqname) SNPlocs(x@injectSNPs_handler, seqname)
-)
 
 setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
 setMethod("mseqnames", "BSgenome",
@@ -245,6 +233,23 @@ setReplaceMethod("seqnames", "BSgenome",
         seqinfo(x, new2old=seq_along(x_seqinfo)) <- x_seqinfo
         x
     }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### SNP related accessors
+###
+
+setMethod("SNPlocs_pkgname", "BSgenome",
+    function(x) SNPlocs_pkgname(x@injectSNPs_handler)
+)
+
+setMethod("snpcount", "BSgenome",
+    function(x) snpcount(x@injectSNPs_handler)
+)
+
+setMethod("snplocs", "BSgenome",
+    function(x, seqname, ...) snplocs(x@injectSNPs_handler, seqname, ...)
 )
 
 
@@ -459,7 +464,7 @@ setMethod("show", "BSgenome",
              "May be the data on disk is corrupted?")
     }
     ## Inject the SNPs, if any
-    snps <- SNPlocs(x, seqname)
+    snps <- snplocs(x, seqname)
     if (!is.null(snps))
         .inplaceReplaceLetterAt(ans, snps$loc, snps$alleles_as_ambig)
     ## Load and set the built-in masks, if any
@@ -578,5 +583,26 @@ setReplaceMethod("[[", "BSgenome",
 
 setMethod("$", "BSgenome",
     function(x, name) x[[name]]
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Old stuff (deprecated & defunct)
+###
+
+setMethod("SNPcount", "BSgenome",
+    function(x)
+    {
+        .Deprecated("snpcount")
+        snpcount(x)
+    }
+)
+
+setMethod("SNPlocs", "BSgenome",
+    function(x, seqname)
+    {
+        .Deprecated("SNPlocs")
+        snplocs(x, seqname)
+    }
 )
 

@@ -168,7 +168,7 @@
             if (is.na(idx))
                 stop("invalid sequence name: ", seqlevel)
             seqname <- names(x@user_seqnames)[[idx]]
-            if (is.null(SNPlocs(x, seqname))) {
+            if (is.null(snplocs(x, seqname))) {
                 ## Try to grab the subject sequence from the cache.
                 subject <- try(get(seqname, envir=x@.seqs_cache,
                                    inherits=FALSE), silent=TRUE)

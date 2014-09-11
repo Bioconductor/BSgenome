@@ -45,6 +45,36 @@ setClass("SNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Accessors
+###
+
+setMethod("provider", "SNPlocs", function(x) x@provider)
+
+setMethod("providerVersion", "SNPlocs", function(x) x@provider_version)
+
+setMethod("releaseDate", "SNPlocs", function(x) x@release_date)
+
+setMethod("releaseName", "SNPlocs", function(x) x@release_name)
+
+setGeneric("referenceGenome", function(x) standardGeneric("referenceGenome"))
+
+setMethod("referenceGenome", "SNPlocs", function(x) x@reference_genome)
+
+setGeneric("compatibleGenomes",
+    function(x) standardGeneric("compatibleGenomes")
+)
+setMethod("compatibleGenomes", "SNPlocs", function(x) x@compatible_genomes)
+
+setMethod("organism", "SNPlocs", function(x) organism(referenceGenome(x)))
+
+setMethod("species", "SNPlocs", function(x) species(referenceGenome(x)))
+
+setMethod("seqinfo", "SNPlocs", function(x) seqinfo(referenceGenome(x)))
+
+setMethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Constructor
 ###
 
@@ -77,35 +107,6 @@ newSNPlocs <- function(provider, provider_version,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Accessors
-###
-
-setMethod("provider", "SNPlocs", function(x) x@provider)
-
-setMethod("providerVersion", "SNPlocs", function(x) x@provider_version)
-
-setMethod("releaseDate", "SNPlocs", function(x) x@release_date)
-
-setMethod("releaseName", "SNPlocs", function(x) x@release_name)
-
-setGeneric("referenceGenome", function(x) standardGeneric("referenceGenome"))
-setMethod("referenceGenome", "SNPlocs", function(x) x@reference_genome)
-
-setGeneric("compatibleGenomes",
-    function(x) standardGeneric("compatibleGenomes")
-)
-setMethod("compatibleGenomes", "SNPlocs", function(x) x@compatible_genomes)
-
-setMethod("organism", "SNPlocs", function(x) organism(referenceGenome(x)))
-
-setMethod("species", "SNPlocs", function(x) species(referenceGenome(x)))
-
-setMethod("seqinfo", "SNPlocs", function(x) seqinfo(referenceGenome(x)))
-
-setMethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The 'show' method
 ###
 
@@ -113,7 +114,7 @@ setMethod("show", "SNPlocs",
     function(object)
     {
         cat(class(object), " object for ", organism(object), " (",
-            provider(object), " ", releaseName(object), ")\n", sep="")
+            provider(object), ": ", releaseName(object), ")\n", sep="")
     }
 )
 
@@ -163,6 +164,7 @@ setMethod("show", "SNPlocs",
 }
 
 setGeneric("snpcount", function(x) standardGeneric("snpcount"))
+
 setMethod("snpcount", "SNPlocs",
     function(x)
     {

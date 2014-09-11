@@ -20,11 +20,12 @@ available.SNPs <- function(type=getOption("pkgType"))
 }
 
 setGeneric("injectSNPs", signature="x",
-    function(x, SNPlocs_pkgname) standardGeneric("injectSNPs")
+    function(x, snps) standardGeneric("injectSNPs")
 )
 
+### 'snps' can be a SNPlocs object or the name of a SNPlocs package.
 setMethod("injectSNPs", "BSgenome",
-    function(x, SNPlocs_pkgname)
+    function(x, snps)
     {
         if (!is.null(SNPlocs_pkgname(x)))
             stop("SNPs were already injected in genome 'x'. ",
@@ -32,7 +33,7 @@ setMethod("injectSNPs", "BSgenome",
         ans <- x
         ## We want the original sequence names, not the user sequence names,
         ## so we use 'seqnames(x@seqinfo)' instead of 'seqnames(x)'.
-        ans@injectSNPs_handler <- InjectSNPsHandler(SNPlocs_pkgname,
+        ans@injectSNPs_handler <- InjectSNPsHandler(snps,
                                                     x@pkgname,
                                                     seqnames(x@seqinfo))
         ans@.seqs_cache <- new.env(parent=emptyenv())

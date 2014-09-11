@@ -1,12 +1,13 @@
 \name{BSgenome-class}
 \docType{class}
 
-% Classes
+% Classes:
 \alias{class:BSgenome}
 \alias{BSgenome-class}
 \alias{BSgenome}
 
-% Accessor methods:
+% Accessors:
+\alias{length,BSgenome-method}
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
 \alias{mseqnames}
@@ -21,10 +22,9 @@
 % Constructor-like functions and generics:
 \alias{BSgenome}
 
-% Standard generic methods:
+% Other methods:
 \alias{as.list,BSgenome-method}
 \alias{show,BSgenome-method}
-\alias{length,BSgenome-method}
 \alias{[[,BSgenome-method}
 \alias{[[<-,BSgenome-method}
 \alias{$,BSgenome-method}
@@ -34,7 +34,11 @@
 
 \description{
   The BSgenome class is a container for storing the full genome sequences
-  of a given organism.
+  of a given organism. BSgenome objects are usually made in advance by
+  a volunteer and made available to the Bioconductor community as
+  "BSgenome data packages".
+  See \code{?\link{available.genomes}} for how to get the list of
+  "BSgenome data packages" curently available.
 }
 
 \section{Accessor methods}{
