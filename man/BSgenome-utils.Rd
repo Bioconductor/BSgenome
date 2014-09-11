@@ -118,7 +118,7 @@
   with three columns: "seqname" (factor), "strand" (factor), and
   "count" (integer).
 
-  A \link[IRanges]{DataFrame} object for \code{vcountPDict} with four
+  A \link[S4Vectors]{DataFrame} object for \code{vcountPDict} with four
   columns: "seqname" ('factor' Rle), "strand" ('factor' Rle), 
   "index" (integer) and "count" ('integer' Rle). As with \code{vmatchPDict}
   the index column represents a mapping to a position in the original
