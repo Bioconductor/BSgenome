@@ -14,6 +14,7 @@ import(rtracklayer)
 exportClasses(
     SNPlocs,
     InjectSNPsHandler,
+    ExtraSNPlocs,
     BSgenome, MaskedBSgenome,
     GenomeData, GenomeDataList,
 
@@ -24,6 +25,7 @@ exportClasses(
 export(
     ## Non-generic functions:
     newSNPlocs,
+    newExtraSNPlocs,
     BSgenome, MaskedBSgenome,
     installed.genomes, available.genomes, getBSgenome,
     installed.SNPs, available.SNPs,
