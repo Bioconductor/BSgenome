@@ -12,6 +12,7 @@ import(Rsamtools)
 import(rtracklayer)
 
 exportClasses(
+    OnDiskLongTable,
     SNPlocs,
     InjectSNPsHandler,
     ExtraSNPlocs,
@@ -24,6 +25,8 @@ exportClasses(
 
 export(
     ## Non-generic functions:
+    saveAsOnDiskLongTable, saveRowidsOfOnDiskLongTable,
+    OnDiskLongTable, getDataFromOnDiskLongTable,
     newSNPlocs,
     newExtraSNPlocs,
     BSgenome, MaskedBSgenome,
@@ -33,6 +36,7 @@ export(
     GenomeData, GenomeDataList,
 
     ## Generic functions:
+    rowids,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
@@ -56,12 +60,14 @@ export(
 exportMethods(
     ## Methods for generics defined elsewhere:
     length, names, as.list, show, "[[", "$",
+    colnames, nrow, ncol,
     score,
     seqinfo, "seqinfo<-", seqnames, "seqnames<-",
     organism, species, provider, providerVersion, releaseDate, releaseName,
     getSeq, matchPWM, countPWM, vmatchPattern, vcountPattern,
 
     ## Methods for generics defined in this package:
+    rowids,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,

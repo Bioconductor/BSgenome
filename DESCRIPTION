@@ -25,6 +25,7 @@ Suggests: BiocInstaller,
 License: Artistic-2.0
 LazyLoad: yes
 Collate: utils.R
+	OnDiskLongTable-class.R
 	OnDiskNamedSequences-class.R
 	SNPlocs-class.R
 	InjectSNPsHandler-class.R
