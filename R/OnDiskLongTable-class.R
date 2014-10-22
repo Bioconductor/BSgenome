@@ -219,7 +219,7 @@ saveRowidsForOnDiskLongTable <- function(rowids, dirpath=".",
 ### Constructor
 ###
 
-OnDiskLongTable <- function(dirpath)
+OnDiskLongTable <- function(dirpath=".")
 {
     if (!isSingleString(dirpath) || dirpath == "")
         stop("'dirpath' must be a single (non-empty) string")
@@ -304,7 +304,56 @@ setMethod("show", "OnDiskLongTable",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Load data from OnDiskLongTable
+### Load a single block
+###
+
+### colidx:    column index of length 1.
+### blockname: a valid block name. Can also be a valid block index as a
+###            single integer.
+.load_block <- function(x, colidx, blockname)
+{
+    if (!is.character(blockname))
+        blockname <- .blockidx2blockname(blockname)
+    col_dirname <- .colidx2dirname(colidx)
+    col_dirpath <- file.path(x@dirpath, col_dirname)
+    .load_object(col_dirpath, blockname)
+}
+
+.normarg_colidx <- function(colidx, x)
+{
+    if (is.character(colidx)) {
+        colidx <- match(colidx, colnames(x))
+        if (any(is.na(colidx)))
+            stop("'colidx' contains invalid column names")
+        return(colidx)
+    }
+    if (!is.numeric(colidx))
+        stop("'colidx' must be an integer or character vector")
+    if (!is.integer(colidx))
+        colidx <- as.integer(colidx)
+    if (S4Vectors:::anyMissingOrOutside(colidx, 1L, ncol(x)))
+        stop("'colidx' contains invalid column numbers")
+    colidx
+}
+
+### User-friendly wrapper to .load_block(). NOT exported.
+### colidx:   column index of length 1. Can be a single column name.
+### blockidx: block index of length 1. Can be a single block name.
+getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
+{
+    if (!is(x, "OnDiskLongTable"))
+        stop("'x' must be an OnDiskLongTable object")
+    if (!(isSingleNumber(colidx) || isSingleString(colidx)))
+        stop("'colidx' must be a single integer or string")
+    if (!(isSingleNumber(blockidx) || isSingleString(blockidx)))
+        stop("'blockidx' must be a single integer or string")
+    colidx <- .normarg_colidx(colidx, x)
+    .load_block(x, colidx, blockidx)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Get data from OnDiskLongTable
 ###
 
 .rowids2rowidx <- function(x, rowids)
@@ -349,64 +398,35 @@ setMethod("show", "OnDiskLongTable",
     rowkeys
 }
 
-.normarg_j <- function(j, x)
-{
-    if (is.character(j)) {
-        j <- match(j, colnames(x))
-        if (any(is.na(j)))
-            stop("'j' contains invalid column names")
-        return(j)
-    }
-    if (!is.integer(j))
-        stop("'j' must be an integer or character vector")
-    if (S4Vectors:::anyMissingOrOutside(j, 1L, ncol(x)))
-        stop("'j' contains invalid column numbers")
-    j
-}
-
-.get_value_from_block0 <- function(x, col_dirname)
-{
-    col_dirpath <- file.path(x@dirpath, col_dirname)
-    blockname <- .blockidx2blockname(0L)
-    .load_object(col_dirpath, blockname)
-}
-
-.get_values_from_block <- function(x, col_dirname, blockname, keys)
-{
-    col_dirpath <- file.path(x@dirpath, col_dirname)
-    block <- .load_object(col_dirpath, blockname)
-    block[keys]
-}
-
-.get_values_from_column <- function(x, col_dirname, rowkeys)
+### colidx: column index of length 1
+.get_values_from_column <- function(x, colidx, rowkeys)
 {
     if (length(rowkeys) == 0L)
-        return(.get_value_from_block0(x, col_dirname))
+        return(.load_block(x, colidx, 0L))
     list_of_keys <- split(unname(rowkeys), names(rowkeys))
     tmp <- lapply(seq_along(list_of_keys),
              function(i) {
                blockname <- names(list_of_keys)[i]
                keys <- list_of_keys[[i]]
-               .get_values_from_block(x, col_dirname, blockname, keys)
+               block <- .load_block(x, colidx, blockname)
+               block[keys]
              })
     quickUnsplit(tmp, names(rowkeys))
 }
 
+### rowids: integer vector.
+### colidx: integer or character vector.
 ### Return a DataFrame.
-###   rowids: integer vector.
-###   j:      integer or character vector.
-getDataFromOnDiskLongTable <- function(x, rowids, j)
+getDataFromOnDiskLongTable <- function(x, rowids, colidx)
 {
     if (!is(x, "OnDiskLongTable"))
         stop("'x' must be an OnDiskLongTable object")
     rowidx <- .rowids2rowidx(x, rowids)
     rowkeys <- .rowidx2rowkeys(x, rowidx)
-    j <- .normarg_j(j, x)
-    col_dirnames <- .colidx2dirname(j)
-    names(col_dirnames) <- colnames(x)[j]
-    ans_listData <- lapply(col_dirnames,
-                      function(col_dirname)
-                        .get_values_from_column(x, col_dirname, rowkeys))
+    colidx <- .normarg_colidx(colidx, x)
+    names(colidx) <- colnames(x)[colidx]
+    ans_listData <-
+        lapply(colidx, function(j) .get_values_from_column(x, j, rowkeys))
     new("DataFrame", listData=ans_listData, nrows=length(rowids),
                      rownames=as.character(rowids))
 }
