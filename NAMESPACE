@@ -25,7 +25,7 @@ exportClasses(
 
 export(
     ## Non-generic functions:
-    saveAsOnDiskLongTable, saveRowidsOfOnDiskLongTable,
+    saveAsOnDiskLongTable, saveRowidsForOnDiskLongTable,
     OnDiskLongTable, getDataFromOnDiskLongTable,
     newSNPlocs,
     newExtraSNPlocs,
