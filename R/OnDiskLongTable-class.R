@@ -83,13 +83,14 @@ setClass("OnDiskLongTable",
 }
 
 ### Return new break points.
-.save_blocks <- function(df, dirpath, old_breakpoints, blocksize,
-                         compress, compression_level)
+.save_blocks <- function(df, dirpath, blocksize,
+                         compress, compression_level,
+                         prev_breakpoints=integer(0))
 {
     col_dirnames <- .colidx2dirname(seq_len(ncol(df)))
     col_dirpaths <- file.path(dirpath, col_dirnames)
     block_ranges <- breakInChunks(nrow(df), blocksize)
-    blockidx_offset <- length(old_breakpoints)
+    blockidx_offset <- length(prev_breakpoints)
     for (j in seq_len(ncol(df))) {
         col_dirpath <- col_dirpaths[j]
         if (!dir.exists(col_dirpath))
@@ -102,8 +103,8 @@ setClass("OnDiskLongTable",
                          compress, compression_level)
         }
     }
-    c(old_breakpoints,
-      .get_nrow_from_breakpoints(old_breakpoints) + end(block_ranges))
+    prev_nrow <- .get_nrow_from_breakpoints(prev_breakpoints)
+    c(prev_breakpoints, prev_nrow + end(block_ranges))
 }
 
 .save_new_OnDiskLongTable <- function(df, dirpath, blocksize,
@@ -124,7 +125,7 @@ setClass("OnDiskLongTable",
 
     ## Save 'df' columns.
     .save_zero_length_columns(df, dirpath)
-    breakpoints <- .save_blocks(df, dirpath, integer(0), blocksize,
+    breakpoints <- .save_blocks(df, dirpath, blocksize,
                                 compress, compression_level)
 
     ## Save 'breakpoints' vector.
@@ -149,11 +150,12 @@ setClass("OnDiskLongTable",
              file.path(dirpath, "colnames.rda"))
 
     ## Load 'breakpoints' vector.
-    old_breakpoints <- .load_object(dirpath, "breakpoints")
+    prev_breakpoints <- .load_object(dirpath, "breakpoints")
 
     ## Append 'df' columns.
-    breakpoints <- .save_blocks(df, dirpath, old_breakpoints, blocksize,
-                                compress, compression_level)
+    breakpoints <- .save_blocks(df, dirpath, blocksize,
+                                compress, compression_level,
+                                prev_breakpoints)
 
     ## Update 'breakpoints' vector.
     .save_object(dirpath, "breakpoints", breakpoints)
@@ -162,7 +164,7 @@ setClass("OnDiskLongTable",
 ### Ignore the row names on 'df'. If 'df' is a DataFrame, 'metadata(df)' and
 ### 'mcols(df)' are also ignored.
 saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
-                                  blocksize=100000L,
+                                  blocksize=NA,
                                   compress=TRUE, compression_level)
 {
     if (!is.data.frame(df) && !is(df, "DataFrame")) 
@@ -171,12 +173,16 @@ saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
         stop("'dirpath' must be a single string")
     if (!isTRUEorFALSE(append))
         stop("'append' must be TRUE or FALSE")
-    if (!isSingleNumber(blocksize))
-        stop("'blocksize' must be a single integer")
+    if (!isSingleNumberOrNA(blocksize))
+        stop("'blocksize' must be a single integer or NA")
     if (!is.integer(blocksize)) 
         blocksize <- as.integer(blocksize)
-    if (blocksize <= 0L) 
-        stop("'blocksize' must be a positive integer")
+    if (is.na(blocksize))
+        blocksize <- nrow(df)
+    else if (blocksize < 0L) 
+        stop("'blocksize' cannot be negative")
+    else if (blocksize == 0L && nrow(df) != 0L)
+        stop("'blocksize' can be 0 only if 'nrow(df)' is 0")
     if (!append)
         .save_new_OnDiskLongTable(df, dirpath, blocksize,
                                   compress, compression_level)
