@@ -36,7 +36,7 @@ export(
     GenomeData, GenomeDataList,
 
     ## Generic functions:
-    rowids,
+    breakpoints, rowids,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
@@ -67,7 +67,7 @@ exportMethods(
     getSeq, matchPWM, countPWM, vmatchPattern, vcountPattern,
 
     ## Methods for generics defined in this package:
-    rowids,
+    breakpoints, rowids,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,

@@ -163,7 +163,8 @@ setClass("OnDiskLongTable",
     }
 }
 
-.append_batch_to_OnDiskLongTable <- function(df, dirpath, blocksize,
+.append_batch_to_OnDiskLongTable <- function(df, dirpath,
+                                             batch.label, blocksize,
                                              compress, compression_level)
 {
     ## Check existence of rowids.rda file.
@@ -190,6 +191,8 @@ setClass("OnDiskLongTable",
                       compress, compression_level)
 
     ## Update 'breakpoints' vector.
+    if (!is.null(batch.label))
+        names(breakpoints2) <- rep.int(batch.label, length(breakpoints2))
     nrow1 <- .get_nrow_from_breakpoints(breakpoints1)
     breakpoints <- c(breakpoints1, nrow1 + breakpoints2)
     .save_object(dirpath, "breakpoints", breakpoints, overwrite=TRUE)
@@ -218,7 +221,7 @@ setClass("OnDiskLongTable",
 ### Ignore the row names on 'df'. If 'df' is a DataFrame, 'metadata(df)' and
 ### 'mcols(df)' are also ignored.
 saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
-                                  blocksize=NA,
+                                  batch.label=NULL, blocksize=NA,
                                   compress=TRUE, compression_level)
 {
     if (!is.data.frame(df) && !is(df, "DataFrame")) 
@@ -226,11 +229,15 @@ saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
     .check_dirpath(dirpath)
     if (!isTRUEorFALSE(append))
         stop("'append' must be TRUE or FALSE")
+    if (!(is.null(batch.label) ||
+          isSingleString(batch.label) && batch.label != ""))
+        stop("'batch.label' must be NULL or a single (non-empty) string")
     blocksize <- .normarg_blocksize(blocksize, nrow(df))
 
     if (!append)
         .write_zero_row_OnDiskLongTable(df, dirpath)
-    .append_batch_to_OnDiskLongTable(df, dirpath, blocksize,
+    .append_batch_to_OnDiskLongTable(df, dirpath,
+                                     batch.label, blocksize,
                                      compress, compression_level)
 }
 
@@ -274,8 +281,12 @@ OnDiskLongTable <- function(dirpath=".")
 ### "nrow", "rowids", "colnames", and "ncol" methods
 ###
 
+setGeneric("breakpoints", function(x) standardGeneric("breakpoints"))
+
+setMethod("breakpoints", "OnDiskLongTable", function(x) x@breakpoints)
+
 setMethod("nrow", "OnDiskLongTable",
-    function(x) .get_nrow_from_breakpoints(x@breakpoints)
+    function(x) .get_nrow_from_breakpoints(breakpoints(x))
 )
 
 setGeneric("rowids", function(x) standardGeneric("rowids"))
@@ -412,17 +423,17 @@ getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
 }
 
 ### Translation from row index to "row key".
-###   x:      OnDiskLongTable object.
-###   rowidx: integer vector containing valid row indices.
+###   breakpoints: integer vector of break points.
+###   rowidx:      integer vector containing valid row indices.
 ### Return a named integer vector "parallel" to 'rowidx', i.e. each
 ### (name, value) pair in the returned vector represents the "row key" of
 ### the corresponding row index. The name is the "block name" where to find
 ### the row and the value is the row index *relative to the block*, that is,
 ### its position within the block.
-.rowidx2rowkeys <- function(x, rowidx)
+.rowidx2rowkeys <- function(breakpoints, rowidx)
 {
-    blockidx <- findInterval(rowidx - 1L, x@breakpoints) + 1L
-    rowkeys <- rowidx - .breakpoints2offsets(x@breakpoints)[blockidx]
+    blockidx <- findInterval(rowidx - 1L, breakpoints) + 1L
+    rowkeys <- rowidx - .breakpoints2offsets(breakpoints)[blockidx]
     names(rowkeys) <- .blockidx2blockname(blockidx)
     rowkeys
 }
@@ -451,7 +462,7 @@ getDataFromOnDiskLongTable <- function(x, rowids, colidx)
     if (!is(x, "OnDiskLongTable"))
         stop("'x' must be an OnDiskLongTable object")
     rowidx <- .rowids2rowidx(x, rowids)
-    rowkeys <- .rowidx2rowkeys(x, rowidx)
+    rowkeys <- .rowidx2rowkeys(breakpoints(x), rowidx)
     colidx <- .normarg_colidx(colidx, x)
     names(colidx) <- colnames(x)[colidx]
     ans_listData <-
