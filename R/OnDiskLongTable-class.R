@@ -178,20 +178,20 @@ setClass("OnDiskLongTable",
              file.path(dirpath, "colnames.rda"))
 
     ## Load 'breakpoints' vector.
-    prev_breakpoints <- .load_object(dirpath, "breakpoints")
+    breakpoints1 <- .load_object(dirpath, "breakpoints")
 
     ## Append 'df' columns.
     col_dirpaths <- .colidx2dirpath(dirpath, seq_len(ncol(df)))
-    breakpoints <- end(breakInChunks(nrow(df), blocksize))
-    blockidx_offset <- length(prev_breakpoints)
+    breakpoints2 <- end(breakInChunks(nrow(df), blocksize))
+    blockidx_offset <- length(breakpoints1)
     for (j in seq_len(ncol(df)))
         .write_column(df[[j]], col_dirpaths[[j]],
-                      breakpoints, blockidx_offset,
+                      breakpoints2, blockidx_offset,
                       compress, compression_level)
 
     ## Update 'breakpoints' vector.
-    prev_nrow <- .get_nrow_from_breakpoints(prev_breakpoints)
-    c(prev_breakpoints, prev_nrow + breakpoints)
+    nrow1 <- .get_nrow_from_breakpoints(breakpoints1)
+    breakpoints <- c(breakpoints1, nrow1 + breakpoints2)
     .save_object(dirpath, "breakpoints", breakpoints, overwrite=TRUE)
 }
 
