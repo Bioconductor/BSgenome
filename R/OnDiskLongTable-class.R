@@ -14,9 +14,39 @@ setClass("OnDiskLongTable",
         .rowids_cache="environment"  # Where to load and cache the row ids.
                                      # Row ids are unique integer values.
                                      # Used for fast translation from
-                                     # user-supplied row ids to row numbers.
+                                     # user-supplied row ids to row indices.
     )
 )
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Low-level helpers
+###
+
+.check_dirpath <- function(dirpath)
+{
+    if (!isSingleString(dirpath) || dirpath == "")
+        stop("'dirpath' must be a single (non-empty) string")
+    if (!dir.exists(dirpath))
+        stop("directory not found: ", dirpath)
+}
+
+.check_breakpoints <- function(breakpoints)
+{
+    if (!is.integer(breakpoints)
+     || any(is.na(breakpoints))
+     || is.unsorted(breakpoints, strictly=TRUE)
+     || length(breakpoints) != 0L && breakpoints[[1L]] < 1L)
+        stop("invalid breakpoints found for OnDiskLongTable object")
+}
+
+.check_rowids <- function(rowids)
+{
+    if (!is.integer(rowids))
+        stop("'rowids' must be an integer vector")
+    if (any(is.na(rowids)) || any(duplicated(rowids)))
+        stop("'rowids' cannot contain NAs or duplicated values")
+}
 
 .get_nrow_from_breakpoints <- function(breakpoints)
 {
@@ -25,7 +55,11 @@ setClass("OnDiskLongTable",
     breakpoints[[length(breakpoints)]]
 }
 
-.colidx2dirname <- function(colidx) sprintf("col%03d", colidx)
+.colidx2dirname <- function(colidx)
+    sprintf("col%03d", colidx)
+
+.colidx2dirpath <- function(dirpath, colidx)
+    file.path(dirpath, .colidx2dirname(colidx))
 
 .blockidx2blockname <- function(blockidx)
 {
@@ -36,10 +70,13 @@ setClass("OnDiskLongTable",
 }
 
 .save_object <- function(dirpath, objname, value,
-                         compress=TRUE, compression_level)
+                         compress=TRUE, compression_level,
+                         overwrite=FALSE)
 {
     filename <- paste0(objname, ".rda")
     filepath <- file.path(dirpath, filename)
+    if (!overwrite && file.exists(filepath))
+        stop("file already exists: ", filepath)
     assign(objname, value)
     save(list=objname, file=filepath,
          compress=compress, compression_level=compression_level)
@@ -60,84 +97,75 @@ setClass("OnDiskLongTable",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Writing data in the "OnDiskLongTable format"
+### .write_zero_row_OnDiskLongTable()
 ###
 
-.save_zero_length_columns <- function(df, dirpath)
+.remove_file <- function(dirpath, filename)
 {
-    col_dirnames <- .colidx2dirname(seq_len(ncol(df)))
-    col_dirpaths <- file.path(dirpath, col_dirnames)
-    fail_idx <- which(as.logical(unlink(col_dirpaths, recursive=TRUE)))
-    if (length(fail_idx) != 0L)
-        stop("failed to remove directories: ",
-             paste0(col_dirpaths[fail_idx], collapse=", "))
-    for (j in seq_len(ncol(df))) {
-        col_dirpath <- col_dirpaths[j]
-        if (!dir.create(col_dirpath, showWarnings=TRUE, mode="0775"))
-            stop("failed to create directory: ", col_dirpath)
-        ## Save block 0 (special block containing zero-length column).
-        blockname <- .blockidx2blockname(0L)
-        block <- df[[j]][integer(0)]
-        .save_object(col_dirpath, blockname, block)
-    }
-}
-
-### Return new break points.
-.save_blocks <- function(df, dirpath, blocksize,
-                         compress, compression_level,
-                         prev_breakpoints=integer(0))
-{
-    col_dirnames <- .colidx2dirname(seq_len(ncol(df)))
-    col_dirpaths <- file.path(dirpath, col_dirnames)
-    block_ranges <- breakInChunks(nrow(df), blocksize)
-    blockidx_offset <- length(prev_breakpoints)
-    for (j in seq_len(ncol(df))) {
-        col_dirpath <- col_dirpaths[j]
-        if (!dir.exists(col_dirpath))
-            stop("directory not found: ", col_dirpath)
-        for (b in seq_along(block_ranges)) {
-            blockidx <- blockidx_offset + b
-            blockname <- .blockidx2blockname(blockidx)
-            block <- df[[j]][block_ranges[[b]]]
-            .save_object(col_dirpath, blockname, block,
-                         compress, compression_level)
-        }
-    }
-    prev_nrow <- .get_nrow_from_breakpoints(prev_breakpoints)
-    c(prev_breakpoints, prev_nrow + end(block_ranges))
-}
-
-.save_new_OnDiskLongTable <- function(df, dirpath, blocksize,
-                                      compress, compression_level)
-{
-    if (!dir.exists(dirpath))
-        stop("directory not found: ", dirpath)
-
-    ## Remove rowids.rda file.
-    filepath <- file.path(dirpath, "rowids.rda")
+    filepath <- file.path(dirpath, filename)
     if (file.exists(filepath)) {
         if (!file.remove(filepath))
             stop("failed to remove file: ", filepath)
     }
-
-    ## Save 'df' colnames.
-    .save_object(dirpath, "colnames", colnames(df))
-
-    ## Save 'df' columns.
-    .save_zero_length_columns(df, dirpath)
-    breakpoints <- .save_blocks(df, dirpath, blocksize,
-                                compress, compression_level)
-
-    ## Save 'breakpoints' vector.
-    .save_object(dirpath, "breakpoints", breakpoints)
 }
 
-.append_to_OnDiskLongTable <- function(df, dirpath, blocksize,
-                                       compress, compression_level)
+.remove_dirs <- function(dirpaths)
 {
-    if (!dir.exists(dirpath))
-        stop("directory not found: ", dirpath)
+    fail_idx <- which(as.logical(unlink(dirpaths, recursive=TRUE)))
+    if (length(fail_idx) != 0L)
+        stop("failed to remove directories: ",
+             paste0(dirpaths[fail_idx], collapse=", "))
+}
 
+.create_and_initialize_column_dir <- function(df_col, col_dirpath)
+{
+    if (!dir.create(col_dirpath, showWarnings=TRUE, mode="0775"))
+        stop("failed to create directory: ", col_dirpath)
+    ## A "special block" is written in newly created column dir. It contains
+    ## serialized zero-length column.
+    blockname <- .blockidx2blockname(0L)
+    block <- df_col[integer(0)]
+    .save_object(col_dirpath, blockname, block)
+}
+
+.write_zero_row_OnDiskLongTable <- function(df, dirpath)
+{
+    ## Remove stuff.
+    .remove_file(dirpath, "rowids.rda")
+    col_dirpaths <- .colidx2dirpath(dirpath, seq_len(ncol(df)))
+    .remove_dirs(col_dirpaths)
+
+    ## Create stuff.
+    .save_object(dirpath, "colnames", colnames(df), overwrite=TRUE)
+    for (j in seq_len(ncol(df)))
+        .create_and_initialize_column_dir(df[[j]], col_dirpaths[[j]])
+    .save_object(dirpath, "breakpoints", integer(0), overwrite=TRUE)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### .append_batch_to_OnDiskLongTable()
+###
+
+.write_column <- function(df_col, col_dirpath,
+                          breakpoints, blockidx_offset,
+                          compress, compression_level)
+{
+    if (!dir.exists(col_dirpath))
+        stop("directory not found: ", col_dirpath)
+    block_ranges <- PartitioningByEnd(breakpoints)
+    for (b in seq_along(block_ranges)) {
+        blockidx <- blockidx_offset + b
+        blockname <- .blockidx2blockname(blockidx)
+        block <- df_col[block_ranges[[b]]]
+        .save_object(col_dirpath, blockname, block,
+                     compress, compression_level)
+    }
+}
+
+.append_batch_to_OnDiskLongTable <- function(df, dirpath, blocksize,
+                                             compress, compression_level)
+{
     ## Check existence of rowids.rda file.
     filepath <- file.path(dirpath, "rowids.rda")
     if (file.exists(filepath))
@@ -153,12 +181,38 @@ setClass("OnDiskLongTable",
     prev_breakpoints <- .load_object(dirpath, "breakpoints")
 
     ## Append 'df' columns.
-    breakpoints <- .save_blocks(df, dirpath, blocksize,
-                                compress, compression_level,
-                                prev_breakpoints)
+    col_dirpaths <- .colidx2dirpath(dirpath, seq_len(ncol(df)))
+    breakpoints <- end(breakInChunks(nrow(df), blocksize))
+    blockidx_offset <- length(prev_breakpoints)
+    for (j in seq_len(ncol(df)))
+        .write_column(df[[j]], col_dirpaths[[j]],
+                      breakpoints, blockidx_offset,
+                      compress, compression_level)
 
     ## Update 'breakpoints' vector.
-    .save_object(dirpath, "breakpoints", breakpoints)
+    prev_nrow <- .get_nrow_from_breakpoints(prev_breakpoints)
+    c(prev_breakpoints, prev_nrow + breakpoints)
+    .save_object(dirpath, "breakpoints", breakpoints, overwrite=TRUE)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### saveAsOnDiskLongTable() and saveRowidsForOnDiskLongTable()
+###
+
+.normarg_blocksize <- function(blocksize, totalsize)
+{
+    if (!isSingleNumberOrNA(blocksize))
+        stop("'blocksize' must be a single integer or NA")
+    if (!is.integer(blocksize)) 
+        blocksize <- as.integer(blocksize)
+    if (is.na(blocksize))
+        return(totalsize)
+    if (blocksize < 0L) 
+        stop("'blocksize' cannot be negative")
+    if (blocksize == 0L && totalsize != 0L)
+        stop("'blocksize' can be 0 only if 'nrow(df)' is 0")
+    blocksize
 }
 
 ### Ignore the row names on 'df'. If 'df' is a DataFrame, 'metadata(df)' and
@@ -169,34 +223,15 @@ saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
 {
     if (!is.data.frame(df) && !is(df, "DataFrame")) 
         stop("'df' must be a data.frame or DataFrame object")
-    if (!isSingleString(dirpath)) 
-        stop("'dirpath' must be a single string")
+    .check_dirpath(dirpath)
     if (!isTRUEorFALSE(append))
         stop("'append' must be TRUE or FALSE")
-    if (!isSingleNumberOrNA(blocksize))
-        stop("'blocksize' must be a single integer or NA")
-    if (!is.integer(blocksize)) 
-        blocksize <- as.integer(blocksize)
-    if (is.na(blocksize))
-        blocksize <- nrow(df)
-    else if (blocksize < 0L) 
-        stop("'blocksize' cannot be negative")
-    else if (blocksize == 0L && nrow(df) != 0L)
-        stop("'blocksize' can be 0 only if 'nrow(df)' is 0")
-    if (!append)
-        .save_new_OnDiskLongTable(df, dirpath, blocksize,
-                                  compress, compression_level)
-    else
-        .append_to_OnDiskLongTable(df, dirpath, blocksize,
-                                   compress, compression_level)
-}
+    blocksize <- .normarg_blocksize(blocksize, nrow(df))
 
-.check_rowids <- function(rowids)
-{
-    if (!is.integer(rowids))
-        stop("'rowids' must be an integer vector")
-    if (any(is.na(rowids)) || any(duplicated(rowids)))
-        stop("'rowids' cannot contain NAs or duplicated values")
+    if (!append)
+        .write_zero_row_OnDiskLongTable(df, dirpath)
+    .append_batch_to_OnDiskLongTable(df, dirpath, blocksize,
+                                     compress, compression_level)
 }
 
 ### After row ids are saved, data cannot be appended to the OnDiskLongTable
@@ -205,6 +240,7 @@ saveRowidsForOnDiskLongTable <- function(rowids, dirpath=".",
                                          compress=TRUE, compression_level)
 {
     .check_rowids(rowids)
+    .check_dirpath(dirpath)
     breakpoints <- .load_object(dirpath, "breakpoints")
     nrow <- .get_nrow_from_breakpoints(breakpoints)
     if (length(rowids) != nrow)
@@ -221,10 +257,7 @@ saveRowidsForOnDiskLongTable <- function(rowids, dirpath=".",
 
 OnDiskLongTable <- function(dirpath=".")
 {
-    if (!isSingleString(dirpath) || dirpath == "")
-        stop("'dirpath' must be a single (non-empty) string")
-    if (!dir.exists(dirpath))
-        stop("directory not found: ", dirpath)
+    .check_dirpath(dirpath)
     ans_colnames <- .load_object(dirpath, "colnames")
     ans_breakpoints <- .load_object(dirpath, "breakpoints")
     ans_rowids_cache <- new.env(parent=emptyenv())
@@ -232,10 +265,7 @@ OnDiskLongTable <- function(dirpath=".")
                                   colnames=ans_colnames,
                                   breakpoints=ans_breakpoints,
                                   .rowids_cache=ans_rowids_cache)
-    if (any(is.na(ans_breakpoints))
-     || is.unsorted(ans_breakpoints, strictly=TRUE)
-     || (length(ans_breakpoints) != 0L && ans_breakpoints[[1L]] < 1L))
-        stop("invalid breakpoints found for OnDiskLongTable object")
+    .check_breakpoints(ans_breakpoints)
     ans
 }
 
@@ -314,8 +344,7 @@ setMethod("show", "OnDiskLongTable",
 {
     if (!is.character(blockname))
         blockname <- .blockidx2blockname(blockname)
-    col_dirname <- .colidx2dirname(colidx)
-    col_dirpath <- file.path(x@dirpath, col_dirname)
+    col_dirpath <- .colidx2dirpath(x@dirpath, colidx)
     .load_object(col_dirpath, blockname)
 }
 
@@ -332,7 +361,7 @@ setMethod("show", "OnDiskLongTable",
     if (!is.integer(colidx))
         colidx <- as.integer(colidx)
     if (S4Vectors:::anyMissingOrOutside(colidx, 1L, ncol(x)))
-        stop("'colidx' contains invalid column numbers")
+        stop("'colidx' contains invalid column indices")
     colidx
 }
 
@@ -370,7 +399,7 @@ getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
     ## When 'rowids(x)' is NULL, then row ids are implicit and considered
     ## to be 'seq_len(nrow(x))'.
     if (S4Vectors:::anyMissingOrOutside(rowids, 1L, nrow(x)))
-        stop("'rowids' contains invalid row numbers")
+        stop("'rowids' contains invalid row indices")
     rowids
 }
 
@@ -384,11 +413,11 @@ getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
 
 ### Translation from row index to "row key".
 ###   x:      OnDiskLongTable object.
-###   rowidx: integer vector containing valid row numbers (NAs allowed).
+###   rowidx: integer vector containing valid row indices.
 ### Return a named integer vector "parallel" to 'rowidx', i.e. each
 ### (name, value) pair in the returned vector represents the "row key" of
 ### the corresponding row index. The name is the "block name" where to find
-### the row and the value is the row number *relative to the block*, that is,
+### the row and the value is the row index *relative to the block*, that is,
 ### its position within the block.
 .rowidx2rowkeys <- function(x, rowidx)
 {
