@@ -85,14 +85,26 @@ newExtraSNPlocs <- function(pkgname, snp_table_dirpath,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### snptable()
+###
+
+setGeneric("snptable", function(x) standardGeneric("snptable"))
+
+setMethod("snptable", "ExtraSNPlocs", function(x) x@snp_table)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### The 'show' method
 ###
 
 setMethod("show", "ExtraSNPlocs",
     function(object)
     {
-        cat(class(object), " object for ", organism(object), " (",
-            provider(object), ": ", releaseName(object), ")\n", sep="")
+        cat(class(object), " object for ", organism(object),
+            " (", releaseName(object), ")\n", sep="")
+        cat("| reference genome: ",
+            providerVersion(referenceGenome(object)), "\n", sep="")
+        cat("| nb of SNPs: ", nrow(snptable(object)), "\n", sep="")
     }
 )
 
@@ -101,19 +113,130 @@ setMethod("show", "ExtraSNPlocs",
 ### snpcount() and snplocs()
 ###
 
+.get_snpcount_from_breakpoints <- function(breakpoints, seqnames,
+                                           class, pkgname)
+{
+    ans <- integer(length(seqnames))
+    names(ans) <- seqnames
+    ## Most of the times, 'names(breakpoints)' will be identical to
+    ## 'seqnames'. However, in the unlikely situation where some
+    ## chromosomes have no SNPs, these chromosomes will be missing
+    ## from 'names(breakpoints)'. The sanity check below accomodates
+    ## for that.
+    m <- match(names(breakpoints), seqnames)
+    if (any(is.na(m)) || !isStrictlySorted(m))
+        stop(wmsg("BSgenome internal error: ",
+                  "the data in this ", class, " object is not in the ",
+                  "expected format. Please contact the maintainer of the ",
+                  pkgname, " package."))
+    ans[m] <- diff(c(0L, breakpoints))
+    ans
+}
+
 setMethod("snpcount", "ExtraSNPlocs",
     function(x)
-    {
-        stop("NOT READY YET!")        
-    }
+        .get_snpcount_from_breakpoints(breakpoints(snptable(x)), seqnames(x),
+                                       class(x), x@pkgname)
 )
+
+.get_snplocs_for_single_chrom <- function(x, seqname, columns, drop.rs.prefix)
+{
+    VALID_COLUMNS <- c("RefSNP_id", "snpClass",
+                       "seqnames", "start", "end", "width", "strand",
+                       "alleles", "loctype")
+    if (!all(columns %in% VALID_COLUMNS))
+        stop(wmsg("valid 'columns' are: ",
+             paste(VALID_COLUMNS, collapse=", ")))
+
+    real_columns <- setdiff(columns, c("RefSNP_id", "seqnames", "end"))
+    if ("end" %in% columns)
+        real_columns <- union(real_columns, c("start", "width"))
+    x_snptable <- snptable(x)
+    x_breakpoints <- breakpoints(x_snptable)
+    if (length(seqname) == 0L) {
+        blockidx <- 0L
+    } else {
+        blockidx <- match(seqname, names(x_breakpoints), nomatch=0L)
+    }
+    df0 <- data.frame(
+        lapply(setNames(real_columns, real_columns),
+            function(colname)
+                getBlockFromOnDiskLongTable(x_snptable, colname, blockidx)
+        ),
+        stringsAsFactors=FALSE)
+    if ("RefSNP_id" %in% columns) {
+        if (nrow(df0) == 0L) {
+            ans_RefSNP_id <- integer(0)
+        } else {
+            x_rowids <- rowids(x_snptable)
+            idx <- PartitioningByEnd(x_breakpoints)[[blockidx]]
+            ans_RefSNP_id <- x_rowids[idx]
+            if (!drop.rs.prefix)
+                ans_RefSNP_id <- paste0("rs", ans_RefSNP_id)
+        }
+        df0[["RefSNP_id"]] <- ans_RefSNP_id
+    }
+    if ("seqnames" %in% columns)
+        df0[["seqnames"]] <- factor(seqname)
+    if ("strand" %in% columns) {
+        strand0 <- df0[["strand"]]
+        ans_strand <- rep.int("+", length(strand0))
+        minus_idx <- which(strand0 != as.raw(0L))
+        ans_strand[minus_idx] <- "-"
+        df0[["strand"]] <- ans_strand
+    }
+    if ("end" %in% columns)
+        df0[["end"]] <- df0[["start"]] + df0[["width"]] - 1L
+    if ("loctype" %in% columns)
+        df0[["loctype"]] <- as.integer(df0[["loctype"]])
+    df0[columns]
+}
+
+.get_snplocs_as_GRanges <- function(x, seqname, columns, drop.rs.prefix)
+{
+    columns <- setdiff(columns, "width")
+    columns <- union(columns, c("seqnames", "start", "end", "strand"))
+    if (length(seqname) == 0L) {
+        df <- .get_snplocs_for_single_chrom(x, character(0), columns,
+                                            drop.rs.prefix)
+    } else {
+        dfs <- lapply(seqname,
+            function(chrom)
+              .get_snplocs_for_single_chrom(x, chrom, columns, drop.rs.prefix)
+        )
+        df <- do.call(rbind, dfs)
+    }
+    makeGRangesFromDataFrame(df, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
+}
 
 ### Returns a data frame (when 'as.GRanges=FALSE') or a GRanges object
 ### (when 'as.GRanges=TRUE').
 setMethod("snplocs", "ExtraSNPlocs",
-    function(x, seqname, as.GRanges=FALSE, caching=TRUE)
+    function(x, seqname,
+             columns=c("start", "end", "strand"),
+             drop.rs.prefix=FALSE,
+             as.GRanges=FALSE)
     {
-        stop("NOT READY YET!")
+        if (!isTRUEorFALSE(as.GRanges))
+            stop("'as.GRanges' must be TRUE or FALSE")
+        if (!is.character(seqname) || any(is.na(seqname)))
+            stop("'seqname' must be a character vector with no NAs")
+        if (!all(seqname %in% seqlevels(x))) {
+            if (as.GRanges)
+                prelude <- "strings in 'seqname' must be in: "
+            else
+                prelude <- "'seqname' must be one of: "
+            stop(wmsg(prelude, paste(seqlevels(x), collapse=", ")))
+        }
+        if (!is.character(columns) || any(is.na(columns)))
+            stop("'columns' must be a character vector with no NAs")
+        if (!isTRUEorFALSE(drop.rs.prefix))
+            stop("'drop.rs.prefix' must be TRUE or FALSE")
+        if (as.GRanges)
+            return(.get_snplocs_as_GRanges(x, seqname, columns, drop.rs.prefix))
+        if (length(seqname) != 1L)
+            stop("'seqname' must be of length 1 when 'as.GRanges' is FALSE")
+        .get_snplocs_for_single_chrom(x, seqname, columns, drop.rs.prefix)
     }
 )
 
