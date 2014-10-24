@@ -247,6 +247,7 @@ setMethod("snplocs", "ExtraSNPlocs",
 setMethod("snpid2loc", "ExtraSNPlocs",
     function(x, snpid, caching=TRUE)
     {
+
         stop("NOT READY YET!")
     }
 )
