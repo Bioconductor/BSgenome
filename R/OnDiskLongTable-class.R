@@ -164,7 +164,7 @@ setClass("OnDiskLongTable",
 }
 
 .append_batch_to_OnDiskLongTable <- function(df, dirpath,
-                                             batch.label, blocksize,
+                                             batch_label, blocksize,
                                              compress, compression_level)
 {
     ## Check existence of rowids.rda file.
@@ -191,8 +191,8 @@ setClass("OnDiskLongTable",
                       compress, compression_level)
 
     ## Update 'breakpoints' vector.
-    if (!is.null(batch.label))
-        names(breakpoints2) <- rep.int(batch.label, length(breakpoints2))
+    if (!is.null(batch_label))
+        names(breakpoints2) <- rep.int(batch_label, length(breakpoints2))
     nrow1 <- .get_nrow_from_breakpoints(breakpoints1)
     breakpoints <- c(breakpoints1, nrow1 + breakpoints2)
     .save_object(dirpath, "breakpoints", breakpoints, overwrite=TRUE)
@@ -221,7 +221,7 @@ setClass("OnDiskLongTable",
 ### Ignore the row names on 'df'. If 'df' is a DataFrame, 'metadata(df)' and
 ### 'mcols(df)' are also ignored.
 saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
-                                  batch.label=NULL, blocksize=NA,
+                                  batch_label=NULL, blocksize=NA,
                                   compress=TRUE, compression_level)
 {
     if (!is.data.frame(df) && !is(df, "DataFrame")) 
@@ -229,15 +229,15 @@ saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
     .check_dirpath(dirpath)
     if (!isTRUEorFALSE(append))
         stop("'append' must be TRUE or FALSE")
-    if (!(is.null(batch.label) ||
-          isSingleString(batch.label) && batch.label != ""))
-        stop("'batch.label' must be NULL or a single (non-empty) string")
+    if (!(is.null(batch_label) ||
+          isSingleString(batch_label) && batch_label != ""))
+        stop("'batch_label' must be NULL or a single (non-empty) string")
     blocksize <- .normarg_blocksize(blocksize, nrow(df))
 
     if (!append)
         .write_zero_row_OnDiskLongTable(df, dirpath)
     .append_batch_to_OnDiskLongTable(df, dirpath,
-                                     batch.label, blocksize,
+                                     batch_label, blocksize,
                                      compress, compression_level)
 }
 
@@ -425,49 +425,66 @@ getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
 ### Translation from row index to "row key".
 ###   breakpoints: integer vector of break points.
 ###   rowidx:      integer vector containing valid row indices.
-### Return a named integer vector "parallel" to 'rowidx', i.e. each
-### (name, value) pair in the returned vector represents the "row key" of
-### the corresponding row index. The name is the "block name" where to find
-### the row and the value is the row index *relative to the block*, that is,
-### its position within the block.
+### Return a list of 2 integer vectors parallel to 'rowidx'. The 1st vector
+### contains block indices. The 2nd vector contains row indices relative to
+### the block indicated by the corresponding element in the 1st vector.
+### In addition, if 'breakpoints' has names (i.e. "batch labels") then the
+### 1st vector also has names indicating the label of the batch associated
+### with each row index in 'rowidx'.
 .rowidx2rowkeys <- function(breakpoints, rowidx)
 {
     blockidx <- findInterval(rowidx - 1L, breakpoints) + 1L
-    rowkeys <- rowidx - .breakpoints2offsets(breakpoints)[blockidx]
-    names(rowkeys) <- .blockidx2blockname(blockidx)
-    rowkeys
+    names(blockidx) <- names(breakpoints)[blockidx]
+    rowrelidx <- rowidx - .breakpoints2offsets(unname(breakpoints))[blockidx]
+    list(blockidx, rowrelidx)
 }
 
 ### colidx: column index of length 1
 .get_values_from_column <- function(x, colidx, rowkeys)
 {
-    if (length(rowkeys) == 0L)
+    if (length(rowkeys[[1L]]) == 0L)
         return(.load_block(x, colidx, 0L))
-    list_of_keys <- split(unname(rowkeys), names(rowkeys))
+    list_of_keys <- split(unname(rowkeys[[2L]]), rowkeys[[1L]])
     tmp <- lapply(seq_along(list_of_keys),
              function(i) {
-               blockname <- names(list_of_keys)[i]
+               blockidx <- as.integer(names(list_of_keys)[i])
                keys <- list_of_keys[[i]]
-               block <- .load_block(x, colidx, blockname)
+               block <- .load_block(x, colidx, blockidx)
                block[keys]
              })
-    quickUnsplit(tmp, names(rowkeys))
+    quickUnsplit(tmp, rowkeys[[1L]])
 }
 
 ### rowids: integer vector.
 ### colidx: integer or character vector.
-### Return a DataFrame.
-getDataFromOnDiskLongTable <- function(x, rowids, colidx)
+### Return a DataFrame or data.frame.
+getDataFromOnDiskLongTable <- function(x, rowids, colidx,
+                                       with.batch_label=FALSE,
+                                       as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
         stop("'x' must be an OnDiskLongTable object")
     rowidx <- .rowids2rowidx(x, rowids)
-    rowkeys <- .rowidx2rowkeys(breakpoints(x), rowidx)
+    x_breakpoints <- breakpoints(x)
+    rowkeys <- .rowidx2rowkeys(x_breakpoints, rowidx)
     colidx <- .normarg_colidx(colidx, x)
+    if (!isTRUEorFALSE(with.batch_label))
+        stop("'with.batch_label' must be TRUE or FALSE")
+    if (!isTRUEorFALSE(as.data.frame))
+        stop("'as.data.frame' must be TRUE or FALSE")
     names(colidx) <- colnames(x)[colidx]
     ans_listData <-
         lapply(colidx, function(j) .get_values_from_column(x, j, rowkeys))
-    new("DataFrame", listData=ans_listData, nrows=length(rowids),
-                     rownames=as.character(rowids))
+    if (with.batch_label)
+        ans_listData[["batch_label"]] <- factor(names(rowkeys[[1L]]),
+                                                levels=names(x_breakpoints))
+    if (as.data.frame) {
+        ans <- data.frame(ans_listData, stringsAsFactors=FALSE)
+    } else {
+        ans <- new("DataFrame", listData=ans_listData,
+                                nrows=length(rowids),
+                                rownames=as.character(rowids))
+    }
+    ans
 }
 
