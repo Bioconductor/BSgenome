@@ -29,7 +29,7 @@ Collate: utils.R
 	OnDiskNamedSequences-class.R
 	SNPlocs-class.R
 	InjectSNPsHandler-class.R
-	ExtraSNPlocs-class.R
+	XtraSNPlocs-class.R
 	BSgenome-class.R
 	available.genomes.R
 	injectSNPs.R

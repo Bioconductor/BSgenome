@@ -15,7 +15,7 @@ exportClasses(
     OnDiskLongTable,
     SNPlocs,
     InjectSNPsHandler,
-    ExtraSNPlocs,
+    XtraSNPlocs,
     BSgenome, MaskedBSgenome,
     GenomeData, GenomeDataList,
 
@@ -28,7 +28,7 @@ export(
     saveAsOnDiskLongTable, saveRowidsForOnDiskLongTable,
     OnDiskLongTable, getDataFromOnDiskLongTable,
     newSNPlocs,
-    newExtraSNPlocs,
+    newXtraSNPlocs,
     BSgenome, MaskedBSgenome,
     installed.genomes, available.genomes, getBSgenome,
     installed.SNPs, available.SNPs,
@@ -40,6 +40,7 @@ export(
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
+    snpsBySeqname, snpsById,
 
     sourceUrl,
     SNPlocs, SNPlocs_pkgname, SNPcount,
@@ -71,6 +72,7 @@ exportMethods(
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
+    snpsBySeqname, snpsById,
 
     sourceUrl,
     SNPlocs, SNPlocs_pkgname, SNPcount,
