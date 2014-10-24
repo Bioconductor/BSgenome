@@ -135,7 +135,7 @@ setMethod("show", "ExtraSNPlocs",
 
 setMethod("snpcount", "ExtraSNPlocs",
     function(x)
-        .get_snpcount_from_breakpoints(breakpoints(snptable(x)), seqnames(x),
+        .get_snpcount_from_breakpoints(breakpoints(snptable(x)), seqlevels(x),
                                        class(x), x@pkgname)
 )
 
@@ -192,51 +192,50 @@ setMethod("snpcount", "ExtraSNPlocs",
     df0[columns]
 }
 
-.get_snplocs_as_GRanges <- function(x, seqname, columns, drop.rs.prefix)
+.get_snplocs_as_df <- function(x, seqnames, columns, drop.rs.prefix)
+{
+    if (length(seqnames) <= 1L)
+        return(.get_snplocs_for_single_chrom(x, seqnames, columns,
+                                             drop.rs.prefix))
+    dfs <- lapply(seqnames,
+               function(seqname)
+                   .get_snplocs_for_single_chrom(x, seqname, columns,
+                                                 drop.rs.prefix))
+    do.call(rbind, dfs)
+}
+
+.get_snplocs_as_GRanges <- function(x, seqnames, columns, drop.rs.prefix)
 {
     columns <- setdiff(columns, "width")
     columns <- union(columns, c("seqnames", "start", "end", "strand"))
-    if (length(seqname) == 0L) {
-        df <- .get_snplocs_for_single_chrom(x, character(0), columns,
-                                            drop.rs.prefix)
-    } else {
-        dfs <- lapply(seqname,
-            function(chrom)
-              .get_snplocs_for_single_chrom(x, chrom, columns, drop.rs.prefix)
-        )
-        df <- do.call(rbind, dfs)
-    }
+    df <- .get_snplocs_as_df(x, seqnames, columns, drop.rs.prefix)
     makeGRangesFromDataFrame(df, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
 }
 
-### Returns a data frame (when 'as.GRanges=FALSE') or a GRanges object
-### (when 'as.GRanges=TRUE').
+### Returns a GRanges object unless 'as.data.frame=TRUE'.
 setMethod("snplocs", "ExtraSNPlocs",
-    function(x, seqname,
-             columns=c("start", "end", "strand"),
+    function(x, seqnames,
+             columns=c("seqnames", "start", "end", "strand"),
              drop.rs.prefix=FALSE,
-             as.GRanges=FALSE)
+             as.data.frame=FALSE)
     {
-        if (!isTRUEorFALSE(as.GRanges))
-            stop("'as.GRanges' must be TRUE or FALSE")
-        if (!is.character(seqname) || any(is.na(seqname)))
-            stop("'seqname' must be a character vector with no NAs")
-        if (!all(seqname %in% seqlevels(x))) {
-            if (as.GRanges)
-                prelude <- "strings in 'seqname' must be in: "
-            else
-                prelude <- "'seqname' must be one of: "
-            stop(wmsg(prelude, paste(seqlevels(x), collapse=", ")))
-        }
+        if (!is.character(seqnames)
+         || any(is.na(seqnames))
+         || any(duplicated(seqnames)))
+            stop("'seqnames' must be a character vector ",
+                 "with no NAs and no duplicates")
+        if (!all(seqnames %in% seqlevels(x)))
+            stop(wmsg("'seqnames' must be a subset of: ",
+                      paste(seqlevels(x), collapse=", ")))
         if (!is.character(columns) || any(is.na(columns)))
             stop("'columns' must be a character vector with no NAs")
         if (!isTRUEorFALSE(drop.rs.prefix))
             stop("'drop.rs.prefix' must be TRUE or FALSE")
-        if (as.GRanges)
-            return(.get_snplocs_as_GRanges(x, seqname, columns, drop.rs.prefix))
-        if (length(seqname) != 1L)
-            stop("'seqname' must be of length 1 when 'as.GRanges' is FALSE")
-        .get_snplocs_for_single_chrom(x, seqname, columns, drop.rs.prefix)
+        if (!isTRUEorFALSE(as.data.frame))
+            stop("'as.data.frame' must be TRUE or FALSE")
+        if (as.data.frame)
+            return(.get_snplocs_as_df(x, seqnames, columns, drop.rs.prefix))
+        .get_snplocs_as_GRanges(x, seqnames, columns, drop.rs.prefix)
     }
 )
 
