@@ -227,23 +227,23 @@ setMethod("snpcount", "SNPlocs",
                stringsAsFactors=FALSE)
 }
 
-.SNPlocsAsGranges <- function(x, ufsnplocs, seqnames)
+.SNPlocsAsGranges <- function(x, ufsnplocs, seqname)
 {
-    if (is(seqnames, "Rle")) {
-        if (length(seqnames) != nrow(ufsnplocs)
-         || !identical(levels(seqnames), seqlevels(x)))
-            stop("when an Rle, 'seqnames' must be a factor Rle ",
+    if (is(seqname, "Rle")) {
+        if (length(seqname) != nrow(ufsnplocs)
+         || !identical(levels(seqname), seqlevels(x)))
+            stop("when an Rle, 'seqname' must be a factor Rle ",
                  "of length 'nrow(ufsnplocs)' and levels 'SEQNAMES'")
-        ans_seqnames <- seqnames
+        ans_seqnames <- seqname
     } else {
-        if (!is.factor(seqnames))
-            seqnames <- factor(seqnames, levels=seqlevels(x))
-        if (length(seqnames) == 1L)
-            ans_seqnames <- Rle(seqnames, nrow(ufsnplocs))
-        else if (length(seqnames) == nrow(ufsnplocs))
-            ans_seqnames <- Rle(seqnames)
+        if (!is.factor(seqname))
+            seqname <- factor(seqname, levels=seqlevels(x))
+        if (length(seqname) == 1L)
+            ans_seqnames <- Rle(seqname, nrow(ufsnplocs))
+        else if (length(seqname) == nrow(ufsnplocs))
+            ans_seqnames <- Rle(seqname)
         else
-            stop("'length(seqnames)' must be 1 or 'nrow(ufsnplocs)'")
+            stop("'length(seqname)' must be 1 or 'nrow(ufsnplocs)'")
     }
     if (nrow(ufsnplocs) == 0L)
         ans_ranges <- IRanges()
@@ -260,41 +260,39 @@ setMethod("snpcount", "SNPlocs",
 }
 
 setGeneric("snplocs", signature="x",
-    function(x, seqnames, ...) standardGeneric("snplocs")
+    function(x, seqname, ...) standardGeneric("snplocs")
 )
 
 ### Returns a data frame (when 'as.GRanges=FALSE') or a GRanges object
 ### (when 'as.GRanges=TRUE').
 setMethod("snplocs", "SNPlocs",
-    function(x, seqnames, as.GRanges=FALSE, caching=TRUE)
+    function(x, seqname, as.GRanges=FALSE, caching=TRUE)
     {
-        if (!is.character(seqnames) || any(is.na(seqnames)))
-            stop("'seqnames' must be a character vector with no NAs")
-        if (!all(seqnames %in% seqlevels(x)))
-            stop("all 'seqnames' elements must be in: ",
+        if (!is.character(seqname) || any(is.na(seqname)))
+            stop("'seqname' must be a character vector with no NAs")
+        if (!all(seqname %in% seqlevels(x)))
+            stop("all 'seqname' elements must be in: ",
                  paste(seqlevels(x), collapse=", "))
         if (!isTRUEorFALSE(as.GRanges))
             stop("'as.GRanges' must be TRUE or FALSE")
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
         if (!as.GRanges) {
-            if (length(seqnames) != 1L)
-                stop("'seqnames' must be of length 1 ",
-                     "when 'as.GRanges' is FALSE")
-            return(.get_ufsnplocs(x, seqnames, caching))
+            if (length(seqname) != 1L)
+                stop("'seqname' must be of length 1 when 'as.GRanges' is FALSE")
+            return(.get_ufsnplocs(x, seqname, caching))
         }
-        if (length(seqnames) == 0L) {
+        if (length(seqname) == 0L) {
             empty_ufsnplocs <- .get_SNPlocs_data(x, "empty_ufsnplocs")
             ans <- .SNPlocsAsGranges(x, empty_ufsnplocs, character(0))
             return(ans)
         }
-        list_of_ufsnplocs <- lapply(seqnames,
+        list_of_ufsnplocs <- lapply(seqname,
                                     .get_ufsnplocs, x=x, caching=caching)
         ufsnplocs <- do.call(rbind, list_of_ufsnplocs)
-        ans_seqnames <- Rle(factor(seqnames, levels=seqlevels(x)),
-                            unlist(lapply(list_of_ufsnplocs, nrow),
-                                   use.names=FALSE))
-        .SNPlocsAsGranges(x, ufsnplocs, ans_seqnames)
+        seqnames <- Rle(factor(seqname, levels=seqlevels(x)),
+                        unlist(lapply(list_of_ufsnplocs, nrow), use.names=FALSE))
+        .SNPlocsAsGranges(x, ufsnplocs, seqnames)
     }
 )
 
