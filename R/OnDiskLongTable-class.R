@@ -23,7 +23,7 @@ setClass("OnDiskLongTable",
 ### Low-level helpers
 ###
 
-.check_dirpath <- function(dirpath)
+.OnDiskLongTable_check_dirpath <- function(dirpath)
 {
     if (!isSingleString(dirpath) || dirpath == "")
         stop(wmsg("'dirpath' must be a single (non-empty) string"))
@@ -31,37 +31,37 @@ setClass("OnDiskLongTable",
         stop(wmsg("directory not found: ", dirpath))
 }
 
-.check_breakpoints <- function(breakpoints)
+.OnDiskLongTable_check_breakpoints <- function(breakpoints)
 {
     if (!is.integer(breakpoints)
-     || any(is.na(breakpoints))
+     || S4Vectors:::anyMissing(breakpoints)
      || is.unsorted(breakpoints, strictly=TRUE)
      || length(breakpoints) != 0L && breakpoints[[1L]] < 1L)
         stop(wmsg("invalid breakpoints found for OnDiskLongTable object"))
 }
 
-.check_rowids <- function(rowids)
+.OnDiskLongTable_check_rowids <- function(rowids)
 {
     if (!is.integer(rowids))
         stop(wmsg("'rowids' must be an integer vector"))
-    if (any(is.na(rowids)) || any(duplicated(rowids)))
+    if (S4Vectors:::anyMissing(rowids) || anyDuplicated(rowids))
         stop(wmsg("'rowids' cannot contain NAs or duplicated values"))
 }
 
-.get_nrow_from_breakpoints <- function(breakpoints)
+.OnDiskLongTable_get_nrow_from_breakpoints <- function(breakpoints)
 {
     if (length(breakpoints) == 0L)
         return(0L)
     breakpoints[[length(breakpoints)]]
 }
 
-.colidx2dirname <- function(colidx)
+.OnDiskLongTable_colidx2dirname <- function(colidx)
     sprintf("col%03d", colidx)
 
-.colidx2dirpath <- function(dirpath, colidx)
-    file.path(dirpath, .colidx2dirname(colidx))
+.OnDiskLongTable_colidx2dirpath <- function(dirpath, colidx)
+    file.path(dirpath, .OnDiskLongTable_colidx2dirname(colidx))
 
-.blockidx2blockname <- function(blockidx)
+.OnDiskLongTable_blockidx2blockname <- function(blockidx)
 {
     not_na_idx <- which(!is.na(blockidx))
     blockname <- character(length(blockidx))
@@ -95,6 +95,17 @@ setClass("OnDiskLongTable",
     get(objname, envir=tmpenv, inherits=FALSE)
 }
 
+### colidx:    column index of length 1.
+### blockname: a valid block name. Can also be a valid block index as a
+###            single integer.
+.load_block <- function(x, colidx, blockname)
+{
+    if (!is.character(blockname))
+        blockname <- .OnDiskLongTable_blockidx2blockname(blockname)
+    col_dirpath <- .OnDiskLongTable_colidx2dirpath(x@dirpath, colidx)
+    .load_object(col_dirpath, blockname)
+}
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### .write_zero_row_OnDiskLongTable()
@@ -123,7 +134,7 @@ setClass("OnDiskLongTable",
         stop(wmsg("failed to create directory: ", col_dirpath))
     ## A "special block" is written in newly created column dir. It contains
     ## serialized zero-length column.
-    blockname <- .blockidx2blockname(0L)
+    blockname <- .OnDiskLongTable_blockidx2blockname(0L)
     block <- df_col[integer(0)]
     .save_object(col_dirpath, blockname, block)
 }
@@ -132,7 +143,7 @@ setClass("OnDiskLongTable",
 {
     ## Remove stuff.
     .remove_file(dirpath, "rowids.rda")
-    col_dirpaths <- .colidx2dirpath(dirpath, seq_len(ncol(df)))
+    col_dirpaths <- .OnDiskLongTable_colidx2dirpath(dirpath, seq_len(ncol(df)))
     .remove_dirs(col_dirpaths)
 
     ## Create stuff.
@@ -156,7 +167,7 @@ setClass("OnDiskLongTable",
     block_ranges <- PartitioningByEnd(breakpoints)
     for (b in seq_along(block_ranges)) {
         blockidx <- blockidx_offset + b
-        blockname <- .blockidx2blockname(blockidx)
+        blockname <- .OnDiskLongTable_blockidx2blockname(blockidx)
         block <- df_col[block_ranges[[b]]]
         .save_object(col_dirpath, blockname, block,
                      compress, compression_level)
@@ -183,7 +194,7 @@ setClass("OnDiskLongTable",
     breakpoints1 <- .load_object(dirpath, "breakpoints")
 
     ## Append 'df' columns.
-    col_dirpaths <- .colidx2dirpath(dirpath, seq_len(ncol(df)))
+    col_dirpaths <- .OnDiskLongTable_colidx2dirpath(dirpath, seq_len(ncol(df)))
     breakpoints2 <- end(breakInChunks(nrow(df), blocksize))
     blockidx_offset <- length(breakpoints1)
     for (j in seq_len(ncol(df)))
@@ -194,7 +205,7 @@ setClass("OnDiskLongTable",
     ## Update 'breakpoints' vector.
     if (!is.null(batch_label))
         names(breakpoints2) <- rep.int(batch_label, length(breakpoints2))
-    nrow1 <- .get_nrow_from_breakpoints(breakpoints1)
+    nrow1 <- .OnDiskLongTable_get_nrow_from_breakpoints(breakpoints1)
     breakpoints <- c(breakpoints1, nrow1 + breakpoints2)
     .save_object(dirpath, "breakpoints", breakpoints, overwrite=TRUE)
 }
@@ -227,7 +238,7 @@ saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
 {
     if (!is.data.frame(df) && !is(df, "DataFrame")) 
         stop(wmsg("'df' must be a data.frame or DataFrame object"))
-    .check_dirpath(dirpath)
+    .OnDiskLongTable_check_dirpath(dirpath)
     if (!isTRUEorFALSE(append))
         stop(wmsg("'append' must be TRUE or FALSE"))
     if (!(is.null(batch_label) ||
@@ -247,10 +258,10 @@ saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
 saveRowidsForOnDiskLongTable <- function(rowids, dirpath=".",
                                          compress=TRUE, compression_level)
 {
-    .check_rowids(rowids)
-    .check_dirpath(dirpath)
+    .OnDiskLongTable_check_rowids(rowids)
+    .OnDiskLongTable_check_dirpath(dirpath)
     breakpoints <- .load_object(dirpath, "breakpoints")
-    nrow <- .get_nrow_from_breakpoints(breakpoints)
+    nrow <- .OnDiskLongTable_get_nrow_from_breakpoints(breakpoints)
     if (length(rowids) != nrow)
         stop(wmsg("length of 'rowids' is incompatible ",
                   "with the OnDiskLongTable object in ", dirpath))
@@ -265,7 +276,7 @@ saveRowidsForOnDiskLongTable <- function(rowids, dirpath=".",
 
 OnDiskLongTable <- function(dirpath=".")
 {
-    .check_dirpath(dirpath)
+    .OnDiskLongTable_check_dirpath(dirpath)
     ans_colnames <- .load_object(dirpath, "colnames")
     ans_breakpoints <- .load_object(dirpath, "breakpoints")
     ans_rowids_cache <- new.env(parent=emptyenv())
@@ -273,7 +284,7 @@ OnDiskLongTable <- function(dirpath=".")
                                   colnames=ans_colnames,
                                   breakpoints=ans_breakpoints,
                                   .rowids_cache=ans_rowids_cache)
-    .check_breakpoints(ans_breakpoints)
+    .OnDiskLongTable_check_breakpoints(ans_breakpoints)
     ans
 }
 
@@ -299,7 +310,7 @@ setMethod("blocksizes", "OnDiskLongTable",
 )
 
 setMethod("nrow", "OnDiskLongTable",
-    function(x) .get_nrow_from_breakpoints(breakpoints(x))
+    function(x) .OnDiskLongTable_get_nrow_from_breakpoints(breakpoints(x))
 )
 
 setGeneric("rowids", function(x) standardGeneric("rowids"))
@@ -327,7 +338,7 @@ setMethod("rowids", "OnDiskLongTable",
             stop(wmsg(filepath, " does not seem to belong ",
                       "to an OnDiskLongTable object"))
         ans <- get(objname, envir=x@.rowids_cache, inherits=FALSE)
-        .check_rowids(ans)
+        .OnDiskLongTable_check_rowids(ans)
         if (length(ans) != nrow(x))
             stop(wmsg("length(rowids) != nrow(x)"))
         ans
@@ -358,54 +369,6 @@ setMethod("show", "OnDiskLongTable",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Load a single block
-###
-
-### colidx:    column index of length 1.
-### blockname: a valid block name. Can also be a valid block index as a
-###            single integer.
-.load_block <- function(x, colidx, blockname)
-{
-    if (!is.character(blockname))
-        blockname <- .blockidx2blockname(blockname)
-    col_dirpath <- .colidx2dirpath(x@dirpath, colidx)
-    .load_object(col_dirpath, blockname)
-}
-
-.normarg_colidx <- function(colidx, x)
-{
-    if (is.character(colidx)) {
-        colidx <- match(colidx, colnames(x))
-        if (any(is.na(colidx)))
-            stop(wmsg("'colidx' contains invalid column names"))
-        return(colidx)
-    }
-    if (!is.numeric(colidx))
-        stop(wmsg("'colidx' must be an integer or character vector"))
-    if (!is.integer(colidx))
-        colidx <- as.integer(colidx)
-    if (S4Vectors:::anyMissingOrOutside(colidx, 1L, ncol(x)))
-        stop(wmsg("'colidx' contains invalid column indices"))
-    colidx
-}
-
-### User-friendly wrapper to .load_block(). NOT exported.
-### colidx:   column index of length 1. Can be a single column name.
-### blockidx: block index of length 1. Can be a single block name.
-getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
-{
-    if (!is(x, "OnDiskLongTable"))
-        stop(wmsg("'x' must be an OnDiskLongTable object"))
-    if (!(isSingleNumber(colidx) || isSingleString(colidx)))
-        stop(wmsg("'colidx' must be a single integer or string"))
-    if (!(isSingleNumber(blockidx) || isSingleString(blockidx)))
-        stop(wmsg("'blockidx' must be a single integer or string"))
-    colidx <- .normarg_colidx(colidx, x)
-    .load_block(x, colidx, blockidx)
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get batches from OnDiskLongTable
 ###
 
@@ -416,11 +379,28 @@ getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
                   "no names): cannot use getBatchesFromOnDiskLongTable() ",
                   "on it"))
     if (!is.character(batch_labels)
-     || any(is.na(batch_labels))
-     || any(duplicated(batch_labels)))
+     || S4Vectors:::anyMissing(batch_labels)
+     || anyDuplicated(batch_labels))
         stop(wmsg("'batch_labels' must be a character vector ",
                   "with no NAs and no duplicates"))
     batch_labels
+}
+
+.normarg_colidx <- function(colidx, x)
+{
+    if (is.character(colidx)) {
+        colidx <- match(colidx, colnames(x))
+        if (S4Vectors:::anyMissing(colidx))
+            stop(wmsg("'colidx' contains invalid column names"))
+        return(colidx)
+    }
+    if (!is.numeric(colidx))
+        stop(wmsg("'colidx' must be an integer or character vector"))
+    if (!is.integer(colidx))
+        colidx <- as.integer(colidx)
+    if (S4Vectors:::anyMissingOrOutside(colidx, 1L, ncol(x)))
+        stop(wmsg("'colidx' contains invalid column indices"))
+    colidx
 }
 
 ### colidx: column index of length 1
@@ -488,25 +468,16 @@ getBatchesFromOnDiskLongTable <- function(x, batch_labels, colidx,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Get data from OnDiskLongTable
+### getRowsByIndexFromOnDiskLongTable()
 ###
 
-.rowids2rowidx <- function(x, rowids)
+.normarg_rowidx <- function(rowidx, x)
 {
-    if (!is.integer(rowids))
-        stop(wmsg("'rowids' must be an integer vector"))
-    x_rowids <- rowids(x)
-    if (!is.null(x_rowids)) {
-        rowidx <- match(rowids, x_rowids)
-        if (any(is.na(rowidx)))
-            stop(wmsg("'rowids' contains invalid row ids"))
-        return(rowidx)
-    }
-    ## When 'rowids(x)' is NULL, then row ids are implicit and considered
-    ## to be 'seq_len(nrow(x))'.
-    if (S4Vectors:::anyMissingOrOutside(rowids, 1L, nrow(x)))
-        stop(wmsg("'rowids' contains invalid row indices"))
-    rowids
+    if (!is.integer(rowidx))
+        stop(wmsg("'rowidx' must be an integer vector"))
+    if (S4Vectors:::anyMissingOrOutside(rowidx, 1L, nrow(x)))
+        stop(wmsg("'rowidx' contains NAs or invalid row indices"))
+    rowidx
 }
 
 .breakpoints2offsets <- function(breakpoints)
@@ -550,16 +521,18 @@ getBatchesFromOnDiskLongTable <- function(x, batch_labels, colidx,
     quickUnsplit(tmp, rowkeys[[1L]])
 }
 
-### rowids: integer vector.
+### rowidx: integer vector.
 ### colidx: integer or character vector.
-### Return a DataFrame (or data.frame) with 1 row per row id in 'rowids'.
-getDataFromOnDiskLongTable <- function(x, rowids, colidx,
-                                       with.batch_label=FALSE,
-                                       as.data.frame=FALSE)
+### Return a DataFrame (or data.frame) with 1 row per row id in 'rowidx'.
+### Note that we do NOT set the row names to 'rowidx' on the returned DataFrame
+### because we want to support duplicates in 'rowidx'.
+getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
+                                              with.batch_label=FALSE,
+                                              as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
-    rowidx <- .rowids2rowidx(x, rowids)
+    rowidx <- .normarg_rowidx(rowidx, x)
     x_breakpoints <- breakpoints(x)
     rowkeys <- .rowidx2rowkeys(x_breakpoints, rowidx)
     colidx <- .normarg_colidx(colidx, x)
@@ -576,18 +549,47 @@ getDataFromOnDiskLongTable <- function(x, rowids, colidx,
                                                 levels=batch_label_levels)
     }
     if (as.data.frame) {
-        ## We do NOT set the row names because we want to support duplicates
-        ## in 'rowids'.
-        #ans <- data.frame(ans_listData, row.names=rowids,
-        #                  stringsAsFactors=FALSE)
         ans <- data.frame(ans_listData, stringsAsFactors=FALSE)
     } else {
-        #ans <- new("DataFrame", listData=ans_listData,
-        #                        nrows=length(rowids),
-        #                        rownames=as.character(rowids))
         ans <- new("DataFrame", listData=ans_listData,
-                                nrows=length(rowids))
+                                nrows=length(rowidx))
     }
     ans
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### getRowsByIdFromOnDiskLongTable()
+###
+
+.rowids2rowidx <- function(x, rowids)
+{
+    x_rowids <- rowids(x)
+    if (is.null(x_rowids))
+        stop(wmsg("'x' has no row ids: cannot use ",
+                  "getRowsByIdFromOnDiskLongTable() on it"))
+    if (!is.integer(rowids) || S4Vectors:::anyMissing(rowids))
+        stop(wmsg("'rowids' must be an integer vector with no NAs"))
+    rowidx <- match(rowids, x_rowids)
+    if (S4Vectors:::anyMissing(rowidx))
+        stop(wmsg("'rowids' contains invalid row ids"))
+    rowidx
+}
+
+### rowids: integer vector.
+### colidx: integer or character vector.
+### Return a DataFrame (or data.frame) with 1 row per row id in 'rowids'.
+### Note that we do NOT set the row names to 'rowids' on the returned DataFrame
+### because we want to support duplicates in 'rowids'.
+getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx,
+                                           with.batch_label=FALSE,
+                                           as.data.frame=FALSE)
+{
+    if (!is(x, "OnDiskLongTable"))
+        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    rowidx <- .rowids2rowidx(x, rowids)
+    getRowsByIndexFromOnDiskLongTable(x, rowidx, colidx,
+                                      with.batch_label=with.batch_label,
+                                      as.data.frame=as.data.frame)
 }
 

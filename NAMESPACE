@@ -27,7 +27,8 @@ export(
     ## Non-generic functions:
     saveAsOnDiskLongTable, saveRowidsForOnDiskLongTable,
     OnDiskLongTable,
-    getBatchesFromOnDiskLongTable, getDataFromOnDiskLongTable,
+    getBatchesFromOnDiskLongTable,
+    getRowsByIndexFromOnDiskLongTable, getRowsByIdFromOnDiskLongTable,
     newSNPlocs,
     newXtraSNPlocs,
     BSgenome, MaskedBSgenome,
