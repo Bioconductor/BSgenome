@@ -3,14 +3,146 @@
 ### -------------------------------------------------------------------------
 ###
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### XtraSnpTable class
+###
+### NOT exported. Used internally in XtraSNPlocs class.
+###
+
+setClass("XtraSnpTable", contains="OnDiskLongTable")
+
+.XTRASNPTABLE_REAL_COLUMNS <- c(
+    "snpClass",
+    "alleles",
+    "start", "width", "strand",
+    "loctype"
+)
+
+.XTRASNPTABLE_COMPUTED_COLUMNS <- c("RefSNP_id", "seqnames", "end")
+
+.XTRASNPTABLE_ALL_COLUMNS <- c(.XTRASNPTABLE_REAL_COLUMNS,
+                               .XTRASNPTABLE_COMPUTED_COLUMNS)
+
+.XtraSnpTable <- function(dirpath=".")
+{
+    odlt <- OnDiskLongTable(dirpath)
+    stopifnot(identical(colnames(odlt), .XTRASNPTABLE_REAL_COLUMNS))
+    new("XtraSnpTable", odlt)
+}
+
+.XtraSnpTable_check_user_supplied_columns <- function(columns)
+{
+    if (!is.character(columns) || any(is.na(columns)))
+        stop(wmsg("'columns' must be a character vector with no NAs"))
+    if (!all(columns %in% .XTRASNPTABLE_ALL_COLUMNS))
+        stop(wmsg("valid columns: ",
+                  paste(.XTRASNPTABLE_ALL_COLUMNS, collapse=", ")))
+}
+
+.XtraSnpTable_get_real_from_user_supplied_columns <- function(columns)
+{
+    real_columns <- setdiff(columns, .XTRASNPTABLE_COMPUTED_COLUMNS)
+    if ("end" %in% columns)
+        real_columns <- union(real_columns, c("start", "width"))
+    real_columns
+}
+
+.XtraSnpTable_get_DF_for_seqname <- function(x, seqname, columns,
+                                             drop.rs.prefix)
+{
+    real_columns <- .XtraSnpTable_get_real_from_user_supplied_columns(columns)
+    x_breakpoints <- breakpoints(x)
+    if (length(seqname) == 0L) {
+        blockidx <- 0L
+    } else {
+        blockidx <- match(seqname, names(x_breakpoints), nomatch=0L)
+    }
+    DF0 <- data.frame(
+        lapply(setNames(real_columns, real_columns),
+            function(colname)
+                getBlockFromOnDiskLongTable(x, colname, blockidx)
+        ),
+        stringsAsFactors=FALSE)
+    if ("RefSNP_id" %in% columns) {
+        if (nrow(DF0) == 0L) {
+            ans_RefSNP_id <- integer(0)
+        } else {
+            x_rowids <- rowids(x)
+            idx <- PartitioningByEnd(x_breakpoints)[[blockidx]]
+            ans_RefSNP_id <- x_rowids[idx]
+            if (!drop.rs.prefix)
+                ans_RefSNP_id <- paste0("rs", ans_RefSNP_id)
+        }
+        DF0[["RefSNP_id"]] <- ans_RefSNP_id
+    }
+    if ("seqnames" %in% columns)
+        DF0[["seqnames"]] <- factor(seqname)
+    if ("strand" %in% columns) {
+        strand0 <- DF0[["strand"]]
+        ans_strand <- rep.int("+", length(strand0))
+        minus_idx <- which(strand0 != as.raw(0L))
+        ans_strand[minus_idx] <- "-"
+        DF0[["strand"]] <- ans_strand
+    }
+    if ("end" %in% columns)
+        DF0[["end"]] <- DF0[["start"]] + DF0[["width"]] - 1L
+    if ("loctype" %in% columns)
+        DF0[["loctype"]] <- as.integer(DF0[["loctype"]])
+    DF0[columns]
+}
+
+.XtraSnpTable_get_DF_for_seqnames <- function(x, seqnames, columns,
+                                              drop.rs.prefix)
+{
+    if (length(seqnames) <= 1L)
+        return(.XtraSnpTable_get_DF_for_seqname(x, seqnames, columns,
+                                                drop.rs.prefix))
+    DF_list <- lapply(seqnames,
+        function(seqname)
+            .XtraSnpTable_get_DF_for_seqname(x, seqname, columns,
+                                             drop.rs.prefix))
+    do.call(rbind, DF_list)
+}
+
+.XtraSnpTable_get_DF_for_ids <- function(x, rowids, ids,
+                                         ifnotfound, columns,
+                                         x_seqlevels)
+{
+    real_columns <- .XtraSnpTable_get_real_from_user_supplied_columns(columns)
+    DF0 <- getDataFromOnDiskLongTable(x, rowids, real_columns,
+                                      with.batch_label=TRUE)
+    if ("RefSNP_id" %in% columns)
+        DF0[["RefSNP_id"]] <- ids
+    if ("seqnames" %in% columns)
+        DF0[["seqnames"]] <- factor(DF0[["batch_label"]], levels=x_seqlevels)
+    if ("strand" %in% columns) {
+        strand0 <- DF0[["strand"]]
+        ans_strand <- rep.int("+", length(strand0))
+        minus_idx <- which(strand0 != as.raw(0L))
+        ans_strand[minus_idx] <- "-"
+        DF0[["strand"]] <- ans_strand
+    }
+    if ("end" %in% columns)
+        DF0[["end"]] <- DF0[["start"]] + DF0[["width"]] - 1L
+    if ("loctype" %in% columns)
+        DF0[["loctype"]] <- as.integer(DF0[["loctype"]])
+    DF0[columns]
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### XtraSNPlocs class
+###
+
 setClass("XtraSNPlocs",
     representation(
         ## Name of the XtraSNPlocs data package where the XtraSNPlocs
         ## object is defined.
         pkgname="character",
 
-        ## OnDiskLongTable object containing the SNP table.
-        snp_table="OnDiskLongTable",
+        ## XtraSnpTable object containing the SNP table.
+        snp_table="XtraSnpTable",
 
         ## Provider of the SNPs (e.g. "dbSNP").
         provider="character",
@@ -70,7 +202,7 @@ newXtraSNPlocs <- function(pkgname, snp_table_dirpath,
                            download_url, download_date,
                            reference_genome)
 {
-    snp_table <- OnDiskLongTable(snp_table_dirpath)
+    snp_table <- .XtraSnpTable(snp_table_dirpath)
     new("XtraSNPlocs",
         pkgname=pkgname,
         snp_table=snp_table,
@@ -85,12 +217,12 @@ newXtraSNPlocs <- function(pkgname, snp_table_dirpath,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### snptable()
+### snpTable()
 ###
 
-setGeneric("snptable", function(x) standardGeneric("snptable"))
+setGeneric("snpTable", function(x) standardGeneric("snpTable"))
 
-setMethod("snptable", "XtraSNPlocs", function(x) x@snp_table)
+setMethod("snpTable", "XtraSNPlocs", function(x) x@snp_table)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -104,7 +236,7 @@ setMethod("show", "XtraSNPlocs",
             " (", releaseName(object), ")\n", sep="")
         cat("| reference genome: ",
             providerVersion(referenceGenome(object)), "\n", sep="")
-        cat("| nb of SNPs: ", nrow(snptable(object)), "\n", sep="")
+        cat("| nb of SNPs: ", nrow(snpTable(object)), "\n", sep="")
     }
 )
 
@@ -135,7 +267,7 @@ setMethod("show", "XtraSNPlocs",
 
 setMethod("snpcount", "XtraSNPlocs",
     function(x)
-        .get_snpcount_from_breakpoints(breakpoints(snptable(x)), seqlevels(x),
+        .get_snpcount_from_breakpoints(breakpoints(snpTable(x)), seqlevels(x),
                                        class(x), x@pkgname)
 )
 
@@ -144,122 +276,54 @@ setMethod("snpcount", "XtraSNPlocs",
 ### snpsBySeqname()
 ###
 
-.XTRASNPLOCS_VALID_COLUMNS <- c(
-    "RefSNP_id",
-    "snpClass",
-    "seqnames", "start", "end", "width", "strand",
-    "alleles",
-    "loctype"
-)
-
-.get_real_columns_from_user_supplied_columns <- function(columns)
+.normarg_columns <- function(columns)
 {
-    if (!all(columns %in% .XTRASNPLOCS_VALID_COLUMNS))
-        stop(wmsg("valid 'columns' are: ",
-             paste(.XTRASNPLOCS_VALID_COLUMNS, collapse=", ")))
-    real_columns <- setdiff(columns, c("RefSNP_id", "seqnames", "end"))
-    if ("end" %in% columns)
-        real_columns <- union(real_columns, c("start", "width"))
-    real_columns
-}
-
-.get_df_for_one_seqname_from_XtraSNPlocs <- function(x, seqname, columns,
-                                                     drop.rs.prefix)
-{
-    real_columns <- .get_real_columns_from_user_supplied_columns(columns)
-    x_snptable <- snptable(x)
-    x_breakpoints <- breakpoints(x_snptable)
-    if (length(seqname) == 0L) {
-        blockidx <- 0L
-    } else {
-        blockidx <- match(seqname, names(x_breakpoints), nomatch=0L)
-    }
-    df0 <- data.frame(
-        lapply(setNames(real_columns, real_columns),
-            function(colname)
-                getBlockFromOnDiskLongTable(x_snptable, colname, blockidx)
-        ),
-        stringsAsFactors=FALSE)
-    if ("RefSNP_id" %in% columns) {
-        if (nrow(df0) == 0L) {
-            ans_RefSNP_id <- integer(0)
-        } else {
-            x_rowids <- rowids(x_snptable)
-            idx <- PartitioningByEnd(x_breakpoints)[[blockidx]]
-            ans_RefSNP_id <- x_rowids[idx]
-            if (!drop.rs.prefix)
-                ans_RefSNP_id <- paste0("rs", ans_RefSNP_id)
-        }
-        df0[["RefSNP_id"]] <- ans_RefSNP_id
-    }
-    if ("seqnames" %in% columns)
-        df0[["seqnames"]] <- factor(seqname)
-    if ("strand" %in% columns) {
-        strand0 <- df0[["strand"]]
-        ans_strand <- rep.int("+", length(strand0))
-        minus_idx <- which(strand0 != as.raw(0L))
-        ans_strand[minus_idx] <- "-"
-        df0[["strand"]] <- ans_strand
-    }
-    if ("end" %in% columns)
-        df0[["end"]] <- df0[["start"]] + df0[["width"]] - 1L
-    if ("loctype" %in% columns)
-        df0[["loctype"]] <- as.integer(df0[["loctype"]])
-    df0[columns]
-}
-
-.get_df_by_seqname_from_XtraSNPlocs <- function(x, seqnames, columns,
-                                                drop.rs.prefix)
-{
-    if (length(seqnames) <= 1L)
-        return(.get_df_for_one_seqname_from_XtraSNPlocs(x, seqnames, columns,
-                                                         drop.rs.prefix))
-    dfs <- lapply(seqnames,
-               function(seqname)
-                   .get_df_for_one_seqname_from_XtraSNPlocs(x, seqname,
-                                                             columns,
-                                                             drop.rs.prefix))
-    do.call(rbind, dfs)
+    #IGNORED_COLUMNS <- c("seqnames", "start", "end", "width", "strand")
+    #ignored_idx <- which(columns %in% IGNORED_COLUMNS)
+    #if (length(ignored_idx) != 0L)
+    #    warning(wmsg("ignored columns (because they're implicit): ",
+    #                 paste(IGNORED_COLUMNS[ignored_idx], collapse=", ")))
+    columns <- setdiff(columns, "width")
+    union(columns, c("seqnames", "start", "end", "strand"))
 }
 
 .get_GRanges_by_seqname_from_XtraSNPlocs <- function(x, seqnames, columns,
                                                      drop.rs.prefix)
 {
-    columns <- setdiff(columns, "width")
-    columns <- union(columns, c("seqnames", "start", "end", "strand"))
-    df <- .get_df_by_seqname_from_XtraSNPlocs(x, seqnames,
-                                               columns, drop.rs.prefix)
-    makeGRangesFromDataFrame(df, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
+    columns <- .normarg_columns(columns)
+    DF <- .XtraSnpTable_get_DF_for_seqnames(snpTable(x), seqnames, columns,
+                                            drop.rs.prefix)
+    makeGRangesFromDataFrame(DF, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
 }
 
 setGeneric("snpsBySeqname", signature="x",
     function(x, seqnames, ...) standardGeneric("snpsBySeqname")
 )
 
-### Returns a GRanges object unless 'as.data.frame=TRUE'.
+### Returns a GRanges object unless 'as.DataFrame=TRUE'.
 setMethod("snpsBySeqname", "XtraSNPlocs",
     function(x, seqnames,
-             columns=c("seqnames", "start", "end", "strand"),
+             columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
              drop.rs.prefix=FALSE,
-             as.data.frame=FALSE)
+             as.DataFrame=FALSE)
     {
         if (!is.character(seqnames)
          || any(is.na(seqnames))
          || any(duplicated(seqnames)))
-            stop("'seqnames' must be a character vector ",
-                 "with no NAs and no duplicates")
+            stop(wmsg("'seqnames' must be a character vector ",
+                      "with no NAs and no duplicates"))
         if (!all(seqnames %in% seqlevels(x)))
             stop(wmsg("'seqnames' must be a subset of: ",
                       paste(seqlevels(x), collapse=", ")))
-        if (!is.character(columns) || any(is.na(columns)))
-            stop("'columns' must be a character vector with no NAs")
+        .XtraSnpTable_check_user_supplied_columns(columns)
         if (!isTRUEorFALSE(drop.rs.prefix))
-            stop("'drop.rs.prefix' must be TRUE or FALSE")
-        if (!isTRUEorFALSE(as.data.frame))
-            stop("'as.data.frame' must be TRUE or FALSE")
-        if (as.data.frame)
-            return(.get_df_by_seqname_from_XtraSNPlocs(x, seqnames, columns,
-                                                       drop.rs.prefix))
+            stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
+        if (!isTRUEorFALSE(as.DataFrame))
+            stop(wmsg("'as.DataFrame' must be TRUE or FALSE"))
+        if (as.DataFrame)
+            return(.XtraSnpTable_get_DF_for_seqnames(snpTable(x),
+                                                     seqnames, columns,
+                                                     drop.rs.prefix))
         .get_GRanges_by_seqname_from_XtraSNPlocs(x, seqnames, columns,
                                                  drop.rs.prefix)
     }
@@ -270,61 +334,67 @@ setMethod("snpsBySeqname", "XtraSNPlocs",
 ### snpsById()
 ###
 
-.get_df_by_id_from_XtraSNPlocs <- function(x, ids, ifnotfound, columns)
+.get_GRanges_by_id_from_XtraSNPlocs <- function(x, rowids, ids,
+                                                ifnotfound, columns)
 {
-    real_columns <- .get_real_columns_from_user_supplied_columns(columns)
-    x_snptable <- snptable(x)
-    df0 <- getDataFromOnDiskLongTable(x_snptable, ids, real_columns,
-                                      with.batch_label=TRUE,
-                                      as.data.frame=TRUE)
-    if ("RefSNP_id" %in% columns) {
-        df0[["RefSNP_id"]] <- ids
-    }
-    if ("seqnames" %in% columns) {
-        df0[["seqnames"]] <- factor(df0[["batch_label"]], levels=seqlevels(x))
-    }
-    if ("strand" %in% columns) {
-        strand0 <- df0[["strand"]]
-        ans_strand <- rep.int("+", length(strand0))
-        minus_idx <- which(strand0 != as.raw(0L))
-        ans_strand[minus_idx] <- "-"
-        df0[["strand"]] <- ans_strand
-    }
-    if ("end" %in% columns)
-        df0[["end"]] <- df0[["start"]] + df0[["width"]] - 1L
-    if ("loctype" %in% columns)
-        df0[["loctype"]] <- as.integer(df0[["loctype"]])
-    df0[columns]
-}
-
-.get_GRanges_by_id_from_XtraSNPlocs <- function(x, ids, ifnotfound, columns)
-{
+    columns <- .normarg_columns(columns)
+    DF <- .XtraSnpTable_get_DF_for_ids(snpTable(x), rowids, ids,
+                                       ifnotfound, columns,
+                                       seqlevels(x))
+    makeGRangesFromDataFrame(DF, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
 }
 
 setGeneric("snpsById", signature="x",
     function(x, ids, ...) standardGeneric("snpsById")
 )
 
-### Returns a GRanges object unless 'as.data.frame=TRUE'.
+.normarg_ids <- function(ids)
+{
+    if (!(is.character(ids) || is.numeric(ids)))
+        stop(wmsg("'ids' must be a character or integer vector with no NAs"))
+    if (S4Vectors:::anyMissing(ids))
+        stop(wmsg("'ids' cannot contain NAs"))
+    if (is.numeric(ids)) {
+        if (!is.integer(ids))
+            ids <- as.integer(ids)
+        return(ids)
+    }
+    prefixes <- unique(substr(ids, 1L, 2L))
+    if ("rs" %in% prefixes) {
+        if (!setequal(prefixes, "rs"))
+            stop(wmsg("'ids' cannot mix SNP ids that are prefixed ",
+                      "with \"rs\" with SNP ids that are not"))
+        ## Drop the "rs" prefix.
+        ids <- substr(ids, 3L, nchar(ids))
+    }
+    ids <- suppressWarnings(as.integer(ids))
+    if (S4Vectors:::anyMissing(ids))
+        stop(wmsg("cannot extract the digital part of some SNP ids in 'ids'"))
+    ids
+}
+
+### Returns a GRanges object unless 'as.DataFrame=TRUE'.
 ### If 'ifnotfound="error"' and if the function returns then the returned
 ### object is guaranteed to be parallel to 'ids'.
 setMethod("snpsById", "XtraSNPlocs",
     function(x, ids,
              ifnotfound=c("error", "warning", "drop"),
-             columns=c("seqnames", "start", "end", "strand"),
-             as.data.frame=FALSE)
+             columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
+             as.DataFrame=FALSE)
     {
-        if (!(is.character(ids) || is.integer(ids)) || any(is.na(ids)))
-            stop("'ids' must be a character or integer vector with no NAs")
+        rowids <- .normarg_ids(ids)
         ifnotfound <- match.arg(ifnotfound)
-        if (!is.character(columns) || any(is.na(columns)))
-            stop("'columns' must be a character vector with no NAs")
-        if (!isTRUEorFALSE(as.data.frame))
-            stop("'as.data.frame' must be TRUE or FALSE")
-        if (as.data.frame)
-            return(.get_df_by_id_from_XtraSNPlocs(x, ids,
-                                                  ifnotfound, columns))
-        .get_GRanges_by_id_from_XtraSNPlocs(x, ids, ifnotfound, columns)
+        if (ifnotfound != "error")
+            stop(wmsg("only 'ifnotfound=\"error\"' is supported for now"))
+        .XtraSnpTable_check_user_supplied_columns(columns)
+        if (!isTRUEorFALSE(as.DataFrame))
+            stop(wmsg("'as.DataFrame' must be TRUE or FALSE"))
+        if (as.DataFrame)
+            return(.XtraSnpTable_get_DF_for_ids(snpTable(x), rowids, ids,
+                                                ifnotfound, columns,
+                                                seqlevels(x)))
+        .get_GRanges_by_id_from_XtraSNPlocs(x, rowids, ids,
+                                            ifnotfound, columns)
     }
 )
 
