@@ -279,12 +279,24 @@ OnDiskLongTable <- function(dirpath=".")
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### "nrow", "rowids", "colnames", and "ncol" methods
+### Getters
 ###
 
 setGeneric("breakpoints", function(x) standardGeneric("breakpoints"))
 
 setMethod("breakpoints", "OnDiskLongTable", function(x) x@breakpoints)
+
+setGeneric("blocksizes", function(x) standardGeneric("blocksizes"))
+
+setMethod("blocksizes", "OnDiskLongTable",
+    function(x)
+    {
+        x_breakpoints <- breakpoints(x)
+        ans <- S4Vectors:::diffWithInitialZero(x_breakpoints)
+        names(ans) <- names(x_breakpoints)
+        ans
+    }
+)
 
 setMethod("nrow", "OnDiskLongTable",
     function(x) .get_nrow_from_breakpoints(breakpoints(x))
@@ -394,6 +406,88 @@ getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Get batches from OnDiskLongTable
+###
+
+.normarg_batch_labels <- function(batch_labels, x_batch_labels)
+{
+    if (is.null(x_batch_labels))
+        stop(wmsg("'x' has no batch labels (i.e. 'breakpoints(x)' has ",
+                  "no names): cannot use getBatchesFromOnDiskLongTable() ",
+                  "on it"))
+    if (!is.character(batch_labels)
+     || any(is.na(batch_labels))
+     || any(duplicated(batch_labels)))
+        stop(wmsg("'batch_labels' must be a character vector ",
+                  "with no NAs and no duplicates"))
+    batch_labels
+}
+
+### colidx: column index of length 1
+.get_blocks_from_column <- function(x, colidx, blockidx)
+{
+    if (length(blockidx) == 0L)
+        blockidx <- 0L
+    tmp <- lapply(blockidx, function(i) .load_block(x, colidx, i))
+    quickUnlist(tmp)
+}
+
+### batch_labels: character vector of batch labels.
+### colidx: integer or character vector.
+### Return a DataFrame (or data.frame).
+getBatchesFromOnDiskLongTable <- function(x, batch_labels, colidx,
+                                          with.batch_label=FALSE,
+                                          with.rowids=FALSE,
+                                          as.data.frame=FALSE)
+{
+    if (!is(x, "OnDiskLongTable"))
+        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    x_blocksizes <- blocksizes(x)
+    x_batch_labels <- names(x_blocksizes)
+    batch_labels <- .normarg_batch_labels(batch_labels, x_batch_labels)
+    colidx <- .normarg_colidx(colidx, x)
+    if (!isTRUEorFALSE(with.batch_label))
+        stop(wmsg("'with.batch_label' must be TRUE or FALSE"))
+    if (!isTRUEorFALSE(with.rowids))
+        stop(wmsg("'with.rowids' must be TRUE or FALSE"))
+    if (!isTRUEorFALSE(as.data.frame))
+        stop(wmsg("'as.data.frame' must be TRUE or FALSE"))
+    hits <- findMatches(batch_labels, x_batch_labels)
+    blockidx <- subjectHits(hits)
+    ans_blocksizes <- x_blocksizes[blockidx]
+    names(colidx) <- colnames(x)[colidx]
+    ans_listData <-
+        lapply(colidx, function(j) .get_blocks_from_column(x, j, blockidx))
+    if (with.batch_label) {
+        batch_label_levels <- unique(x_batch_labels)
+        ans_batch_label <- factor(batch_labels[queryHits(hits)],
+                                  levels=batch_label_levels)
+        ans_batch_label <- rep.int(ans_batch_label, ans_blocksizes)
+        ans_listData[["batch_label"]] <- ans_batch_label
+    }
+    if (with.rowids) {
+        rowidx <- as.integer(successiveIRanges(x_blocksizes)[blockidx])
+        ans_rowids <- rowids(x)[rowidx]
+    } else {
+        ans_rowids <- NULL
+    }
+    if (as.data.frame) {
+        ans <- data.frame(ans_listData, row.names=ans_rowids,
+                          stringsAsFactors=FALSE)
+    } else {
+        ## Unfortunately, DataFrame cannot store its row names as an integer
+        ## vector.
+        if (!is.null(ans_rowids))
+            ans_rowids <- as.character(ans_rowids)
+        ans <- new("DataFrame", listData=ans_listData,
+                                nrows=sum(ans_blocksizes),
+                                rownames=ans_rowids)
+    }
+    ans
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get data from OnDiskLongTable
 ###
 
@@ -458,7 +552,7 @@ getBlockFromOnDiskLongTable <- function(x, colidx, blockidx)
 
 ### rowids: integer vector.
 ### colidx: integer or character vector.
-### Return a DataFrame or data.frame.
+### Return a DataFrame (or data.frame) with 1 row per row id in 'rowids'.
 getDataFromOnDiskLongTable <- function(x, rowids, colidx,
                                        with.batch_label=FALSE,
                                        as.data.frame=FALSE)
@@ -476,9 +570,11 @@ getDataFromOnDiskLongTable <- function(x, rowids, colidx,
     names(colidx) <- colnames(x)[colidx]
     ans_listData <-
         lapply(colidx, function(j) .get_values_from_column(x, j, rowkeys))
-    if (with.batch_label)
+    if (with.batch_label) {
+        batch_label_levels <- unique(names(x_breakpoints))
         ans_listData[["batch_label"]] <- factor(names(rowkeys[[1L]]),
-                                                levels=names(x_breakpoints))
+                                                levels=batch_label_levels)
+    }
     if (as.data.frame) {
         ## We do NOT set the row names because we want to support duplicates
         ## in 'rowids'.

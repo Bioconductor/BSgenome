@@ -48,36 +48,26 @@ setClass("XtraSnpTable", contains="OnDiskLongTable")
     real_columns
 }
 
-.XtraSnpTable_get_DF_for_seqname <- function(x, seqname, columns,
-                                             drop.rs.prefix)
+.XtraSnpTable_get_DF_for_seqnames <- function(x, seqnames, columns,
+                                              drop.rs.prefix,
+                                              x_seqlevels)
 {
     real_columns <- .XtraSnpTable_get_real_from_user_supplied_columns(columns)
-    x_breakpoints <- breakpoints(x)
-    if (length(seqname) == 0L) {
-        blockidx <- 0L
-    } else {
-        blockidx <- match(seqname, names(x_breakpoints), nomatch=0L)
-    }
-    DF0 <- data.frame(
-        lapply(setNames(real_columns, real_columns),
-            function(colname)
-                getBlockFromOnDiskLongTable(x, colname, blockidx)
-        ),
-        stringsAsFactors=FALSE)
-    if ("RefSNP_id" %in% columns) {
-        if (nrow(DF0) == 0L) {
-            ans_RefSNP_id <- integer(0)
-        } else {
-            x_rowids <- rowids(x)
-            idx <- PartitioningByEnd(x_breakpoints)[[blockidx]]
-            ans_RefSNP_id <- x_rowids[idx]
-            if (!drop.rs.prefix)
-                ans_RefSNP_id <- paste0("rs", ans_RefSNP_id)
-        }
+    with_RefSNP_id <- "RefSNP_id" %in% columns
+    DF0 <- getBatchesFromOnDiskLongTable(x, seqnames, real_columns,
+                                         with.batch_label=TRUE,
+                                         with.rowids=with_RefSNP_id,
+                                         as.data.frame=with_RefSNP_id)
+    if (with_RefSNP_id) {
+        ans_RefSNP_id <- rownames(DF0)
+        rownames(DF0) <- NULL
+        DF0 <- DataFrame(DF0)
+        if (!drop.rs.prefix && length(ans_RefSNP_id) != 0L)
+            ans_RefSNP_id <- paste0("rs", ans_RefSNP_id)
         DF0[["RefSNP_id"]] <- ans_RefSNP_id
     }
     if ("seqnames" %in% columns)
-        DF0[["seqnames"]] <- factor(seqname)
+        DF0[["seqnames"]] <- factor(DF0[["batch_label"]], levels=x_seqlevels)
     if ("strand" %in% columns) {
         strand0 <- DF0[["strand"]]
         ans_strand <- rep.int("+", length(strand0))
@@ -92,21 +82,8 @@ setClass("XtraSnpTable", contains="OnDiskLongTable")
     DF0[columns]
 }
 
-.XtraSnpTable_get_DF_for_seqnames <- function(x, seqnames, columns,
-                                              drop.rs.prefix)
-{
-    if (length(seqnames) <= 1L)
-        return(.XtraSnpTable_get_DF_for_seqname(x, seqnames, columns,
-                                                drop.rs.prefix))
-    DF_list <- lapply(seqnames,
-        function(seqname)
-            .XtraSnpTable_get_DF_for_seqname(x, seqname, columns,
-                                             drop.rs.prefix))
-    do.call(rbind, DF_list)
-}
-
-.XtraSnpTable_get_DF_for_ids <- function(x, rowids, ids,
-                                         ifnotfound, columns,
+.XtraSnpTable_get_DF_for_ids <- function(x, ids, rowids,
+                                         columns, ifnotfound,
                                          x_seqlevels)
 {
     real_columns <- .XtraSnpTable_get_real_from_user_supplied_columns(columns)
@@ -245,30 +222,30 @@ setMethod("show", "XtraSNPlocs",
 ### snpcount()
 ###
 
-.get_snpcount_from_breakpoints <- function(breakpoints, seqnames,
-                                           class, pkgname)
+.get_snpcount_from_blocksizes <- function(blocksizes, seqnames,
+                                          class, pkgname)
 {
     ans <- integer(length(seqnames))
     names(ans) <- seqnames
-    ## Most of the times, 'names(breakpoints)' will be identical to
+    ## Most of the times, 'names(blocksizes)' will be identical to
     ## 'seqnames'. However, in the unlikely situation where some
     ## chromosomes have no SNPs, these chromosomes will be missing
-    ## from 'names(breakpoints)'. The sanity check below accomodates
+    ## from 'names(blocksizes)'. The sanity check below accomodates
     ## for that.
-    m <- match(names(breakpoints), seqnames)
+    m <- match(names(blocksizes), seqnames)
     if (any(is.na(m)) || !isStrictlySorted(m))
         stop(wmsg("BSgenome internal error: ",
                   "the data in this ", class, " object is not in the ",
                   "expected format. Please contact the maintainer of the ",
                   pkgname, " package."))
-    ans[m] <- diff(c(0L, breakpoints))
+    ans[m] <- blocksizes
     ans
 }
 
 setMethod("snpcount", "XtraSNPlocs",
     function(x)
-        .get_snpcount_from_breakpoints(breakpoints(snpTable(x)), seqlevels(x),
-                                       class(x), x@pkgname)
+        .get_snpcount_from_blocksizes(blocksizes(snpTable(x)), seqlevels(x),
+                                      class(x), x@pkgname)
 )
 
 
@@ -292,7 +269,8 @@ setMethod("snpcount", "XtraSNPlocs",
 {
     columns <- .normarg_columns(columns)
     DF <- .XtraSnpTable_get_DF_for_seqnames(snpTable(x), seqnames, columns,
-                                            drop.rs.prefix)
+                                            drop.rs.prefix,
+                                            seqlevels(x))
     makeGRangesFromDataFrame(DF, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
 }
 
@@ -323,7 +301,8 @@ setMethod("snpsBySeqname", "XtraSNPlocs",
         if (as.DataFrame)
             return(.XtraSnpTable_get_DF_for_seqnames(snpTable(x),
                                                      seqnames, columns,
-                                                     drop.rs.prefix))
+                                                     drop.rs.prefix,
+                                                     seqlevels(x)))
         .get_GRanges_by_seqname_from_XtraSNPlocs(x, seqnames, columns,
                                                  drop.rs.prefix)
     }
@@ -334,12 +313,12 @@ setMethod("snpsBySeqname", "XtraSNPlocs",
 ### snpsById()
 ###
 
-.get_GRanges_by_id_from_XtraSNPlocs <- function(x, rowids, ids,
-                                                ifnotfound, columns)
+.get_GRanges_by_id_from_XtraSNPlocs <- function(x, ids, rowids,
+                                                columns, ifnotfound)
 {
     columns <- .normarg_columns(columns)
-    DF <- .XtraSnpTable_get_DF_for_ids(snpTable(x), rowids, ids,
-                                       ifnotfound, columns,
+    DF <- .XtraSnpTable_get_DF_for_ids(snpTable(x), ids, rowids,
+                                       columns, ifnotfound,
                                        seqlevels(x))
     makeGRangesFromDataFrame(DF, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
 }
@@ -348,7 +327,7 @@ setGeneric("snpsById", signature="x",
     function(x, ids, ...) standardGeneric("snpsById")
 )
 
-.normarg_ids <- function(ids)
+.ids2rowids <- function(ids)
 {
     if (!(is.character(ids) || is.numeric(ids)))
         stop(wmsg("'ids' must be a character or integer vector with no NAs"))
@@ -378,23 +357,23 @@ setGeneric("snpsById", signature="x",
 ### object is guaranteed to be parallel to 'ids'.
 setMethod("snpsById", "XtraSNPlocs",
     function(x, ids,
-             ifnotfound=c("error", "warning", "drop"),
              columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
+             ifnotfound=c("error", "warning", "drop"),
              as.DataFrame=FALSE)
     {
-        rowids <- .normarg_ids(ids)
+        rowids <- .ids2rowids(ids)
+        .XtraSnpTable_check_user_supplied_columns(columns)
         ifnotfound <- match.arg(ifnotfound)
         if (ifnotfound != "error")
             stop(wmsg("only 'ifnotfound=\"error\"' is supported for now"))
-        .XtraSnpTable_check_user_supplied_columns(columns)
         if (!isTRUEorFALSE(as.DataFrame))
             stop(wmsg("'as.DataFrame' must be TRUE or FALSE"))
         if (as.DataFrame)
-            return(.XtraSnpTable_get_DF_for_ids(snpTable(x), rowids, ids,
-                                                ifnotfound, columns,
+            return(.XtraSnpTable_get_DF_for_ids(snpTable(x), ids, rowids,
+                                                columns, ifnotfound,
                                                 seqlevels(x)))
-        .get_GRanges_by_id_from_XtraSNPlocs(x, rowids, ids,
-                                            ifnotfound, columns)
+        .get_GRanges_by_id_from_XtraSNPlocs(x, ids, rowids,
+                                            columns, ifnotfound)
     }
 )
 
