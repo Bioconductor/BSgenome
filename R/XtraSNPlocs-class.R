@@ -82,11 +82,12 @@ setClass("XtraSnpTable", contains="OnDiskLongTable")
     DF0[columns]
 }
 
-### Return a list of 2 integer vectors parallel to each other. The 1st and 2nd
-### vectors are respectively the row indices and the input vector 'ids', with
-### not found entries removed from them.
+### Return a list of 2 vectors parallel to each other. The 1st and 2nd vectors
+### are respectively the row indices (integer vector) and the user-supplied
+### 'ids' vector (can be character, numeric, or integer), with the not found
+### entries removed from both of them.
 ### Note that, if 'ifnotfound="error"' then the 2 returned vectors are parallel
-### to the input vectors.
+### to input vectors 'rowids' and 'ids'.
 .XtraSnpTable_rowids2rowidx <- function(x, rowids, ids, ifnotfound)
 {
     x_rowids <- rowids(x)
@@ -114,14 +115,15 @@ setClass("XtraSnpTable", contains="OnDiskLongTable")
     list(rowidx, ids)
 }
 
-.XtraSnpTable_get_DF_for_ids <- function(x, ids, rowidx,
-                                         columns, x_seqlevels)
+### 'rowidx' must be a list of 2 vectors parallel to each other, as returned
+### by .XtraSnpTable_rowids2rowidx() above.
+.XtraSnpTable_get_DF_for_ids <- function(x, rowidx, columns, x_seqlevels)
 {
     real_columns <- .XtraSnpTable_get_real_from_user_supplied_columns(columns)
-    DF0 <- getRowsByIndexFromOnDiskLongTable(x, rowidx, real_columns,
+    DF0 <- getRowsByIndexFromOnDiskLongTable(x, rowidx[[1L]], real_columns,
                                              with.batch_label=TRUE)
     if ("RefSNP_id" %in% columns)
-        DF0[["RefSNP_id"]] <- ids
+        DF0[["RefSNP_id"]] <- rowidx[[2L]]
     if ("seqnames" %in% columns)
         DF0[["seqnames"]] <- factor(DF0[["batch_label"]], levels=x_seqlevels)
     if ("strand" %in% columns) {
@@ -344,11 +346,11 @@ setMethod("snpsBySeqname", "XtraSNPlocs",
 ### snpsById()
 ###
 
-.get_GRanges_by_id_from_XtraSNPlocs <- function(x, ids, rowidx, columns)
+.get_GRanges_by_id_from_XtraSNPlocs <- function(x, rowidx, columns)
 {
     columns <- .normarg_columns(columns)
-    DF <- .XtraSnpTable_get_DF_for_ids(snpTable(x), ids, rowidx,
-                                       columns, seqlevels(x))
+    DF <- .XtraSnpTable_get_DF_for_ids(snpTable(x), rowidx, columns,
+                                       seqlevels(x))
     makeGRangesFromDataFrame(DF, keep.extra.columns=TRUE, seqinfo=seqinfo(x))
 }
 
@@ -363,22 +365,27 @@ setGeneric("snpsById", signature="x",
         stop(wmsg("'ids' must be a character or integer vector with no NAs"))
     if (S4Vectors:::anyMissing(ids))
         stop(wmsg("'ids' cannot contain NAs"))
-    if (is.numeric(ids)) {
-        if (!is.integer(ids))
-            ids <- as.integer(ids)
-        return(ids)
+    if (is.character(ids)) {
+        prefixes <- unique(substr(ids, 1L, 2L))
+        if ("rs" %in% prefixes) {
+            if (!setequal(prefixes, "rs"))
+                stop(wmsg("'ids' cannot mix SNP ids that are prefixed ",
+                          "with \"rs\" with SNP ids that are not"))
+            ## Drop the "rs" prefix.
+            ids <- substr(ids, 3L, nchar(ids))
+        }
+        ids <- suppressWarnings(as.numeric(ids))
+        if (S4Vectors:::anyMissing(ids))
+            stop(wmsg("cannot extract the digital part of ",
+                      "some SNP ids in 'ids'"))
     }
-    prefixes <- unique(substr(ids, 1L, 2L))
-    if ("rs" %in% prefixes) {
-        if (!setequal(prefixes, "rs"))
-            stop(wmsg("'ids' cannot mix SNP ids that are prefixed ",
-                      "with \"rs\" with SNP ids that are not"))
-        ## Drop the "rs" prefix.
-        ids <- substr(ids, 3L, nchar(ids))
+    if (length(ids) != 0L && min(ids) < 0)
+        stop(wmsg("'ids' contains unrealistic SNP ids"))
+    if (!is.integer(ids)) {
+        ids <- suppressWarnings(as.integer(ids))
+        if (S4Vectors:::anyMissing(ids))
+            stop(wmsg("'ids' contains SNP ids that are too big"))
     }
-    ids <- suppressWarnings(as.integer(ids))
-    if (S4Vectors:::anyMissing(ids))
-        stop(wmsg("cannot extract the digital part of some SNP ids in 'ids'"))
     ids
 }
 
@@ -395,15 +402,13 @@ setMethod("snpsById", "XtraSNPlocs",
         ifnotfound <- match.arg(ifnotfound)
         rowidx <- .XtraSnpTable_rowids2rowidx(snpTable(x), rowids, ids,
                                               ifnotfound)
-        ids <- rowidx[[2L]]
-        rowidx <- rowidx[[1L]]
         .XtraSnpTable_check_user_supplied_columns(columns)
         if (!isTRUEorFALSE(as.DataFrame))
             stop(wmsg("'as.DataFrame' must be TRUE or FALSE"))
         if (as.DataFrame)
-            return(.XtraSnpTable_get_DF_for_ids(snpTable(x), ids, rowidx,
-                                                columns, seqlevels(x)))
-        .get_GRanges_by_id_from_XtraSNPlocs(x, ids, rowidx, columns)
+            return(.XtraSnpTable_get_DF_for_ids(snpTable(x), rowidx, columns,
+                                                seqlevels(x)))
+        .get_GRanges_by_id_from_XtraSNPlocs(x, rowidx, columns)
     }
 )
 
