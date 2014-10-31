@@ -19,6 +19,7 @@ Suggests: BiocInstaller,
 	BSgenome.Hsapiens.UCSC.hg19.masked,
 	BSgenome.Rnorvegicus.UCSC.rn5,
 	SNPlocs.Hsapiens.dbSNP.20100427,
+	XtraSNPlocs.Hsapiens.dbSNP141.GRCh38,
 	hgu95av2probe,
 	Biobase,
 	RUnit
