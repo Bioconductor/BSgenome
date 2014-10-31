@@ -5,7 +5,9 @@
 \alias{XtraSNPlocs-class}
 \alias{XtraSNPlocs}
 
-% accessors
+% getters
+\alias{colnames,XtraSNPlocs-method}
+\alias{dim,XtraSNPlocs-method}
 \alias{provider,XtraSNPlocs-method}
 \alias{providerVersion,XtraSNPlocs-method}
 \alias{releaseDate,XtraSNPlocs-method}
@@ -54,16 +56,20 @@
 \S4method{snpcount}{XtraSNPlocs}(x)
 
 snpsBySeqname(x, seqnames, ...)
+
 \S4method{snpsBySeqname}{XtraSNPlocs}(x, seqnames,
               columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
               drop.rs.prefix=FALSE,
               as.DataFrame=FALSE)
 
 snpsById(x, ids, ...)
+
 \S4method{snpsById}{XtraSNPlocs}(x, ids,
          columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
          ifnotfound=c("error", "warning", "drop"),
          as.DataFrame=FALSE)
+
+\S4method{colnames}{XtraSNPlocs}(x, do.NULL=TRUE, prefix="col")
 }
 
 \arguments{
@@ -82,7 +88,7 @@ snpsById(x, ids, ...)
     See Details section below for a description of these columns.
   }
   \item{drop.rs.prefix}{
-    Should the \emph{rs} prefix be dropped from the returned RefSNP ids?
+    Should the \code{rs} prefix be dropped from the returned RefSNP ids?
     (RefSNP ids are stored in the \code{RefSNP_id} metadata column of the
     returned object.)
   }
@@ -101,6 +107,9 @@ snpsById(x, ids, ...)
   \item{...}{
     Additional arguments, for use in specific methods.
   }
+  \item{do.NULL, prefix}{
+    These arguments are ignored.
+  }
 }
 
 \value{
@@ -113,48 +122,61 @@ snpsById(x, ids, ...)
   return a \link[S4Vectors]{DataFrame} with 1 row per SNP.
   When a \link[GenomicRanges]{GRanges} object is returned, the columns
   requested via the \code{columns} argument are stored as metada columns
-  of the object, except for the columns describing the genomic locations
-  of the SNPs (i.e. \code{seqnames}, \code{start}, \code{end}, \code{width},
-  and \code{strand}) because they are redundant with the genomic ranges
-  represented by the \link[GenomicRanges]{GRanges} object itself.
+  of the object, except for the following columns: \code{seqnames},
+  \code{start}, \code{end}, \code{width}, and \code{strand}.
+  These "spatial columns" (in the sense that they describe the genomic
+  locations of the SNPs) can be accessed by calling the corresponding
+  getter on the \link[GenomicRanges]{GRanges} object.
 
-  Description of the columns:
+  Summary of available columns (\code{my_snps} being the returned object):
   \itemize{
     \item \code{seqnames}: The name of the chromosome where each SNP is
-          located.
-          When a \link[GenomicRanges]{GRanges} object is returned, use
-          \code{seqnames()} on it to get this component.
+          located. Access with \code{seqnames(my_snps)} when \code{my_snps}
+          is a \link[GenomicRanges]{GRanges} object.
 
     \item \code{start} and \code{end}: The starting and ending coordinates of
           each SNP with respect to the chromosome indicated in \code{seqnames}.
           Coordinated are 1-based and with respect to the 5' end of the plus
           strand of the chromosome in the reference genome.
-          When a \link[GenomicRanges]{GRanges} object is returned, use
-          \code{start()}, \code{end()}, or \code{ranges()} on it to get these
-          components.
+          Access with \code{start(my_snps)}, \code{end(my_snps)},
+          or \code{ranges(my_snps)} when \code{my_snps} is a
+          \link[GenomicRanges]{GRanges} object.
 
-    \item \code{width}: The number of nucleotides spanned by each SNP on the
-          reference genome.
+    \item \code{width}: The number of nucleotides spanned by each SNP
+          \emph{on the reference genome} (e.g. a width of 0 means the SNP
+          is an insertion). Access with \code{width( my_snps)} when
+          \code{my_snps} is a \link[GenomicRanges]{GRanges} object.
 
     \item \code{strand}: The strand that the alleles of each SNP was reported
-          to.
+          to. Access with \code{strand(my_snps)} when \code{my_snps} is a
+          \link[GenomicRanges]{GRanges} object.
 
     \item \code{RefSNP_id}: The RefSNP id (a.k.a. \emph{rs id}) of each SNP.
+          Access with \code{mcols(my_snps)$RefSNP_id} when \code{my_snps} is a
+          \link[GenomicRanges]{GRanges} object.
 
-    \item \code{alleles}: The alleles of each SNP.
+    \item \code{alleles}: The alleles of each SNP in the format used by dbSNP.
+          Access with \code{mcols(my_snps)$alleles} when \code{my_snps} is a
+          \link[GenomicRanges]{GRanges} object.
 
     \item \code{snpClass}: Class of each SNP. Possible values are
           \code{in-del}, \code{heterozygous}, \code{microsatellite},
           \code{named-locus}, \code{no-variation}, \code{mixed}, and
           \code{multinucleotide-polymorphism}.
+          Access with \code{mcols(my_snps)$snpClass} when \code{my_snps} is a
+          \link[GenomicRanges]{GRanges} object.
 
     \item \code{loctype}: See \url{ftp://ftp.ncbi.nih.gov/snp/00readme.txt}
-          for the 6 loctype codes used by dbSNP and their meanings.
+          for the 6 loctype codes used by dbSNP, and their meanings.
           WARNING: The code assigned to each SNP doesn't seem to be reliable.
-          For example, loctypes 1 and 3 officially stand for insertion and
-          deletion, but when looking at the data it actually seem to be the
-          other way around.
+          For example, loctype codes 1 and 3 officially stand for insertion
+          and deletion, respectively. However, when looking at the SNP ranges
+          it actually seems to be the other way around.
+          Access with \code{mcols(my_snps)$loctype} when \code{my_snps} is a
+          \link[GenomicRanges]{GRanges} object.
   }
+
+  \code{colnames(x)} returns the names of the available columns.
 }
 
 \author{H. Pages}
@@ -168,7 +190,13 @@ snpsById(x, ids, ...)
 }
 
 \examples{
-## COMING SOON!
+library(XtraSNPlocs.Hsapiens.dbSNP141.GRCh38)
+snps <- XtraSNPlocs.Hsapiens.dbSNP141.GRCh38
+snpcount(snps)
+colnames(snps)
+
+## See ?XtraSNPlocs.Hsapiens.dbSNP141.GRCh38 for examples of using
+## snpsBySeqname() and snpsById().
 }
 
 \keyword{methods}

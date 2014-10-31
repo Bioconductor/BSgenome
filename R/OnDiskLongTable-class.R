@@ -351,6 +351,8 @@ setMethod("colnames", "OnDiskLongTable",
 
 setMethod("ncol", "OnDiskLongTable", function(x) length(colnames(x)))
 
+setMethod("dim", "OnDiskLongTable", function(x) c(nrow(x), ncol(x)))
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### "show" method

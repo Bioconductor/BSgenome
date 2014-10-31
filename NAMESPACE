@@ -63,7 +63,7 @@ export(
 exportMethods(
     ## Methods for generics defined elsewhere:
     length, names, as.list, show, "[[", "$",
-    colnames, nrow, ncol,
+    colnames, nrow, ncol, dim,
     score,
     seqinfo, "seqinfo<-", seqnames, "seqnames<-",
     organism, species, provider, providerVersion, releaseDate, releaseName,

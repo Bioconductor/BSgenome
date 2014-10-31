@@ -12,17 +12,20 @@
 
 setClass("XtraSnpTable", contains="OnDiskLongTable")
 
-.XTRASNPTABLE_REAL_COLUMNS <- c(
-    "snpClass",
-    "alleles",
-    "start", "width", "strand",
-    "loctype"
+.XTRASNPTABLE_ALL_COLUMNS <- c(
+    "seqnames", "start", "end", "width", "strand",
+    "RefSNP_id", "alleles", "snpClass", "loctype"
 )
 
-.XTRASNPTABLE_COMPUTED_COLUMNS <- c("RefSNP_id", "seqnames", "end")
+### Only some of all the columns are "real" (i.e. physical), the other ones
+### being computed.
+.XTRASNPTABLE_REAL_COLUMNS <- c(
+    "snpClass", "alleles", "start", "width", "strand", "loctype"
+)
 
-.XTRASNPTABLE_ALL_COLUMNS <- c(.XTRASNPTABLE_REAL_COLUMNS,
-                               .XTRASNPTABLE_COMPUTED_COLUMNS)
+setMethod("colnames", "XtraSnpTable",
+    function(x, do.NULL=TRUE, prefix="col") .XTRASNPTABLE_ALL_COLUMNS
+)
 
 .XtraSnpTable <- function(dirpath=".")
 {
@@ -42,7 +45,7 @@ setClass("XtraSnpTable", contains="OnDiskLongTable")
 
 .XtraSnpTable_get_real_from_user_supplied_columns <- function(columns)
 {
-    real_columns <- setdiff(columns, .XTRASNPTABLE_COMPUTED_COLUMNS)
+    real_columns <- intersect(columns, .XTRASNPTABLE_REAL_COLUMNS)
     if ("end" %in% columns)
         real_columns <- union(real_columns, c("start", "width"))
     real_columns
@@ -179,12 +182,18 @@ setClass("XtraSNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Accessors
+### Getters
 ###
 
 ### NOT exported.
 setGeneric("snpTable", function(x) standardGeneric("snpTable"))
 setMethod("snpTable", "XtraSNPlocs", function(x) x@snp_table)
+
+setMethod("colnames", "XtraSNPlocs",
+    function(x, do.NULL=TRUE, prefix="col") colnames(snpTable(x))
+)
+
+setMethod("dim", "XtraSNPlocs", function(x) dim(snpTable(x)))
 
 setMethod("provider", "XtraSNPlocs", function(x) x@provider)
 
