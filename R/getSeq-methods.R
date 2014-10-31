@@ -86,18 +86,6 @@
 ### .toGRanges() is called.
 .toGRanges <- function(x, strand)
 {
-    if (is(x, "RangedData")) {
-        msg <- c("Starting with BioC 2.14, passing a RangedData object to ",
-                 "getSeq() is no more supported. Please use a GRanges object ",
-                 "instead. Note that you can obtain a GRanges object by ",
-                 "simply coercing the RangedData object with ",
-                 "'as(..., \"RangedData\")'. However, we strongly recommend ",
-                 "that you start migrating your code to operate on GRanges ",
-                 "objects instead of RangedData objects. Please ask on the ",
-                 "bioc-devel mailing list if you have questions or concerns ",
-                 "about this (http://bioconductor.org/help/mailing-list/).")
-        .Defunct(msg=msg)
-    }
     if (is(x, "RangesList") || is(x, "Ranges")) {
         if (is.null(names(x)))
             stop("when 'names' is a RangesList or Ranges object, ",
