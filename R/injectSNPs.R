@@ -2,10 +2,18 @@
 ### SNP injection
 ### -------------------------------------------------------------------------
 
+.keep_snps_packages <- function(pkgs)
+{
+    idx1 <- which(substr(pkgs, 1, 8) == "SNPlocs.")
+    idx2 <- which(substr(pkgs, 1, 12) == "XtraSNPlocs.")
+    idx <- c(idx1, idx2)
+    pkgs[idx]
+}
+
 installed.SNPs <- function()
 {
     pkgs <- installed.packages()[ , "Package"]
-    pkgs <- pkgs[substr(pkgs, 1, 8) == "SNPlocs."]
+    pkgs <- .keep_snps_packages(pkgs)
     names(pkgs) <- NULL
     return(pkgs)
 }
@@ -14,7 +22,7 @@ available.SNPs <- function(type=getOption("pkgType"))
 {
     url <- getDataAnnotationContribUrl(type)
     pkgs <- available.packages(url)[, "Package"]
-    pkgs <- pkgs[substr(pkgs, 1, 8) == "SNPlocs."]
+    pkgs <- .keep_snps_packages(pkgs)
     names(pkgs) <- NULL
     return(pkgs)
 }

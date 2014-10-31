@@ -83,12 +83,19 @@ installed.SNPs()
   sequence whose name is specified by \code{seqname}.
 
   \code{available.SNPs} returns a character vector containing the names of the
-  SNPlocs data packages that are currently available on the Bioconductor
-  repositories for your version of R/Bioconductor. A SNPlocs data package
-  contains basic SNP information (location and alleles) for a given organism.
+  SNPlocs and XtraSNPlocs data packages that are currently available on the
+  Bioconductor repositories for your version of R/Bioconductor.
+  A SNPlocs data package contains basic information (location and alleles)
+  about the known molecular variations of class \emph{snp} for a given
+  organism.
+  A XtraSNPlocs data package contains information about the known molecular
+  variations of other classes (\emph{in-del}, \emph{heterozygous},
+  \emph{microsatellite}, \emph{named-locus}, \emph{no-variation}, \emph{mixed},
+  \emph{multinucleotide-polymorphism}) for a given organism.
+  Only SNPlocs data packages can be used for SNP injection for now.
 
-  \code{installed.SNPs} returns a character vector containing the names of the
-  SNPlocs data packages that are already installed.
+  \code{installed.SNPs} returns a character vector containing the names of
+  the SNPlocs and XtraSNPlocs data packages that are already installed.
 }
 
 \note{
