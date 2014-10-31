@@ -8,6 +8,7 @@ setGeneric("gdapply",
 setMethod("gdapply",
           signature(X = "GenomeDataList", FUN = "function"),
           function(X, FUN, ...) {
+              .Defunct(msg=GenomeData_defunct_msg)
               new.elements <- lapply(X, gdapply, FUN, ...)
               cls <- lapply(new.elements, class)
               ucl <- unique(unlist(cls))
@@ -19,6 +20,7 @@ setMethod("gdapply",
 setMethod("gdapply",
           signature(X = "GenomeData", FUN = "function"),
           function(X, FUN, ...) {
+              .Defunct(msg=GenomeData_defunct_msg)
               new.elements <- lapply(X, FUN, ...)
               cls <- lapply(new.elements, class)
               ucl <- unique(unlist(cls))

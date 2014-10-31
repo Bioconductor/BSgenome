@@ -7,6 +7,7 @@ setMethod(gdReduce, "GenomeDataList",
           function(f, ..., init, right=FALSE, accumulate=FALSE,
                    gdArgs=list())
 {
+    .Defunct(msg=GenomeData_defunct_msg)
     args <- list(...)
     if (length(args) > 1L)
         stop("'...' must satisfy 'length(...) == 1' in\n  ",
@@ -35,6 +36,7 @@ setMethod(gdReduce, "GenomeData",
           function(f, ..., init, right=FALSE, accumulate=FALSE,
                    gdArgs=list())
 {
+    .Defunct(msg=GenomeData_defunct_msg)
     if (missing(init))
         gdReduce(f, GenomeDataList(list(...)), right=right,
                  accumulate=accumulate, gdArgs=gdArgs)
