@@ -182,6 +182,10 @@ setClass("XtraSNPlocs",
 ### Accessors
 ###
 
+### NOT exported.
+setGeneric("snpTable", function(x) standardGeneric("snpTable"))
+setMethod("snpTable", "XtraSNPlocs", function(x) x@snp_table)
+
 setMethod("provider", "XtraSNPlocs", function(x) x@provider)
 
 setMethod("providerVersion", "XtraSNPlocs", function(x) x@provider_version)
@@ -224,15 +228,6 @@ newXtraSNPlocs <- function(pkgname, snp_table_dirpath,
         download_date=download_date,
         reference_genome=reference_genome)
 }
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### snpTable()
-###
-
-setGeneric("snpTable", function(x) standardGeneric("snpTable"))
-
-setMethod("snpTable", "XtraSNPlocs", function(x) x@snp_table)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
