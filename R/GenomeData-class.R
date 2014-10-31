@@ -2,10 +2,10 @@
 ### GenomeData objects
 ### -------------------------------------------------------------------------
 
-### DEPRECATED!!!
-GenomeData_deprecation_msg <- wmsg(
-    "Starting with BioC 3.0, GenomeData and GenomeDataList objects ",
-    "are deprecated. Note that the GenomeData/GenomeDataList containers ",
+### DEFUNCT!!!
+GenomeData_defunct_msg <- wmsg(
+    "Starting with BioC 3.1, GenomeData and GenomeDataList objects ",
+    "are defunct. Note that the GenomeData/GenomeDataList containers ",
     "predate the GRanges/GRangesList containers and, most of the times, ",
     "the latters can be used instead of the formers. ",
     "Please let us know on the bioc-devel mailing list ",
@@ -26,17 +26,17 @@ setClass("GenomeData", contains = "SimpleList")
 ### At least that way, all the metadata is in one place.
 setMethod("providerVersion", "GenomeData",
           function(x) {
-            .Deprecated(msg=GenomeData_deprecation_msg)
+            .Defunct(msg=GenomeData_defunct_msg)
             metadata(x)$providerVersion
           })
 setMethod("organism", "GenomeData",
           function(x) {
-            .Deprecated(msg=GenomeData_deprecation_msg)
+            .Defunct(msg=GenomeData_defunct_msg)
             metadata(x)$organism
           })
 setMethod("provider", "GenomeData",
           function(x) {
-            .Deprecated(msg=GenomeData_deprecation_msg)
+            .Defunct(msg=GenomeData_defunct_msg)
             metadata(x)$provider
           })
 
@@ -47,7 +47,7 @@ GenomeData <- function(listData = list(),
                        metadata = list(),
                        elementMetadata = NULL, ...)
 {
-  .Deprecated(msg=GenomeData_deprecation_msg)
+  .Defunct(msg=GenomeData_defunct_msg)
   if (!is.list(metadata))
     stop("'metadata' must be a list")
   md <- list(organism = organism, provider = provider,
@@ -58,7 +58,7 @@ GenomeData <- function(listData = list(),
 }
 
 setMethod("show", "GenomeData", function(object) {
-  .Deprecated(msg=GenomeData_deprecation_msg)
+  .Defunct(msg=GenomeData_defunct_msg)
   cat("A GenomeData instance")
   if (!is.null(organism(object)))
     cat(" for", organism(object))
@@ -78,7 +78,7 @@ setMethod("show", "GenomeData", function(object) {
 
 setValidity("GenomeData",
             function(object) {
-              .Deprecated(msg=GenomeData_deprecation_msg)
+              .Defunct(msg=GenomeData_defunct_msg)
               org <- organism(object)
               prov <- provider(object)
               provVer <- providerVersion(object)
