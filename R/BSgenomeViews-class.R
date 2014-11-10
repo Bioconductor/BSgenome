@@ -103,7 +103,8 @@ setMethod("Views", "BSgenome",
     ans_seqnames <- as.character(seqnames(x))
     ans_ranges <- showAsCell(ranges(x))
     ans_strand <- as.character(strand(x))
-    ans_dna <- as.character(getSeq(subject(x), granges(x)))
+    ans_dna <- sapply(getSeq(subject(x), granges(x)),
+                      Biostrings:::toSeqSnippet, 23L)
     if (lx != 0L)
         ans_dna <- paste0("[", ans_dna, "]")
     ans <- cbind(seqnames=as.character(seqnames(x)),
