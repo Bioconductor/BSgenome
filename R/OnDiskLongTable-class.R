@@ -411,7 +411,7 @@ setMethod("show", "OnDiskLongTable",
     if (length(blockidx) == 0L)
         blockidx <- 0L
     tmp <- lapply(blockidx, function(i) .load_block(x, colidx, i))
-    quickUnlist(tmp)
+    S4Vectors:::quick_unlist(tmp)
 }
 
 ### batch_labels: character vector of batch labels.
@@ -520,7 +520,7 @@ getBatchesFromOnDiskLongTable <- function(x, batch_labels, colidx,
                block <- .load_block(x, colidx, blockidx)
                block[keys]
              })
-    quickUnsplit(tmp, rowkeys[[1L]])
+    S4Vectors:::quick_unsplit(tmp, rowkeys[[1L]])
 }
 
 ### rowidx: integer vector.
