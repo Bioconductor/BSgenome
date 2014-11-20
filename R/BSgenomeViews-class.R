@@ -139,7 +139,7 @@ showBSgenomeViews <- function(x, margin="",
             dna="DNAStringSet"
         )
         classinfo <-
-            GenomicRanges:::makeClassinfoRowForCompactPrinting(x, .COL2CLASS)
+            S4Vectors:::makeClassinfoRowForCompactPrinting(x, .COL2CLASS)
         ## A sanity check, but this should never happen!
         stopifnot(identical(colnames(classinfo), colnames(out)))
         out <- rbind(classinfo, out)
