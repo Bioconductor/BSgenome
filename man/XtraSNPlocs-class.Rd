@@ -28,6 +28,8 @@
 \alias{snpcount,XtraSNPlocs-method}
 \alias{snpsBySeqname}
 \alias{snpsBySeqname,XtraSNPlocs-method}
+\alias{snpsByOverlaps}
+\alias{snpsByOverlaps,XtraSNPlocs-method}
 \alias{snpsById}
 \alias{snpsById,XtraSNPlocs-method}
 
@@ -110,7 +112,7 @@ snpsById(x, ids, ...)
     of the form \code{"ch14:5201-5300"}.
   }
   \item{maxgap, minoverlap, type}{
-    These arguments are passed to \code{\link[GenomicRanges]{subsetByOverlaps()}}
+    These arguments are passed to \code{\link[IRanges]{subsetByOverlaps}()}
     which is used internally by \code{snpsByOverlaps}.
     See \code{?IRanges::\link[IRanges]{subsetByOverlaps}} in the \pkg{IRanges}
     package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}} in
@@ -130,7 +132,7 @@ snpsById(x, ids, ...)
     Additional arguments, for use in specific methods.
     Further arguments passed to the \code{snpsByOverlaps} method for
     XtraSNPlocs objects (thru \code{...}) are passed to
-    \code{subsetByOverlaps()}.
+    \code{\link[IRanges]{subsetByOverlaps}()}.
   }
   \item{do.NULL, prefix}{
     These arguments are ignored.
