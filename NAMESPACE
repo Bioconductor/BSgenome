@@ -43,7 +43,7 @@ export(
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
-    snpsBySeqname, snpsById,
+    snpsBySeqname, snpsByOverlaps, snpsById,
 
     sourceUrl,
     SNPlocs, SNPlocs_pkgname, SNPcount,
@@ -75,7 +75,7 @@ exportMethods(
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
-    snpsBySeqname, snpsById,
+    snpsBySeqname, snpsByOverlaps, snpsById,
 
     sourceUrl,
     SNPlocs, SNPlocs_pkgname, SNPcount,

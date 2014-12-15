@@ -306,8 +306,7 @@ setGeneric("snpsBySeqname", signature="x",
 setMethod("snpsBySeqname", "XtraSNPlocs",
     function(x, seqnames,
              columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
-             drop.rs.prefix=FALSE,
-             as.DataFrame=FALSE)
+             drop.rs.prefix=FALSE, as.DataFrame=FALSE)
     {
         if (!is.character(seqnames)
          || any(is.na(seqnames))
@@ -327,6 +326,91 @@ setMethod("snpsBySeqname", "XtraSNPlocs",
                                                     drop.rs.prefix))
         .get_GRanges_by_seqname_from_XtraSNPlocs(x, seqnames, columns,
                                                  drop.rs.prefix)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### snpsByOverlaps()
+###
+
+### Same args and signature as GenomicFeatures::transcriptsByOverlaps()
+### EXCEPT for 'minoverlap' default value that we set to zero so we also
+### get SNPs that are insertions.
+setGeneric("snpsByOverlaps", signature="x",
+    function(x, ranges, maxgap=0L, minoverlap=0L,
+             type=c("any", "start", "end", "within", "equal"), ...)
+        standardGeneric("snpsByOverlaps")
+)
+
+### TODO: Avoid code duplication between .normarg_ranges() and
+### GenomicAlignments:::.normarg_param().
+.normarg_ranges <- function(ranges)
+{
+    if (isSingleString(ranges)) {
+        tmp1 <- strsplit(ranges, ":", fixed=TRUE)[[1L]]
+        if (length(tmp1) != 2L) 
+            stop(wmsg("when a character string, 'ranges' must be ",
+                      "of the form \"ch14:5201-5300\""))
+        tmp2 <- as.integer(strsplit(tmp1[2L], "-", fixed=TRUE)[[1L]])
+        if (length(tmp2) != 2L || any(is.na(tmp2)))
+            stop(wmsg("when a character string, 'ranges' must be ", 
+                      "of the form \"ch14:5201-5300\""))
+        ranges <- GRanges(tmp1[1L], IRanges(tmp2[1L], tmp2[2L]))
+        return(ranges)
+    }
+    if (!is(ranges, "GenomicRanges"))
+        stop(wmsg("'ranges' ranges must be a GenomicRanges object ",
+                  "or a character string of the form \"ch14:5201-5300\""))
+    ranges
+}
+
+.to_DataFrame <- function(x, columns)
+{
+    spatial_colnames <- c("seqnames", "start", "end", "width", "strand")
+    spatial_colnames <- intersect(spatial_colnames, columns)
+    spatial_cols <- vector(mode="list", length=length(spatial_colnames))
+    names(spatial_cols) <- spatial_colnames
+    if ("seqnames" %in% spatial_colnames)
+        spatial_cols[["seqnames"]] <- seqnames(x)
+    if ("start" %in% spatial_colnames)
+        spatial_cols[["start"]] <- start(x)
+    if ("end" %in% spatial_colnames)
+        spatial_cols[["end"]] <- end(x)
+    if ("width" %in% spatial_colnames)
+        spatial_cols[["width"]] <- width(x)
+    if ("strand" %in% spatial_colnames)
+        spatial_cols[["strand"]] <- strand(x)
+    cbind(DataFrame(spatial_cols), mcols(x))[ , columns, drop=FALSE]
+}
+
+### Returns a GRanges object unless 'as.DataFrame=TRUE'.
+### Arguments passed thru ... are further arguments to be passed to
+### subsetByOverlaps().
+setMethod("snpsByOverlaps", "XtraSNPlocs",
+    function(x, ranges, maxgap=0L, minoverlap=0L,
+             type=c("any", "start", "end", "within", "equal"),
+             columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
+             drop.rs.prefix=FALSE, as.DataFrame=FALSE, ...)
+    {
+        ranges <- .normarg_ranges(ranges)
+        ## The only purpose of the line below is to check that 'x' and 'ranges'
+        ## are based on the same reference genome (merge() will raise an error
+        ## if they are not).
+        merge(seqinfo(x), seqinfo(ranges))
+        seqlevels(ranges, force=TRUE) <- intersect(seqlevels(x),
+                                                   seqlevelsInUse(ranges))
+        if (!isTRUEorFALSE(as.DataFrame))
+            stop(wmsg("'as.DataFrame' must be TRUE or FALSE"))
+        snps_by_seqname <- snpsBySeqname(x, seqlevels(ranges),
+                                            columns=columns,
+                                            drop.rs.prefix=drop.rs.prefix)
+        ans <- subsetByOverlaps(snps_by_seqname, ranges,
+                                maxgap=maxgap, minoverlap=minoverlap,
+                                type=type, ...)
+        if (as.DataFrame)
+            ans <- .to_DataFrame(ans, columns)
+        ans
     }
 )
 

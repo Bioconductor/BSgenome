@@ -2,7 +2,7 @@ Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages
 Description: Infrastructure shared by all the Biostrings-based genome data
              packages 
-Version: 1.35.8
+Version: 1.35.9
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fhcrc.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
@@ -20,6 +20,7 @@ Suggests: BiocInstaller,
 	BSgenome.Rnorvegicus.UCSC.rn5,
 	SNPlocs.Hsapiens.dbSNP.20100427,
 	XtraSNPlocs.Hsapiens.dbSNP141.GRCh38,
+	TxDb.Hsapiens.UCSC.hg38.knownGene,
 	hgu95av2probe,
 	Biobase,
 	RUnit

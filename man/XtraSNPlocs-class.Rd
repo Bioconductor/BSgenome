@@ -62,6 +62,14 @@ snpsBySeqname(x, seqnames, ...)
               drop.rs.prefix=FALSE,
               as.DataFrame=FALSE)
 
+snpsByOverlaps(x, ranges, maxgap=0L, minoverlap=0L,
+               type=c("any", "start", "end", "within", "equal"), ...)
+
+\S4method{snpsByOverlaps}{XtraSNPlocs}(x, ranges, maxgap=0L, minoverlap=0L,
+               type=c("any", "start", "end", "within", "equal"),
+               columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
+               drop.rs.prefix=FALSE, as.DataFrame=FALSE, ...)
+
 snpsById(x, ids, ...)
 
 \S4method{snpsById}{XtraSNPlocs}(x, ids,
@@ -96,6 +104,20 @@ snpsById(x, ids, ...)
     Should the result be returned in a \link[S4Vectors]{DataFrame} instead
     of a \link[GenomicRanges]{GRanges} object?
   }
+  \item{ranges}{
+    One or more regions of interest specified as a \link[GenomicRanges]{GRanges}
+    object. A single region of interest can be specified as a character string
+    of the form \code{"ch14:5201-5300"}.
+  }
+  \item{maxgap, minoverlap, type}{
+    These arguments are passed to \code{\link[GenomicRanges]{subsetByOverlaps()}}
+    which is used internally by \code{snpsByOverlaps}.
+    See \code{?IRanges::\link[IRanges]{subsetByOverlaps}} in the \pkg{IRanges}
+    package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}} in
+    the \pkg{GenomicRanges} package for more information about the
+    \code{subsetByOverlaps()} generic and its method for
+    \link[GenomicRanges]{GenomicRanges} objects.
+  }
   \item{ids}{
     The RefSNP ids to look up (a.k.a. \emph{rs ids}). Can be integer or
     character vector, with or without the \code{"rs"} prefix. NAs are not
@@ -106,6 +128,9 @@ snpsById(x, ids, ...)
   }
   \item{...}{
     Additional arguments, for use in specific methods.
+    Further arguments passed to the \code{snpsByOverlaps} method for
+    XtraSNPlocs objects (thru \code{...}) are passed to
+    \code{subsetByOverlaps()}.
   }
   \item{do.NULL, prefix}{
     These arguments are ignored.
@@ -194,6 +219,37 @@ library(XtraSNPlocs.Hsapiens.dbSNP141.GRCh38)
 snps <- XtraSNPlocs.Hsapiens.dbSNP141.GRCh38
 snpcount(snps)
 colnames(snps)
+
+## Get the location, RefSNP id, and alleles for all "extra SNPs"
+## located on chromosome 22 and MT:
+my_snps1 <- snpsBySeqname(snps, c("ch22", "chMT"),
+                          columns=c("RefSNP_id", "alleles"))
+my_snps1
+
+## Get the location, RefSNP id, and alleles for all "extra SNPs"
+## overlapping some regions of interest:
+my_snps2a <- snpsByOverlaps(snps, "ch22:33.63e6-33.64e6",
+                            columns=c("RefSNP_id", "alleles"))
+my_snps2a
+
+## With the regions of interest being all the known CDS for hg38
+## (except for the chromosome naming convention this genome build
+## is the same as GRCh38):
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+hg38_cds <- cds(txdb)
+seqlevelsStyle(hg38_cds)  # UCSC
+seqlevelsStyle(snps)  # dbSNP
+seqlevelsStyle(hg38_cds) <- seqlevelsStyle(snps)
+genome(hg38_cds) <- genome(snps)
+my_snps2b <- snpsByOverlaps(snps, hg38_cds,
+                            columns=c("RefSNP_id", "alleles"))
+
+## Get the location and alleles for some RefSNP ids:
+my_rsids <- c("rs367617508", "rs398104919", "rs3831697", "rs372470289",
+              "rs141568169", "rs34628976", "rs67551854")
+my_snps3 <- snpsById(snps, my_rsids, c("RefSNP_id", "alleles"))
+my_snps3
 
 ## See ?XtraSNPlocs.Hsapiens.dbSNP141.GRCh38 for examples of using
 ## snpsBySeqname() and snpsById().
