@@ -19,5 +19,5 @@ PkgExamples: genome$chr1  # a MaskedDNAString object!
 	masks(genome$chr1)$TRF
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Mmulatta.UCSC.rheMac2$chr1
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac2/masks
+masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac2/masks
 AGAPSfiles_name: gap.txt.gz

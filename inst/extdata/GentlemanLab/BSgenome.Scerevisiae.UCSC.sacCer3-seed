@@ -15,4 +15,4 @@ seqnames: paste("chr", c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX",
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/sacCer3/bigZips/
 PkgExamples: genome$chrI  # same as genome[["chrI"]]
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Scerevisiae.UCSC.sacCer3/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Scerevisiae.UCSC.sacCer3/seqs

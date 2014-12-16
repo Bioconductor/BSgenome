@@ -19,6 +19,6 @@ SrcDataFiles: all the chr*.fas file from ftp://ftp.arabidopsis.org/home/tair/Seq
 	TAIR might update the content of this folder in the future with a new
 	snapshot and move the 04232008 snapshot to the OLD/ subfolder.
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.04232008/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.04232008/seqs
 seqfiles_suffix: .fas
 ondisk_seq_format: rda

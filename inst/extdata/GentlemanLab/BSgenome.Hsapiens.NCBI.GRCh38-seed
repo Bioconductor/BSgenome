@@ -448,5 +448,5 @@ seqnames: c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
 circ_seqs: "MT"
 SrcDataFiles: GCA_000001405.15_GRCh38_top-level.fna.gz from ftp://ftp.ncbi.nlm.nih.gov/genbank/genomes/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh38
 PkgExamples: genome[["1"]]
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.NCBI.GRCh38/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.NCBI.GRCh38/seqs
 ondisk_seq_format: rda

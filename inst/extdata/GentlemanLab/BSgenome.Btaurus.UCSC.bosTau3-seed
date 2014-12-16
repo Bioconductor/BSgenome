@@ -29,5 +29,5 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	.
 	## See ?extractUpstreamSeqs in the GenomicFeatures package for more
 	## information about this.
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau3/seqs
 seqfile_name: bosTau3.2bit

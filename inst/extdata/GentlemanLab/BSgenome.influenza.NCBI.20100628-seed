@@ -14,5 +14,5 @@ BSgenomeObjname: influenza
 seqnames: character(0)
 mseqnames: "influenza"
 SrcDataFiles: influenza.fna.gz from ftp://ftp.ncbi.nih.gov/genomes/INFLUENZA/ (downloaded on 2010/06/28)
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.influenza.NCBI.20100628/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.influenza.NCBI.20100628/seqs
 seqfiles_suffix: .fna

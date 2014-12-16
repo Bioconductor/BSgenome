@@ -15,4 +15,4 @@ seqnames: paste0("chr", c(1, "1A", "1B", 2:4, "4A", 5:28, "LGE22", "LG2", "LG5",
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.soe.ucsc.edu/goldenPath/taeGut1/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Tguttata.UCSC.taeGut1/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Tguttata.UCSC.taeGut1/seqs

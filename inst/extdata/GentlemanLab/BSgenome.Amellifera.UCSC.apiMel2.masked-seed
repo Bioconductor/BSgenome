@@ -11,6 +11,6 @@ SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/golden
 PkgExamples: genome$Group1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$Group1)  # same as BSgenome.Amellifera.UCSC.apiMel2$Group1
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
+masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .out

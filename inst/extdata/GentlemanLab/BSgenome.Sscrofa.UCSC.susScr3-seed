@@ -16,4 +16,4 @@ circ_seqs: "chrM"
 mseqnames: "unplaced_scaffolds"
 SrcDataFiles: susScr3.fa.gz from http://hgdownload.soe.ucsc.edu/goldenPath/susScr3/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Sscrofa.UCSC.susScr3/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Sscrofa.UCSC.susScr3/seqs

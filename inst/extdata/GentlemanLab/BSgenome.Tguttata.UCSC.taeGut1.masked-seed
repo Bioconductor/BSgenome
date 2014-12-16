@@ -10,5 +10,5 @@ SrcDataFiles: AGAPS masks: all the chr*_gap.txt.gz files from http://hgdownload.
 PkgExamples: genome$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chr1)  # same as BSgenome.Tguttata.UCSC.taeGut1$chr1
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Tguttata.UCSC.taeGut1/masks
+masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Tguttata.UCSC.taeGut1/masks
 AGAPSfiles_suffix: _gap.txt.gz

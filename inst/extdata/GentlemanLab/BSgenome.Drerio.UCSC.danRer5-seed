@@ -39,4 +39,4 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
 	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
 	## package.
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer5/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer5/seqs

@@ -12,7 +12,7 @@ SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/golden
 PkgExamples: genome$chrI  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
 	unmasked(genome$chrI)  # same as BSgenome.Gaculeatus.UCSC.gasAcu1$chrI
-masks_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/masks
+masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .fa.out
 TRFfiles_suffix: .bed

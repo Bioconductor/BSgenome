@@ -13,5 +13,5 @@ organism_biocview: Apis_mellifera
 BSgenomeObjname: Amellifera
 SrcDataFiles: apiMel2.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 PkgExamples: genome$Group1  # same as genome[["Group1"]]
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
 seqfile_name: apiMel2.2bit
