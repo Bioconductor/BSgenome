@@ -274,7 +274,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
              paste(seqnames[notfound_idx], collapse=", "))
     seqs <- seqs[idx]
     if (verbose)
-        cat("Writing all sequences to '", dest_filepath, "' ... ", sep="")
+        cat("Writing sequences to '", dest_filepath, "' ... ", sep="")
     export(seqs, dest_filepath, format="2bit")
     if (verbose)
         cat("DONE\n")
@@ -730,11 +730,9 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         }
         createPackage(x@Package, destdir, template_path, symvals)
         pkgdir <- file.path(destdir, x@Package)
-        ## Just to avoid codetools "no visible binding" NOTEs
-        .seqnames <- .mseqnames <- NULL
-        ## Sourcing this file will set the values of the '.seqnames' and
-        ## '.mseqnames' variables
-        source(file.path(pkgdir, "R", "zzz.R"), local=TRUE)
+
+        .seqnames <- eval(parse(text=x@seqnames))
+        .mseqnames <- eval(parse(text=x@mseqnames))
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
         if (x@ondisk_seq_format == "rda") {
             ## Forge the "seqlengths.rda" file
