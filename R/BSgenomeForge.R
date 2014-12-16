@@ -286,21 +286,10 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL,
                           ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                           verbose=TRUE)
 {
-    if (length(seqnames) == 0L) {
-        if (is.na(seqfile_name))
-            warning("'seqnames' is empty")
-    } else {
-        ## just for the side effect of checking the arguments
-        getSeqSrcpaths(seqnames, prefix=prefix, suffix=suffix,
-                       seqs_srcdir=seqs_srcdir)
-    }
-    if (length(mseqnames) != 0) {
-        if (!is.character(mseqnames))
-            stop("'mseqnames' must be a character vector (or NULL)")
-        ## just for the side effect of checking the arguments
-        getSeqSrcpaths(mseqnames, prefix=prefix, suffix=suffix,
-                       seqs_srcdir=seqs_srcdir)
-    }
+    if (length(seqnames) == 0L && is.na(seqfile_name))
+        warning("'seqnames' is empty")
+    if (!(length(mseqnames) == 0L || is.character(mseqnames)))
+        stop("'mseqnames' must be a character vector (or NULL)")
     if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
     ondisk_seq_format <- match.arg(ondisk_seq_format)
@@ -721,7 +710,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             SOURCEURL=x@source_url,
             ORGANISMBIOCVIEW=x@organism_biocview,
             BSGENOMEOBJNAME=x@BSgenomeObjname,
-            SEQNAMES=x@seqnames,
+            SEQNAMES=ifelse(is.na(x@seqfile_name), x@seqnames, "NULL"),
             CIRCSEQS=x@circ_seqs,
             MSEQNAMES=x@mseqnames,
             PKGDETAILS=x@PkgDetails,
@@ -756,7 +745,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                                 seqs_destdir=seqs_destdir,
                                 verbose=verbose)
         }
-        ## Forge the sequence files (either "rda", "fa", or "fa.rz")
+        ## Forge the sequence files (either "2bit", "rda", "fa.rz", or "fa")
         forgeSeqFiles(.seqnames, mseqnames=.mseqnames,
                       seqfile_name=x@seqfile_name,
                       prefix=x@seqfiles_prefix,

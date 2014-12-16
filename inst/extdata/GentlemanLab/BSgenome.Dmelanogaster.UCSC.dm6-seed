@@ -1,7 +1,7 @@
 Package: BSgenome.Dmelanogaster.UCSC.dm6
 Title: Full genome sequences for Drosophila melanogaster (UCSC version dm6)
 Description: Full genome sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm6, Aug. 2014) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.1
 Suggests: GenomicFeatures
 organism: Drosophila melanogaster
 species: Fly
@@ -13,7 +13,7 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
 organism_biocview: Drosophila_melanogaster
 BSgenomeObjname: Dmelanogaster
 seqnames: seqnames(Seqinfo(genome="dm6"))
-circ_seqs: names(which(isCircular(Seqinfo(genome="dm6"))))
+circ_seqs: "chrM"
 SrcDataFiles: dm6.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
 PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 	.
@@ -34,5 +34,5 @@ PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
 	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
 	## information.
-seqs_srcdir: /shared/silo_researcher/Morgan_M/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm6/seqs
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm6/seqs
 seqfile_name: dm6.2bit
