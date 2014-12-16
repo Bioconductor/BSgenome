@@ -50,8 +50,8 @@ getSeqSrcpaths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
     ans <- file.path(seqs_srcdir, srcfiles)
     is_OK <- file.exists(ans)
     if (!all(is_OK)) {
-        missing_files <- paste(ans[!is_OK], collapse=", ")
-        stop(missing_files, ": file(s) not found")
+        files_not_found <- paste(ans[!is_OK], collapse=", ")
+        stop("file(s) not found: ", files_not_found)
     }
     names(ans) <- seqnames
     ans
@@ -130,9 +130,9 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     .saveObject(seq, name, destdir=seqs_destdir, verbose=verbose)
 }
 
-.forgeFastaRzFile <- function(seqnames, prefix, suffix,
-                              seqs_srcdir, seqs_destdir,
-                              ondisk_seq_format, verbose=TRUE)
+.forgeFastaRzFileFromFastaFiles <- function(seqnames, prefix, suffix,
+                                            seqs_srcdir, seqs_destdir,
+                                            ondisk_seq_format, verbose=TRUE)
 {
     if (!is.character(seqnames))
         stop("'seqnames' must be a character vector")
@@ -204,9 +204,9 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     chartr(old, new, x)
 }
 
-.forgeTwobitFile <- function(seqnames, prefix, suffix,
-                             seqs_srcdir, seqs_destdir,
-                             verbose=TRUE)
+.forgeTwobitFileFromFastaFiles <- function(seqnames, prefix, suffix,
+                                           seqs_srcdir, seqs_destdir,
+                                           verbose=TRUE)
 {
     if (!is.character(seqnames))
         stop("'seqnames' must be a character vector")
@@ -255,13 +255,38 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         cat("DONE\n")
 }
 
+.subsetTwobitFile <- function(seqfile_name, seqnames,
+                              seqs_srcdir, seqs_destdir,
+                              verbose=verbose)
+{
+    src_filepath <- file.path(seqs_srcdir, seqfile_name)
+    dest_filename <- "single_sequences.2bit"
+    dest_filepath <- file.path(seqs_destdir, dest_filename)
+    if (verbose)
+        cat("Loading '", src_filepath, "' ... ", sep="")
+    seqs <- import(src_filepath)
+    if (verbose)
+        cat("DONE\n")
+    idx <- match(seqnames, names(seqs))
+    notfound_idx <- which(is.na(idx))
+    if (length(notfound_idx) != 0L)
+        stop("sequence(s) not found: ",
+             paste(seqnames[notfound_idx], collapse=", "))
+    seqs <- seqs[idx]
+    if (verbose)
+        cat("Writing all sequences to '", dest_filepath, "' ... ", sep="")
+    export(seqs, dest_filepath, format="2bit")
+    if (verbose)
+        cat("DONE\n")
+}
+
 forgeSeqFiles <- function(seqnames, mseqnames=NULL,
                           seqfile_name=NA, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
                           ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
                           verbose=TRUE)
 {
-    if (length(seqnames) == 0) {
+    if (length(seqnames) == 0L) {
         if (is.na(seqfile_name))
             warning("'seqnames' is empty")
     } else {
@@ -286,17 +311,22 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL,
         }
     } else if (ondisk_seq_format == "2bit") {  # "2bit" format
         if (is.na(seqfile_name)) {
-            .forgeTwobitFile(seqnames, prefix, suffix,
-                             seqs_srcdir, seqs_destdir,
-                             verbose=verbose)
-        } else {
+            .forgeTwobitFileFromFastaFiles(seqnames, prefix, suffix,
+                                           seqs_srcdir, seqs_destdir,
+                                           verbose=verbose)
+        } else if (length(seqnames) == 0L) {
             .copySeqFile(seqfile_name,
                          seqs_srcdir, seqs_destdir,
                          verbose=verbose)
+        } else {
+            .subsetTwobitFile(seqfile_name, seqnames,
+                              seqs_srcdir, seqs_destdir,
+                              verbose=verbose)
         }
     } else {  # "fa" and "fa.rz" formats
-        .forgeFastaRzFile(seqnames, prefix, suffix, seqs_srcdir, seqs_destdir,
-                          ondisk_seq_format, verbose=verbose)
+        .forgeFastaRzFileFromFastaFiles(seqnames, prefix, suffix,
+                                        seqs_srcdir, seqs_destdir,
+                                        ondisk_seq_format, verbose=verbose)
     }
     for (name in mseqnames) {
         .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,

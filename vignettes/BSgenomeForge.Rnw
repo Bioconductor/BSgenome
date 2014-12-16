@@ -251,21 +251,21 @@ a \term{seed file} are divided in 3 categories:
 \item Non-standard \texttt{DESCRIPTION} fields. These fields are specific
       to \term{seed files} and they will also be copied to the
       \texttt{DESCRIPTION} file of the \term{target package}.
-      In addition, the values of those fields will be stored in the
+      In addition, the values of these fields will be stored in the
       \Rclass{BSgenome} object that will be contained in the \term{target
       package}. This means that the users of the \term{target package} will be
       able to retrieve these values via the accessor methods defined for
       \Rclass{BSgenome} objects. See the man page for the \Rclass{BSgenome}
       class (\code{{?}`BSgenome-class`}) for a description of these methods.
 
-\item Additional fields that don't fall in the 2 first categories.
+\item Additional fields that don't fall in the first 2 categories.
 \end{enumerate}
 
 The 3 following sub-subsections give an extensive description of all the
 valid fields of a \term{seed file}.
 
 Alternatively, the reader in a hurry can go directly to the last
-sub-subsection of this subsection for an example of \term{seed file}.
+sub-subsection of this subsection for an example of a \term{seed file}.
 
 \subsubsection{Standard \texttt{DESCRIPTION} fields}
 
