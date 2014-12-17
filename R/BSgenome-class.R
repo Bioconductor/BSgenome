@@ -367,11 +367,11 @@ setMethod("as.list", "BSgenome",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The 'show' method
+### The "show" method
 ###
 
-.SHOW_BSGENOME_PREFIX <- "| "
-.SHOW_SEQSECTION_PREFIX <- "|   "
+.SHOW_BSGENOME_PREFIX <- "# "
+.SHOW_SEQSECTION_PREFIX <- "#   "
 
 setMethod("show", "BSgenome",
     function(object)
