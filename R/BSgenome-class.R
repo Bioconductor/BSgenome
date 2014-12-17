@@ -379,10 +379,8 @@ setMethod("show", "BSgenome",
         mystrwrap <- function(line)
             writeLines(strwrap(line, width=getOption("width")+1,
                                exdent=0L, prefix=.SHOW_BSGENOME_PREFIX))
-        if (!is.na(object@species)) {
-            cat(object@species, "genome\n")
-            cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
-        }
+        if (!is.na(object@species))
+            cat(object@species, "genome:\n")
         GenomeInfoDb:::showGenomeDescription(object,
                                              margin=.SHOW_BSGENOME_PREFIX)
         if (!is.null(SNPlocs_pkgname(object)))
