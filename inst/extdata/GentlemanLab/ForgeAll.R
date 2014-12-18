@@ -44,6 +44,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Ptroglodytes.UCSC.panTro3",
   "BSgenome.Rnorvegicus.UCSC.rn4",
   "BSgenome.Rnorvegicus.UCSC.rn5",
+  "BSgenome.Rnorvegicus.UCSC.rn6",
   "BSgenome.Scerevisiae.UCSC.sacCer1",
   "BSgenome.Scerevisiae.UCSC.sacCer2",
   "BSgenome.Scerevisiae.UCSC.sacCer3",

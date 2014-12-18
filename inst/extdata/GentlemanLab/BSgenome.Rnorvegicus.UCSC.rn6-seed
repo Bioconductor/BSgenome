@@ -1,0 +1,38 @@
+Package: BSgenome.Rnorvegicus.UCSC.rn6
+Title: Full genome sequences for Rattus norvegicus (UCSC version rn6)
+Description: Full genome sequences for Rattus norvegicus (Rat) as provided by UCSC (rn6, Jul. 2014) and stored in Biostrings objects.
+Version: 1.4.1
+Suggests: GenomicFeatures
+organism: Rattus norvegicus
+species: Rat
+provider: UCSC
+provider_version: rn6
+release_date: Jul. 2014
+release_name: RGSC Rnor_6.0
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rn6/bigZips/
+organism_biocview: Rattus_norvegicus
+BSgenomeObjname: Rnorvegicus
+seqnames: seqnames(Seqinfo(genome="rn6"))
+circ_seqs: "chrM"
+SrcDataFiles: rn6.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/rn6/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Extract the upstream sequences
+	## ---------------------------------------------------------------------
+	## The upstream sequences can easily be extracted from the full genome
+	## sequences with something like:
+	.
+	library(GenomicFeatures)
+	txdb <- makeTxDbFromUCSC("rn6", tablename="refGene")
+	up1000seqs <- extractUpstreamSeqs(genome, txdb, width=1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object) that
+	## contains a gene model based on rn6 or on a compatible genome (i.e.
+	## a genome with sequences identical to the sequences in rn6). Note
+	## that you can make a TxDb object from various annotation resources.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
+	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
+	## information.
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn6/seqs
+seqfile_name: rn6.2bit
