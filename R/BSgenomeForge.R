@@ -245,12 +245,19 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
                          verbose=TRUE)
 {
     src_filepath <- file.path(seqs_srcdir, seqfile_name)
+    if (!file.exists(src_filepath))
+        stop("File not found: ", src_filepath)
     dest_filename <- "single_sequences.2bit"
     dest_filepath <- file.path(seqs_destdir, dest_filename)
     if (verbose)
         cat("Copying '", src_filepath, "' to '", dest_filepath, "' ... ",
             sep="")
-    file.copy(src_filepath, dest_filepath, copy.mode=FALSE, copy.date=FALSE)
+    if (!file.copy(src_filepath, dest_filepath,
+                   copy.mode=FALSE, copy.date=FALSE)) {
+        if (verbose)
+            stop("FAILED")
+        stop("Failed to copy '", src_filepath, "' to '", dest_filepath, "'")
+    }
     if (verbose)
         cat("DONE\n")
 }
