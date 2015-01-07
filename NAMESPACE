@@ -11,6 +11,11 @@ import(Biostrings)
 import(Rsamtools)
 import(rtracklayer)
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Export S4 classes
+###
+
 exportClasses(
     OnDiskLongTable,
     SNPlocs,
@@ -24,65 +29,153 @@ exportClasses(
     BSgenomeDataPkgSeed
 )
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Export S3 methods
+###
+
+S3method(as.data.frame, BSgenomeViews)
+
+### We also export them thru the export() directive so that (a) they can be
+### called directly, (b) tab-completion on the name of the generic shows them,
+### and (c) methods() doesn't asterisk them.
 export(
-    ## Non-generic functions:
+    as.data.frame.BSgenomeViews
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Export S4 methods for generics not defined in S4Vectors
+###
+
+exportMethods(
+    ## Methods for generics defined in the base package:
+    length, names,
+    nrow, ncol, dim,
+    colnames,
+    as.character, as.list, as.data.frame,
+    "[[", "$", unlist,
+    nchar,
+
+    ## Methods for generics defined in the methods package:
+    coerce, show,
+
+    ## Methods for generics defined in the BiocGenerics package:
+    start, end, width, strand,
+
+    ## Methods for generics defined in the IRanges package:
+    ranges, Views, subject, score,
+
+    ## Methods for generics defined in the GenomeInfoDb package:
+    seqinfo, "seqinfo<-", seqnames, "seqnames<-",
+    organism, species, provider, providerVersion, releaseDate, releaseName,
+
+    ## Methods for generics defined in the GenomicRanges package:
+    granges,
+
+    ## Methods for generics defined in the Biostrings package:
+    getSeq,
+    seqtype, alphabetFrequency, hasOnlyBaseLetters,
+    uniqueLetters, letterFrequencyInSlidingView, letterFrequency,
+    oligonucleotideFrequency, nucleotideFrequencyAt,
+    consensusMatrix, consensusString,
+    matchPWM, countPWM, vmatchPattern, vcountPattern,
+
+    ## Methods for generics defined in the rtracklayer package:
+    export
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Export non-generic functions
+###
+
+export(
+    ## OnDiskLongTable-class.R:
     saveAsOnDiskLongTable, saveRowidsForOnDiskLongTable,
     OnDiskLongTable,
     getBatchesFromOnDiskLongTable,
     getRowsByIndexFromOnDiskLongTable, getRowsByIdFromOnDiskLongTable,
-    newSNPlocs,
-    newXtraSNPlocs,
-    BSgenome, MaskedBSgenome,
-    installed.genomes, available.genomes, getBSgenome,
-    installed.SNPs, available.SNPs,
-    bsapply,
-    BSgenomeViews,
-    GenomeData, GenomeDataList,
 
-    ## Generic functions:
+    ## SNPlocs-class.R:
+    newSNPlocs,
+
+    ## XtraSNPlocs-class.R:
+    newXtraSNPlocs,
+
+    ## BSgenome-class.R:
+    BSgenome, MaskedBSgenome,
+
+    ## available.genomes.R:
+    installed.genomes, available.genomes, getBSgenome,
+
+    ## injectSNPs.R:
+    installed.SNPs, available.SNPs,
+
+    ## bsapply.R:
+    bsapply,
+
+    ## BSgenomeViews-class.R:
+    BSgenomeViews,
+
+    ## GenomeData-class.R:
+    GenomeData,
+
+    ## GenomeDataList-class.R:
+    GenomeDataList,
+
+    ## BSgenomeForge.R:
+    forgeSeqlengthsFile,
+    forgeSeqFiles,
+    forgeMasksFiles
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Export S4 generics defined in S4Vectors + export corresponding methods
+###
+
+export(
+    ## OnDiskLongTable-class.R:
     breakpoints, blocksizes, rowids,
+
+    ## SNPlocs-class.R:
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
+
+    ## InjectSNPsHandler-class.R:
+    SNPlocs_pkgname, SNPcount, SNPlocs,
+
+    ## XtraSNPlocs-class.R:
     snpsBySeqname, snpsByOverlaps, snpsById,
 
+    ## BSgenome-class.R:
     sourceUrl,
-    SNPlocs, SNPlocs_pkgname, SNPcount,
     mseqnames,
     masknames,
+
+    ## injectSNPs.R:
     injectSNPs,
+
+    ## gdapply.R:
     gdapply,
+
+    ## gdReduce.R:
     gdReduce,
 
-    ## BSgenomeForge functions:
-    forgeSeqlengthsFile,
-    forgeSeqFiles,
-    forgeMasksFiles,
+    ## BSgenomeForge.R:
     forgeBSgenomeDataPkg,
     forgeMaskedBSgenomeDataPkg
 )
 
+### Exactly the same list as above.
 exportMethods(
-    ## Methods for generics defined elsewhere:
-    length, names, as.list, show, "[[", "$",
-    colnames, nrow, ncol, dim,
-    score,
-    Views,
-    seqinfo, "seqinfo<-", seqnames, "seqnames<-",
-    organism, species, provider, providerVersion, releaseDate, releaseName,
-    seqtype, nchar, unlist, alphabetFrequency, hasOnlyBaseLetters,
-    uniqueLetters, letterFrequencyInSlidingView, letterFrequency,
-    oligonucleotideFrequency, nucleotideFrequencyAt,
-    consensusMatrix, consensusString,
-    getSeq, matchPWM, countPWM, vmatchPattern, vcountPattern,
-
-    ## Methods for generics defined in this package:
     breakpoints, blocksizes, rowids,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
     snpsBySeqname, snpsByOverlaps, snpsById,
-
     sourceUrl,
     SNPlocs, SNPlocs_pkgname, SNPcount,
     mseqnames,
@@ -90,8 +183,7 @@ exportMethods(
     injectSNPs,
     gdapply,
     gdReduce,
-
-    ## BSgenomeForge methods:
-    forgeBSgenomeDataPkg
+    forgeBSgenomeDataPkg,
+    forgeMaskedBSgenomeDataPkg
 )
 

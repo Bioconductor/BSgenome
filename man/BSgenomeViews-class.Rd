@@ -22,7 +22,6 @@
 \alias{seqinfo,BSgenomeViews-method}
 
 % coercion
-\alias{as}
 \alias{coerce,BSgenomeViews,DNAStringSet-method}
 \alias{coerce,BSgenomeViews,XStringSet-method}
 \alias{as.character,BSgenomeViews-method}
@@ -67,7 +66,7 @@ BSgenomeViews(genome, granges)
 ## ---------
 
 \S4method{subject}{BSgenomeViews}(x)
-\S4method{granges}{BSgenomeViews}(x)
+\S4method{granges}{BSgenomeViews}(x, use.mcols=FALSE)
 
 \S4method{length}{BSgenomeViews}(x)
 \S4method{names}{BSgenomeViews}(x)
@@ -75,22 +74,9 @@ BSgenomeViews(genome, granges)
 \S4method{start}{BSgenomeViews}(x)
 \S4method{end}{BSgenomeViews}(x)
 \S4method{width}{BSgenomeViews}(x)
-\S4method{ranges}{BSgenomeViews}(x)
+\S4method{ranges}{BSgenomeViews}(x, use.mcols=FALSE)
 \S4method{strand}{BSgenomeViews}(x)
 \S4method{seqinfo}{BSgenomeViews}(x)
-
-## Coercion
-## --------
-
-## From BSgenomeViews to DNAStringSet:
-as(x, "DNAStringSet")
-as(x, "XStringSet")
-
-## From BSgenomeViews to character vector:
-\S4method{as.character}{BSgenomeViews}(x, ...)
-
-## From BSgenomeViews to data.frame:
-\S4method{as.data.frame}{BSgenomeViews}(x, row.names=NULL, optional=FALSE, ...)
 
 ## DNAStringSet methods
 ## --------------------
@@ -125,20 +111,28 @@ as(x, "XStringSet")
 
 \arguments{
   \item{genome}{
+    A \link{BSgenome} object or the name of a reference genome specified
+    in a way that is accepted by the \code{\link{getBSgenome}} function.
+    In that case the corresponding BSgenome data package needs to be already
+    installed (see \code{?\link{getBSgenome}} for the details).
   }
   \item{granges}{
+    A \link[GenomicRanges]{GRanges} object containing ranges relative to
+    \code{genome}.
   }
   \item{x}{
+    A BSgenomeViews object.
   }
-  \item{...}{
-  }
-  \item{row.names, optional}{
+  \item{use.mcols}{
   }
   \item{type, allowNA}{
   }
   \item{recursive, use.names}{
   }
   \item{as.prob}{
+  }
+  \item{...}{
+    Further arguments to be passed to or from other methods.
   }
   \item{view.width, letters, OR}{
   }
@@ -162,6 +156,21 @@ as(x, "XStringSet")
 }
 
 \section{Coercion}{
+  In the code snippets below, \code{x} is a BSgenomeViews object.
+  \describe{
+    \item{}{
+      \code{as(x, "DNAStringSet")}:
+      Turn \code{x} into a \link[Biostrings]{DNAStringSet} object.
+      Alternatively \code{as(x, "XStringSet")} can be used for this, and is
+      equivalent to \code{as(x, "DNAStringSet")}.
+    }
+    \item{}{
+      \code{as.character(x)}:
+    }
+    \item{}{
+      \code{as.data.frame(x)}:
+    }
+  }
 }
 
 \section{Subsetting}{
@@ -185,7 +194,8 @@ as(x, "XStringSet")
 
   At the moment, the list of such methods is:
   \code{\link[Biostrings]{seqtype}},
-  \code{\link[Biostrings]{nchar}}, \code{\link[Biostrings]{unlist}},
+  \code{\link[Biostrings]{nchar,XStringSet-method}},
+  \code{\link[Biostrings]{unlist,XStringSet-method}},
   \code{\link[Biostrings]{alphabetFrequency}},
   \code{\link[Biostrings]{hasOnlyBaseLetters}},
   \code{\link[Biostrings]{uniqueLetters}},
@@ -203,6 +213,15 @@ as(x, "XStringSet")
 \author{H. Pages}
 
 \seealso{
+  \itemize{
+    \item The \link{BSgenome} class.
+
+    \item The \link[GenomicRanges]{GRanges} class in the \pkg{GenomicRanges}
+          package.
+
+    \item The \link[Biostrings]{DNAStringSet} class in the \pkg{Biostrings}
+          package.
+  }
 }
 
 \examples{

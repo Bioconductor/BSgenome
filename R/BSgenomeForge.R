@@ -694,8 +694,10 @@ setGeneric("forgeBSgenomeDataPkg", signature="x",
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
     function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
     {
-        require(Biobase) ||
-            stop("the Biobase package is required")
+        ## The Biobase package is needed for createPackage().
+        if (!requireNamespace("Biobase", quietly=TRUE))
+            stop("Couldn't load the Biobase package. Please install ",
+                 "the Biobase\n  package and try again.")
         template_path <- system.file("pkgtemplates", "BSgenome_datapkg",
                                      package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
@@ -735,7 +737,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
             stop("values for symbols ", bad_syms, " are not single strings")
         }
-        createPackage(x@Package, destdir, template_path, symvals)
+        Biobase::createPackage(x@Package, destdir, template_path, symvals)
         pkgdir <- file.path(destdir, x@Package)
 
         .seqnames <- eval(parse(text=x@seqnames))
@@ -860,8 +862,10 @@ setGeneric("forgeMaskedBSgenomeDataPkg", signature="x",
 setMethod("forgeMaskedBSgenomeDataPkg", "MaskedBSgenomeDataPkgSeed",
     function(x, masks_srcdir=".", destdir=".", verbose=TRUE)
     {
-        require(Biobase) ||
-            stop("the Biobase package is required")
+        ## The Biobase package is needed for createPackage().
+        if (!requireNamespace("Biobase", quietly=TRUE))
+            stop("Couldn't load the Biobase package. Please install ",
+                 "the Biobase\n  package and try again.")
         require(x@RefPkgname, character.only=TRUE) ||
             stop("the ", x@RefPkgname, " package is required")
         ref_envir <- as.environment(paste0("package:", x@RefPkgname))
@@ -902,7 +906,7 @@ setMethod("forgeMaskedBSgenomeDataPkg", "MaskedBSgenomeDataPkgSeed",
             bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
             stop("values for symbols ", bad_syms, " are not single strings")
         }
-        createPackage(x@Package, destdir, template_path, symvals)
+        Biobase::createPackage(x@Package, destdir, template_path, symvals)
         ## Forge the "*.masks.rda" files
         seqs_destdir <- dirname(seqlengthsFilepath(ref_bsgenome@single_sequences))
         pkgdir <- file.path(destdir, x@Package)

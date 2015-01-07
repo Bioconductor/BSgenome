@@ -3,14 +3,14 @@
 ### -------------------------------------------------------------------------
 
 
-getDataAnnotationContribUrl <- function(type=getOption("pkgType"))
+get_data_annotation_contrib_url <- function(type=getOption("pkgType"))
 {
-    if (!suppressWarnings(suppressMessages(require(BiocInstaller,
-                                                   quietly=TRUE)))) {
+    ## The BiocInstaller package is needed for biocinstallRepos().
+    if (!requireNamespace("BiocInstaller", quietly=TRUE)) {
         ## Sourcing this file will install and load the BiocInstaller package.
         suppressWarnings(source("http://bioconductor.org/biocLite.R",
                                 local=TRUE))
     }
-    contrib.url(biocinstallRepos()["BioCann"], type=type)
+    contrib.url(BiocInstaller::biocinstallRepos()["BioCann"], type=type)
 }
 

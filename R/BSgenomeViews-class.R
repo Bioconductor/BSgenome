@@ -203,17 +203,22 @@ setMethod("as.character", "BSgenomeViews",
     }
 )
 
-setMethod("as.data.frame", "BSgenomeViews",
-    function(x, row.names=NULL, optional=FALSE, ...)
-    {
-        df1 <- as.data.frame(granges(x, use.mcols=TRUE),
-                             row.names=NULL, optional=optional)
-        df2 <- as.data.frame(.extract_dna_from_BSgenomeViews(x),
-                             row.names=NULL, optional=optional)
-        colnames(df2) <- "dna"
-        cbind(df1, df2)
-    }
-)
+### S3/S4 combo for as.data.frame.BSgenomeViews
+.as.data.frame.BSgenomeViews <- function(x, row.names=NULL, optional=FALSE)
+{
+    if (!identical(row.names, TRUE))
+        stop("\"as.data.frame\" method for BSgenomeViews objects ",
+             "does not support the 'row.names' argument")
+    df1 <- as.data.frame(granges(x, use.mcols=TRUE),
+                         row.names=NULL, optional=optional)
+    df2 <- as.data.frame(.extract_dna_from_BSgenomeViews(x),
+                         row.names=NULL, optional=optional)
+    colnames(df2) <- "dna"
+    cbind(df1, df2)
+}
+as.data.frame.BSgenomeViews <- function(x, row.names=NULL, optional=FALSE, ...)
+    .as.data.frame.BSgenomeViews(x, row.names=row.names, optional=optional, ...)
+setMethod("as.data.frame", "BSgenomeViews", as.data.frame.BSgenomeViews)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

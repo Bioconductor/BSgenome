@@ -26,7 +26,6 @@
 \alias{as.list,BSgenome-method}
 \alias{show,BSgenome-method}
 \alias{[[,BSgenome-method}
-\alias{[[<-,BSgenome-method}
 \alias{$,BSgenome-method}
 
 

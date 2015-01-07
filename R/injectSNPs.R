@@ -20,8 +20,8 @@ installed.SNPs <- function()
 
 available.SNPs <- function(type=getOption("pkgType"))
 {
-    url <- getDataAnnotationContribUrl(type)
-    pkgs <- available.packages(url)[, "Package"]
+    contrib_url <- get_data_annotation_contrib_url(type)
+    pkgs <- available.packages(contrib_url)[, "Package"]
     pkgs <- .keep_snps_packages(pkgs)
     names(pkgs) <- NULL
     return(pkgs)

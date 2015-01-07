@@ -572,13 +572,6 @@ setMethod("[[", "BSgenome",
     }
 )
 
-setReplaceMethod("[[", "BSgenome",
-    function(x, i, j,..., value)
-    {
-        stop("attempt to modify the value of a \"BSgenome\" object")
-    }
-)
-
 setMethod("$", "BSgenome",
     function(x, name) x[[name]]
 )

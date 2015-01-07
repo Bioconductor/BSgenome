@@ -66,8 +66,8 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
 {
     if (!isTRUEorFALSE(splitNameParts))
         stop("'splitNameParts' must be TRUE or FALSE")
-    url <- getDataAnnotationContribUrl(type)
-    pkgs <- available.packages(url)[, "Package"]
+    contrib_url <- get_data_annotation_contrib_url(type)
+    pkgs <- available.packages(contrib_url)[, "Package"]
     pkgs <- pkgs[.has_BSgenome_prefix(pkgs)]
     names(pkgs) <- NULL
     if (splitNameParts)
