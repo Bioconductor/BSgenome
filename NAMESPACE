@@ -45,7 +45,7 @@ export(
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Export S4 methods for generics not defined in S4Vectors
+### Export S4 methods for generics not defined in BSgenome
 ###
 
 exportMethods(
@@ -62,6 +62,9 @@ exportMethods(
 
     ## Methods for generics defined in the BiocGenerics package:
     start, end, width, strand,
+
+    ## Methods for generics defined in the S4Vectors package:
+    elementLengths,
 
     ## Methods for generics defined in the IRanges package:
     ranges, Views, subject, score,
@@ -132,7 +135,7 @@ export(
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Export S4 generics defined in S4Vectors + export corresponding methods
+### Export S4 generics defined in BSgenome + export corresponding methods
 ###
 
 export(

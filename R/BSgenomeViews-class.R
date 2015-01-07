@@ -50,13 +50,33 @@ setMethod("granges", "BSgenomeViews",
 )
 
 setMethod("length", "BSgenomeViews", function(x) length(granges(x)))
+
 setMethod("names", "BSgenomeViews", function(x) names(granges(x)))
+
 setMethod("seqnames", "BSgenomeViews", function(x) seqnames(granges(x)))
+
 setMethod("start", "BSgenomeViews", function(x) start(granges(x)))
+
 setMethod("end", "BSgenomeViews", function(x) end(granges(x)))
+
 setMethod("width", "BSgenomeViews", function(x) width(granges(x)))
-setMethod("ranges", "BSgenomeViews", function(x, use.mcols=FALSE) ranges(granges(x)))
+
 setMethod("strand", "BSgenomeViews", function(x) strand(granges(x)))
+
+setMethod("ranges", "BSgenomeViews",
+    function(x, use.mcols=FALSE)
+    {
+        if (!isTRUEorFALSE(use.mcols))
+            stop("'use.mcols' must be TRUE or FALSE")
+        ans <- ranges(granges(x))
+        if (use.mcols)
+            mcols(ans) <- mcols(x)
+        ans
+    }
+)
+
+setMethod("elementLengths", "BSgenomeViews", function(x) width(x))
+
 setMethod("seqinfo", "BSgenomeViews", function(x) seqinfo(granges(x)))
 
 
@@ -64,13 +84,13 @@ setMethod("seqinfo", "BSgenomeViews", function(x) seqinfo(granges(x)))
 ### Constructors
 ###
 
-BSgenomeViews <- function(genome, granges)
+BSgenomeViews <- function(subject, granges)
 {
-    genome <- getBSgenome(genome)
+    subject <- getBSgenome(subject)
     if (!is(granges, "GenomicRanges"))
         stop("'granges' must be a GRanges object")
-    ans_seqinfo <- seqinfo(genome)
-    ## Calling merge() is the standard way to check that 'genome' and
+    ans_seqinfo <- seqinfo(subject)
+    ## Calling merge() is the standard way to check that 'subject' and
     ## 'granges' are based on the same reference genome.
     merge(ans_seqinfo, seqinfo(granges))
     ans_granges <- granges(granges)
@@ -79,7 +99,7 @@ BSgenomeViews <- function(genome, granges)
     ans_mcols <- mcols(granges)
     if (is.null(ans_mcols))
         ans_mcols <- new("DataFrame", nrows=length(granges))
-    new("BSgenomeViews", subject=genome, granges=ans_granges,
+    new("BSgenomeViews", subject=subject, granges=ans_granges,
                          elementMetadata=ans_mcols)
 }
 
@@ -289,16 +309,16 @@ setMethod("uniqueLetters", "BSgenomeViews",
     }
 )
 
-setMethod("letterFrequencyInSlidingView", "BSgenomeViews",
-    function(x, view.width, letters, OR="|", as.prob=FALSE)
+setMethod("letterFrequency", "BSgenomeViews",
+    function(x, letters, OR="|", as.prob=FALSE, ...)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
         callGeneric()
     }
 )
 
-setMethod("letterFrequency", "BSgenomeViews",
-    function(x, letters, OR="|", as.prob=FALSE, ...)
+setMethod("letterFrequencyInSlidingView", "BSgenomeViews",
+    function(x, view.width, letters, OR="|", as.prob=FALSE)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
         callGeneric()
