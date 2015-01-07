@@ -16,7 +16,7 @@
 ### For GViews: the subject is a named List and the granges slot is a
 ### GRanges object. Both IViews and GViews would be direct subclasses of a
 ### more general Views class that contains List and has a subject slot.
-### BSgenomeViews below would be a subclass of GViews.
+### BSgenomeViews below then should become a subclass of GViews.
 
 setClass("BSgenomeViews",
     contains="List",
@@ -52,8 +52,8 @@ setMethod("granges", "BSgenomeViews",
 setMethod("length", "BSgenomeViews", function(x) length(granges(x)))
 setMethod("names", "BSgenomeViews", function(x) names(granges(x)))
 setMethod("seqnames", "BSgenomeViews", function(x) seqnames(granges(x)))
-setMethod("start", "BSgenomeViews", function(x, ...) start(granges(x)))
-setMethod("end", "BSgenomeViews", function(x, ...) end(granges(x)))
+setMethod("start", "BSgenomeViews", function(x) start(granges(x)))
+setMethod("end", "BSgenomeViews", function(x) end(granges(x)))
 setMethod("width", "BSgenomeViews", function(x) width(granges(x)))
 setMethod("ranges", "BSgenomeViews", function(x, use.mcols=FALSE) ranges(granges(x)))
 setMethod("strand", "BSgenomeViews", function(x) strand(granges(x)))
@@ -61,10 +61,30 @@ setMethod("seqinfo", "BSgenomeViews", function(x) seqinfo(granges(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Constructor
+### Constructors
 ###
 
-### The signature of the Views() generic is not appropriate
+BSgenomeViews <- function(genome, granges)
+{
+    genome <- getBSgenome(genome)
+    if (!is(granges, "GenomicRanges"))
+        stop("'granges' must be a GRanges object")
+    ans_seqinfo <- seqinfo(genome)
+    ## Calling merge() is the standard way to check that 'genome' and
+    ## 'granges' are based on the same reference genome.
+    merge(ans_seqinfo, seqinfo(granges))
+    ans_granges <- granges(granges)
+    seqlevels(ans_granges) <- seqlevels(ans_seqinfo)
+    seqinfo(ans_granges) <- ans_seqinfo
+    ans_mcols <- mcols(granges)
+    if (is.null(ans_mcols))
+        ans_mcols <- new("DataFrame", nrows=length(granges))
+    new("BSgenomeViews", subject=genome, granges=ans_granges,
+                         elementMetadata=ans_mcols)
+}
+
+### Provided for convenience. Need to do some ugly tweaks with the supplied
+### args because of the weird signature of the Views() generic.
 setMethod("Views", "BSgenome",
     function(subject, start=NULL, end=NULL, width=NULL, names=NULL)
     {
@@ -76,18 +96,7 @@ setMethod("Views", "BSgenome",
         if (!is(start, "GenomicRanges"))
             stop("the location of the views on the genome must be ",
                  "specified as a GRanges object")
-        ans_seqinfo <- seqinfo(subject)
-        ## Calling merge() is the standard way to check that 'subject' and
-        ## 'start' are based on the same reference genome.
-        merge(ans_seqinfo, seqinfo(start))
-        ans_granges <- granges(start)
-        seqlevels(ans_granges) <- seqlevels(ans_seqinfo)
-        seqinfo(ans_granges) <- ans_seqinfo
-        ans_mcols <- mcols(start)
-        if (is.null(ans_mcols))
-            ans_mcols <- new("DataFrame", nrows=length(start))
-        new("BSgenomeViews", subject=subject, granges=ans_granges,
-                             elementMetadata=mcols(start))
+        BSgenomeViews(subject, start)
     }
 )
 
@@ -220,11 +229,7 @@ setMethod("extractROWS", "BSgenomeViews",
     }
 )
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Extracting a view.
-###
-
 setMethod("getListElement", "BSgenomeViews",
     function(x, i, exact=TRUE)
     {

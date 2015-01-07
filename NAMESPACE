@@ -36,6 +36,7 @@ export(
     installed.genomes, available.genomes, getBSgenome,
     installed.SNPs, available.SNPs,
     bsapply,
+    BSgenomeViews,
     GenomeData, GenomeDataList,
 
     ## Generic functions:
@@ -66,8 +67,13 @@ exportMethods(
     length, names, as.list, show, "[[", "$",
     colnames, nrow, ncol, dim,
     score,
+    Views,
     seqinfo, "seqinfo<-", seqnames, "seqnames<-",
     organism, species, provider, providerVersion, releaseDate, releaseName,
+    seqtype, nchar, unlist, alphabetFrequency, hasOnlyBaseLetters,
+    uniqueLetters, letterFrequencyInSlidingView, letterFrequency,
+    oligonucleotideFrequency, nucleotideFrequencyAt,
+    consensusMatrix, consensusString,
     getSeq, matchPWM, countPWM, vmatchPattern, vcountPattern,
 
     ## Methods for generics defined in this package:
