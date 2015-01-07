@@ -201,6 +201,8 @@ BSgenomeViews(subject, granges)
     \item{}{
       \code{seqinfo(x)}: Equivalent to \code{seqinfo(subject(x))} and to
       \code{seqinfo(granges(x))} (both are guaranteed to be the same).
+      See \code{?\link[GenomeInfoDb]{seqinfo}} in the \pkg{GenomeInfoDb}
+      package for more information.
     }
   }
 }
@@ -273,6 +275,10 @@ BSgenomeViews(subject, granges)
     \item The \link[Biostrings]{DNAStringSet} class in the \pkg{Biostrings}
           package.
 
+    \item The \link[GenomeInfoDb]{seqinfo}} and related getters in the
+          \pkg{GenomeInfoDb} package for getting the sequence information
+          stored in an object.
+
     \item \link[GenomicFeatures]{TxDb} objects in the \pkg{GenomicFeatures}
           package.
   }
@@ -289,12 +295,21 @@ v
 
 subject(v)
 granges(v)
+seqinfo(v)
 as(v, "DNAStringSet")
-alphabetFrequency(v, collapse=TRUE)
 
-## Note that BSgenomeViews objects are list-like objects: BSgenomeViews
-## derives from List and [[, elementLengths(), unlist(), elementType()
-## work on them:
+v10 <- v[1:10]  # select the first 10 views
+subject(v10)    # same as subject(v)
+granges(v10)
+seqinfo(v10)    # same as seqinfo(v)
+as(v10, "DNAStringSet")
+alphabetFrequency(v10)
+alphabetFrequency(v10, collapse=TRUE)
+
+## BSgenomeViews objects are list-like objects. That is, the
+## BSgenomeViews class derives from List and typical list/List
+## operations (e.g. [[, elementLengths(), unlist(), elementType(),
+## etc...) work on these objects:
 is(v, "List")  # TRUE
 v[[2]]
 head(elementLengths(v))  # elementLengths(v) is the same as width(v)
