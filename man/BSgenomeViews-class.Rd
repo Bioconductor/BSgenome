@@ -275,7 +275,7 @@ BSgenomeViews(subject, granges)
     \item The \link[Biostrings]{DNAStringSet} class in the \pkg{Biostrings}
           package.
 
-    \item The \link[GenomeInfoDb]{seqinfo}} and related getters in the
+    \item The \link[GenomeInfoDb]{seqinfo} and related getters in the
           \pkg{GenomeInfoDb} package for getting the sequence information
           stored in an object.
 
