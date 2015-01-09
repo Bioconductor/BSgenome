@@ -88,24 +88,25 @@ BSgenomeViews(subject, granges)
 
 \S4method{unlist}{BSgenomeViews}(x, recursive=TRUE, use.names=TRUE)
 
-\S4method{alphabetFrequency}{BSgenomeViews}(x, as.prob=FALSE, ...)
+\S4method{alphabetFrequency}{BSgenomeViews}(x, as.prob=FALSE, collapse=FALSE, baseOnly=FALSE)
 
 \S4method{hasOnlyBaseLetters}{BSgenomeViews}(x)
 
 \S4method{uniqueLetters}{BSgenomeViews}(x)
 
-\S4method{letterFrequency}{BSgenomeViews}(x, letters, OR="|", as.prob=FALSE, ...)
+\S4method{letterFrequency}{BSgenomeViews}(x, letters, OR="|", as.prob=FALSE, collapse=FALSE)
 
 \S4method{oligonucleotideFrequency}{BSgenomeViews}(x, width, step=1,
                          as.prob=FALSE, as.array=FALSE,
-                         fast.moving.side="right", with.labels=TRUE, ...)
+                         fast.moving.side="right", with.labels=TRUE, simplify.as="matrix")
 
 \S4method{nucleotideFrequencyAt}{BSgenomeViews}(x, at, as.prob=FALSE, as.array=TRUE,
-                      fast.moving.side="right", with.labels=TRUE, ...)
+                      fast.moving.side="right", with.labels=TRUE)
 
-\S4method{consensusMatrix}{BSgenomeViews}(x, as.prob=FALSE, shift=0L, width=NULL, ...)
+\S4method{consensusMatrix}{BSgenomeViews}(x, as.prob=FALSE, shift=0L, width=NULL, baseOnly=FALSE)
 
-\S4method{consensusString}{BSgenomeViews}(x, ...)
+\S4method{consensusString}{BSgenomeViews}(x, ambiguityMap=IUPAC_CODE_MAP, threshold=0.25,
+                shift=0L, width=NULL)
 }
 
 \arguments{
@@ -130,16 +131,20 @@ BSgenomeViews(subject, granges)
   \item{type, allowNA, recursive, use.names}{
     Ignored.
   }
-  \item{as.prob, letters, OR, width, ...}{
+  \item{as.prob, letters, OR, width}{
     See \code{?\link[Biostrings]{alphabetFrequency}} and
     \code{?\link[Biostrings]{oligonucleotideFrequency}} in the
     \pkg{Biostrings} package.
   }
-  \item{step, as.array, fast.moving.side, with.labels, at}{
+  \item{collapse, baseOnly}{
+    See \code{?\link[Biostrings]{alphabetFrequency}} in the
+    \pkg{Biostrings} package.
+  }
+  \item{step, as.array, fast.moving.side, with.labels, simplify.as, at}{
     See \code{?\link[Biostrings]{oligonucleotideFrequency}} in the
     \pkg{Biostrings} package.
   }
-  \item{shift}{
+  \item{shift, ambiguityMap, threshold}{
     See \code{?\link[Biostrings]{consensusMatrix}} in the
     \pkg{Biostrings} package.
   }
