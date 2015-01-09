@@ -226,7 +226,7 @@ setMethod("as.character", "BSgenomeViews",
 ### S3/S4 combo for as.data.frame.BSgenomeViews
 .as.data.frame.BSgenomeViews <- function(x, row.names=NULL, optional=FALSE)
 {
-    if (!identical(row.names, TRUE))
+    if (!identical(row.names, NULL))
         stop("\"as.data.frame\" method for BSgenomeViews objects ",
              "does not support the 'row.names' argument")
     df1 <- as.data.frame(granges(x, use.mcols=TRUE),
@@ -277,6 +277,14 @@ setMethod("nchar", "BSgenomeViews",
     function(x, type="chars", allowNA=FALSE) width(x)
 )
 
+### For some methods below we use
+###   do.call(callGeneric, as.list(match.call()[-1L]))
+### instead of just calling callGeneric() with no args, and we also use the
+### exact same formal args than in the method for DNAStringSet objects. This
+### is to work around a bug (bug 16141) in callGeneric().
+### See https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=16141 for the
+### details.
+
 setMethod("unlist", "BSgenomeViews",
     function(x, recursive=TRUE, use.names=TRUE)
     {
@@ -285,11 +293,20 @@ setMethod("unlist", "BSgenomeViews",
     }
 )
 
+# Ideally, we'd like to just be able to do this:
+#setMethod("alphabetFrequency", "BSgenomeViews",
+#    function(x, as.prob=FALSE, ...)
+#    {
+#        x <- .extract_dna_from_BSgenomeViews(x)
+#        callGeneric()
+#    }
+#)
+# Unfortunately, because of bug 16141 (see above), we have to do this:
 setMethod("alphabetFrequency", "BSgenomeViews",
-    function(x, as.prob=FALSE, ...)
+    function(x, as.prob=FALSE, collapse=FALSE, baseOnly=FALSE)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
-        callGeneric()
+        do.call(callGeneric, as.list(match.call()[-1L]))
     }
 )
 
@@ -309,54 +326,93 @@ setMethod("uniqueLetters", "BSgenomeViews",
     }
 )
 
+# Ideally, we'd like to just be able to do this:
+#setMethod("letterFrequency", "BSgenomeViews",
+#    function(x, letters, OR="|", as.prob=FALSE, ...)
+#    {
+#        x <- .extract_dna_from_BSgenomeViews(x)
+#        callGeneric()
+#    }
+#)
+# Unfortunately, because of bug 16141 (see above), we have to do this:
 setMethod("letterFrequency", "BSgenomeViews",
-    function(x, letters, OR="|", as.prob=FALSE, ...)
+    function(x, letters, OR="|", as.prob=FALSE, collapse=FALSE)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
-        callGeneric()
+        do.call(callGeneric, as.list(match.call()[-1L]))
     }
 )
 
-setMethod("letterFrequencyInSlidingView", "BSgenomeViews",
-    function(x, view.width, letters, OR="|", as.prob=FALSE)
-    {
-        x <- .extract_dna_from_BSgenomeViews(x)
-        callGeneric()
-    }
-)
-
+# Ideally, we'd like to just be able to do this:
+#setMethod("oligonucleotideFrequency", "BSgenomeViews",
+#    function(x, width, step=1, as.prob=FALSE, as.array=FALSE,
+#             fast.moving.side="right", with.labels=TRUE, ...)
+#    {
+#        x <- .extract_dna_from_BSgenomeViews(x)
+#        callGeneric()
+#    }
+#)
+# Unfortunately, because of bug 16141 (see above), we have to do this:
 setMethod("oligonucleotideFrequency", "BSgenomeViews",
-    function(x, width, step=1,
-             as.prob=FALSE, as.array=FALSE,
-             fast.moving.side="right", with.labels=TRUE, ...)
+    function(x, width, step=1, as.prob=FALSE, as.array=FALSE,
+             fast.moving.side="right", with.labels=TRUE, simplify.as="matrix")
     {
         x <- .extract_dna_from_BSgenomeViews(x)
-        callGeneric()
+        do.call(callGeneric, as.list(match.call()[-1L]))
     }
 )
 
+# Ideally, we'd like to just be able to do this:
+#setMethod("nucleotideFrequencyAt", "BSgenomeViews",
+#    function(x, at, as.prob=FALSE, as.array=TRUE,
+#             fast.moving.side="right", with.labels=TRUE, ...)
+#    {
+#        x <- .extract_dna_from_BSgenomeViews(x)
+#        callGeneric()
+#    }
+#)
+# Unfortunately, because of bug 16141 (see above), we have to do this:
 setMethod("nucleotideFrequencyAt", "BSgenomeViews",
     function(x, at, as.prob=FALSE, as.array=TRUE,
-             fast.moving.side="right", with.labels=TRUE, ...)
+             fast.moving.side="right", with.labels=TRUE)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
-        callGeneric()
+        do.call(callGeneric, as.list(match.call()[-1L]))
     }
 )
 
+# Ideally, we'd like to just be able to do this:
+#setMethod("consensusMatrix", "BSgenomeViews",
+#    function(x, as.prob=FALSE, shift=0L, width=NULL, ...)
+#    {
+#        x <- .extract_dna_from_BSgenomeViews(x)
+#        callGeneric()
+#    }
+#)
+# Unfortunately, because of bug 16141 (see above), we have to do this:
 setMethod("consensusMatrix", "BSgenomeViews",
-    function(x, as.prob=FALSE, shift=0L, width=NULL, ...)
+    function(x, as.prob=FALSE, shift=0L, width=NULL, baseOnly=FALSE)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
-        callGeneric()
+        do.call(callGeneric, as.list(match.call()[-1L]))
     }
 )
 
+# Ideally, we'd like to just be able to do this:
+#setMethod("consensusString", "BSgenomeViews",
+#    function(x, ...)
+#    {
+#        x <- .extract_dna_from_BSgenomeViews(x)
+#        callGeneric()
+#    }
+#)
+# Unfortunately, because of bug 16141 (see above), we have to do this:
 setMethod("consensusString", "BSgenomeViews",
-    function(x, ...)
+    function(x, ambiguityMap=IUPAC_CODE_MAP, threshold=0.25, 
+                shift=0L, width=NULL)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
-        callGeneric()
+        do.call(callGeneric, as.list(match.call()[-1L]))
     }
 )
 

@@ -40,7 +40,6 @@
 \alias{hasOnlyBaseLetters,BSgenomeViews-method}
 \alias{uniqueLetters,BSgenomeViews-method}
 \alias{letterFrequency,BSgenomeViews-method}
-\alias{letterFrequencyInSlidingView,BSgenomeViews-method}
 \alias{oligonucleotideFrequency,BSgenomeViews-method}
 \alias{nucleotideFrequencyAt,BSgenomeViews-method}
 \alias{consensusMatrix,BSgenomeViews-method}
@@ -96,7 +95,6 @@ BSgenomeViews(subject, granges)
 \S4method{uniqueLetters}{BSgenomeViews}(x)
 
 \S4method{letterFrequency}{BSgenomeViews}(x, letters, OR="|", as.prob=FALSE, ...)
-\S4method{letterFrequencyInSlidingView}{BSgenomeViews}(x, view.width, letters, OR="|", as.prob=FALSE)
 
 \S4method{oligonucleotideFrequency}{BSgenomeViews}(x, width, step=1,
                          as.prob=FALSE, as.array=FALSE,
@@ -132,13 +130,10 @@ BSgenomeViews(subject, granges)
   \item{type, allowNA, recursive, use.names}{
     Ignored.
   }
-  \item{as.prob, view.width, letters, OR, width}{
+  \item{as.prob, letters, OR, width, ...}{
     See \code{?\link[Biostrings]{alphabetFrequency}} and
     \code{?\link[Biostrings]{oligonucleotideFrequency}} in the
     \pkg{Biostrings} package.
-  }
-  \item{...}{
-    Further arguments to be passed to or from other methods.
   }
   \item{step, as.array, fast.moving.side, with.labels, at}{
     See \code{?\link[Biostrings]{oligonucleotideFrequency}} in the
@@ -253,7 +248,6 @@ BSgenomeViews(subject, granges)
   \code{\link[Biostrings]{hasOnlyBaseLetters}},
   \code{\link[Biostrings]{uniqueLetters}},
   \code{\link[Biostrings]{letterFrequency}},
-  \code{\link[Biostrings]{letterFrequencyInSlidingView}},
   \code{\link[Biostrings]{oligonucleotideFrequency}},
   \code{\link[Biostrings]{nucleotideFrequencyAt}},
   \code{\link[Biostrings]{consensusMatrix}},
@@ -306,15 +300,19 @@ as(v10, "DNAStringSet")
 alphabetFrequency(v10)
 alphabetFrequency(v10, collapse=TRUE)
 
+v12 <- v[width(v) <= 12]  # select the views of 12 nucleotides or less
+head(as.data.frame(v12))
+trinucleotideFrequency(v12, simplify.as="collapsed")
+
 ## BSgenomeViews objects are list-like objects. That is, the
 ## BSgenomeViews class derives from List and typical list/List
 ## operations (e.g. [[, elementLengths(), unlist(), elementType(),
 ## etc...) work on these objects:
-is(v, "List")  # TRUE
-v[[2]]
-head(elementLengths(v))  # elementLengths(v) is the same as width(v)
-unlist(v) 
-elementType(v)
+is(v12, "List")  # TRUE
+v12[[2]]
+head(elementLengths(v12))  # elementLengths(v) is the same as width(v)
+unlist(v12) 
+elementType(v12)
 }
 
 \keyword{methods}
