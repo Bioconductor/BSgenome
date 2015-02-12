@@ -34,6 +34,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Hsapiens.UCSC.hg18",
   "BSgenome.Hsapiens.UCSC.hg19",
   "BSgenome.Hsapiens.NCBI.GRCh38",
+  "BSgenome.Hsapiens.UCSC.hg38",
   "BSgenome.Mfuro.UCSC.musFur1",
   "BSgenome.Mmulatta.UCSC.rheMac2",
   "BSgenome.Mmulatta.UCSC.rheMac3",
