@@ -14,3 +14,5 @@ PkgExamples: genome$chr1  # a MaskedDNAString object!
 	unmasked(genome$chr1)  # same as BSgenome.Hsapiens.UCSC.hg38$chr1
 masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg38/masks
 AGAPSfiles_name: gap.txt.gz
+RMfiles_name: hg38.fa.out.gz
+TRFfiles_name: hg38.trf.bed.gz
