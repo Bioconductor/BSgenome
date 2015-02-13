@@ -81,6 +81,7 @@ MaskedBSgenome_datapkgs <- c(
   "BSgenome.Hsapiens.UCSC.hg17.masked",
   "BSgenome.Hsapiens.UCSC.hg18.masked",
   "BSgenome.Hsapiens.UCSC.hg19.masked",
+  "BSgenome.Hsapiens.UCSC.hg38.masked",
   "BSgenome.Mmulatta.UCSC.rheMac2.masked",
   "BSgenome.Mmulatta.UCSC.rheMac3.masked",
   "BSgenome.Mmusculus.UCSC.mm8.masked",
