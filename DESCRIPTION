@@ -4,7 +4,7 @@ Description: Infrastructure shared by all the Biostrings-based genome data
              packages
 Version: 1.35.17
 Author: Herve Pages
-Maintainer: H. Pages <hpages@fhcrc.org>
+Maintainer: H. Pages <hpages@fredhutch.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
 Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.1.2),
