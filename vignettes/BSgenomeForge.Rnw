@@ -129,10 +129,8 @@ on the Bioconductor website if you need to install or update the
 
 Questions, comments or bug reports about this vignette or about the
 BSgenomeForge functions are welcome. Please address them to the author
-(\code{hpages@fhcrc.org}) or post them on The Bioconductor Project Mailing
-List (\code{bioconductor@r-project.org}). Don't forget to visit the
-Bioconductor website \footnote{\url{http://bioconductor.org/}}
-and subscribe to this list if you've not already done so.
+(\code{hpages@fredhutch.org}) or post them on The Bioconductor Project
+Support Site (\url{https://support.bioconductor.org/}).
 
 In the next section (``How to forge a BSgenome data package with bare
 sequences''), we describe how to forge a \term{BSgenome data package}
