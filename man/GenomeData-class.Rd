@@ -54,10 +54,11 @@
 }
 
 \section{Accessor methods}{
-  In the code snippets below, \code{x} is a \code{GenomeData} object.
+  In the code snippets below, \code{object} and \code{x} are
+  \code{GenomeData} objects.
 
   \describe{
-    \item{}{\code{organism(x)}:
+    \item{}{\code{organism(object)}:
       Get the single string indicating the
       organism, if specified, otherwise \code{NULL}.
     }

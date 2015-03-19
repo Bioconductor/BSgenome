@@ -30,9 +30,9 @@ setMethod("providerVersion", "GenomeData",
             metadata(x)$providerVersion
           })
 setMethod("organism", "GenomeData",
-          function(x) {
+          function(object) {
             .Defunct(msg=GenomeData_defunct_msg)
-            metadata(x)$organism
+            metadata(object)$organism
           })
 setMethod("provider", "GenomeData",
           function(x) {

@@ -191,9 +191,13 @@ setMethod("releaseName", "XtraSNPlocs", function(x) x@release_name)
 
 setMethod("referenceGenome", "XtraSNPlocs", function(x) x@reference_genome)
 
-setMethod("organism", "XtraSNPlocs", function(x) organism(referenceGenome(x)))
+setMethod("organism", "XtraSNPlocs",
+    function(object) organism(referenceGenome(object))
+)
 
-setMethod("species", "XtraSNPlocs", function(x) species(referenceGenome(x)))
+setMethod("species", "XtraSNPlocs",
+    function(object) species(referenceGenome(object))
+)
 
 setMethod("seqinfo", "XtraSNPlocs", function(x) seqinfo(referenceGenome(x)))
 

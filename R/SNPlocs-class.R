@@ -65,9 +65,13 @@ setGeneric("compatibleGenomes",
 )
 setMethod("compatibleGenomes", "SNPlocs", function(x) x@compatible_genomes)
 
-setMethod("organism", "SNPlocs", function(x) organism(referenceGenome(x)))
+setMethod("organism", "SNPlocs",
+    function(object) organism(referenceGenome(object))
+)
 
-setMethod("species", "SNPlocs", function(x) species(referenceGenome(x)))
+setMethod("species", "SNPlocs",
+    function(object) species(referenceGenome(object))
+)
 
 setMethod("seqinfo", "SNPlocs", function(x) seqinfo(referenceGenome(x)))
 
