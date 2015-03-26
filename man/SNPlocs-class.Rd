@@ -15,6 +15,7 @@
 \alias{compatibleGenomes}
 \alias{compatibleGenomes,SNPlocs-method}
 \alias{organism,SNPlocs-method}
+\alias{commonName,SNPlocs-method}
 \alias{species,SNPlocs-method}
 \alias{seqinfo,SNPlocs-method}
 \alias{seqnames,SNPlocs-method}

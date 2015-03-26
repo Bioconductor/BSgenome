@@ -14,6 +14,7 @@
 \alias{releaseName,XtraSNPlocs-method}
 \alias{referenceGenome,XtraSNPlocs-method}
 \alias{organism,XtraSNPlocs-method}
+\alias{commonName,XtraSNPlocs-method}
 \alias{species,XtraSNPlocs-method}
 \alias{seqinfo,XtraSNPlocs-method}
 \alias{seqnames,XtraSNPlocs-method}

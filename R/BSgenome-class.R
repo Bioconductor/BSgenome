@@ -282,14 +282,20 @@ setMethod("snplocs", "BSgenome",
             genome=provider_version)
 }
 
-### NOTE: In BioC 2.14, the 'seqs_pkgname' and 'masks_pkgname' BSgenome slots
-### have been replaced with the 'pkgname' slot but the 2 corresponding
-### arguments have been kept for backward compatibility.
-BSgenome <- function(organism, species, provider, provider_version,
+### NOTES:
+### - In BioC 2.14, the 'seqs_pkgname' and 'masks_pkgname' BSgenome slots
+###   were replaced with the 'pkgname' slot but the 2 corresponding
+###   arguments were kept for backward compatibility with existing
+###   BSgenome packages.
+### - In BioC 3.1, the 'species' argument was replaced with the 'common_name'
+###   argument but the former was kept for backward compatibility with
+###   existing BSgenome packages.
+BSgenome <- function(organism, common_name, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
                      seqs_pkgname, seqs_dirpath,
-                     nmask_per_seq=0, masks_pkgname=NA, masks_dirpath=NA)
+                     nmask_per_seq=0, masks_pkgname=NA, masks_dirpath=NA,
+                     species=NA_character_)
 {
     twobit_filename <- "single_sequences.2bit"
     twobit_filepath <- file.path(seqs_dirpath, twobit_filename)
@@ -312,7 +318,9 @@ BSgenome <- function(organism, species, provider, provider_version,
                                     circ_seqs, provider_version,
                                     seqnames)
     seqnames <- seqnames(seqinfo)
-    genome_description <- GenomeDescription(organism, species,
+    if (missing(common_name))
+        common_name <- species
+    genome_description <- GenomeDescription(organism, common_name,
                                             provider, provider_version,
                                             release_date, release_name,
                                             seqinfo)
@@ -379,8 +387,8 @@ setMethod("show", "BSgenome",
         mystrwrap <- function(line)
             writeLines(strwrap(line, width=getOption("width")+1,
                                exdent=0L, prefix=.SHOW_BSGENOME_PREFIX))
-        if (!is.na(object@species))
-            cat(object@species, "genome:\n")
+        if (!is.na(object@common_name))
+            cat(object@common_name, "genome:\n")
         GenomeInfoDb:::showGenomeDescription(object,
                                              margin=.SHOW_BSGENOME_PREFIX)
         if (!is.null(SNPlocs_pkgname(object)))

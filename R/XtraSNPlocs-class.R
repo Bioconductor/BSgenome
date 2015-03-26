@@ -195,8 +195,20 @@ setMethod("organism", "XtraSNPlocs",
     function(object) organism(referenceGenome(object))
 )
 
+setMethod("commonName", "XtraSNPlocs",
+    function(object) commonName(referenceGenome(object))
+)
+
 setMethod("species", "XtraSNPlocs",
-    function(object) species(referenceGenome(object))
+    function(object)
+    {
+         msg <- wmsg("The \"species\" method for XtraSNPlocs objects ",
+                     "is deprecated and should not be used anymore. ",
+                     "Please use commonName() instead of species() on ",
+                     "XtraSNPlocs objects.")
+        .Deprecated(msg=msg)
+        commonName(object)
+    }
 )
 
 setMethod("seqinfo", "XtraSNPlocs", function(x) seqinfo(referenceGenome(x)))
