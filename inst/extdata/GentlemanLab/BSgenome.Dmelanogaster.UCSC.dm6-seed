@@ -1,10 +1,10 @@
 Package: BSgenome.Dmelanogaster.UCSC.dm6
 Title: Full genome sequences for Drosophila melanogaster (UCSC version dm6)
 Description: Full genome sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm6, Aug. 2014) and stored in Biostrings objects.
-Version: 1.4.1
+Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Drosophila melanogaster
-species: Fly
+common_name: Fly
 provider: UCSC
 provider_version: dm6
 release_date: Aug. 2014

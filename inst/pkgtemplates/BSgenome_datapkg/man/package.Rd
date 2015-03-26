@@ -44,7 +44,7 @@
 \examples{
 @PKGNAME@
 genome <- @PKGNAME@
-seqlengths(genome)
+head(seqlengths(genome))
 @PKGEXAMPLES@
 
 ## ---------------------------------------------------------------------

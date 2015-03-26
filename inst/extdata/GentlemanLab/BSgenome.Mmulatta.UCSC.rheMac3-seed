@@ -1,10 +1,10 @@
 Package: BSgenome.Mmulatta.UCSC.rheMac3
 Title: Full genome sequences for Macaca mulatta (UCSC version rheMac3)
 Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac3, Oct. 2010) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Macaca mulatta
-species: Rhesus
+common_name: Rhesus
 provider: UCSC
 provider_version: rheMac3
 release_date: Oct. 2010
@@ -27,16 +27,16 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## full genome sequences with something like:
 	.
 	library(GenomicFeatures)
-	txdb <- makeTranscriptDbFromUCSC("rheMac3", "refGene")
+	txdb <- makeTxDbFromUCSC("rheMac3", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
 	up1000seqs <- getSeq(genome, up1000)
 	.
-	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
-	## your own custom TranscriptDb object from various annotation resources.
-	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
-	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## your own custom TxDb object from various annotation resources.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
+	## and makeTxDbFromGFF() functions in the GenomicFeatures
 	## package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac3/seqs

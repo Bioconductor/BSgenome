@@ -1,10 +1,10 @@
 Package: BSgenome.Drerio.UCSC.danRer5
 Title: Full genome sequences for Danio rerio (UCSC version danRer5)
 Description: Full genome sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer5, Jul. 2007) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Danio rerio
-species: Zebrafish
+common_name: Zebrafish
 provider: UCSC
 provider_version: danRer5
 release_date: Jul. 2007
@@ -27,16 +27,16 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## full genome sequences with something like:
 	.
 	library(GenomicFeatures)
-	txdb <- makeTranscriptDbFromUCSC("danRer5", "refGene")
+	txdb <- makeTxDbFromUCSC("danRer5", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
 	up1000seqs <- getSeq(genome, up1000)
 	.
-	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
-	## your own custom TranscriptDb object from various annotation resources.
-	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
-	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## your own custom TxDb object from various annotation resources.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
+	## and makeTxDbFromGFF() functions in the GenomicFeatures
 	## package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer5/seqs

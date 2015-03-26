@@ -20,7 +20,7 @@
     ## Make and export BSgenome object.
     bsgenome <- BSgenome(
         organism="@ORGANISM@",
-        species="@SPECIES@",
+        common_name="@COMMONNAME@",
         provider="@PROVIDER@",
         provider_version="@PROVIDERVERSION@",
         release_date="@RELEASEDATE@",

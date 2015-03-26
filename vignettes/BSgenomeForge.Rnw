@@ -304,13 +304,17 @@ sub-subsection of this subsection for an example of a \term{seed file}.
 \subsubsection{Non-standard \texttt{DESCRIPTION} fields}
 
 \begin{itemize}
-\item \code{organism}: The full name of the organism (e.g. \code{Rattus
-      norvegicus}).
+\item \code{organism}: The scientific name of the organism in the format
+      \code{Genus species} (e.g. \code{Rattus norvegicus}, \code{Homo sapiens})
+      or \code{Genus species subspecies} (e.g. \code{Homo sapiens
+      neanderthalensis}).
 
-\item \code{species}: The name of the species.
-      For the packages built by the Bioconductor project from a UCSC genome,
-      this field corresponds to the \code{SPECIES} column of the
-      \textit{List of UCSC genome releases} table
+\item \code{common\_name}: The common name of the organism (e.g. \code{Rat}
+      or \code{Human}). For organisms that have more than one commmon name
+      (e.g. \code{Bovine} or \code{Cow} for Bos taurus), choose one.
+      Note that for the packages built by the Bioconductor project from a
+      UCSC genome, this field corresponds to the \code{SPECIES} column of
+      the \textit{List of UCSC genome releases} table
       \footnote{\url{http://genome.ucsc.edu/FAQ/FAQreleases\#release1}}.
 
 \item \code{provider}: The provider of the \term{sequence data files} e.g.

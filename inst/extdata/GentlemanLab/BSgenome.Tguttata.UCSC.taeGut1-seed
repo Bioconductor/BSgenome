@@ -1,9 +1,9 @@
 Package: BSgenome.Tguttata.UCSC.taeGut1
 Title: Full genome sequences for Taeniopygia guttata (UCSC version taeGut1)
 Description: Full genome sequences for Taeniopygia guttata (Zebra finch) as provided by UCSC (taeGut1, Jul. 2008) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.2
 organism: Taeniopygia guttata
-species: Zebra finch
+common_name: Zebra finch
 provider: UCSC
 provider_version: taeGut1
 release_date: Jul. 2008

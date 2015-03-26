@@ -1,9 +1,9 @@
 Package: BSgenome.Scerevisiae.UCSC.sacCer3
 Title: Saccharomyces cerevisiae (Yeast) full genome (UCSC version sacCer3)
 Description: Saccharomyces cerevisiae (Yeast) full genome as provided by UCSC (sacCer3, April 2011) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.2
 organism: Saccharomyces cerevisiae
-species: Yeast
+common_name: Yeast
 provider: UCSC
 provider_version: sacCer3
 release_date: April 2011

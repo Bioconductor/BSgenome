@@ -50,7 +50,7 @@
 \examples{
 @PKGNAME@
 genome <- @PKGNAME@
-seqlengths(genome)
+head(seqlengths(genome))
 @PKGEXAMPLES@
 
 if ("AGAPS" \%in\% masknames(genome)) {

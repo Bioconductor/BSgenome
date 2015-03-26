@@ -1,10 +1,10 @@
 Package: BSgenome.Rnorvegicus.UCSC.rn4
 Title: Full genome sequences for Rattus norvegicus (UCSC version rn4)
 Description: Full genome sequences for Rattus norvegicus (Rat) as provided by UCSC (rn4, Nov. 2004) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.2
 Suggests: TxDb.Rnorvegicus.UCSC.rn4.ensGene
 organism: Rattus norvegicus
-species: Rat
+common_name: Rat
 provider: UCSC
 provider_version: rn4
 release_date: Nov. 2004
@@ -31,11 +31,11 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	up1000 <- flank(gn, width=1000)
 	up1000seqs <- getSeq(genome, up1000)
 	.
-	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
-	## your own custom TranscriptDb object from various annotation resources.
-	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
-	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## your own custom TxDb object from various annotation resources.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
+	## and makeTxDbFromGFF() functions in the GenomicFeatures
 	## package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/seqs

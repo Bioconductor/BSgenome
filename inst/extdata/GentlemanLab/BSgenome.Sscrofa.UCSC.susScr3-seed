@@ -1,9 +1,9 @@
 Package: BSgenome.Sscrofa.UCSC.susScr3
 Title: Full genome sequences for Sus scrofa (UCSC version susScr3)
 Description: Full genome sequences for Sus scrofa (Pig) as provided by UCSC (susScr3, Aug. 2011) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.2
 organism: Sus scrofa
-species: Pig
+common_name: Pig
 provider: UCSC
 provider_version: susScr3
 release_date: Aug. 2011

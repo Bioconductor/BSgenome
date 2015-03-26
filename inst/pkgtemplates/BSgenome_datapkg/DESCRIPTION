@@ -9,7 +9,7 @@ Imports: BSgenome
 Suggests: @SUGGESTS@
 License: @LICENSE@
 organism: @ORGANISM@
-species: @SPECIES@
+common_name: @COMMONNAME@
 provider: @PROVIDER@
 provider_version: @PROVIDERVERSION@
 release_date: @RELEASEDATE@

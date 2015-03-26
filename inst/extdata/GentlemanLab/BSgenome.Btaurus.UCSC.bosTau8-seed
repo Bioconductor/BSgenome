@@ -25,7 +25,7 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## These can easily be extracted from the full genome sequences with:
 	.
 	library(GenomicFeatures)
-	refGene_txdb <- makeTxDbFromUCSC("bosTau8", "refGene")
+	refGene_txdb <- suppressWarnings(makeTxDbFromUCSC("bosTau8", "refGene"))
 	refGene_up1000seqs <- extractUpstreamSeqs(genome, refGene_txdb)
 	.
 	## Note that you can make a TxDb object from various annotation

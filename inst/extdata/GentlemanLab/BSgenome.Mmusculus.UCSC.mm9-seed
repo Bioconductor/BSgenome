@@ -1,10 +1,10 @@
 Package: BSgenome.Mmusculus.UCSC.mm9
 Title: Full genome sequences for Mus musculus (UCSC version mm9)
 Description: Full genome sequences for Mus musculus (Mouse) as provided by UCSC (mm9, Jul. 2007) and stored in Biostrings objects.
-Version: 1.4.0
+Version: 1.4.2
 Suggests: TxDb.Mmusculus.UCSC.mm9.knownGene
 organism: Mus musculus
-species: Mouse
+common_name: Mouse
 provider: UCSC
 provider_version: mm9
 release_date: Jul. 2007
@@ -31,11 +31,11 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	up1000 <- flank(gn, width=1000)
 	up1000seqs <- getSeq(genome, up1000)
 	.
-	## IMPORTANT: Make sure you use a TxDb package (or TranscriptDb object),
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
-	## your own custom TranscriptDb object from various annotation resources.
-	## See the makeTranscriptDbFromUCSC(), makeTranscriptDbFromBiomart(),
-	## and makeTranscriptDbFromGFF() functions in the GenomicFeatures
+	## your own custom TxDb object from various annotation resources.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
+	## and makeTxDbFromGFF() functions in the GenomicFeatures
 	## package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Mmusculus.UCSC.mm9/seqs

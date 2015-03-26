@@ -1,10 +1,10 @@
 Package: BSgenome.Btaurus.UCSC.bosTau3
 Title: Full genome sequences for Bos taurus (UCSC version bosTau3)
 Description: Full genome sequences for Bos taurus (Cow) as provided by UCSC (bosTau3, Aug. 2006) and stored in Biostrings objects.
-Version: 1.4.1
+Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Bos taurus
-species: Cow
+common_name: Cow
 provider: UCSC
 provider_version: bosTau3
 release_date: Aug. 2006
@@ -24,7 +24,7 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## genome sequences with something like:
 	.
 	library(GenomicFeatures)
-	txdb <- makeTranscriptDbFromUCSC("bosTau3", "refGene")
+	txdb <- makeTxDbFromUCSC("bosTau3", "refGene")
 	up1000seqs <- extractUpstreamSeqs(genome, txdb, width=1000)
 	.
 	## See ?extractUpstreamSeqs in the GenomicFeatures package for more
