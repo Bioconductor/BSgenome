@@ -1,0 +1,41 @@
+Package: BSgenome.Btaurus.UCSC.bosTau8
+Title: Full genome sequences for Bos taurus (UCSC version bosTau8)
+Description: Full genome sequences for Bos taurus (Cow) as provided by UCSC (bosTau8, Jun. 2014) and stored in Biostrings objects.
+Version: 1.4.2
+Suggests: GenomicFeatures
+organism: Bos taurus
+common_name: Cow
+provider: UCSC
+provider_version: bosTau8
+release_date: Jun. 2014
+release_name: University of Maryland v3.1.1
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau8/bigZips/
+organism_biocview: Bos_taurus
+BSgenomeObjname: Btaurus
+circ_seqs: "chrM"
+SrcDataFiles: bosTau8.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/bosTau8/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Extract the upstream sequences
+	## ---------------------------------------------------------------------
+	## The upstream sequences located in
+	##   http://hgdownload.cse.ucsc.edu/goldenPath/bosTau8/bigZips/
+	## are based on RefSeq genes (RefSeq Genes track in the Genome Browser).
+	## These can easily be extracted from the full genome sequences with:
+	.
+	library(GenomicFeatures)
+	refGene_txdb <- makeTxDbFromUCSC("bosTau8", "refGene")
+	refGene_up1000seqs <- extractUpstreamSeqs(genome, refGene_txdb)
+	.
+	## Note that you can make a TxDb object from various annotation
+	## resources. See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
+	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
+	## information.
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object) that
+	## contains a gene model based on bosTau8 or on a compatible genome
+	## (i.e. a genome with sequences identical to the sequences in bosTau8).
+	## See ?extractUpstreamSeqs in the GenomicFeatures package for more
+	## information.
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau8/seqs
+seqfile_name: bosTau8.sorted.2bit
