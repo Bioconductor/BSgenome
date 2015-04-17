@@ -23,7 +23,6 @@ exportClasses(
     XtraSNPlocs,
     BSgenome, MaskedBSgenome,
     BSgenomeViews,
-    GenomeData, GenomeDataList,
 
     ## BSgenomeForge classes:
     BSgenomeDataPkgSeed
@@ -121,12 +120,6 @@ export(
     ## BSgenomeViews-class.R:
     BSgenomeViews,
 
-    ## GenomeData-class.R:
-    GenomeData,
-
-    ## GenomeDataList-class.R:
-    GenomeDataList,
-
     ## BSgenomeForge.R:
     forgeSeqlengthsFile,
     forgeSeqFiles,
@@ -161,12 +154,6 @@ export(
     ## injectSNPs.R:
     injectSNPs,
 
-    ## gdapply.R:
-    gdapply,
-
-    ## gdReduce.R:
-    gdReduce,
-
     ## BSgenomeForge.R:
     forgeBSgenomeDataPkg,
     forgeMaskedBSgenomeDataPkg
@@ -184,8 +171,6 @@ exportMethods(
     mseqnames,
     masknames,
     injectSNPs,
-    gdapply,
-    gdReduce,
     forgeBSgenomeDataPkg,
     forgeMaskedBSgenomeDataPkg
 )
