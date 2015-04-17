@@ -203,10 +203,9 @@ setMethod("species", "XtraSNPlocs",
     function(object)
     {
          msg <- wmsg("The \"species\" method for XtraSNPlocs objects ",
-                     "is deprecated and should not be used anymore. ",
-                     "Please use commonName() instead of species() on ",
-                     "XtraSNPlocs objects.")
-        .Deprecated(msg=msg)
+                     "is defunct. Please use commonName() instead of ",
+                     "species() on XtraSNPlocs objects.")
+        .Defunct(msg=msg)
         commonName(object)
     }
 )

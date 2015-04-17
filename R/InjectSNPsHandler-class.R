@@ -176,7 +176,7 @@ setGeneric("SNPcount", function(x) standardGeneric("SNPcount"))
 setMethod("SNPcount", "InjectSNPsHandler",
     function(x)
     {
-        .Deprecated("snpcount")
+        .Defunct("snpcount")
         snpcount(x)
     }
 )
@@ -186,7 +186,7 @@ setGeneric("SNPlocs", signature="x",
 setMethod("SNPlocs", "InjectSNPsHandler",
     function(x, seqname)
     {
-        .Deprecated("SNPlocs")
+        .Defunct("SNPlocs")
         snplocs(x, seqname)
     }
 )

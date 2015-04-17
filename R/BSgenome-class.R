@@ -592,7 +592,7 @@ setMethod("$", "BSgenome",
 setMethod("SNPcount", "BSgenome",
     function(x)
     {
-        .Deprecated("snpcount")
+        .Defunct("snpcount")
         snpcount(x)
     }
 )
@@ -600,7 +600,7 @@ setMethod("SNPcount", "BSgenome",
 setMethod("SNPlocs", "BSgenome",
     function(x, seqname)
     {
-        .Deprecated("SNPlocs")
+        .Defunct("SNPlocs")
         snplocs(x, seqname)
     }
 )
