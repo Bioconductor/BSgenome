@@ -452,9 +452,9 @@ setMethod("show", "BSgenome",
                 "  as the BSgenome object you pass to getSeq(). Note that ",
                 "you can make\n  your own custom TranscriptDb object from ",
                 "various annotation resources.\n",
-                "  See the makeTranscriptDbFromUCSC(), ",
-                "makeTranscriptDbFromBiomart(), and\n",
-                "  makeTranscriptDbFromGFF() functions in the ",
+                "  See the makeTxDbFromUCSC(), ",
+                "makeTxDbFromBiomart(), and\n",
+                "  makeTxDbFromGFF() functions in the ",
                 "GenomicFeatures package."
             )
             .Defunct(msg=paste0(msg, collapse=""))
