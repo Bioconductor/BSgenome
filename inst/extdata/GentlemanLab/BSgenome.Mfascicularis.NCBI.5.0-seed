@@ -1,0 +1,19 @@
+Package: BSgenome.Mfascicularis.NCBI.5.0
+Title: Full genome sequences for Macaca fascicularis (Macaca_fascicularis_5.0)
+Description: Full genome sequences for Macaca fascicularis (long-tailed macaque) as provided by NCBI (Macaca_fascicularis_5.0, 2013-06-12) and stored in Biostrings objects.
+Version: 1.4.2
+organism: Macaca fascicularis
+common_name: long-tailed macaque
+provider: NCBI
+provider_version: Macaca_fascicularis_5.0
+release_date: 2013-06-12
+release_name: Macaca_fascicularis_5.0
+source_url: ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000364345.1_Macaca_fascicularis_5.0/
+organism_biocview: Macaca_fascicularis
+BSgenomeObjname: Mfascicularis
+seqnames:
+circ_seqs: "MT"
+SrcDataFiles: GCF_000364345.1_Macaca_fascicularis_5.0_genomic.fna.gz from ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000364345.1_Macaca_fascicularis_5.0/
+PkgExamples: genome$MFA1  # same as genome[["MFA1"]]
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Mfascicularis.NCBI.5.0/seqs
+seqfile_name: Macaca_fascicularis_5.0.sorted.2bit
