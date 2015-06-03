@@ -3,28 +3,32 @@ library(BSgenome)
 INFILE <- "GCF_000364345.1_Macaca_fascicularis_5.0_genomic.fna.gz"
 OUTFILE <- "Macaca_fascicularis_5.0.sorted.2bit"
 
+## Fetch assembly report from:
+##   ftp://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/GCF_000364345.1.assembly.txt
 assembly_report <- GenomeInfoDb:::fetch_assembly_report("GCF_000364345.1")
 Mfascicularis <- readDNAStringSet(INFILE)
 
-## Extract RefSeq accessions from long ugly names found in FASTA file.
-refseq_accn <- as.character(phead(
-                   CharacterList(
-                       strsplit(names(Mfascicularis), " ", fixed=TRUE)
-                   ),
-                   n=1
-               ))
+## Clean names on Mfascicularis to keep only the RefSeq accession.
+names(Mfascicularis) <- as.character(phead(
+                          CharacterList(
+                            strsplit(names(Mfascicularis), " ", fixed=TRUE)
+                          ),
+                          n=1
+                        ))
 
-## Replace long ugly names with official SequenceName.
-m <- match(refseq_accn, assembly_report[ , "RefSeqAccn"])
-stopifnot(all(!is.na(m)))
-names(Mfascicularis) <- assembly_report[m, "SequenceName"]
+## Order sequences in Mfascicularis like in assembly report.
+Mfascicularis <- Mfascicularis[assembly_report[ , "RefSeqAccn"]]
 
-## Sort Mfascicularis.
-seqnames <- c(paste0("MFA", c(1:20, "X")), "MT")
-scaffold_idx <- grep("^Scaffold", names(Mfascicularis))
-scaffold_id <- sub("^Scaffold", "", names(Mfascicularis)[scaffold_idx])
-seqnames <- c(seqnames, paste0("Scaffold", sort(as.integer(scaffold_id))))
-Mfascicularis <- Mfascicularis[seqnames]
+## Replace RefSeq accessions with official SequenceName from assembly report.
+SequenceName <- assembly_report[ , "SequenceName"]
+names(Mfascicularis) <- SequenceName
+
+## Move MT sequence from last position to position after chromosomes (MFA*
+## sequences) and before scaffolds (Scaffold* sequences).
+oo <- c(grep("^MFA", SequenceName),
+        grep("^MT$", SequenceName),
+        grep("^Scaffold", SequenceName))
+Mfascicularis <- Mfascicularis[oo]
 
 ## Export as 2bit file.
 export.2bit(Mfascicularis, OUTFILE)

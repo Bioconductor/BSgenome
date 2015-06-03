@@ -15,5 +15,15 @@ seqnames:
 circ_seqs: "MT"
 SrcDataFiles: GCF_000364345.1_Macaca_fascicularis_5.0_genomic.fna.gz from ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000364345.1_Macaca_fascicularis_5.0/
 PkgExamples: genome$MFA1  # same as genome[["MFA1"]]
+	.
+	## The sequences in BSgenome object 'genome' are ordered like in the
+	## assembly report at the following URL:
+	url <- "ftp://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/GCF_000364345.1.assembly.txt"
+	## except that the MT sequence was moved from last position to the
+	## position between the chromosomes (MFA* sequences) and the scaffolds
+	## (Scaffold* sequences):
+	SequenceName <- read.table(url, sep="\t", stringsAsFactors=FALSE)[[1]]
+	target_seqlevels <- SequenceName[c(1:21, 7601, 22:7600)]
+	stopifnot(identical(seqlevels(genome), target_seqlevels))
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Mfascicularis.NCBI.5.0/seqs
 seqfile_name: Macaca_fascicularis_5.0.sorted.2bit
