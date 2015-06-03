@@ -16,10 +16,13 @@ circ_seqs: "MT"
 SrcDataFiles: GCF_000364345.1_Macaca_fascicularis_5.0_genomic.fna.gz from ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000364345.1_Macaca_fascicularis_5.0/
 PkgExamples: genome$MFA1  # same as genome[["MFA1"]]
 	.
+	## ---------------------------------------------------------------------
+	## About the ordering of the sequences
+	## ---------------------------------------------------------------------
 	## The sequences in BSgenome object 'genome' are ordered like in the
-	## assembly report at the following URL:
+	## assembly report at the following URL
 	url <- "ftp://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/GCF_000364345.1.assembly.txt"
-	## except that the MT sequence was moved from last position to the
+	## except that the MT sequence was moved from the last position to the
 	## position between the chromosomes (MFA* sequences) and the scaffolds
 	## (Scaffold* sequences):
 	SequenceName <- read.table(url, sep="\t", stringsAsFactors=FALSE)[[1]]
