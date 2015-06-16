@@ -600,7 +600,7 @@ setMethod("SNPcount", "BSgenome",
 setMethod("SNPlocs", "BSgenome",
     function(x, seqname)
     {
-        .Defunct("SNPlocs")
+        .Defunct("snplocs")
         snplocs(x, seqname)
     }
 )

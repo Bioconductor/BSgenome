@@ -186,7 +186,7 @@ setGeneric("SNPlocs", signature="x",
 setMethod("SNPlocs", "InjectSNPsHandler",
     function(x, seqname)
     {
-        .Defunct("SNPlocs")
+        .Defunct("snplocs")
         snplocs(x, seqname)
     }
 )
