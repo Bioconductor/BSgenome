@@ -124,15 +124,15 @@ available.SNPs()
 if (interactive()) {
   ## Make your choice and install with:
   source("http://bioconductor.org/biocLite.R")
-  biocLite("SNPlocs.Hsapiens.dbSNP.20100427")
+  biocLite("SNPlocs.Hsapiens.dbSNP141.GRCh38")
 }
 
 ## Inject SNPs from dbSNP into the Human genome:
-library(BSgenome.Hsapiens.UCSC.hg19.masked)
-genome <- BSgenome.Hsapiens.UCSC.hg19.masked
+library(BSgenome.Hsapiens.UCSC.hg38.masked)
+genome <- BSgenome.Hsapiens.UCSC.hg38.masked
 SNPlocs_pkgname(genome)
 
-genome2 <- injectSNPs(genome, "SNPlocs.Hsapiens.dbSNP.20100427")
+genome2 <- injectSNPs(genome, "SNPlocs.Hsapiens.dbSNP141.GRCh38")
 genome2  # note the extra "with SNPs injected from ..." line
 SNPlocs_pkgname(genome2)
 snpcount(genome2)

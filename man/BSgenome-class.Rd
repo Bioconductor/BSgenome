@@ -138,9 +138,9 @@
       The man page for most BSgenome data packages should provide the exact
       list and permanent URLs of the source data files that were used to
       extract the built-in masks.
-      For example, if you've installed the BSgenome.Hsapiens.UCSC.hg19 package,
+      For example, if you've installed the BSgenome.Hsapiens.UCSC.hg38 package,
       load it and see the Note section in
-      \code{?`\link[BSgenome.Hsapiens.UCSC.hg19]{BSgenome.Hsapiens.UCSC.hg19}`}.
+      \code{?`\link[BSgenome.Hsapiens.UCSC.hg38]{BSgenome.Hsapiens.UCSC.hg38}`}.
     }
   }
 }

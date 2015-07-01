@@ -64,18 +64,15 @@
 snpcount(x)
 
 snpsBySeqname(x, seqnames, ...)
-
 \S4method{snpsBySeqname}{SNPlocs}(x, seqnames, drop.rs.prefix=FALSE)
 
 snpsByOverlaps(x, ranges, maxgap=0L, minoverlap=0L,
                type=c("any", "start", "end", "within", "equal"), ...)
-
 \S4method{snpsByOverlaps}{SNPlocs}(x, ranges, maxgap=0L, minoverlap=0L,
                type=c("any", "start", "end", "within", "equal"),
                drop.rs.prefix=FALSE, ...)
 
 snpsById(x, ids, ...)
-
 \S4method{snpsById}{SNPlocs}(x, ids, ifnotfound=c("error", "warning", "drop"))
 
 ## Old API
@@ -99,15 +96,14 @@ snpid2grange(x, snpid, ...)
     A SNPlocs object.
   }
   \item{seqnames}{
-    The names of the sequences for which to get SNPs. NAs and duplicates
-    are not allowed. The supplied \code{seqnames} must be a subset of
-    \code{seqlevels(x)}.
+    The names of the sequences for which to get SNPs. Must be a subset of
+    \code{seqlevels(x)}. NAs and duplicates are not allowed.
   }
   \item{...}{
     Additional arguments, for use in specific methods.
 
-    Further arguments passed to the \code{snpsByOverlaps} method
-    for SNPlocs objects (thru \code{...}) are passed to
+    Arguments passed to the \code{snpsByOverlaps} method for SNPlocs
+    objects thru \code{...} are passed to internal call to
     \code{\link[IRanges]{subsetByOverlaps}()}.
   }
   \item{drop.rs.prefix}{
@@ -129,10 +125,9 @@ snpid2grange(x, snpid, ...)
     \code{subsetByOverlaps()} generic and its method for
     \link[GenomicRanges]{GenomicRanges} objects.
   }
-  \item{ids}{
-    The RefSNP ids to look up (a.k.a. \emph{rs ids}). Can be integer or
-    character vector, with or without the \code{"rs"} prefix. NAs are not
-    allowed.
+  \item{ids, snpid}{
+    The RefSNP ids to look up (a.k.a. rs ids). Can be integer or character
+    vector, with or without the \code{"rs"} prefix. NAs are not allowed.
   }
   \item{ifnotfound}{
     What to do if SNP ids are not found.
@@ -150,15 +145,11 @@ snpid2grange(x, snpid, ...)
   \item{as.GRanges}{
     \code{TRUE} or \code{FALSE}. If \code{TRUE}, then the SNP locations
     and alleles are returned in a \link[GenomicRanges]{GRanges} object.
-    Otherwise (the default), they are returned in a data frame (see below).
+    Otherwise (the default), they are returned in a data frame.
   }
   \item{caching}{
     Should the loaded SNPs be cached in memory for faster further
     retrieval but at the cost of increased memory usage?
-  }
-  \item{snpid}{
-    The SNP ids to look up (e.g. rs ids). Can be integer or character vector,
-    with or without the \code{"rs"} prefix. NAs are not allowed.
   }
 }
 

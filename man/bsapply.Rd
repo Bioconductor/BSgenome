@@ -46,14 +46,14 @@ bsapply(BSParams, ...)
   library("BSgenome.Celegans.UCSC.ce2")
 
   ## Count the alphabet frequencies for every chromosome but exclude
-  ## mitochrondrial ones:
+  ## mitochrondrial and scaffold ones:
   params <- new("BSParams", X = Celegans, FUN = alphabetFrequency,
-  exclude = "M")
+  exclude = c("M", "_"))
   bsapply(params)
 
   ## Or we can do this same function with simplify = TRUE:
   params <- new("BSParams", X = Celegans, FUN = alphabetFrequency,
-  exclude = "M", simplify = TRUE)
+  exclude = c("M", "_"), simplify = TRUE)
   bsapply(params)
 
 
@@ -74,13 +74,13 @@ bsapply(BSParams, ...)
 
 
   ## Examples on how to use the masks
-  library("BSgenome.Hsapiens.UCSC.hg19.masked")
-  genome <- BSgenome.Hsapiens.UCSC.hg19.masked
+  library(BSgenome.Hsapiens.UCSC.hg38.masked)
+  genome <- BSgenome.Hsapiens.UCSC.hg38.masked
   ## I can make things verbose if I want to see the chromosomes getting processed.
   options(verbose=TRUE)
   ## For the 1st example, lets use default masks
   params <- new("BSParams", X = genome, FUN = alphabetFrequency,
-  exclude = c(1:8,"M","X","random","hap"), simplify = TRUE)
+  exclude = c(1:8,"M","X","_"), simplify = TRUE)
   bsapply(params)
 
   if (interactive()) {

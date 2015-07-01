@@ -71,8 +71,8 @@ getBSgenome(genome, masked=FALSE)
     \item The 4th part is the release string or number used by this
           organisation for this particular genome assembly. We formally
           refer to it as the \emph{provider version} of the genome.
-          E.g. \code{mm9}, \code{mm10}, \code{hg18}, \code{hg19},
-          \code{GRCh38}, \code{susScr3}, etc...
+          E.g. \code{hg38}, \code{GRCh38}, \code{hg19}, \code{mm10},
+          \code{susScr3}, etc...
 
     \item If the package contains masked sequences, its name has the
           \code{.masked} suffix added to it, which is typically the 5th part.
@@ -144,12 +144,12 @@ genome <- getBSgenome("BSgenome.Celegans.UCSC.ce2")
 genome
 
 ## Specify a genome assembly (a.k.a. provider version):
-genome <- getBSgenome("hg19")
+genome <- getBSgenome("hg38")
 class(genome)  # BSgenome object
 providerVersion(genome)
 genome$chrM
 
-genome <- getBSgenome("hg19", masked=TRUE)
+genome <- getBSgenome("hg38", masked=TRUE)
 class(genome)  # MaskedBSgenome object
 providerVersion(genome)
 genome$chr22
