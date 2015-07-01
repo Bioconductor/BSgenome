@@ -128,8 +128,11 @@ newSNPlocs <- function(provider, provider_version,
 setMethod("show", "SNPlocs",
     function(object)
     {
-        cat(class(object), " object for ", organism(object), " (",
-            provider(object), ": ", releaseName(object), ")\n", sep="")
+        cat("# ", class(object), " object for ", organism(object),
+            " (", releaseName(object), ")\n", sep="")
+        cat("# reference genome: ",
+            providerVersion(referenceGenome(object)), "\n", sep="")
+        cat("# nb of SNPs: ", sum(snpcount(object)), "\n", sep="")
     }
 )
 

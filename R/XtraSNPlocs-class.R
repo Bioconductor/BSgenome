@@ -216,11 +216,11 @@ newXtraSNPlocs <- function(pkgname, snp_data_dirpath,
 setMethod("show", "XtraSNPlocs",
     function(object)
     {
-        cat(class(object), " object for ", organism(object),
+        cat("# ", class(object), " object for ", organism(object),
             " (", releaseName(object), ")\n", sep="")
-        cat("| reference genome: ",
+        cat("# reference genome: ",
             providerVersion(referenceGenome(object)), "\n", sep="")
-        cat("| nb of SNPs: ", nrow(snpData(object)), "\n", sep="")
+        cat("# nb of SNPs: ", nrow(snpData(object)), "\n", sep="")
     }
 )
 
