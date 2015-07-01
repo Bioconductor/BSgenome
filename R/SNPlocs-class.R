@@ -362,11 +362,12 @@ setMethod("snplocs", "SNPlocs",
             bad_snpid <- snpid[bad_snpid_idx]
             bad_snpid_in1string <- paste(bad_snpid, collapse=", ")
             stop(wmsg("SNP id(s) not found: ", bad_snpid_in1string,
-                      "\n\nPlease note that snpid2loc(), snpid2alleles(), ",
+                      "\n\nPlease note that rsid2loc(), snpid2loc(), ",
+                      "rsid2alleles(), snpid2alleles(), rsidsToGRanges(), ",
                       "and snpid2grange() are superseded by snpsById(). ",
-                      "The latter can be called with ifnotfound=\"drop\" ",
-                      "to drop unknown SNP ids. See ?snpsById for more ",
-                      "information."))
+                      "The latter can be called with 'ifnotfound=\"drop\"' ",
+                      "to drop unknown SNP ids. See '?snpsById' for more ",
+                      "information.\n\n "))
         }
     }
     seqidx <- findInterval(idx - 1L, cumsum(snpcount(x))) + 1L
