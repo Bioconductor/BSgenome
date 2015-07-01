@@ -27,13 +27,9 @@
 
 % SNP extractors
 \alias{snpcount,XtraSNPlocs-method}
-\alias{snpsBySeqname}
 \alias{snpsBySeqname,XtraSNPlocs-method}
-\alias{snpsByOverlaps}
 \alias{snpsByOverlaps,XtraSNPlocs-method}
-\alias{snpsById}
 \alias{snpsById,XtraSNPlocs-method}
-
 
 \title{XtraSNPlocs objects}
 
@@ -58,22 +54,15 @@
 \usage{
 \S4method{snpcount}{XtraSNPlocs}(x)
 
-snpsBySeqname(x, seqnames, ...)
-
 \S4method{snpsBySeqname}{XtraSNPlocs}(x, seqnames,
               columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
               drop.rs.prefix=FALSE,
               as.DataFrame=FALSE)
 
-snpsByOverlaps(x, ranges, maxgap=0L, minoverlap=0L,
-               type=c("any", "start", "end", "within", "equal"), ...)
-
 \S4method{snpsByOverlaps}{XtraSNPlocs}(x, ranges, maxgap=0L, minoverlap=0L,
                type=c("any", "start", "end", "within", "equal"),
                columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
                drop.rs.prefix=FALSE, as.DataFrame=FALSE, ...)
-
-snpsById(x, ids, ...)
 
 \S4method{snpsById}{XtraSNPlocs}(x, ids,
          columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
@@ -223,21 +212,24 @@ snps <- XtraSNPlocs.Hsapiens.dbSNP141.GRCh38
 snpcount(snps)
 colnames(snps)
 
+## ---------------------------------------------------------------------
+## snpsBySeqname()
+## ---------------------------------------------------------------------
 ## Get the location, RefSNP id, and alleles for all "extra SNPs"
 ## located on chromosome 22 and MT:
-my_snps1 <- snpsBySeqname(snps, c("ch22", "chMT"),
-                          columns=c("RefSNP_id", "alleles"))
-my_snps1
+snpsBySeqname(snps, c("ch22", "chMT"), columns=c("RefSNP_id", "alleles"))
 
+## ---------------------------------------------------------------------
+## snpsByOverlaps()
+## ---------------------------------------------------------------------
 ## Get the location, RefSNP id, and alleles for all "extra SNPs"
 ## overlapping some regions of interest:
-my_snps2a <- snpsByOverlaps(snps, "ch22:33.63e6-33.64e6",
-                            columns=c("RefSNP_id", "alleles"))
-my_snps2a
+snpsByOverlaps(snps, "ch22:33.63e6-33.64e6",
+               columns=c("RefSNP_id", "alleles"))
 
 ## With the regions of interest being all the known CDS for hg38
-## (except for the chromosome naming convention this genome build
-## is the same as GRCh38):
+## (except for the chromosome naming convention, hg38 is the same
+## as GRCh38):
 library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 hg38_cds <- cds(txdb)
@@ -245,14 +237,15 @@ seqlevelsStyle(hg38_cds)  # UCSC
 seqlevelsStyle(snps)  # dbSNP
 seqlevelsStyle(hg38_cds) <- seqlevelsStyle(snps)
 genome(hg38_cds) <- genome(snps)
-my_snps2b <- snpsByOverlaps(snps, hg38_cds,
-                            columns=c("RefSNP_id", "alleles"))
+snpsByOverlaps(snps, hg38_cds, columns=c("RefSNP_id", "alleles"))
 
+## ---------------------------------------------------------------------
+## snpsById()
+## ---------------------------------------------------------------------
 ## Get the location and alleles for some RefSNP ids:
 my_rsids <- c("rs367617508", "rs398104919", "rs3831697", "rs372470289",
               "rs141568169", "rs34628976", "rs67551854")
-my_snps3 <- snpsById(snps, my_rsids, c("RefSNP_id", "alleles"))
-my_snps3
+snpsById(snps, my_rsids, c("RefSNP_id", "alleles"))
 
 ## See ?XtraSNPlocs.Hsapiens.dbSNP141.GRCh38 for examples of using
 ## snpsBySeqname() and snpsById().

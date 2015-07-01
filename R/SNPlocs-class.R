@@ -135,7 +135,7 @@ setMethod("show", "SNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### snpcount() and snplocs()
+### snpcount()
 ###
 
 ### Creates objects "on-the-fly" (not serialized).
@@ -192,6 +192,11 @@ setMethod("snpcount", "SNPlocs",
         ans        
     }
 )
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### OLD API: snplocs(), snpid2loc(), snpid2alleles(), and snpid2grange()
+###
 
 ### Load raw snplocs.
 .load_raw_snplocs <- function(x, seqname, caching)
@@ -310,11 +315,6 @@ setMethod("snplocs", "SNPlocs",
         .SNPlocsAsGranges(x, ufsnplocs, seqnames)
     }
 )
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### snpid2loc(), snpid2alleles(), and snpid2grange()
-###
 
 .normargSnpid <- function(snpid)
 {
@@ -448,4 +448,170 @@ setMethod("snpid2grange", "SNPlocs",
         .SNPlocsAsGranges(x, ufsnplocs, names(loc))
     }
 )
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### NEW API: snpsBySeqname(), snpsByOverlaps(), snpsById() (similar to API
+### for querying an XtraSNPlocs object)
+###
+
+setGeneric("snpsBySeqname", signature="x",
+    function(x, seqnames, ...) standardGeneric("snpsBySeqname")
+)
+
+### Same args and signature as GenomicFeatures::transcriptsByOverlaps()
+### EXCEPT for 'minoverlap' default value that we set to zero so we also
+### get SNPs that are insertions (relevant for XtraSNPlocs objects).
+setGeneric("snpsByOverlaps", signature="x",
+    function(x, ranges, maxgap=0L, minoverlap=0L,
+             type=c("any", "start", "end", "within", "equal"), ...)
+        standardGeneric("snpsByOverlaps")
+)
+
+setGeneric("snpsById", signature="x",
+    function(x, ids, ...) standardGeneric("snpsById")
+)
+
+.get_GRanges_by_seqname_from_SNPlocs <- function(x, seqnames, drop.rs.prefix)
+{
+    gr <- snplocs(x, seqnames, as.GRanges=TRUE)
+    if (!drop.rs.prefix && length(gr) != 0L)
+        mcols(gr)$RefSNP_id <- paste0("rs", mcols(gr)$RefSNP_id)
+    gr
+}
+
+.SNPlocs_snpsBySeqname <- function(x, seqnames, drop.rs.prefix=FALSE)
+{
+    if (!is.character(seqnames)
+     || any(is.na(seqnames))
+     || any(duplicated(seqnames)))
+        stop(wmsg("'seqnames' must be a character vector ",
+                  "with no NAs and no duplicates"))
+    if (!all(seqnames %in% seqlevels(x)))
+        stop(wmsg("'seqnames' must be a subset of: ",
+                  paste(seqlevels(x), collapse=", ")))
+    if (!isTRUEorFALSE(drop.rs.prefix))
+        stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
+    .get_GRanges_by_seqname_from_SNPlocs(x, seqnames, drop.rs.prefix)
+}
+
+setMethod("snpsBySeqname", "SNPlocs", .SNPlocs_snpsBySeqname)
+
+### TODO: Avoid code duplication between normarg_ranges() and
+### GenomicAlignments:::.normarg_param().
+normarg_ranges <- function(ranges)
+{
+    if (isSingleString(ranges)) {
+        tmp1 <- strsplit(ranges, ":", fixed=TRUE)[[1L]]
+        if (length(tmp1) != 2L)
+            stop(wmsg("when a character string, 'ranges' must be ",
+                      "of the form \"ch14:5201-5300\""))
+        tmp2 <- as.integer(strsplit(tmp1[2L], "-", fixed=TRUE)[[1L]])
+        if (length(tmp2) != 2L || any(is.na(tmp2)))
+            stop(wmsg("when a character string, 'ranges' must be ",
+                      "of the form \"ch14:5201-5300\""))
+        ranges <- GRanges(tmp1[1L], IRanges(tmp2[1L], tmp2[2L]))
+        return(ranges)
+    }
+    if (!is(ranges, "GenomicRanges"))
+        stop(wmsg("'ranges' ranges must be a GenomicRanges object ",
+                  "or a character string of the form \"ch14:5201-5300\""))
+    ranges
+}
+
+.SNPlocs_snpsByOverlaps <- function(x, ranges, maxgap=0L, minoverlap=0L,
+             type=c("any", "start", "end", "within", "equal"),
+             drop.rs.prefix=FALSE, ...)
+{
+    ranges <- normarg_ranges(ranges)
+    ## The only purpose of the line below is to check that 'x' and 'ranges'
+    ## are based on the same reference genome (merge() will raise an error
+    ## if they are not).
+    merge(seqinfo(x), seqinfo(ranges))
+    seqlevels(ranges, force=TRUE) <- intersect(seqlevels(x),
+                                               seqlevelsInUse(ranges))
+    snps_by_seqname <- .SNPlocs_snpsBySeqname(x, seqlevels(ranges),
+                                              drop.rs.prefix=drop.rs.prefix)
+    subsetByOverlaps(snps_by_seqname, ranges,
+                     maxgap=maxgap, minoverlap=minoverlap,
+                     type=type, ...)
+}
+
+setMethod("snpsByOverlaps", "SNPlocs", .SNPlocs_snpsByOverlaps)
+
+### Return an integer vector with no NAs parallel to 'ids'.
+ids2rowids <- function(ids)
+{
+    if (!(is.character(ids) || is.numeric(ids)))
+        stop(wmsg("'ids' must be a character or integer vector with no NAs"))
+    if (S4Vectors:::anyMissing(ids))
+        stop(wmsg("'ids' cannot contain NAs"))
+    if (is.character(ids)) {
+        prefixes <- unique(substr(ids, 1L, 2L))
+        if ("rs" %in% prefixes) {
+            if (!setequal(prefixes, "rs"))
+                stop(wmsg("'ids' cannot mix SNP ids that are prefixed ",
+                          "with \"rs\" with SNP ids that are not"))
+            ## Drop the "rs" prefix.
+            ids <- substr(ids, 3L, nchar(ids))
+        }
+        ids <- suppressWarnings(as.numeric(ids))
+        if (S4Vectors:::anyMissing(ids))
+            stop(wmsg("cannot extract the digital part of ",
+                      "some SNP ids in 'ids'"))
+    }
+    if (length(ids) != 0L && min(ids) < 0)
+        stop(wmsg("'ids' contains unrealistic SNP ids"))
+    if (!is.integer(ids)) {
+        ids <- suppressWarnings(as.integer(ids))
+        if (S4Vectors:::anyMissing(ids))
+            stop(wmsg("'ids' contains SNP ids that are too big"))
+    }
+    ids
+}
+
+### Return a list of 2 vectors parallel to each other. The 1st and 2nd vectors
+### are respectively the row indices (integer vector) and the 'user_ids' vector
+### (which can be character, numeric, or integer), with the not found entries
+### removed from both of them.
+### Note that, if 'ifnotfound="error"' then the 2 returned vectors are parallel
+### to input vectors 'user_rowids' and 'user_ids'.
+rowids2rowidx <- function(user_rowids, user_ids, x_rowids, ifnotfound)
+{
+    if (is.null(x_rowids))
+        stop(wmsg("BSgenome internal error: data contains no SNP ids"))
+    rowidx <- match(user_rowids, x_rowids)
+    notfound_idx <- which(is.na(rowidx))
+    if (length(notfound_idx) != 0L) {
+        if (length(notfound_idx) <= 10L) {
+            ids_to_show <- user_ids[notfound_idx]
+        } else {
+            ids_to_show <- c(user_ids[notfound_idx[1:9]], "...")
+        }
+        ids_to_show <- paste0(ids_to_show, collapse=", ")
+        if (ifnotfound == "error")
+            stop(wmsg("SNP ids not found: ",
+                      ids_to_show,
+                      "\n\nUse 'ifnotfound=\"drop\"' to drop them."))
+        if (ifnotfound == "warning")
+            warning(wmsg("SNP ids not found: ", ids_to_show,
+                         "\n\nThey were dropped."))
+        rowidx <- rowidx[-notfound_idx]
+        user_ids <- user_ids[-notfound_idx]
+    }
+    list(rowidx, user_ids)
+}
+
+.SNPlocs_snpsById <- function(x, ids, ifnotfound=c("error", "warning", "drop"))
+{
+    user_rowids <- ids2rowids(ids)
+    ifnotfound <- match.arg(ifnotfound)
+    x_rowids <- .get_SNPlocs_data(x, "all_rsids")
+    rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
+    ans <- snpid2grange(x, rowidx[[1L]])
+    mcols(ans)[ , "RefSNP_id"] <- rowidx[[2L]]
+    ans
+}
+
+setMethod("snpsById", "SNPlocs", .SNPlocs_snpsById)
 
