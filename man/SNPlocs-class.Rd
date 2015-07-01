@@ -186,7 +186,11 @@ snpid2grange(x, snpid, ...)
   element in the \link[GenomicRanges]{GRanges} object corresponds to the
   i-th element in \code{ids}.
 
-  \subsection{OLD API}{
+  \subsection{Old API}{
+    Note that \code{snplocs} is superseded by \code{snpsBySeqname}, and
+    \code{snpid2loc}, \code{snpid2alleles}, and \code{snpid2grange} are
+    superseded by \code{snpsById}.
+
     By default (i.e. when \code{as.GRanges=FALSE}), \code{snplocs} returns a
     data frame with 1 row per SNP and the following columns:
     \enumerate{
