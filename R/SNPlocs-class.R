@@ -617,7 +617,7 @@ rowids2rowidx <- function(user_rowids, user_ids, x_rowids, ifnotfound)
     ifnotfound <- match.arg(ifnotfound)
     x_rowids <- .get_SNPlocs_data(x, "all_rsids")
     rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
-    ans <- snpid2grange(x, rowidx[[1L]])
+    ans <- snpid2grange(x, rowidx[[2L]])
     mcols(ans)[ , "RefSNP_id"] <- rowidx[[2L]]
     ans
 }
