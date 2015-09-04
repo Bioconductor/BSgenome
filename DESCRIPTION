@@ -1,5 +1,6 @@
 Package: BSgenome
-Title: Infrastructure for Biostrings-based genome data packages
+Title: Infrastructure for Biostrings-based genome data packages and support
+	for efficient SNP representation
 Description: Infrastructure shared by all the Biostrings-based genome data
              packages
 Version: 1.37.4
