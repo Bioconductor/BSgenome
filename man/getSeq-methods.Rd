@@ -19,7 +19,7 @@
 
 \arguments{
   \item{x}{
-    A \link{BSgenome} or \link[Biostrings]{XStringsSet} object.
+    A \link{BSgenome} or \link[Biostrings]{XStringSet} object.
     See the \code{\link{available.genomes}} function for how
     to install a genome.
   }
@@ -36,7 +36,7 @@
     in \code{x} where to get the subsequences from.
 
     If \code{names} is missing, then \code{seqnames(x)} is used.
-    
+ 
     See \code{?`\link{BSgenome-class}`} for details on how to get
     the lists of single sequences and multiple sequences (respectively)
     contained in a \link{BSgenome} object.
