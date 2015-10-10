@@ -1,27 +1,31 @@
 \name{getSeq-methods}
 
 \alias{getSeq,BSgenome-method}
+\alias{getSeq,XStringSet-method}
 
-\title{getSeq method for BSgenome objects}
+\title{getSeq method for BSgenome and XStringSet objects}
 
 \description{
    A \code{\link[Biostrings]{getSeq}} method for extracting a set of
-   sequences (or subsequences) from a \link{BSgenome} object.
+   sequences (or subsequences) from a \link{BSgenome} or
+   \link[Biostrings]{XStringSet} object.
 }
 
 \usage{
 \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA,
                  strand="+", as.character=FALSE) 
+\S4method{getSeq}{XStringSet}(x, names)
 }
 
 \arguments{
   \item{x}{
-    A \link{BSgenome} object.
+    A \link{BSgenome} or \link[Biostrings]{XStringsSet} object.
     See the \code{\link{available.genomes}} function for how
     to install a genome.
   }
   \item{names}{
-    A character vector containing the names of the sequences
+    When \code{x} is a \link{BSgenome}, \code{names} must be a
+    character vector containing the names of the sequences
     in \code{x} where to get the subsequences from,
     or a \link[GenomicRanges]{GRanges} object,
     or a \link[GenomicRanges]{GRangesList} object,
@@ -36,6 +40,9 @@
     See \code{?`\link{BSgenome-class}`} for details on how to get
     the lists of single sequences and multiple sequences (respectively)
     contained in a \link{BSgenome} object.
+
+    When \code{x} is a \link[Biostrings]{XStringSet} object, \code{names}
+    must be a character vector or \link[GenomicRanges]{GRanges} object.
   }
   \item{start, end, width}{
     Vector of integers (eventually with NAs) specifying the locations
