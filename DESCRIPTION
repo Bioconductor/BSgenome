@@ -3,7 +3,7 @@ Title: Infrastructure for Biostrings-based genome data packages and support
 	for efficient SNP representation
 Description: Infrastructure shared by all the Biostrings-based genome data
              packages
-Version: 1.37.6
+Version: 1.38.0
 Author: Herve Pages
 Maintainer: H. Pages <hpages@fredhutch.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
