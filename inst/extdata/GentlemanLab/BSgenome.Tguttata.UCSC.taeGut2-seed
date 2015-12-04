@@ -11,7 +11,6 @@ release_name: WashU taeGut324
 source_url: http://hgdownload.soe.ucsc.edu/goldenPath/taeGut2/bigZips/
 organism_biocview: Taeniopygia_guttata
 BSgenomeObjname: Tguttata
-seqnames: paste0("chr", c(1, "1A", "1B", 2:4, "4A", 5:28, "LGE22", "LG2", "LG5", "Z", "M", "Un", paste0(c(1, "1A", "1B", 2:4, "4A", 5:28, "LGE22", "Z"), "_random")))
 circ_seqs: "chrM"
 SrcDataFiles: taeGut2.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/taeGut2/bigZips/
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
