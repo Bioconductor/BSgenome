@@ -1,0 +1,41 @@
+Package: BSgenome.Drerio.UCSC.danRer10
+Title: Full genome sequences for Danio rerio (UCSC version danRer10)
+Description: Full genome sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer10, Sep. 2014) and stored in Biostrings objects.
+Version: 1.4.2
+Suggests: GenomicFeatures
+organism: Danio rerio
+common_name: Zebrafish
+provider: UCSC
+provider_version: danRer10
+release_date: Sep. 2014
+release_name: Genome Reference Consortium GRCz10
+source_url: http://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/
+organism_biocview: Danio_rerio
+BSgenomeObjname: Drerio
+circ_seqs: "chrM"
+SrcDataFiles: danRer10.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Extract the upstream sequences
+	## ---------------------------------------------------------------------
+	## The upstream sequences located in
+	##   http://hgdownload.cse.ucsc.edu/goldenPath/danRer10/bigZips/
+	## are based on RefSeq genes (RefSeq Genes track in the Genome Browser).
+	## These can easily be extracted from the full genome sequences with:
+	.
+	library(GenomicFeatures)
+	refGene_txdb <- suppressWarnings(makeTxDbFromUCSC("danRer10", "refGene"))
+	refGene_up1000seqs <- extractUpstreamSeqs(genome, refGene_txdb)
+	.
+	## Note that you can make a TxDb object from various annotation
+	## resources. See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
+	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
+	## information.
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object) that
+	## contains a gene model based on danRer10 or on a compatible genome
+	## (i.e. a genome with sequences identical to the sequences in
+	## danRer10). See ?extractUpstreamSeqs in the GenomicFeatures package
+	## for more information.
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer10/seqs
+seqfile_name: danRer10.sorted.2bit
