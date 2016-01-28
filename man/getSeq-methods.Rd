@@ -253,7 +253,7 @@ extractRandomReads <- function(x, density, readlength)
                              seqlength * density,
                              replace=TRUE)
                     })
-    names <- rep.int(seqnames(x), elementLengths(start))
+    names <- rep.int(seqnames(x), elementNROWS(start))
     ranges <- IRanges(start=unlist(start), width=readlength)
     strand <- strand(sample(c("+", "-"), length(names), replace=TRUE))
     gr <- GRanges(seqnames=names, ranges=ranges, strand=strand)

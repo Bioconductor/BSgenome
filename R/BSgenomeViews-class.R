@@ -75,7 +75,7 @@ setMethod("ranges", "BSgenomeViews",
     }
 )
 
-setMethod("elementLengths", "BSgenomeViews", function(x) width(x))
+setMethod("elementNROWS", "BSgenomeViews", function(x) width(x))
 
 setMethod("seqinfo", "BSgenomeViews", function(x) seqinfo(granges(x)))
 

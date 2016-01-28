@@ -63,7 +63,7 @@ exportMethods(
     start, end, width, strand, organism, species,
 
     ## Methods for generics defined in the S4Vectors package:
-    elementLengths,
+    elementNROWS,
 
     ## Methods for generics defined in the IRanges package:
     ranges, Views, subject, score,

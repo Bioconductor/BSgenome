@@ -69,7 +69,7 @@
 ### Assumes 'x' is a RangesList object with names.
 .newGRangesFromNamedRangesList <- function(x, strand)
 {
-    seqnames <- rep.int(names(x), elementLengths(x))
+    seqnames <- rep.int(names(x), elementNROWS(x))
     ranges <- unlist(x, use.names=FALSE)
     strand <- .normargStrand(strand, length(ranges))
     GRanges(seqnames=seqnames, ranges=ranges, strand=strand)
@@ -231,7 +231,7 @@
     if (length(x) == 0L)
         return(DNAStringSet())
     subject <- do.call(xscat, x)
-    DNAStringSet(successiveViews(subject, elementLengths(x)))
+    DNAStringSet(successiveViews(subject, elementNROWS(x)))
 }
 
 ### 'names' must be a character vector or a GRanges object.

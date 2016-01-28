@@ -23,7 +23,7 @@
     pkgs2[idx] <- substr(pkgs2[idx], 1L, nchar(pkgs2)[idx] - 7L)
 
     parts <- strsplit(pkgs2, ".", fixed=TRUE)
-    nparts <- elementLengths(parts)
+    nparts <- elementNROWS(parts)
     ## Some packages like BSgenome.Tgondii.ToxoDB.7.0 don't follow the rules
     ## and are made of more than 4 parts.
     has_more_than_4_parts <- which(nparts > 4L)

@@ -5,7 +5,7 @@ danRer10 <- import("danRer10.2bit")
 seqlevels1 <- paste0("chr", c(1:25, "M"))
 
 tmp <- CharacterList(strsplit(names(danRer10), "_"))
-npart <- elementLengths(tmp)
+npart <- elementNROWS(tmp)
 stopifnot(all(npart <= 2L))
 
 idx1 <- which(npart == 1L)

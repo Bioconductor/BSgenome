@@ -155,7 +155,7 @@ setMethod("vmatchPDict", "BSgenome",
                          fixed = fixed,
                          algorithm = algorithm,
                          verbose = verbose)
-            posCounts <- elementLengths(posMatches)
+            posCounts <- elementNROWS(posMatches)
             negMatches <-
               matchPDict(pdict = negPDict, subject = chr,
                          max.mismatch = max.mismatch,
@@ -163,7 +163,7 @@ setMethod("vmatchPDict", "BSgenome",
                          fixed = fixed,
                          algorithm = algorithm,
                          verbose = verbose)
-            negCounts <- elementLengths(negMatches)
+            negCounts <- elementNROWS(negMatches)
             COUNTER <<- COUNTER + 1L
             seqnames <- names(seqlengths)
             GRanges(seqnames = 

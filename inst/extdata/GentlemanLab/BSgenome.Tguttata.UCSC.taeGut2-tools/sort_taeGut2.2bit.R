@@ -5,7 +5,7 @@ taeGut2 <- import("taeGut2.2bit")
 seqlevels1 <- paste0("chr", c(1, "1A", "1B", 2:4, "4A", 5:28, "LGE22", "LG2", "LG5", "Z", "M"))
 
 tmp <- CharacterList(strsplit(names(taeGut2), "_"))
-npart <- elementLengths(tmp)
+npart <- elementNROWS(tmp)
 stopifnot(all(npart <= 3L))
 
 idx1 <- which(npart == 1L)

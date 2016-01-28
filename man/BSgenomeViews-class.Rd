@@ -19,7 +19,7 @@
 \alias{width,BSgenomeViews-method}
 \alias{strand,BSgenomeViews-method}
 \alias{ranges,BSgenomeViews-method}
-\alias{elementLengths,BSgenomeViews-method}
+\alias{elementNROWS,BSgenomeViews-method}
 \alias{seqinfo,BSgenomeViews-method}
 
 % coercion
@@ -76,7 +76,7 @@ BSgenomeViews(subject, granges)
 \S4method{width}{BSgenomeViews}(x)
 \S4method{strand}{BSgenomeViews}(x)
 \S4method{ranges}{BSgenomeViews}(x, use.mcols=FALSE)
-\S4method{elementLengths}{BSgenomeViews}(x)
+\S4method{elementNROWS}{BSgenomeViews}(x)
 \S4method{seqinfo}{BSgenomeViews}(x)
 
 ## DNAStringSet methods
@@ -196,7 +196,7 @@ BSgenomeViews(subject, granges)
       \code{ranges(granges(x, use.mcols), use.mcols)}.
     }
     \item{}{
-      \code{elementLengths(x)}: Equivalent to \code{width(x)}.
+      \code{elementNROWS(x)}: Equivalent to \code{width(x)}.
     }
     \item{}{
       \code{seqinfo(x)}: Equivalent to \code{seqinfo(subject(x))} and to
@@ -311,11 +311,11 @@ trinucleotideFrequency(v12, simplify.as="collapsed")
 
 ## BSgenomeViews objects are list-like objects. That is, the
 ## BSgenomeViews class derives from List and typical list/List
-## operations (e.g. [[, elementLengths(), unlist(), elementType(),
+## operations (e.g. [[, elementNROWS(), unlist(), elementType(),
 ## etc...) work on these objects:
 is(v12, "List")  # TRUE
 v12[[2]]
-head(elementLengths(v12))  # elementLengths(v) is the same as width(v)
+head(elementNROWS(v12))  # elementNROWS(v) is the same as width(v)
 unlist(v12) 
 elementType(v12)
 }
