@@ -11,7 +11,7 @@ set -e  # Exit immediately if a simple command exits with a non-zero status
 # Note that in 'head -n NH $1 | tail -n NT' the NH and NT values
 # were obtained from R with:
 #   library(Biostrings)
-#   fi <- fasta.info("danRer5.fa")
+#   fi <- fasta.seqlengths("danRer5.fa")
 #   fi25 <- fi[1:25]
 #   NT <- fi25 %/% 50 + 2
 #   NH <- cumsum(NT)

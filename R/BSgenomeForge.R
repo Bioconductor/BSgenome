@@ -73,7 +73,7 @@ getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
     sapply(seqnames, function(seqname)
            {
                srcpath <- srcpaths[[seqname]]
-               ans <- fasta.info(srcpath)
+               ans <- fasta.seqlengths(srcpath)
                if (length(ans) == 0)
                    stop("In file '", srcpath, "': no sequence found")
                if (length(ans) > 1)

@@ -187,12 +187,13 @@ Alternatively, the big compressed tarball (\texttt{chromFa.tar.gz}) could
 be used. After downloading and extracting it, we should end up with the same
 files as with (c).
 
-You can use the \Rfunction{fasta.info} function from the \Rpackage{Biostrings}
-package to see what's in a FASTA file:
+You can use the \Rfunction{fasta.seqlengths} function from the
+\Rpackage{Biostrings} package to get the lengths of the sequences in a
+FASTA file:
 <<>>=
 library(Biostrings)
 file <- system.file("extdata", "ce2chrM.fa.gz", package="BSgenome")
-fasta.info(file)
+fasta.seqlengths(file)
 @
 
 For the \Rpackage{BSgenome.Mfuro.UCSC.musFur1} package, the twoBit file was
