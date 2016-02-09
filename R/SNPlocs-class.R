@@ -250,7 +250,7 @@ setMethod("snpcount", "SNPlocs",
                stringsAsFactors=FALSE)
 }
 
-.SNPlocsAsGranges <- function(x, ufsnplocs, seqname)
+.SNPlocsAsGRanges <- function(x, ufsnplocs, seqname)
 {
     if (is(seqname, "Rle")) {
         if (length(seqname) != nrow(ufsnplocs)
@@ -307,7 +307,7 @@ setMethod("snplocs", "SNPlocs",
         }
         if (length(seqname) == 0L) {
             empty_ufsnplocs <- .get_SNPlocs_data(x, "empty_ufsnplocs")
-            ans <- .SNPlocsAsGranges(x, empty_ufsnplocs, character(0))
+            ans <- .SNPlocsAsGRanges(x, empty_ufsnplocs, character(0))
             return(ans)
         }
         list_of_ufsnplocs <- lapply(seqname,
@@ -315,7 +315,7 @@ setMethod("snplocs", "SNPlocs",
         ufsnplocs <- do.call(rbind, list_of_ufsnplocs)
         seqnames <- Rle(factor(seqname, levels=seqlevels(x)),
                         unlist(lapply(list_of_ufsnplocs, nrow), use.names=FALSE))
-        .SNPlocsAsGranges(x, ufsnplocs, seqnames)
+        .SNPlocsAsGRanges(x, ufsnplocs, seqnames)
     }
 )
 
@@ -454,7 +454,7 @@ setMethod("snpid2grange", "SNPlocs",
                                 alleles_as_ambig=unname(alleles),
                                 loc=unname(loc),
                                 stringsAsFactors=FALSE)
-        .SNPlocsAsGranges(x, ufsnplocs, names(loc))
+        .SNPlocsAsGRanges(x, ufsnplocs, names(loc))
     }
 )
 
@@ -481,12 +481,16 @@ setGeneric("snpsById", signature="x",
     function(x, ids, ...) standardGeneric("snpsById")
 )
 
-.get_GRanges_by_seqname_from_SNPlocs <- function(x, seqnames, drop.rs.prefix)
+.get_GPos_by_seqname_from_SNPlocs <- function(x, seqnames, drop.rs.prefix)
 {
     gr <- snplocs(x, seqnames, as.GRanges=TRUE)
     if (!drop.rs.prefix && length(gr) != 0L)
         mcols(gr)$RefSNP_id <- paste0("rs", mcols(gr)$RefSNP_id)
-    gr
+
+    ## Turn 'gr' into GPos object.
+    ans <- GPos(gr)
+    mcols(ans) <- mcols(gr)
+    ans
 }
 
 .SNPlocs_snpsBySeqname <- function(x, seqnames, drop.rs.prefix=FALSE)
@@ -501,7 +505,7 @@ setGeneric("snpsById", signature="x",
                   paste(seqlevels(x), collapse=", ")))
     if (!isTRUEorFALSE(drop.rs.prefix))
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
-    .get_GRanges_by_seqname_from_SNPlocs(x, seqnames, drop.rs.prefix)
+    .get_GPos_by_seqname_from_SNPlocs(x, seqnames, drop.rs.prefix)
 }
 
 setMethod("snpsBySeqname", "SNPlocs", .SNPlocs_snpsBySeqname)
@@ -617,8 +621,13 @@ rowids2rowidx <- function(user_rowids, user_ids, x_rowids, ifnotfound)
     ifnotfound <- match.arg(ifnotfound)
     x_rowids <- .get_SNPlocs_data(x, "all_rsids")
     rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
-    ans <- snpid2grange(x, rowidx[[2L]])
-    mcols(ans)[ , "RefSNP_id"] <- rowidx[[2L]]
+    gr <- snpid2grange(x, rowidx[[2L]])
+
+    ## Turn 'gr' into GPos object.
+    ans <- GPos(gr)
+    ans_mcols <- mcols(gr)
+    ans_mcols[ , "RefSNP_id"] <- rowidx[[2L]]
+    mcols(ans) <- ans_mcols
     ans
 }
 

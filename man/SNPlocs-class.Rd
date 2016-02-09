@@ -112,16 +112,16 @@ snpid2grange(x, snpid, ...)
     returned object.)
   }
   \item{ranges}{
-    One or more regions of interest specified as a \link[GenomicRanges]{GRanges}
-    object. A single region of interest can be specified as a character string
-    of the form \code{"ch14:5201-5300"}.
+    One or more regions of interest specified as a
+    \link[GenomicRanges]{GRanges} object. A single region of interest can
+    be specified as a character string of the form \code{"ch14:5201-5300"}.
   }
   \item{maxgap, minoverlap, type}{
     These arguments are passed to \code{\link[IRanges]{subsetByOverlaps}()}
     which is used internally by \code{snpsByOverlaps}.
     See \code{?IRanges::\link[IRanges]{subsetByOverlaps}} in the \pkg{IRanges}
-    package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}} in
-    the \pkg{GenomicRanges} package for more information about the
+    package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}}
+    in the \pkg{GenomicRanges} package for more information about the
     \code{subsetByOverlaps()} generic and its method for
     \link[GenomicRanges]{GenomicRanges} objects.
   }
@@ -158,7 +158,7 @@ snpid2grange(x, snpid, ...)
   of SNPs for each sequence in the reference genome.
 
   \code{snpsBySeqname}, \code{snpsByOverlaps}, and \code{snpsById} return
-  a \link[GenomicRanges]{GRanges} object with 1 element (genomic range)
+  a \link[GenomicRanges]{GPos} object with 1 element (genomic position)
   per SNP and the following metadata columns:
   \itemize{
     \item \code{RefSNP_id}: RefSNP ID (aka "rs id"). Character vector
@@ -169,12 +169,12 @@ snpid2grange(x, snpid, ...)
           See \code{?\link[Biostrings]{IUPAC_CODE_MAP}} in the
           \pkg{Biostrings} package for more information.
   }
-  Note that all the elements (genomic ranges) in this
+  Note that all the elements (genomic positions) in this
   \link[GenomicRanges]{GRanges} object have their strand set to \code{"+"}.
 
   If \code{ifnotfound="error"}, the object returned by \code{snpsById}
   is guaranteed to be \emph{parallel} to \code{ids}, that is, the i-th
-  element in the \link[GenomicRanges]{GRanges} object corresponds to the
+  element in the \link[GenomicRanges]{GPos} object corresponds to the
   i-th element in \code{ids}.
 
   \subsection{Old API}{
@@ -216,6 +216,9 @@ snpid2grange(x, snpid, ...)
 \seealso{
   \itemize{
     \item \code{\link{available.SNPs}}
+
+    \item \link[GenomicRanges]{GRanges} and \link[GenomicRanges]{GPos}
+          objects in the \pkg{GenomicRanges} package.
 
     \item \code{\link{injectSNPs}}
 
