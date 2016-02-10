@@ -217,7 +217,7 @@ snpid2grange(x, snpid, ...)
   \itemize{
     \item \code{\link{available.SNPs}}
 
-    \item \link[GenomicRanges]{GRanges} and \link[GenomicRanges]{GPos}
+    \item \link[GenomicRanges]{GPos} and \link[GenomicRanges]{GRanges}
           objects in the \pkg{GenomicRanges} package.
 
     \item \code{\link{injectSNPs}}
