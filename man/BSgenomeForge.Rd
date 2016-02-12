@@ -122,7 +122,7 @@ forgeMasksFiles(seqnames, nmask_per_seq,
   of this topic.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \examples{
 seqs_srcdir <- system.file("extdata", package="BSgenome")

@@ -99,7 +99,7 @@ getBSgenome(genome, masked=FALSE)
   BSgenome data packages currently installed.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \itemize{

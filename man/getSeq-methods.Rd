@@ -135,7 +135,7 @@
   information about masked DNA sequences.
 }
 
-\author{H. Pages; improvements suggested by Matt Settles and others}
+\author{H. Pagès; improvements suggested by Matt Settles and others}
 
 \seealso{
   \code{\link[Biostrings]{getSeq}},

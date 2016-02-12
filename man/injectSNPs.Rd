@@ -104,7 +104,7 @@ installed.SNPs()
   specified thru the \code{snps} argument if it's not already loaded.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \link{BSgenome-class},

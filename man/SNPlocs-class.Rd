@@ -211,7 +211,7 @@ snpid2grange(x, snpid, ...)
   }
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \itemize{

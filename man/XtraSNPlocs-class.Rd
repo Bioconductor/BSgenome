@@ -196,7 +196,7 @@
   \code{colnames(x)} returns the names of the available columns.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \itemize{

@@ -262,7 +262,7 @@ BSgenomeViews(subject, granges)
   description of these methods.
 }
 
-\author{H. Pages}
+\author{H. Pagès}
 
 \seealso{
   \itemize{
