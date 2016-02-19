@@ -98,7 +98,7 @@ BSgenomeViews <- function(subject, granges)
     seqinfo(ans_granges) <- ans_seqinfo
     ans_mcols <- mcols(granges)
     if (is.null(ans_mcols))
-        ans_mcols <- new("DataFrame", nrows=length(granges))
+        ans_mcols <- S4Vectors:::make_zero_col_DataFrame(length(granges))
     new("BSgenomeViews", subject=subject, granges=ans_granges,
                          elementMetadata=ans_mcols)
 }
