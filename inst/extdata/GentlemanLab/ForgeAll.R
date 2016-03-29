@@ -19,6 +19,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Celegans.UCSC.ce2",
   "BSgenome.Celegans.UCSC.ce6",
   "BSgenome.Celegans.UCSC.ce10",
+  "BSgenome.Celegans.UCSC.ce11",
   "BSgenome.Cfamiliaris.UCSC.canFam2",
   "BSgenome.Cfamiliaris.UCSC.canFam3",
   "BSgenome.Dmelanogaster.UCSC.dm2",
