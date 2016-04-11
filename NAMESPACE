@@ -1,4 +1,5 @@
 import(methods)
+importFrom(utils, available.packages, contrib.url, installed.packages, str)
 importFrom(stats, setNames)
 
 import(BiocGenerics)
