@@ -21,7 +21,7 @@
 }
 
 \usage{
-\S4method{export}{BSgenome,FastaFile,ANY}(object, con, format, ...)
+\S4method{export}{BSgenome,FastaFile,ANY}(object, con, format, compress=FALSE, compression_level=NA, verbose=TRUE)
 \S4method{export}{BSgenome,TwoBitFile,ANY}(object, con, format, ...)
 }
 
@@ -49,10 +49,17 @@
     If not missing, should be \code{"fasta"}, \code{"twoBit"}, or
     \code{"2bit"} (case insensitive for \code{"twoBit"} and \code{"2bit"}).
   }
+  \item{compress, compression_level}{
+    Forwarded to \code{\link{writeXStringSet}}.
+    See \code{?\link{writeXStringSet}} for the details.
+  }
+  \item{verbose}{
+    Whether or not the function should display progress.
+    \code{TRUE} by default.
+  }
   \item{...}{
-    Extra arguments passed down to other methods.
-    The method for \link[rtracklayer]{TwoBitFile} objects forwards them to
-    \code{\link{bsapply}}.
+    Extra arguments. The method for \link[rtracklayer]{TwoBitFile} objects
+    forwards them to \code{\link{bsapply}}.
   }
 }
 

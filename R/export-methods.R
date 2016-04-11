@@ -40,7 +40,7 @@ setMethod("export", c("BSgenome", "FastaFile"),
     function(object, con, format,
              compress=FALSE, compression_level=NA, verbose=TRUE)
     {
-        writeBSgenomeToFasta(object, con,
+        writeBSgenomeToFasta(object, path(con),
                              compress=compress,
                              compression_level=compression_level,
                              verbose=verbose)
