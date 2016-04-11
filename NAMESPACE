@@ -120,6 +120,10 @@ export(
     ## BSgenomeViews-class.R:
     BSgenomeViews,
 
+    ## export-methods.R:
+    writeBSgenomeToFasta,
+    writeBSgenomeToTwobit,
+
     ## BSgenomeForge.R:
     forgeSeqlengthsFile,
     forgeSeqFiles,

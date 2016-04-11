@@ -2,7 +2,10 @@
 
 \alias{export-methods}
 
+\alias{writeBSgenomeToFasta}
 \alias{export,BSgenome,FastaFile,ANY-method}
+
+\alias{writeBSgenomeToTwobit}
 \alias{export,BSgenome,TwoBitFile,ANY-method}
 
 
