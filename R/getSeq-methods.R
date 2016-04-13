@@ -369,9 +369,9 @@ setMethod("getSeq", "XStringSet",
             warning("some strand(x) != '*' but ",
                     "strand has no meaning for ", class(x))
         }
-        rl <- as(ranges(gr), "RangesList")
-        names(rl) <- seqnames(gr)
-        ans <- x[rl]
+        rl <- as(gr, "RangesList")
+        ans <- relist(unsplit(x[rl], rep(seqnames(gr), width(gr))),
+                      PartitioningByWidth(width(gr)))
         if (!ignoringStrand) {
             minus <- strand(gr) == "-"
             ans[minus] <- reverseComplement(ans[minus])
