@@ -16,6 +16,15 @@
 
 .splitNameParts <- function(pkgs)
 {
+    if (length(pkgs) == 0L) {
+        ans <- data.frame(pkgname=character(0),
+                          organism=factor(),
+                          provider=factor(),
+                          provider_version=character(0),
+                          masked=logical(0),
+                          stringsAsFactors=FALSE)
+        return(ans)
+    }
     ## Remove ".masked" suffix.
     pkgs2 <- pkgs
     is_masked <- substr(pkgs2, nchar(pkgs2) - 6L, nchar(pkgs2)) == ".masked"
@@ -103,10 +112,10 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
 {
     ## 1) Search installed packages.
     inst_pkgs <- installed.genomes(splitNameParts=TRUE)
-    inst_pkgs <- inst_pkgs[inst_pkgs[ , "masked"] == masked, ]
+    inst_pkgs <- inst_pkgs[inst_pkgs[ , "masked"] == masked, , drop=FALSE]
     idx <- which(genome == inst_pkgs[ , "provider_version"])
     if (length(idx) == 1L)
-        return(inst_pkgs[idx , "pkgname"])
+        return(inst_pkgs[idx , "pkgname", drop=FALSE])
     if (length(idx) >= 2L)
         stop("Looks like you have more than one installed ",
              ifelse(masked, "masked ", ""), "BSgenome data package\n",
