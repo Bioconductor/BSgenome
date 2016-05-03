@@ -115,7 +115,7 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
     inst_pkgs <- inst_pkgs[inst_pkgs[ , "masked"] == masked, , drop=FALSE]
     idx <- which(genome == inst_pkgs[ , "provider_version"])
     if (length(idx) == 1L)
-        return(inst_pkgs[idx , "pkgname", drop=FALSE])
+        return(inst_pkgs[idx , "pkgname"])
     if (length(idx) >= 2L)
         stop("Looks like you have more than one installed ",
              ifelse(masked, "masked ", ""), "BSgenome data package\n",
