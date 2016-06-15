@@ -1,12 +1,13 @@
 \name{getSeq-methods}
 
+\alias{getSeq}
 \alias{getSeq,BSgenome-method}
 \alias{getSeq,XStringSet-method}
 
-\title{getSeq method for BSgenome and XStringSet objects}
+\title{getSeq methods for BSgenome and XStringSet objects}
 
 \description{
-   A \code{\link[Biostrings]{getSeq}} method for extracting a set of
+   \code{\link[Biostrings]{getSeq}} methods for extracting a set of
    sequences (or subsequences) from a \link{BSgenome} or
    \link[Biostrings]{XStringSet} object.
 }
