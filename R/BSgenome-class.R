@@ -584,24 +584,3 @@ setMethod("$", "BSgenome",
     function(x, name) x[[name]]
 )
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Old stuff (deprecated & defunct)
-###
-
-setMethod("SNPcount", "BSgenome",
-    function(x)
-    {
-        .Defunct("snpcount")
-        snpcount(x)
-    }
-)
-
-setMethod("SNPlocs", "BSgenome",
-    function(x, seqname)
-    {
-        .Defunct("snplocs")
-        snplocs(x, seqname)
-    }
-)
-

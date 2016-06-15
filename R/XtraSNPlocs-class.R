@@ -166,17 +166,6 @@ setMethod("commonName", "XtraSNPlocs",
     function(object) commonName(referenceGenome(object))
 )
 
-setMethod("species", "XtraSNPlocs",
-    function(object)
-    {
-         msg <- wmsg("The \"species\" method for XtraSNPlocs objects ",
-                     "is defunct. Please use commonName() instead of ",
-                     "species() on XtraSNPlocs objects.")
-        .Defunct(msg=msg)
-        commonName(object)
-    }
-)
-
 setMethod("seqinfo", "XtraSNPlocs", function(x) seqinfo(referenceGenome(x)))
 
 setMethod("seqnames", "XtraSNPlocs", function(x) seqnames(referenceGenome(x)))

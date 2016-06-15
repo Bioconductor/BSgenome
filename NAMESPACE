@@ -61,7 +61,7 @@ exportMethods(
     coerce, show,
 
     ## Methods for generics defined in the BiocGenerics package:
-    start, end, width, strand, organism, species,
+    start, end, width, strand, organism,
 
     ## Methods for generics defined in the S4Vectors package:
     elementNROWS,
@@ -146,7 +146,7 @@ export(
     snpid2loc, snpid2alleles, snpid2grange,
 
     ## InjectSNPsHandler-class.R:
-    SNPlocs_pkgname, SNPcount, SNPlocs,
+    SNPlocs_pkgname,
 
     ## XtraSNPlocs-class.R:
     snpsBySeqname, snpsByOverlaps, snpsById,
@@ -172,7 +172,7 @@ exportMethods(
     snpid2loc, snpid2alleles, snpid2grange,
     snpsBySeqname, snpsByOverlaps, snpsById,
     sourceUrl,
-    SNPlocs, SNPlocs_pkgname, SNPcount,
+    SNPlocs_pkgname,
     mseqnames,
     masknames,
     injectSNPs,

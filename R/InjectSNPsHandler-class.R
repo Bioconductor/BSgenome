@@ -166,28 +166,3 @@ setMethod("snplocs", "InjectSNPsHandler",
     }
 )
 
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Old stuff (deprecated & defunct)
-###
-
-setGeneric("SNPcount", function(x) standardGeneric("SNPcount"))
-
-setMethod("SNPcount", "InjectSNPsHandler",
-    function(x)
-    {
-        .Defunct("snpcount")
-        snpcount(x)
-    }
-)
-setGeneric("SNPlocs", signature="x",
-    function(x, seqname) standardGeneric("SNPlocs"))
-
-setMethod("SNPlocs", "InjectSNPsHandler",
-    function(x, seqname)
-    {
-        .Defunct("snplocs")
-        snplocs(x, seqname)
-    }
-)
-

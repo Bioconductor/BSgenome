@@ -17,14 +17,6 @@
 \alias{available.SNPs}
 \alias{installed.SNPs}
 
-% Old stuff (deprecated or defunct):
-\alias{SNPcount}
-\alias{SNPcount,InjectSNPsHandler-method}
-\alias{SNPcount,BSgenome-method}
-\alias{SNPlocs,InjectSNPsHandler-method}
-\alias{SNPlocs,BSgenome-method}
-
-
 \title{SNP injection}
 
 \description{
