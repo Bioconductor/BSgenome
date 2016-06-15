@@ -4,12 +4,16 @@
 \alias{getSeq,BSgenome-method}
 \alias{getSeq,XStringSet-method}
 
+\alias{[,XStringSet,GenomicRanges-method}
+\alias{[,XStringSet,GRangesList-method}
+
 \title{getSeq methods for BSgenome and XStringSet objects}
 
 \description{
    \code{\link[Biostrings]{getSeq}} methods for extracting a set of
    sequences (or subsequences) from a \link{BSgenome} or
-   \link[Biostrings]{XStringSet} object.
+   \link[Biostrings]{XStringSet} object. For XStringSets, there are also
+   convenience methods on \code{[} that delegate to \code{getSeq}.
 }
 
 \usage{
@@ -43,7 +47,8 @@
     contained in a \link{BSgenome} object.
 
     When \code{x} is a \link[Biostrings]{XStringSet} object, \code{names}
-    must be a character vector or \link[GenomicRanges]{GRanges} object.
+    must be a character vector, \link[GenomicRanges]{GRanges} or
+    \link[GenomicRanges]{GRangesList} object.
   }
   \item{start, end, width}{
     Vector of integers (eventually with NAs) specifying the locations
@@ -104,6 +109,16 @@
         then it is used for extraction, otherwise (i.e. if no sequence or
         more than 1 sequence is found) then an error is raised.
   }
+
+  There are convenience methods for extracting sequences from
+  \link[Biostrings]{XStringSet} objects using a
+  \link[GenomicRanges:GenomicRanges-class]{GenomicRanges} or
+  \link[GenomicRanges]{GRangesList} subscript (character subscripts are
+  implicitly supported). Both methods are simple wrappers around
+  \code{getSeq}, although the GRangesList method differs from the
+  \code{getSeq} behavior in that the within-element results are
+  concatenated and returned as an XStringSet, rather than an
+  XStringSetList. See the examples.
 }
 
 \value{
@@ -309,6 +324,15 @@ stopifnot(length(ls(Celegans@.seqs_cache)) == 0L)
 ## One more gc() call is needed in order to see the amount of memory in
 ## used after all the chromosomes have been removed from the cache:
 gc()
+
+## ---------------------------------------------------------------------
+## G. USING '[' FOR CONVENIENT EXTRACTION
+## ---------------------------------------------------------------------
+
+seqs <- getSeq(Celegans)
+seqs[gr1]
+seqs[grl]
+
 }
 
 \keyword{manip}

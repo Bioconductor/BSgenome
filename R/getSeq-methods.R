@@ -343,6 +343,8 @@ setMethod("getSeq", "BSgenome",
                                    mseq_args$strand)
         if (is(names, "GRanges"))
             names(ans) <- names(names)
+        else if (is.character(names))
+            names(ans) <- names
         if (as.character)
             return(as.character(ans))
         if (length(ans) == 1L && is.character(names))
@@ -354,15 +356,20 @@ setMethod("getSeq", "BSgenome",
 setMethod("getSeq", "XStringSet", 
     function(x, names) 
     {
-        stopifnot(is.character(names) || is(names, "GRanges"))
+        stopifnot(is.character(names) || is(names, "GRanges") ||
+                  is(names, "GRangesList"),
+                  !is.null(names(x)))
         if (is.character(names)) {
             found <- names %in% names(x)
             regexNames <- unlist(lapply(names[!found], grep, names(x),
                                         value=TRUE))
             names <- c(names[found], regexNames)
             return(x[names])
+        } else if (is(names, "GRangesList")) {
+            gr <- unlist(names, use.names=FALSE)
+        } else {
+            gr <- names
         }
-        gr <- names
         ignoringStrand <- any(strand(gr) != "*") &&
             !hasMethod(reverseComplement, class(x))
         if (ignoringStrand) {
@@ -376,6 +383,23 @@ setMethod("getSeq", "XStringSet",
             minus <- strand(gr) == "-"
             ans[minus] <- reverseComplement(ans[minus])
         }
+        if (is(names, "GRangesList")) {
+            ans <- relist(ans, names)
+        }
         ans
     }
 )
+
+setMethod("[", c("XStringSet", "GenomicRanges"),
+          function (x, i, j, ..., drop = TRUE) {
+              if (!missing(j)) 
+                  stop("invalid subsetting")
+              getSeq(x, i, ...)
+          })
+
+setMethod("[", c("XStringSet", "GRangesList"),
+          function (x, i, j, ..., drop = TRUE) {
+              if (!missing(j)) 
+                  stop("invalid subsetting")
+              unstrsplit(getSeq(x, i, ...))
+          })
