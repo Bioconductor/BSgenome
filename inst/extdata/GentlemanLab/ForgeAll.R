@@ -42,6 +42,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Mfuro.UCSC.musFur1",
   "BSgenome.Mmulatta.UCSC.rheMac2",
   "BSgenome.Mmulatta.UCSC.rheMac3",
+  "BSgenome.Mmulatta.UCSC.rheMac8",
   "BSgenome.Mmusculus.UCSC.mm8",
   "BSgenome.Mmusculus.UCSC.mm9",
   "BSgenome.Mmusculus.UCSC.mm10",
