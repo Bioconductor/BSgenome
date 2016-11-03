@@ -18,7 +18,7 @@ import(rtracklayer)
 ###
 
 exportClasses(
-    OnDiskLongTable,
+    OnDiskLongTable_old,
     SNPlocs,
     InjectSNPsHandler,
     XtraSNPlocs,
@@ -94,11 +94,11 @@ exportMethods(
 ###
 
 export(
-    ## OnDiskLongTable-class.R:
-    saveAsOnDiskLongTable, saveRowidsForOnDiskLongTable,
-    OnDiskLongTable,
-    getBatchesFromOnDiskLongTable,
-    getRowsByIndexFromOnDiskLongTable, getRowsByIdFromOnDiskLongTable,
+    ## OnDiskLongTable_old-class.R:
+    saveAsOnDiskLongTable_old, saveRowidsForOnDiskLongTable_old,
+    OnDiskLongTable_old,
+    getBatchesFromOnDiskLongTable_old,
+    getRowsByIndexFromOnDiskLongTable_old, getRowsByIdFromOnDiskLongTable_old,
 
     ## SNPlocs-class.R:
     newSNPlocs,
@@ -137,7 +137,7 @@ export(
 ###
 
 export(
-    ## OnDiskLongTable-class.R:
+    ## OnDiskLongTable_old-class.R:
     breakpoints, blocksizes, rowids,
 
     ## SNPlocs-class.R:

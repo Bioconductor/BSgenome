@@ -9,10 +9,11 @@
     "RefSNP_id", "alleles", "snpClass", "loctype"
 )
 
-### Only some of the columns above are actually columns of the OnDiskLongTable
-### component of an XtraSNPlocs object. We call them "real" columns. The other
-### columns are additional columns that we compute on demand.
-.XTRASNPLOCS_REAL_COLUMNS <- c(
+### Only some of the columns above are actually columns of the
+### OnDiskLongTable_old component of an XtraSNPlocs object. We call them
+### "physical" columns. The other columns are "computed" columns i.e. columns
+### that we compute on demand.
+.XTRASNPLOCS_PHYSICAL_COLUMNS <- c(
     "snpClass", "alleles", "start", "width", "strand", "loctype"
 )
 
@@ -25,20 +26,22 @@
                   paste(.XTRASNPLOCS_COLUMNS, collapse=", ")))
 }
 
-.XtraSNPlocs_get_real_from_user_supplied_columns <- function(columns)
+.XtraSNPlocs_get_physical_from_user_supplied_columns <- function(columns)
 {
-    real_columns <- intersect(columns, .XTRASNPLOCS_REAL_COLUMNS)
+    physical_columns <- intersect(columns, .XTRASNPLOCS_PHYSICAL_COLUMNS)
     if ("end" %in% columns)
-        real_columns <- union(real_columns, c("start", "width"))
-    real_columns
+        physical_columns <- union(physical_columns, c("start", "width"))
+    physical_columns
 }
 
 .XtraSNPlocs_get_DF_for_seqnames <- function(x, seqnames, columns,
                                              drop.rs.prefix)
 {
-    real_columns <- .XtraSNPlocs_get_real_from_user_supplied_columns(columns)
+    physical_columns <-
+        .XtraSNPlocs_get_physical_from_user_supplied_columns(columns)
     with_RefSNP_id <- "RefSNP_id" %in% columns
-    DF0 <- getBatchesFromOnDiskLongTable(snpData(x), seqnames, real_columns,
+    DF0 <- getBatchesFromOnDiskLongTable_old(snpData(x), seqnames,
+                                         physical_columns,
                                          with.batch_label=TRUE,
                                          with.rowids=with_RefSNP_id,
                                          as.data.frame=with_RefSNP_id)
@@ -70,10 +73,11 @@
 ### by rowids2rowidx().
 .XtraSNPlocs_get_DF_for_ids <- function(x, rowidx, columns)
 {
-    real_columns <- .XtraSNPlocs_get_real_from_user_supplied_columns(columns)
-    DF0 <- getRowsByIndexFromOnDiskLongTable(snpData(x), rowidx[[1L]],
-                                             real_columns,
-                                             with.batch_label=TRUE)
+    physical_columns <-
+        .XtraSNPlocs_get_physical_from_user_supplied_columns(columns)
+    DF0 <- getRowsByIndexFromOnDiskLongTable_old(snpData(x), rowidx[[1L]],
+                                                 physical_columns,
+                                                 with.batch_label=TRUE)
     if ("RefSNP_id" %in% columns)
         DF0[["RefSNP_id"]] <- rowidx[[2L]]
     if ("seqnames" %in% columns)
@@ -103,8 +107,8 @@ setClass("XtraSNPlocs",
         ## object is defined.
         pkgname="character",
 
-        ## OnDiskLongTable object containing the SNP data.
-        snp_data="OnDiskLongTable",
+        ## OnDiskLongTable_old object containing the SNP data.
+        snp_data="OnDiskLongTable_old",
 
         ## Provider of the SNPs (e.g. "dbSNP").
         provider="character",
@@ -182,8 +186,8 @@ newXtraSNPlocs <- function(pkgname, snp_data_dirpath,
                            download_url, download_date,
                            reference_genome)
 {
-    snp_data <- OnDiskLongTable(snp_data_dirpath)
-    stopifnot(identical(colnames(snp_data), .XTRASNPLOCS_REAL_COLUMNS))
+    snp_data <- OnDiskLongTable_old(snp_data_dirpath)
+    stopifnot(identical(colnames(snp_data), .XTRASNPLOCS_PHYSICAL_COLUMNS))
 
     new("XtraSNPlocs",
         pkgname=pkgname,

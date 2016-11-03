@@ -1,9 +1,10 @@
 ### =========================================================================
-### OnDiskLongTable objects
+### OnDiskLongTable_old objects
 ### -------------------------------------------------------------------------
 ###
 
-setClass("OnDiskLongTable",
+
+setClass("OnDiskLongTable_old",
     representation(
         dirpath="character",         # Single string.
         colnames="character",        # Vector of column names (no NAs, no
@@ -23,7 +24,7 @@ setClass("OnDiskLongTable",
 ### Low-level helpers
 ###
 
-.OnDiskLongTable_check_dirpath <- function(dirpath)
+.OnDiskLongTable_old_check_dirpath <- function(dirpath)
 {
     if (!isSingleString(dirpath) || dirpath == "")
         stop(wmsg("'dirpath' must be a single (non-empty) string"))
@@ -31,16 +32,16 @@ setClass("OnDiskLongTable",
         stop(wmsg("directory not found: ", dirpath))
 }
 
-.OnDiskLongTable_check_breakpoints <- function(breakpoints)
+.OnDiskLongTable_old_check_breakpoints <- function(breakpoints)
 {
     if (!is.integer(breakpoints)
      || S4Vectors:::anyMissing(breakpoints)
      || is.unsorted(breakpoints, strictly=TRUE)
      || length(breakpoints) != 0L && breakpoints[[1L]] < 1L)
-        stop(wmsg("invalid breakpoints found for OnDiskLongTable object"))
+        stop(wmsg("invalid breakpoints found for OnDiskLongTable_old object"))
 }
 
-.OnDiskLongTable_check_rowids <- function(rowids)
+.OnDiskLongTable_old_check_rowids <- function(rowids)
 {
     if (!is.integer(rowids))
         stop(wmsg("'rowids' must be an integer vector"))
@@ -48,20 +49,20 @@ setClass("OnDiskLongTable",
         stop(wmsg("'rowids' cannot contain NAs or duplicated values"))
 }
 
-.OnDiskLongTable_get_nrow_from_breakpoints <- function(breakpoints)
+.OnDiskLongTable_old_get_nrow_from_breakpoints <- function(breakpoints)
 {
     if (length(breakpoints) == 0L)
         return(0L)
     breakpoints[[length(breakpoints)]]
 }
 
-.OnDiskLongTable_colidx2dirname <- function(colidx)
+.OnDiskLongTable_old_colidx2dirname <- function(colidx)
     sprintf("col%03d", colidx)
 
-.OnDiskLongTable_colidx2dirpath <- function(dirpath, colidx)
-    file.path(dirpath, .OnDiskLongTable_colidx2dirname(colidx))
+.OnDiskLongTable_old_colidx2dirpath <- function(dirpath, colidx)
+    file.path(dirpath, .OnDiskLongTable_old_colidx2dirname(colidx))
 
-.OnDiskLongTable_blockidx2blockname <- function(blockidx)
+.OnDiskLongTable_old_blockidx2blockname <- function(blockidx)
 {
     not_na_idx <- which(!is.na(blockidx))
     blockname <- character(length(blockidx))
@@ -91,7 +92,7 @@ setClass("OnDiskLongTable",
     tmpenv <- new.env(parent=emptyenv())
     if (!identical(load(filepath, envir=tmpenv), objname))
         stop(wmsg(filepath, " does not seem to belong ",
-                  "to an OnDiskLongTable object"))
+                  "to an OnDiskLongTable_old object"))
     get(objname, envir=tmpenv, inherits=FALSE)
 }
 
@@ -101,14 +102,14 @@ setClass("OnDiskLongTable",
 .load_block <- function(x, colidx, blockname)
 {
     if (!is.character(blockname))
-        blockname <- .OnDiskLongTable_blockidx2blockname(blockname)
-    col_dirpath <- .OnDiskLongTable_colidx2dirpath(x@dirpath, colidx)
+        blockname <- .OnDiskLongTable_old_blockidx2blockname(blockname)
+    col_dirpath <- .OnDiskLongTable_old_colidx2dirpath(x@dirpath, colidx)
     .load_object(col_dirpath, blockname)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### .write_zero_row_OnDiskLongTable()
+### .write_zero_row_OnDiskLongTable_old()
 ###
 
 .remove_file <- function(dirpath, filename)
@@ -134,16 +135,17 @@ setClass("OnDiskLongTable",
         stop(wmsg("failed to create directory: ", col_dirpath))
     ## A "special block" is written in newly created column dir. It contains
     ## serialized zero-length column.
-    blockname <- .OnDiskLongTable_blockidx2blockname(0L)
+    blockname <- .OnDiskLongTable_old_blockidx2blockname(0L)
     block <- df_col[integer(0)]
     .save_object(col_dirpath, blockname, block)
 }
 
-.write_zero_row_OnDiskLongTable <- function(df, dirpath)
+.write_zero_row_OnDiskLongTable_old <- function(df, dirpath)
 {
     ## Remove stuff.
     .remove_file(dirpath, "rowids.rda")
-    col_dirpaths <- .OnDiskLongTable_colidx2dirpath(dirpath, seq_len(ncol(df)))
+    col_dirpaths <- .OnDiskLongTable_old_colidx2dirpath(dirpath,
+                                                        seq_len(ncol(df)))
     .remove_dirs(col_dirpaths)
 
     ## Create stuff.
@@ -155,7 +157,7 @@ setClass("OnDiskLongTable",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### .append_batch_to_OnDiskLongTable()
+### .append_batch_to_OnDiskLongTable_old()
 ###
 
 .write_column <- function(df_col, col_dirpath,
@@ -167,14 +169,14 @@ setClass("OnDiskLongTable",
     block_ranges <- PartitioningByEnd(breakpoints)
     for (b in seq_along(block_ranges)) {
         blockidx <- blockidx_offset + b
-        blockname <- .OnDiskLongTable_blockidx2blockname(blockidx)
+        blockname <- .OnDiskLongTable_old_blockidx2blockname(blockidx)
         block <- df_col[block_ranges[[b]]]
         .save_object(col_dirpath, blockname, block,
                      compress, compression_level)
     }
 }
 
-.append_batch_to_OnDiskLongTable <- function(df, dirpath,
+.append_batch_to_OnDiskLongTable_old <- function(df, dirpath,
                                              batch_label, blocksize,
                                              compress, compression_level)
 {
@@ -182,7 +184,7 @@ setClass("OnDiskLongTable",
     filepath <- file.path(dirpath, "rowids.rda")
     if (file.exists(filepath))
         stop(wmsg("cannot append data to an ",
-                  "OnDiskLongTable object with row ids"))
+                  "OnDiskLongTable_old object with row ids"))
 
     ## Check 'df' colnames.
     old_colnames <- .load_object(dirpath, "colnames")
@@ -194,7 +196,8 @@ setClass("OnDiskLongTable",
     breakpoints1 <- .load_object(dirpath, "breakpoints")
 
     ## Append 'df' columns.
-    col_dirpaths <- .OnDiskLongTable_colidx2dirpath(dirpath, seq_len(ncol(df)))
+    col_dirpaths <- .OnDiskLongTable_old_colidx2dirpath(dirpath,
+                                                        seq_len(ncol(df)))
     breakpoints2 <- end(breakInChunks(nrow(df), blocksize))
     blockidx_offset <- length(breakpoints1)
     for (j in seq_len(ncol(df)))
@@ -205,14 +208,14 @@ setClass("OnDiskLongTable",
     ## Update 'breakpoints' vector.
     if (!is.null(batch_label))
         names(breakpoints2) <- rep.int(batch_label, length(breakpoints2))
-    nrow1 <- .OnDiskLongTable_get_nrow_from_breakpoints(breakpoints1)
+    nrow1 <- .OnDiskLongTable_old_get_nrow_from_breakpoints(breakpoints1)
     breakpoints <- c(breakpoints1, nrow1 + breakpoints2)
     .save_object(dirpath, "breakpoints", breakpoints, overwrite=TRUE)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### saveAsOnDiskLongTable() and saveRowidsForOnDiskLongTable()
+### saveAsOnDiskLongTable_old() and saveRowidsForOnDiskLongTable_old()
 ###
 
 .normarg_blocksize <- function(blocksize, totalsize)
@@ -232,13 +235,13 @@ setClass("OnDiskLongTable",
 
 ### Ignore the row names on 'df'. If 'df' is a DataFrame, 'metadata(df)' and
 ### 'mcols(df)' are also ignored.
-saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
-                                  batch_label=NULL, blocksize=NA,
-                                  compress=TRUE, compression_level)
+saveAsOnDiskLongTable_old <- function(df, dirpath=".", append=FALSE,
+                                      batch_label=NULL, blocksize=NA,
+                                      compress=TRUE, compression_level)
 {
     if (!is.data.frame(df) && !is(df, "DataFrame")) 
         stop(wmsg("'df' must be a data.frame or DataFrame object"))
-    .OnDiskLongTable_check_dirpath(dirpath)
+    .OnDiskLongTable_old_check_dirpath(dirpath)
     if (!isTRUEorFALSE(append))
         stop(wmsg("'append' must be TRUE or FALSE"))
     if (!(is.null(batch_label) ||
@@ -247,24 +250,24 @@ saveAsOnDiskLongTable <- function(df, dirpath=".", append=FALSE,
     blocksize <- .normarg_blocksize(blocksize, nrow(df))
 
     if (!append)
-        .write_zero_row_OnDiskLongTable(df, dirpath)
-    .append_batch_to_OnDiskLongTable(df, dirpath,
-                                     batch_label, blocksize,
+        .write_zero_row_OnDiskLongTable_old(df, dirpath)
+    .append_batch_to_OnDiskLongTable_old(df, dirpath,
+                                         batch_label, blocksize,
                                      compress, compression_level)
 }
 
-### After row ids are saved, data cannot be appended to the OnDiskLongTable
+### After row ids are saved, data cannot be appended to the OnDiskLongTable_old
 ### object.
-saveRowidsForOnDiskLongTable <- function(rowids, dirpath=".",
-                                         compress=TRUE, compression_level)
+saveRowidsForOnDiskLongTable_old <- function(rowids, dirpath=".",
+                                             compress=TRUE, compression_level)
 {
-    .OnDiskLongTable_check_rowids(rowids)
-    .OnDiskLongTable_check_dirpath(dirpath)
+    .OnDiskLongTable_old_check_rowids(rowids)
+    .OnDiskLongTable_old_check_dirpath(dirpath)
     breakpoints <- .load_object(dirpath, "breakpoints")
-    nrow <- .OnDiskLongTable_get_nrow_from_breakpoints(breakpoints)
+    nrow <- .OnDiskLongTable_old_get_nrow_from_breakpoints(breakpoints)
     if (length(rowids) != nrow)
         stop(wmsg("length of 'rowids' is incompatible ",
-                  "with the OnDiskLongTable object in ", dirpath))
+                  "with the OnDiskLongTable_old object in ", dirpath))
     .save_object(dirpath, "rowids", rowids,
                  compress, compression_level)
 }
@@ -274,17 +277,17 @@ saveRowidsForOnDiskLongTable <- function(rowids, dirpath=".",
 ### Constructor
 ###
 
-OnDiskLongTable <- function(dirpath=".")
+OnDiskLongTable_old <- function(dirpath=".")
 {
-    .OnDiskLongTable_check_dirpath(dirpath)
+    .OnDiskLongTable_old_check_dirpath(dirpath)
     ans_colnames <- .load_object(dirpath, "colnames")
     ans_breakpoints <- .load_object(dirpath, "breakpoints")
     ans_rowids_cache <- new.env(parent=emptyenv())
-    ans <- new("OnDiskLongTable", dirpath=dirpath,
-                                  colnames=ans_colnames,
-                                  breakpoints=ans_breakpoints,
-                                  .rowids_cache=ans_rowids_cache)
-    .OnDiskLongTable_check_breakpoints(ans_breakpoints)
+    ans <- new("OnDiskLongTable_old", dirpath=dirpath,
+                                      colnames=ans_colnames,
+                                      breakpoints=ans_breakpoints,
+                                      .rowids_cache=ans_rowids_cache)
+    .OnDiskLongTable_old_check_breakpoints(ans_breakpoints)
     ans
 }
 
@@ -295,11 +298,11 @@ OnDiskLongTable <- function(dirpath=".")
 
 setGeneric("breakpoints", function(x) standardGeneric("breakpoints"))
 
-setMethod("breakpoints", "OnDiskLongTable", function(x) x@breakpoints)
+setMethod("breakpoints", "OnDiskLongTable_old", function(x) x@breakpoints)
 
 setGeneric("blocksizes", function(x) standardGeneric("blocksizes"))
 
-setMethod("blocksizes", "OnDiskLongTable",
+setMethod("blocksizes", "OnDiskLongTable_old",
     function(x)
     {
         x_breakpoints <- breakpoints(x)
@@ -309,14 +312,14 @@ setMethod("blocksizes", "OnDiskLongTable",
     }
 )
 
-setMethod("nrow", "OnDiskLongTable",
-    function(x) .OnDiskLongTable_get_nrow_from_breakpoints(breakpoints(x))
+setMethod("nrow", "OnDiskLongTable_old",
+    function(x) .OnDiskLongTable_old_get_nrow_from_breakpoints(breakpoints(x))
 )
 
 setGeneric("rowids", function(x) standardGeneric("rowids"))
 
 ### Return NULL or an integer vector with no NAs or duplicated values.
-setMethod("rowids", "OnDiskLongTable",
+setMethod("rowids", "OnDiskLongTable_old",
     function(x)
     {
         objname <- "rowids"
@@ -336,29 +339,29 @@ setMethod("rowids", "OnDiskLongTable",
         ## 3. Load the row ids from disk.
         if (!identical(load(filepath, envir=x@.rowids_cache), objname))
             stop(wmsg(filepath, " does not seem to belong ",
-                      "to an OnDiskLongTable object"))
+                      "to an OnDiskLongTable_old object"))
         ans <- get(objname, envir=x@.rowids_cache, inherits=FALSE)
-        .OnDiskLongTable_check_rowids(ans)
+        .OnDiskLongTable_old_check_rowids(ans)
         if (length(ans) != nrow(x))
             stop(wmsg("length(rowids) != nrow(x)"))
         ans
     }
 )
 
-setMethod("colnames", "OnDiskLongTable",
+setMethod("colnames", "OnDiskLongTable_old",
     function(x, do.NULL=TRUE, prefix="col") x@colnames
 )
 
-setMethod("ncol", "OnDiskLongTable", function(x) length(colnames(x)))
+setMethod("ncol", "OnDiskLongTable_old", function(x) length(colnames(x)))
 
-setMethod("dim", "OnDiskLongTable", function(x) c(nrow(x), ncol(x)))
+setMethod("dim", "OnDiskLongTable_old", function(x) c(nrow(x), ncol(x)))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### "show" method
 ###
 
-setMethod("show", "OnDiskLongTable",
+setMethod("show", "OnDiskLongTable_old",
     function(object)
     {
         cat(class(object), " object with ",
@@ -371,14 +374,14 @@ setMethod("show", "OnDiskLongTable",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Get batches from OnDiskLongTable
+### Get batches from OnDiskLongTable_old
 ###
 
 .normarg_batch_labels <- function(batch_labels, x_batch_labels)
 {
     if (is.null(x_batch_labels))
         stop(wmsg("'x' has no batch labels (i.e. 'breakpoints(x)' has ",
-                  "no names): cannot use getBatchesFromOnDiskLongTable() ",
+                  "no names): cannot use getBatchesFromOnDiskLongTable_old() ",
                   "on it"))
     if (!is.character(batch_labels)
      || S4Vectors:::anyMissing(batch_labels)
@@ -417,13 +420,13 @@ setMethod("show", "OnDiskLongTable",
 ### batch_labels: character vector of batch labels.
 ### colidx: integer or character vector.
 ### Return a DataFrame (or data.frame).
-getBatchesFromOnDiskLongTable <- function(x, batch_labels, colidx,
-                                          with.batch_label=FALSE,
-                                          with.rowids=FALSE,
-                                          as.data.frame=FALSE)
+getBatchesFromOnDiskLongTable_old <- function(x, batch_labels, colidx,
+                                              with.batch_label=FALSE,
+                                              with.rowids=FALSE,
+                                              as.data.frame=FALSE)
 {
-    if (!is(x, "OnDiskLongTable"))
-        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    if (!is(x, "OnDiskLongTable_old"))
+        stop(wmsg("'x' must be an OnDiskLongTable_old object"))
     x_blocksizes <- blocksizes(x)
     x_batch_labels <- names(x_blocksizes)
     batch_labels <- .normarg_batch_labels(batch_labels, x_batch_labels)
@@ -470,7 +473,7 @@ getBatchesFromOnDiskLongTable <- function(x, batch_labels, colidx,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### getRowsByIndexFromOnDiskLongTable()
+### getRowsByIndexFromOnDiskLongTable_old()
 ###
 
 .normarg_rowidx <- function(rowidx, x)
@@ -528,12 +531,12 @@ getBatchesFromOnDiskLongTable <- function(x, batch_labels, colidx,
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowidx'.
 ### Note that we do NOT set the row names to 'rowidx' on the returned DataFrame
 ### because we want to support duplicates in 'rowidx'.
-getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
-                                              with.batch_label=FALSE,
-                                              as.data.frame=FALSE)
+getRowsByIndexFromOnDiskLongTable_old <- function(x, rowidx, colidx,
+                                                  with.batch_label=FALSE,
+                                                  as.data.frame=FALSE)
 {
-    if (!is(x, "OnDiskLongTable"))
-        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    if (!is(x, "OnDiskLongTable_old"))
+        stop(wmsg("'x' must be an OnDiskLongTable_old object"))
     rowidx <- .normarg_rowidx(rowidx, x)
     x_breakpoints <- breakpoints(x)
     rowkeys <- .rowidx2rowkeys(x_breakpoints, rowidx)
@@ -561,7 +564,7 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### getRowsByIdFromOnDiskLongTable()
+### getRowsByIdFromOnDiskLongTable_old()
 ###
 
 .rowids2rowidx <- function(x, rowids)
@@ -569,7 +572,7 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
     x_rowids <- rowids(x)
     if (is.null(x_rowids))
         stop(wmsg("'x' has no row ids: cannot use ",
-                  "getRowsByIdFromOnDiskLongTable() on it"))
+                  "getRowsByIdFromOnDiskLongTable_old() on it"))
     if (!is.integer(rowids) || S4Vectors:::anyMissing(rowids))
         stop(wmsg("'rowids' must be an integer vector with no NAs"))
     rowidx <- match(rowids, x_rowids)
@@ -583,15 +586,15 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowids'.
 ### Note that we do NOT set the row names to 'rowids' on the returned DataFrame
 ### because we want to support duplicates in 'rowids'.
-getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx,
-                                           with.batch_label=FALSE,
-                                           as.data.frame=FALSE)
+getRowsByIdFromOnDiskLongTable_old <- function(x, rowids, colidx,
+                                               with.batch_label=FALSE,
+                                               as.data.frame=FALSE)
 {
-    if (!is(x, "OnDiskLongTable"))
-        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    if (!is(x, "OnDiskLongTable_old"))
+        stop(wmsg("'x' must be an OnDiskLongTable_old object"))
     rowidx <- .rowids2rowidx(x, rowids)
-    getRowsByIndexFromOnDiskLongTable(x, rowidx, colidx,
-                                      with.batch_label=with.batch_label,
-                                      as.data.frame=as.data.frame)
+    getRowsByIndexFromOnDiskLongTable_old(x, rowidx, colidx,
+                                          with.batch_label=with.batch_label,
+                                          as.data.frame=as.data.frame)
 }
 
