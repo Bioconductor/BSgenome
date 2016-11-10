@@ -191,7 +191,9 @@ setMethod("seqinfo", "BSgenome",
 ### only supports replacement of the sequence names, i.e., except for their
 ### sequence names, Seqinfo objects 'value' and 'seqinfo(x)' must be identical.
 setReplaceMethod("seqinfo", "BSgenome",
-    function(x, new2old=NULL, force=FALSE, value)
+    function(x, new2old=NULL, force=FALSE,
+             pruning.mode=c("error", "coarse", "fine", "tidy"),
+             value)
     {
         if (!is(value, "Seqinfo"))
             stop("the supplied 'seqinfo' must be a Seqinfo object")
@@ -199,6 +201,9 @@ setReplaceMethod("seqinfo", "BSgenome",
                                   "of a BSgenome object")
         if (!identical(force, FALSE))
             stop("'force' not supported ", IN_THIS_CONTEXT)
+        pruning.mode <- match.arg(pruning.mode)
+        if (pruning.mode != "error")
+            stop("'pruning.mode' not supported ", IN_THIS_CONTEXT)
         x_seqinfo <- seqinfo(x)
         if (is.null(new2old)) {
             ## Support no-op seqinfo(x) <- seqinfo(x).

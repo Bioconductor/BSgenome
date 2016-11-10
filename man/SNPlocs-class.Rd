@@ -250,7 +250,7 @@ snpsByOverlaps(snps, "ch22:33.63e6-33.64e6")
 library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 my_cds <- cds(txdb)
-seqlevels(my_cds, force=TRUE) <- c("chr22", "chrMT")
+seqlevels(my_cds, pruning.mode="coarse") <- c("chr22", "chrMT")
 seqlevelsStyle(my_cds)  # UCSC
 seqlevelsStyle(snps)  # dbSNP
 seqlevelsStyle(my_cds) <- seqlevelsStyle(snps)

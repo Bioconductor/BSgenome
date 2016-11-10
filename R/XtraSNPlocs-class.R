@@ -338,8 +338,8 @@ setMethod("snpsByOverlaps", "XtraSNPlocs",
         ## are based on the same reference genome (merge() will raise an error
         ## if they are not).
         merge(seqinfo(x), seqinfo(ranges))
-        seqlevels(ranges, force=TRUE) <- intersect(seqlevels(x),
-                                                   seqlevelsInUse(ranges))
+        seqlevels(ranges, pruning.mode="coarse") <-
+            intersect(seqlevels(x), seqlevelsInUse(ranges))
         if (!isTRUEorFALSE(as.DataFrame))
             stop(wmsg("'as.DataFrame' must be TRUE or FALSE"))
         snps_by_seqname <- snpsBySeqname(x, seqlevels(ranges),

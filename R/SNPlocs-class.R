@@ -526,8 +526,8 @@ normarg_ranges <- function(ranges)
     ## are based on the same reference genome (merge() will raise an error
     ## if they are not).
     merge(seqinfo(x), seqinfo(ranges))
-    seqlevels(ranges, force=TRUE) <- intersect(seqlevels(x),
-                                               seqlevelsInUse(ranges))
+    seqlevels(ranges, pruning.mode="coarse") <-
+        intersect(seqlevels(x), seqlevelsInUse(ranges))
     snps_by_seqname <- .SNPlocs_snpsBySeqname(x, seqlevels(ranges),
                                               drop.rs.prefix=drop.rs.prefix)
     subsetByOverlaps(snps_by_seqname, ranges,
