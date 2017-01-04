@@ -19,6 +19,7 @@ import(rtracklayer)
 
 exportClasses(
     OnDiskLongTable_old,
+    GRangesORNULL, OnDiskLongTable,
     SNPlocs,
     InjectSNPsHandler,
     XtraSNPlocs,
@@ -52,7 +53,7 @@ exportMethods(
     ## Methods for generics defined in the base package:
     length, names,
     nrow, ncol, dim,
-    colnames,
+    colnames, dimnames,
     as.character, as.list, as.data.frame,
     "[[", "$", unlist,
     nchar,
@@ -100,6 +101,12 @@ export(
     getBatchesFromOnDiskLongTable_old,
     getRowsByIndexFromOnDiskLongTable_old, getRowsByIdFromOnDiskLongTable_old,
 
+    ## OnDiskLongTable-class.R:
+    OnDiskLongTable, writeOnDiskLongTable, writeOnDiskLongTableRowids,
+    getRowsByIndexFromOnDiskLongTable,
+    getRowsByIdFromOnDiskLongTable,
+    getBatchesByOverlapsFromOnDiskLongTable,
+
     ## SNPlocs-class.R:
     newSNPlocs,
 
@@ -140,6 +147,9 @@ export(
     ## OnDiskLongTable_old-class.R:
     breakpoints, blocksizes, rowids,
 
+    ## OnDiskLongTable_old-class.R:
+    batchsizes,
+
     ## SNPlocs-class.R:
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
@@ -167,6 +177,7 @@ export(
 ### Exactly the same list as above.
 exportMethods(
     breakpoints, blocksizes, rowids,
+    batchsizes,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
