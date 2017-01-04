@@ -122,8 +122,8 @@ setClass("XtraSNPlocs",
         ## Official release name of the SNPs (e.g. "dbSNP Human BUILD 141").
         release_name="character",
 
-        ## URL to the place where the original SNP data was downloaded.
-        download_url="character",
+        ## URL to the place where the original SNP data was downloaded from.
+        data_source_url="character",
 
         ## Date the original SNP data was downloaded.
         download_date="character",
@@ -180,12 +180,16 @@ setMethod("seqnames", "XtraSNPlocs", function(x) seqnames(referenceGenome(x)))
 ###
 
 ### Not intended to be used directly.
+### 'download_url' argument is for backward compatibility with SNPlocs
+### packages < 0.99.12.
 newXtraSNPlocs <- function(pkgname, snp_data_dirpath,
                            provider, provider_version,
                            release_date, release_name,
-                           download_url, download_date,
-                           reference_genome)
+                           data_source_url, download_date,
+                           reference_genome, download_url="")
 {
+    if (missing(data_source_url))
+        data_source_url <- download_url
     snp_data <- OnDiskLongTable_old(snp_data_dirpath)
     stopifnot(identical(colnames(snp_data), .XTRASNPLOCS_PHYSICAL_COLUMNS))
 
@@ -196,7 +200,7 @@ newXtraSNPlocs <- function(pkgname, snp_data_dirpath,
         provider_version=provider_version,
         release_date=release_date,
         release_name=release_name,
-        download_url=download_url,
+        data_source_url=data_source_url,
         download_date=download_date,
         reference_genome=reference_genome)
 }

@@ -7,10 +7,7 @@ setClass("SNPlocs",
         ## provider of the SNPs (e.g. "dbSNP")
         provider="character",
 
-        ## creation date (in compact format) of the flat files found at
-        ## download_url (look at 2nd line of each file e.g.
-        ## CREATED ON: 2012-06-08 14:53, and use the most recent date in
-        ## case of mixed dates, e.g. "20120608")
+        ## e.g. "dbSNP Human BUILD 149"
         provider_version="character",
 
         ## official release date of the SNPs (e.g. "Nov 9, 2010")
@@ -19,8 +16,8 @@ setClass("SNPlocs",
         ## official release name of the SNPs (e.g. "Build 132")
         release_name="character",
 
-        ## URL to the place where the original SNP data was downloaded
-        download_url="character",
+        ## URL to the place where the original SNP data was downloaded from
+        data_source_url="character",
 
         ## date the original SNP data was downloaded
         download_date="character",
@@ -83,12 +80,16 @@ setMethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
 ###
 
 ### Not intended to be used directly.
+### 'download_url' argument is for backward compatibility with SNPlocs
+### packages < 0.99.12.
 newSNPlocs <- function(provider, provider_version,
                        release_date, release_name,
-                       download_url, download_date,
+                       data_source_url, download_date,
                        reference_genome, compatible_genomes,
-                       data_pkgname, data_dirpath)
+                       data_pkgname, data_dirpath, download_url="")
 {
+    if (missing(data_source_url))
+        data_source_url <- download_url
     data_serialized_objnames <- c(
         "SNPcount",
         "all_rsids",
@@ -99,7 +100,7 @@ newSNPlocs <- function(provider, provider_version,
         provider_version=provider_version,
         release_date=release_date,
         release_name=release_name,
-        download_url=download_url,
+        data_source_url=data_source_url,
         download_date=download_date,
         reference_genome=reference_genome,
         compatible_genomes=compatible_genomes,
