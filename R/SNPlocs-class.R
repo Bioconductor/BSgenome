@@ -17,7 +17,7 @@ setClass("SNPlocs",
         release_name="character",
 
         ## URL to the place where the original SNP data was downloaded from
-        data_source_url="character",
+        source_data_url="character",
 
         ## date the original SNP data was downloaded
         download_date="character",
@@ -84,12 +84,12 @@ setMethod("seqnames", "SNPlocs", function(x) seqnames(referenceGenome(x)))
 ### packages < 0.99.12.
 newSNPlocs <- function(provider, provider_version,
                        release_date, release_name,
-                       data_source_url, download_date,
+                       source_data_url, download_date,
                        reference_genome, compatible_genomes,
                        data_pkgname, data_dirpath, download_url="")
 {
-    if (missing(data_source_url))
-        data_source_url <- download_url
+    if (missing(source_data_url))
+        source_data_url <- download_url
     data_serialized_objnames <- c(
         "SNPcount",
         "all_rsids",
@@ -100,7 +100,7 @@ newSNPlocs <- function(provider, provider_version,
         provider_version=provider_version,
         release_date=release_date,
         release_name=release_name,
-        data_source_url=data_source_url,
+        source_data_url=source_data_url,
         download_date=download_date,
         reference_genome=reference_genome,
         compatible_genomes=compatible_genomes,
