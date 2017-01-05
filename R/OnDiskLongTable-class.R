@@ -682,7 +682,7 @@ getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx,
 ### ranges: GenomicRanges object.
 ### colidx: integer or character vector.
 getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
-                                                    maxgap=0L, minoverlap=0L,
+                                                    maxgap=0L, minoverlap=1L,
                                                     colidx,
                                                     with.rowids=FALSE,
                                                     as.data.frame=FALSE)
