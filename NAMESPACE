@@ -20,7 +20,7 @@ import(rtracklayer)
 exportClasses(
     OnDiskLongTable_old,
     GRangesORNULL, OnDiskLongTable,
-    SNPlocs,
+    SNPlocs, SNPlocs_old,
     InjectSNPsHandler,
     XtraSNPlocs,
     BSgenome, MaskedBSgenome,
@@ -107,7 +107,7 @@ export(
     getRowsByIdFromOnDiskLongTable,
     getBatchesByOverlapsFromOnDiskLongTable,
 
-    ## SNPlocs-class.R:
+    ## SNPlocs_old-class.R:
     newSNPlocs,
 
     ## XtraSNPlocs-class.R:
@@ -154,12 +154,10 @@ export(
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
+    snpsBySeqname, snpsByOverlaps, snpsById,
 
     ## InjectSNPsHandler-class.R:
     SNPlocs_pkgname,
-
-    ## XtraSNPlocs-class.R:
-    snpsBySeqname, snpsByOverlaps, snpsById,
 
     ## BSgenome-class.R:
     sourceUrl,
@@ -182,8 +180,8 @@ exportMethods(
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,
     snpsBySeqname, snpsByOverlaps, snpsById,
-    sourceUrl,
     SNPlocs_pkgname,
+    sourceUrl,
     mseqnames,
     masknames,
     injectSNPs,
