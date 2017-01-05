@@ -718,7 +718,7 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
     if (with.rowids) {
         x_rowids <- rowids(x)
         if (!is.null(x_rowids)) {
-            rowidx <- as.integer(successiveIRanges(x_batchsizes)[blockidx])
+            rowidx <- as.integer(successiveIRanges(x_batchsizes)[batchidx])
             ans_rowids <- x_rowids[rowidx]
         }
     }
