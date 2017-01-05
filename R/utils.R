@@ -14,3 +14,16 @@ get_data_annotation_contrib_url <- function(type=getOption("pkgType"))
     contrib.url(BiocInstaller::biocinstallRepos()["BioCann"], type=type)
 }
 
+### TODO: Move this to GenomeInfoDb.
+read_seqinfo_table <- function(filepath, genome=NA)
+{
+    df <- read.table(filepath, stringsAsFactors=FALSE)
+    seqnames <- df[[1L]]
+    Seqinfo(
+        seqnames=seqnames,
+        seqlengths=df[[2L]],
+        isCircular=df[[3L]],
+        genome=genome
+    )
+}
+
