@@ -419,11 +419,14 @@ OnDiskLongTable <- function(dirpath=".")
 ### Basic getters (from the matrix/data.frame API)
 ###
 
-setMethod("nrow", "OnDiskLongTable",
-    function(x) .get_OnDiskLongTable_nrow_from_breakpoints(x@breakpoints)
+setMethod("dim", "OnDiskLongTable",
+    function(x)
+    {
+        nrow <- .get_OnDiskLongTable_nrow_from_breakpoints(x@breakpoints)
+        ncol <- length(x@header)
+        c(nrow, ncol)
+    }
 )
-
-setMethod("dim", "OnDiskLongTable", function(x) c(nrow(x), length(x@header)))
 
 setMethod("dimnames", "OnDiskLongTable",
     function(x) list(NULL, names(x@header))
