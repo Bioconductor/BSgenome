@@ -147,8 +147,8 @@ export(
     ## OnDiskLongTable_old-class.R:
     breakpoints, blocksizes, rowids,
 
-    ## OnDiskLongTable_old-class.R:
-    batchsizes,
+    ## OnDiskLongTable-class.R:
+    batchsizes, spatialIndex,
 
     ## SNPlocs-class.R:
     referenceGenome, compatibleGenomes,
@@ -177,7 +177,7 @@ export(
 ### Exactly the same list as above.
 exportMethods(
     breakpoints, blocksizes, rowids,
-    batchsizes,
+    batchsizes, spatialIndex,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpid2loc, snpid2alleles, snpid2grange,

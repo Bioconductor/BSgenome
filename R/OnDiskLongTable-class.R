@@ -470,6 +470,10 @@ setMethod("batchsizes", "OnDiskLongTable",
     }
 )
 
+setGeneric("spatialIndex", function(x) standardGeneric("spatialIndex"))
+
+setMethod("spatialIndex", "OnDiskLongTable", function(x) x@spatial_index)
+
 ### Generic defined in OnDiskLongTable_old-class.R
 #setGeneric("rowids", function(x) standardGeneric("rowids"))
 
@@ -690,10 +694,10 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
         stop(wmsg("'with.rowids' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(as.data.frame))
         stop(wmsg("'as.data.frame' must be TRUE or FALSE"))
-    spatial_index <- x@spatial_index
-    if (is.null(spatial_index))
+    x_spatial_index <- spatialIndex(x)
+    if (is.null(x_spatial_index))
         stop(wmsg("'x' has no spatial_index"))
-    hits <- findOverlaps(ranges, spatial_index,
+    hits <- findOverlaps(ranges, x_spatial_index,
                          maxgap=maxgap, minoverlap=minoverlap)
     batchidx <- sort(unique(subjectHits(hits)))
     names(colidx) <- colnames(x)[colidx]
@@ -702,7 +706,8 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
     )
     x_batchsizes <- batchsizes(x)
     ans_batchsizes <- x_batchsizes[batchidx]
-    ans_seqnames <- rep.int(seqnames(spatial_index)[batchidx], ans_batchsizes)
+    ans_seqnames <- rep.int(seqnames(x_spatial_index)[batchidx],
+                            ans_batchsizes)
     ans_rowids <- NULL
     if (with.rowids) {
         x_rowids <- rowids(x)
