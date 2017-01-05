@@ -5,9 +5,9 @@
 \alias{SNPlocs-class}
 \alias{SNPlocs}
 
-\alias{class:SNPlocs_old}
-\alias{SNPlocs_old-class}
-\alias{SNPlocs_old}
+\alias{class:OldFashionSNPlocs}
+\alias{OldFashionSNPlocs-class}
+\alias{OldFashionSNPlocs}
 
 % accessors
 \alias{provider,SNPlocs-method}
@@ -32,30 +32,30 @@
 % SNP extractors
 \alias{snpcount}
 \alias{snpcount,SNPlocs-method}
-\alias{snpcount,SNPlocs_old-method}
+\alias{snpcount,OldFashionSNPlocs-method}
 \alias{snpsBySeqname}
 \alias{snpsBySeqname,SNPlocs-method}
-\alias{snpsBySeqname,SNPlocs_old-method}
+\alias{snpsBySeqname,OldFashionSNPlocs-method}
 \alias{snpsByOverlaps}
 \alias{snpsByOverlaps,SNPlocs-method}
-\alias{snpsByOverlaps,SNPlocs_old-method}
+\alias{snpsByOverlaps,OldFashionSNPlocs-method}
 \alias{snpsById}
 \alias{snpsById,SNPlocs-method}
-\alias{snpsById,SNPlocs_old-method}
+\alias{snpsById,OldFashionSNPlocs-method}
 
 % OLD API
 \alias{snplocs}
 \alias{snplocs,SNPlocs-method}
-\alias{snplocs,SNPlocs_old-method}
+\alias{snplocs,OldFashionSNPlocs-method}
 \alias{snpid2loc}
 \alias{snpid2loc,SNPlocs-method}
-\alias{snpid2loc,SNPlocs_old-method}
+\alias{snpid2loc,OldFashionSNPlocs-method}
 \alias{snpid2alleles}
 \alias{snpid2alleles,SNPlocs-method}
-\alias{snpid2alleles,SNPlocs_old-method}
+\alias{snpid2alleles,OldFashionSNPlocs-method}
 \alias{snpid2grange}
 \alias{snpid2grange,SNPlocs-method}
-\alias{snpid2grange,SNPlocs_old-method}
+\alias{snpid2grange,OldFashionSNPlocs-method}
 
 \title{SNPlocs objects}
 

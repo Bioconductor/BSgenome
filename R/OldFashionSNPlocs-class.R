@@ -1,9 +1,9 @@
 ### =========================================================================
-### SNPlocs_old objects
+### OldFashionSNPlocs objects
 ### -------------------------------------------------------------------------
 
 
-setClass("SNPlocs_old",
+setClass("OldFashionSNPlocs",
     contains="SNPlocs",
     representation(
         ## Absolute path to local directory where to find the serialized
@@ -37,7 +37,7 @@ newSNPlocs <- function(provider, provider_version,
         "all_rsids",
         paste(seqlevels(reference_genome), "_snplocs", sep="")
     )
-    new("SNPlocs_old",
+    new("OldFashionSNPlocs",
         provider=provider,
         provider_version=provider_version,
         release_date=release_date,
@@ -97,7 +97,7 @@ newSNPlocs <- function(provider, provider_version,
     ans
 }
 
-setMethod("snpcount", "SNPlocs_old",
+setMethod("snpcount", "OldFashionSNPlocs",
     function(x)
     {
         objname <- "SNPcount"
@@ -198,7 +198,7 @@ setMethod("snpcount", "SNPlocs_old",
 
 ### Returns a data frame (when 'as.GRanges=FALSE') or a GRanges object
 ### (when 'as.GRanges=TRUE').
-setMethod("snplocs", "SNPlocs_old",
+setMethod("snplocs", "OldFashionSNPlocs",
     function(x, seqname, as.GRanges=FALSE, caching=TRUE)
     {
         if (!is.character(seqname) || any(is.na(seqname)))
@@ -259,7 +259,7 @@ setMethod("snplocs", "SNPlocs_old",
     rowidx
 }
 
-setMethod("snpid2loc", "SNPlocs_old",
+setMethod("snpid2loc", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
         snpid <- normarg_snpid(snpid)
@@ -282,7 +282,7 @@ setMethod("snpid2loc", "SNPlocs_old",
     }
 )
 
-setMethod("snpid2alleles", "SNPlocs_old",
+setMethod("snpid2alleles", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
         snpid <- normarg_snpid(snpid)
@@ -306,7 +306,7 @@ setMethod("snpid2alleles", "SNPlocs_old",
     }
 )
 
-setMethod("snpid2grange", "SNPlocs_old",
+setMethod("snpid2grange", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
         snpid <- normarg_snpid(snpid)
@@ -336,7 +336,7 @@ setMethod("snpid2grange", "SNPlocs_old",
     as(gr, "GPos")
 }
 
-.snpsBySeqname_SNPlocs_old <- function(x, seqnames, drop.rs.prefix=FALSE)
+.snpsBySeqname_OldFashionSNPlocs <- function(x, seqnames, drop.rs.prefix=FALSE)
 {
     if (!is.character(seqnames)
      || any(is.na(seqnames))
@@ -351,11 +351,14 @@ setMethod("snpid2grange", "SNPlocs_old",
     .get_GPos_by_seqname_from_SNPlocs(x, seqnames, drop.rs.prefix)
 }
 
-setMethod("snpsBySeqname", "SNPlocs_old", .snpsBySeqname_SNPlocs_old)
+setMethod("snpsBySeqname", "OldFashionSNPlocs",
+    .snpsBySeqname_OldFashionSNPlocs
+)
 
-.snpsByOverlaps_SNPlocs_old <- function(x, ranges, maxgap=0L, minoverlap=0L,
-             type=c("any", "start", "end", "within", "equal"),
-             drop.rs.prefix=FALSE, ...)
+.snpsByOverlaps_OldFashionSNPlocs <- function(x, ranges,
+                maxgap=0L, minoverlap=0L,
+                type=c("any", "start", "end", "within", "equal"),
+                drop.rs.prefix=FALSE, ...)
 {
     ranges <- normarg_ranges(ranges)
     ## The only purpose of the line below is to check that 'x' and 'ranges'
@@ -364,17 +367,20 @@ setMethod("snpsBySeqname", "SNPlocs_old", .snpsBySeqname_SNPlocs_old)
     merge(seqinfo(x), seqinfo(ranges))
     seqlevels(ranges, pruning.mode="coarse") <-
         intersect(seqlevels(x), seqlevelsInUse(ranges))
-    snps_by_seqname <- .snpsBySeqname_SNPlocs_old(x, seqlevels(ranges),
-                                                  drop.rs.prefix=drop.rs.prefix)
+    snps_by_seqname <- .snpsBySeqname_OldFashionSNPlocs(x,
+                                      seqlevels(ranges),
+                                      drop.rs.prefix=drop.rs.prefix)
     subsetByOverlaps(snps_by_seqname, ranges,
                      maxgap=maxgap, minoverlap=minoverlap,
                      type=type, ...)
 }
 
-setMethod("snpsByOverlaps", "SNPlocs_old", .snpsByOverlaps_SNPlocs_old)
+setMethod("snpsByOverlaps", "OldFashionSNPlocs",
+    .snpsByOverlaps_OldFashionSNPlocs
+)
 
-.snpsById_SNPlocs_old <- function(x, ids,
-                                  ifnotfound=c("error", "warning", "drop"))
+.snpsById_OldFashionSNPlocs <- function(x, ids,
+                                 ifnotfound=c("error", "warning", "drop"))
 {
     user_rowids <- ids2rowids(ids)
     ifnotfound <- match.arg(ifnotfound)
@@ -385,5 +391,5 @@ setMethod("snpsByOverlaps", "SNPlocs_old", .snpsByOverlaps_SNPlocs_old)
     as(gr, "GPos")
 }
 
-setMethod("snpsById", "SNPlocs_old", .snpsById_SNPlocs_old)
+setMethod("snpsById", "OldFashionSNPlocs", .snpsById_OldFashionSNPlocs)
 

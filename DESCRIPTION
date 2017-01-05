@@ -34,7 +34,7 @@ Collate: utils.R
 	OnDiskLongTable-class.R
 	OnDiskNamedSequences-class.R
 	SNPlocs-class.R
-	SNPlocs_old-class.R
+	OldFashionSNPlocs-class.R
 	InjectSNPsHandler-class.R
 	XtraSNPlocs-class.R
 	BSgenome-class.R
