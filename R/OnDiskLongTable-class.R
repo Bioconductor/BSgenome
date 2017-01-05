@@ -298,7 +298,13 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
 
     if (!is.null(spatial_index)) {
         ## Update 'spatial_index'.
-        spatial_index <- c(spatial_index0, spatial_index)
+        ## We use suppressWarnings() to avoid the "The 2 combined objects have
+        ## no sequence levels in common" warning that would typically happen
+        ## when writeOnDiskLongTable() is used in a loop to append data from
+        ## different chromosomes (unless at each iteration the user is
+        ## cautiously building and passing a 'spatial_index' with seqlevels
+        ## set to all the chromosomes).
+        spatial_index <- suppressWarnings(c(spatial_index0, spatial_index))
         .write_object(spatial_index, dirpath, "spatial_index", overwrite=TRUE)
     }
 }
