@@ -41,8 +41,9 @@ setClass("OnDiskLongTable",
         .rowids_cache="environment"
     ),
     prototype(
-        dirpath="."
-        #bybatch=FALSE
+        dirpath=NA_character_,
+        #bybatch=FALSE,
+        header=setNames(list(), character(0))
     )
 )
 
@@ -59,8 +60,12 @@ setClass("OnDiskLongTable",
 
 .valid_OnDiskLongTable_dirpath <- function(dirpath)
 {
-    if (!isSingleString(dirpath) || dirpath == "")
-        return(wmsg("'dirpath' must be a single (non-empty) string"))
+    if (!is.character(dirpath) || length(dirpath) != 1L)
+        return(wmsg("'dirpath' must be a single string"))
+    if (is.na(dirpath))
+        return(NULL)
+    if (dirpath == "")
+        return(wmsg("'dirpath' must be a non-empty string"))
     if (!dir.exists(dirpath))
         return(wmsg("directory not found: ", dirpath))
     NULL
@@ -125,6 +130,8 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
     errmsg <- .valid_OnDiskLongTable_dirpath(dirpath)
     if (!is.null(errmsg))
         stop(errmsg)
+    if (is.na(dirpath))
+        stop("'dirpath' must be a single string")
 }
 
 .check_OnDiskLongTable_rowids <- function(rowids)
@@ -218,16 +225,16 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
 {
     ## Remove stuff.
     .remove_file(dirpath, "rowids.rds")
-    col_dirpaths <- file.path(dirpath, .col_physname(seq_len(ncol(df))))
-    .remove_dirs(col_dirpaths)
+    colpaths <- file.path(dirpath, .col_physname(seq_len(ncol(df))))
+    .remove_dirs(colpaths)
 
     ## Create stuff.
     header <- df[0, , drop=FALSE]
     .write_object(header, dirpath, "header", overwrite=TRUE)
     for (c in seq_len(ncol(df))) {
-        col_dirpath <- col_dirpaths[[c]]
-        if (!dir.create(col_dirpath, showWarnings=TRUE, mode="0775"))
-            stop(wmsg("failed to create directory: ", col_dirpath))
+        colpath <- colpaths[[c]]
+        if (!dir.create(colpath, showWarnings=TRUE, mode="0775"))
+            stop(wmsg("failed to create directory: ", colpath))
     }
     .write_object(integer(0), dirpath, "breakpoints", overwrite=TRUE)
     if (!is.null(spatial_index)) {
@@ -274,7 +281,7 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
     breakpoints0 <- .read_object(dirpath, "breakpoints")
 
     ## Append 'df' columns.
-    col_dirpaths <- file.path(dirpath, .col_physname(seq_len(ncol(df))))
+    colpaths <- file.path(dirpath, .col_physname(seq_len(ncol(df))))
     if (is.null(spatial_index)) {
         breakpoints <- end(breakInChunks(nrow(df), batchsize))
     } else {
@@ -283,9 +290,9 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
     }
     b_offset <- length(breakpoints0)
     for (c in seq_len(ncol(df))) {
-        col_dirpath <- col_dirpaths[[c]]
-        if (!dir.exists(col_dirpath))
-            stop(wmsg("directory not found: ", col_dirpath))
+        colpath <- colpaths[[c]]
+        if (!dir.exists(colpath))
+            stop(wmsg("directory not found: ", colpath))
         .write_OnDiskLongTable_column(df[[c]], dirpath,
                                       breakpoints, b_offset, c,
                                       compress=compress)
@@ -495,16 +502,16 @@ setMethod("rowids", "OnDiskLongTable",
         if (!inherits(ans, "try-error"))
             return(ans)
 
-        filepath <- .make_filepath(x@dirpath, objname)
-        if (file.exists(filepath)) {
-            ## 2.a. Load the row ids from disk.
-            ans <- readRDS(filepath)
-            .check_OnDiskLongTable_rowids(ans)
-            if (length(ans) != nrow(x))
-                stop(wmsg("length(rowids) != nrow(x)"))
-        } else {
-            ## 2.b. No row ids.
-            ans <- NULL
+        ## 2. Try to get the row ids from disk.
+        ans <- NULL
+        if (!is.na(x@dirpath)) {
+            filepath <- .make_filepath(x@dirpath, objname)
+            if (file.exists(filepath)) {
+                ans <- readRDS(filepath)
+                .check_OnDiskLongTable_rowids(ans)
+                if (length(ans) != nrow(x))
+                    stop(wmsg("length(rowids) != nrow(x)"))
+            }
         }
 
         ## 3. Cache the row ids.
@@ -702,7 +709,8 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
         stop(wmsg("'as.data.frame' must be TRUE or FALSE"))
     x_spatial_index <- spatialIndex(x)
     if (is.null(x_spatial_index))
-        stop(wmsg("'x' has no spatial_index"))
+        stop(wmsg("'x' has no spatial index: cannot use ",
+                  "getBatchesByOverlapsFromOnDiskLongTable() on it"))
     hits <- findOverlaps(ranges, x_spatial_index,
                          maxgap=maxgap, minoverlap=minoverlap)
     batchidx <- sort(unique(subjectHits(hits)))
