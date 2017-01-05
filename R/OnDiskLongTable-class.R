@@ -482,20 +482,20 @@ setMethod("rowids", "OnDiskLongTable",
         if (!inherits(ans, "try-error"))
             return(ans)
 
-        ## 2. Try to find them on disk.
-        filename <- paste0(objname, ".rds")
-        filepath <- file.path(x@dirpath, filename)
-        if (!file.exists(filepath))
-            return((assign(objname, NULL, envir=x@.rowids_cache)))
+        filepath <- .make_filepath(x@dirpath, objname)
+        if (file.exists(filepath)) {
+            ## 2.a. Load the row ids from disk.
+            ans <- readRDS(filepath)
+            .check_OnDiskLongTable_rowids(ans)
+            if (length(ans) != nrow(x))
+                stop(wmsg("length(rowids) != nrow(x)"))
+        } else {
+            ## 2.b. No row ids.
+            ans <- NULL
+        }
 
-        ## 3. Load the row ids from disk.
-        if (!identical(load(filepath, envir=x@.rowids_cache), objname))
-            stop(wmsg(filepath, " does not seem to belong ",
-                      "to an OnDiskLongTable object"))
-        ans <- get(objname, envir=x@.rowids_cache, inherits=FALSE)
-        .check_OnDiskLongTable_rowids(ans)
-        if (length(ans) != nrow(x))
-            stop(wmsg("length(rowids) != nrow(x)"))
+        ## 3. Cache the row ids.
+        assign(objname, ans, envir=x@.rowids_cache)
         ans
     }
 )
