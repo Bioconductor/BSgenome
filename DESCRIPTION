@@ -2,7 +2,7 @@ Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages and support
 	for efficient SNP representation
 Description: Infrastructure shared by all the Biostrings-based genome data
-             packages
+	packages
 Version: 1.43.1
 Encoding: UTF-8
 Author: Hervé Pagès
@@ -34,6 +34,7 @@ Collate: utils.R
 	OnDiskLongTable-class.R
 	OnDiskNamedSequences-class.R
 	SNPlocs-class.R
+	ODLT_SNPlocs-class.R
 	OldFashionSNPlocs-class.R
 	InjectSNPsHandler-class.R
 	XtraSNPlocs-class.R

@@ -98,63 +98,7 @@ setGeneric("snpcount", function(x) standardGeneric("snpcount"))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### OLD API: snplocs(), snpid2loc(), snpid2alleles(), and snpid2grange()
-###
-
-setGeneric("snplocs", signature="x",
-    function(x, seqname, ...) standardGeneric("snplocs")
-)
-
-normarg_snpid <- function(snpid)
-{
-    if (!is.vector(snpid))
-        stop("'snpid' must be an integer or character vector")
-    if (S4Vectors:::anyMissing(snpid))
-        stop("'snpid' cannot contain NAs")
-    if (is.numeric(snpid)) {
-        if (!is.integer(snpid))
-            snpid <- as.integer(snpid)
-        return(snpid)
-    }
-    if (!is.character(snpid))
-        stop("'snpid' must be an integer or character vector")
-    prefixes <- unique(substr(snpid, 1L, 2L))
-    if ("rs" %in% prefixes) {
-        if (!setequal(prefixes, "rs"))
-            stop("'snpid' cannot mix ids that are prefixed with \"rs\" ",
-                 "with ids that are not")
-        ## Drop the "rs" prefix.
-        snpid <- substr(snpid, 3, nchar(snpid))
-    }
-    snpid <- suppressWarnings(as.integer(snpid))
-    if (S4Vectors:::anyMissing(snpid))
-        stop("cannot extract the digital part of some ids in 'snpid'")
-    snpid
-}
-
-### Returns a named integer vector where each (name, value) pair corresponds
-### to a supplied SNP id (typically an rs id). The name is the chromosome of
-### the SNP id and the value is its position on the chromosome.
-setGeneric("snpid2loc", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2loc")
-)
-
-### Returns a named character vector where each (name, value) pair corresponds
-### to a supplied SNP id (typically an rs id). The name is the chromosome of
-### the SNP id and the value is a single IUPAC code representing the associated
-### alleles.
-setGeneric("snpid2alleles", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2alleles")
-)
-
-setGeneric("snpid2grange", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2grange")
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### NEW API: snpsBySeqname(), snpsByOverlaps(), snpsById() (similar to API
-### for querying an XtraSNPlocs object)
+### SNP extractors: snpsBySeqname(), snpsByOverlaps(), snpsById()
 ###
 
 setGeneric("snpsBySeqname", signature="x",

@@ -645,6 +645,33 @@ getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### getBatchesByOverlapsFromOnDiskLongTable()
+###
+
+### ranges: GenomicRanges object.
+### colidx: integer or character vector of column indices, or NULL.
+getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
+                                                    maxgap=0L, minoverlap=1L,
+                                                    colidx=NULL,
+                                                    with.rowids=FALSE,
+                                                    as.data.frame=FALSE)
+{
+    if (!is(x, "OnDiskLongTable"))
+        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    x_spatial_index <- spatialIndex(x)
+    if (is.null(x_spatial_index))
+        stop(wmsg("'x' has no spatial index: cannot use ",
+                  "getBatchesByOverlapsFromOnDiskLongTable() on it"))
+    hits <- findOverlaps(ranges, x_spatial_index,
+                         maxgap=maxgap, minoverlap=minoverlap)
+    batchidx <- sort(unique(subjectHits(hits)))
+    getBatchesFromOnDiskLongTable(x, batchidx, colidx=colidx,
+                                  with.rowids=with.rowids,
+                                  as.data.frame=as.data.frame)
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### getRowsFromOnDiskLongTable()
 ###
 
@@ -775,31 +802,5 @@ getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx=NULL,
     getRowsFromOnDiskLongTable(x, rowidx, colidx=colidx,
                                with.rowids=with.rowids,
                                as.data.frame=as.data.frame)
-}
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### getBatchesByOverlapsFromOnDiskLongTable()
-###
-
-### ranges: GenomicRanges object.
-### colidx: integer or character vector of column indices, or NULL.
-getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
-                                                    maxgap=0L, minoverlap=1L,
-                                                    colidx=NULL,
-                                                    with.rowids=FALSE,
-                                                    as.data.frame=FALSE)
-{
-    if (!is(x, "OnDiskLongTable"))
-        stop(wmsg("'x' must be an OnDiskLongTable object"))
-    x_spatial_index <- spatialIndex(x)
-    if (is.null(x_spatial_index))
-        stop(wmsg("'x' has no spatial index: cannot use ",
-                  "getBatchesByOverlapsFromOnDiskLongTable() on it"))
-    hits <- findOverlaps(ranges, x_spatial_index,
-                         maxgap=maxgap, minoverlap=minoverlap)
-    batchidx <- sort(unique(subjectHits(hits)))
-    getBatchesFromOnDiskLongTable(x, batchidx, colidx=colidx,
-                                  with.rowids=with.rowids,
-                                  as.data.frame=as.data.frame)
 }
 

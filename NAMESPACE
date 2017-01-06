@@ -20,7 +20,7 @@ import(rtracklayer)
 exportClasses(
     OnDiskLongTable_old,
     GRangesORNULL, OnDiskLongTable,
-    SNPlocs, OldFashionSNPlocs,
+    SNPlocs, ODLT_SNPlocs, OldFashionSNPlocs,
     InjectSNPsHandler,
     XtraSNPlocs,
     BSgenome, MaskedBSgenome,
@@ -104,9 +104,9 @@ export(
     ## OnDiskLongTable-class.R:
     OnDiskLongTable, writeOnDiskLongTable, writeOnDiskLongTableRowids,
     getBatchesFromOnDiskLongTable,
+    getBatchesByOverlapsFromOnDiskLongTable,
     getRowsFromOnDiskLongTable,
     getRowsByIdFromOnDiskLongTable,
-    getBatchesByOverlapsFromOnDiskLongTable,
 
     ## OldFashionSNPlocs-class.R:
     newSNPlocs,

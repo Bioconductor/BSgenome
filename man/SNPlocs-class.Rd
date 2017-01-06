@@ -5,6 +5,10 @@
 \alias{SNPlocs-class}
 \alias{SNPlocs}
 
+\alias{class:ODLT_SNPlocs}
+\alias{ODLT_SNPlocs-class}
+\alias{ODLT_SNPlocs}
+
 \alias{class:OldFashionSNPlocs}
 \alias{OldFashionSNPlocs-class}
 \alias{OldFashionSNPlocs}
@@ -23,7 +27,8 @@
 \alias{seqinfo,SNPlocs-method}
 \alias{seqnames,SNPlocs-method}
 
-% constructor
+% constructors
+\alias{new_ODLT_SNPlocs}
 \alias{newSNPlocs}
 
 % displaying
@@ -32,18 +37,22 @@
 % SNP extractors
 \alias{snpcount}
 \alias{snpcount,SNPlocs-method}
+\alias{snpcount,ODLT_SNPlocs-method}
 \alias{snpcount,OldFashionSNPlocs-method}
 \alias{snpsBySeqname}
 \alias{snpsBySeqname,SNPlocs-method}
+\alias{snpsBySeqname,ODLT_SNPlocs-method}
 \alias{snpsBySeqname,OldFashionSNPlocs-method}
 \alias{snpsByOverlaps}
 \alias{snpsByOverlaps,SNPlocs-method}
+\alias{snpsByOverlaps,ODLT_SNPlocs-method}
 \alias{snpsByOverlaps,OldFashionSNPlocs-method}
 \alias{snpsById}
 \alias{snpsById,SNPlocs-method}
+\alias{snpsById,ODLT_SNPlocs-method}
 \alias{snpsById,OldFashionSNPlocs-method}
 
-% OLD API
+% OLD API (to be deprecated soon)
 \alias{snplocs}
 \alias{snplocs,SNPlocs-method}
 \alias{snplocs,OldFashionSNPlocs-method}
@@ -85,21 +94,6 @@ snpsByOverlaps(x, ranges, maxgap=0L, minoverlap=0L,
 
 snpsById(x, ids, ...)
 \S4method{snpsById}{SNPlocs}(x, ids, ifnotfound=c("error", "warning", "drop"))
-
-## Old API
-## ------------------------------------
-
-snplocs(x, seqname, ...)
-\S4method{snplocs}{SNPlocs}(x, seqname, as.GRanges=FALSE, caching=TRUE)
-
-snpid2loc(x, snpid, ...)
-\S4method{snpid2loc}{SNPlocs}(x, snpid, caching=TRUE)
-
-snpid2alleles(x, snpid, ...)
-\S4method{snpid2alleles}{SNPlocs}(x, snpid, caching=TRUE)
-
-snpid2grange(x, snpid, ...)
-\S4method{snpid2grange}{SNPlocs}(x, snpid, caching=TRUE)
 }
 
 \arguments{
@@ -136,31 +130,12 @@ snpid2grange(x, snpid, ...)
     \code{subsetByOverlaps()} generic and its method for
     \link[GenomicRanges]{GenomicRanges} objects.
   }
-  \item{ids, snpid}{
+  \item{ids}{
     The RefSNP ids to look up (a.k.a. rs ids). Can be integer or character
     vector, with or without the \code{"rs"} prefix. NAs are not allowed.
   }
   \item{ifnotfound}{
     What to do if SNP ids are not found.
-  }
-  \item{seqname}{
-    The name of the sequence for which to get the SNP locations
-    and alleles.
-
-    If \code{as.GRanges} is \code{FALSE}, only one sequence can
-    be specified (i.e. \code{seqname} must be a single string).
-    If \code{as.GRanges} is \code{TRUE}, an arbitrary number of
-    sequences can be specified (i.e. \code{seqname} can be
-    a character vector of arbitrary length).
-  }
-  \item{as.GRanges}{
-    \code{TRUE} or \code{FALSE}. If \code{TRUE}, then the SNP locations
-    and alleles are returned in a \link[GenomicRanges]{GRanges} object.
-    Otherwise (the default), they are returned in a data frame.
-  }
-  \item{caching}{
-    Should the loaded SNPs be cached in memory for faster further
-    retrieval but at the cost of increased memory usage?
   }
 }
 
@@ -187,39 +162,6 @@ snpid2grange(x, snpid, ...)
   is guaranteed to be \emph{parallel} to \code{ids}, that is, the i-th
   element in the \link[GenomicRanges]{GPos} object corresponds to the
   i-th element in \code{ids}.
-
-  \subsection{Old API}{
-    Note that \code{snplocs} is superseded by \code{snpsBySeqname}, and
-    \code{snpid2loc}, \code{snpid2alleles}, and \code{snpid2grange} are
-    superseded by \code{snpsById}.
-
-    By default (i.e. when \code{as.GRanges=FALSE}), \code{snplocs} returns a
-    data frame with 1 row per SNP and the following columns:
-    \enumerate{
-      \item \code{RefSNP_id}: Same as above but with \code{"rs"} prefix
-            always removed.
-      \item \code{alleles_as_ambig}: Same as above.
-      \item \code{loc}: The 1-based location of the SNP relative to the
-            first base at the 5' end of the plus strand of the reference
-            sequence.
-    }
-    Otherwise (i.e. when \code{as.GRanges=TRUE}), it returns a
-    \link[GenomicRanges]{GRanges} object with metadata columns
-    \code{"RefSNP_id"} and \code{"alleles_as_ambig"}.
-
-    \code{snpid2loc} and \code{snpid2alleles} both return a named vector
-    (integer vector for the former, character vector for the latter)
-    where each (name, value) pair corresponds to a supplied SNP id.
-    For both functions the name in (name, value) is the chromosome
-    of the SNP id. The value in (name, value) is the position of the
-    SNP id on the chromosome for \code{snpid2loc}, and a single IUPAC
-    code representing the associated alleles for \code{snpid2alleles}.
-
-    \code{snpid2grange} returns a \link[GenomicRanges]{GRanges} object
-    similar to the one returned by \code{snplocs} (when used with
-    \code{as.GRanges=TRUE}) and where each element corresponds to a
-    supplied SNP id.
-  }
 }
 
 \author{H. Pagès}

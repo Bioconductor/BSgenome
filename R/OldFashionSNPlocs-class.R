@@ -32,6 +32,14 @@ newSNPlocs <- function(provider, provider_version,
 {
     if (missing(source_data_url))
         source_data_url <- download_url
+
+    if (file.exists(file.path(data_dirpath, "header.rds")))
+        return(new_ODLT_SNPlocs(provider, provider_version,
+                                release_date, release_name,
+                                source_data_url, download_date,
+                                reference_genome, compatible_genomes,
+                                data_pkgname, data_dirpath))
+
     data_serialized_objnames <- c(
         "SNPcount",
         "all_rsids",
@@ -114,6 +122,29 @@ setMethod("snpcount", "OldFashionSNPlocs",
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### OLD API: snplocs(), snpid2loc(), snpid2alleles(), and snpid2grange()
 ###
+
+setGeneric("snplocs", signature="x",
+    function(x, seqname, ...) standardGeneric("snplocs")
+)
+
+### Returns a named integer vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is its position on the chromosome.
+setGeneric("snpid2loc", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2loc")
+)
+
+### Returns a named character vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is a single IUPAC code representing the associated
+### alleles.
+setGeneric("snpid2alleles", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2alleles")
+)
+
+setGeneric("snpid2grange", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2grange")
+)
 
 ### Load raw snplocs.
 .load_raw_snplocs <- function(x, seqname, caching)
@@ -229,6 +260,33 @@ setMethod("snplocs", "OldFashionSNPlocs",
     }
 )
 
+.normarg_snpid <- function(snpid)
+{
+    if (!is.vector(snpid))
+        stop("'snpid' must be an integer or character vector")
+    if (S4Vectors:::anyMissing(snpid))
+        stop("'snpid' cannot contain NAs")
+    if (is.numeric(snpid)) {
+        if (!is.integer(snpid))
+            snpid <- as.integer(snpid)
+        return(snpid)
+    }
+    if (!is.character(snpid))
+        stop("'snpid' must be an integer or character vector")
+    prefixes <- unique(substr(snpid, 1L, 2L))
+    if ("rs" %in% prefixes) {
+        if (!setequal(prefixes, "rs"))
+            stop("'snpid' cannot mix ids that are prefixed with \"rs\" ",
+                 "with ids that are not")
+        ## Drop the "rs" prefix.
+        snpid <- substr(snpid, 3, nchar(snpid))
+    }
+    snpid <- suppressWarnings(as.integer(snpid))
+    if (S4Vectors:::anyMissing(snpid))
+        stop("cannot extract the digital part of some ids in 'snpid'")
+    snpid
+}
+
 ### Returns a named integer vector where each (name, value) pair corresponds
 ### to a supplied SNP id (typically an rs id). The name is the chromosome of
 ### the SNP id and the value is the row index in the serialized snplocs data
@@ -262,7 +320,7 @@ setMethod("snplocs", "OldFashionSNPlocs",
 setMethod("snpid2loc", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        snpid <- normarg_snpid(snpid)
+        snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
         rowidx <- .snpid2rowidx(x, snpid)
@@ -285,7 +343,7 @@ setMethod("snpid2loc", "OldFashionSNPlocs",
 setMethod("snpid2alleles", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        snpid <- normarg_snpid(snpid)
+        snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
         rowidx <- .snpid2rowidx(x, snpid)
@@ -309,7 +367,7 @@ setMethod("snpid2alleles", "OldFashionSNPlocs",
 setMethod("snpid2grange", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        snpid <- normarg_snpid(snpid)
+        snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
         loc <- snpid2loc(x, snpid, caching=caching)
