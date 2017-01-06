@@ -534,8 +534,11 @@ setMethod("rowids", "OnDiskLongTable",
     rowidx
 }
 
+### Return an integer vector of valid column indices.
 .normarg_colidx <- function(colidx, x)
 {
+    if (is.null(colidx))
+        return(seq_len(ncol(x)))
     if (is.character(colidx)) {
         colidx <- match(colidx, colnames(x))
         if (S4Vectors:::anyMissing(colidx))
@@ -593,12 +596,12 @@ setMethod("rowids", "OnDiskLongTable",
 }
 
 ### rowidx: integer vector.
-### colidx: integer or character vector.
+### colidx: integer or character vector, or NULL.
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowidx'.
 ### Note that we do NOT set the row names to 'rowidx' on the returned DataFrame
 ### because we want to support duplicates in 'rowidx'.
-getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
-                                              as.data.frame=FALSE)
+getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
+                                                 as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
@@ -606,11 +609,11 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
     x_breakpoints <- breakpoints(x)
     rowkeys <- .rowidx2rowkeys(x_breakpoints, rowidx)
     colidx <- .normarg_colidx(colidx, x)
+    names(colidx) <- colnames(x)[colidx]
     if (!isTRUEorFALSE(as.data.frame))
         stop(wmsg("'as.data.frame' must be TRUE or FALSE"))
-    names(colidx) <- colnames(x)[colidx]
-    ans_listData <-
-        lapply(colidx, function(c) .read_OnDiskLongTable_column(x, c, rowkeys))
+    ans_listData <- lapply(colidx,
+        function(c) .read_OnDiskLongTable_column(x, c, rowkeys))
     if (as.data.frame) {
         ans <- data.frame(ans_listData, stringsAsFactors=FALSE)
     } else {
@@ -640,11 +643,11 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx,
 }
 
 ### rowids: integer vector.
-### colidx: integer or character vector.
+### colidx: integer or character vector, or NULL.
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowids'.
 ### Note that we do NOT set the row names to 'rowids' on the returned DataFrame
 ### because we want to support duplicates in 'rowids'.
-getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx,
+getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx=NULL,
                                               as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
@@ -693,16 +696,17 @@ getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx,
 }
 
 ### ranges: GenomicRanges object.
-### colidx: integer or character vector.
+### colidx: integer or character vector, or NULL.
 getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
                                                     maxgap=0L, minoverlap=1L,
-                                                    colidx,
+                                                    colidx=NULL,
                                                     with.rowids=FALSE,
                                                     as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
     colidx <- .normarg_colidx(colidx, x)
+    names(colidx) <- colnames(x)[colidx]
     if (!isTRUEorFALSE(with.rowids))
         stop(wmsg("'with.rowids' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(as.data.frame))
@@ -714,10 +718,8 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
     hits <- findOverlaps(ranges, x_spatial_index,
                          maxgap=maxgap, minoverlap=minoverlap)
     batchidx <- sort(unique(subjectHits(hits)))
-    names(colidx) <- colnames(x)[colidx]
     ans_listData <- lapply(colidx,
-        function(c) .read_OnDiskLongTable_batch_column(x, batchidx, c)
-    )
+        function(c) .read_OnDiskLongTable_batch_column(x, batchidx, c))
     x_batchsizes <- batchsizes(x)
     ans_batchsizes <- x_batchsizes[batchidx]
     ans_seqnames <- rep.int(seqnames(x_spatial_index)[batchidx],
