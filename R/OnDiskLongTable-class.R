@@ -608,13 +608,39 @@ setMethod("rowids", "OnDiskLongTable",
     S4Vectors:::quick_unsplit(tmp, rowkeys[[1L]])
 }
 
+### seqnames: factor-Rle or NULL.
+### rowids: integer vector of row ids, or NULL.
+.make_data_frame <- function(listData, seqnames=NULL, rowids=NULL)
+{
+    if (!is.null(seqnames)) {
+        seqnames <- S4Vectors:::decodeRle(seqnames)
+        listData <- c(list(seqnames=seqnames), listData)
+    }
+    data.frame(listData, row.names=rowids, stringsAsFactors=FALSE)
+}
+
+.make_DataFrame <- function(listData, seqnames=NULL, rowids=NULL,
+                            nrows)
+{
+    if (!is.null(seqnames))
+        listData <- c(list(seqnames=seqnames), listData)
+    ## Unfortunately, DataFrame cannot store its row names as an integer
+    ## vector.
+    if (!is.null(rowids))
+        rowids <- as.character(rowids)
+    new("DataFrame", listData=listData,
+                     nrows=nrows,
+                     rownames=rowids)
+}
+
 ### rowidx: integer vector of row indices.
 ### colidx: integer or character vector of column indices, or NULL.
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowidx'.
 ### Note that we do NOT set the row names to 'rowidx' on the returned DataFrame
 ### because we want to support duplicates in 'rowidx'.
 getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
-                                                 as.data.frame=FALSE)
+                                              with.rowids=FALSE,
+                                              as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
@@ -623,17 +649,30 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
     rowkeys <- .rowidx2rowkeys(x_breakpoints, rowidx)
     colidx <- .normarg_colidx(colidx, x)
     names(colidx) <- colnames(x)[colidx]
+    if (!isTRUEorFALSE(with.rowids))
+        stop(wmsg("'with.rowids' must be TRUE or FALSE"))
     if (!isTRUEorFALSE(as.data.frame))
         stop(wmsg("'as.data.frame' must be TRUE or FALSE"))
     ans_listData <- lapply(colidx,
         function(c) .read_OnDiskLongTable_column(x, c, rowkeys))
-    if (as.data.frame) {
-        ans <- data.frame(ans_listData, stringsAsFactors=FALSE)
+    x_spatial_index <- spatialIndex(x)
+    if (is.null(x_spatial_index)) {
+        ans_seqnames <- NULL
     } else {
-        ans <- new("DataFrame", listData=ans_listData,
-                                nrows=length(rowidx))
+        x_seqnames <- rep.int(seqnames(x_spatial_index), batchsizes(x))
+        ans_seqnames <- x_seqnames[rowidx]
     }
-    ans
+    ans_rowids <- NULL
+    if (with.rowids) {
+        x_rowids <- rowids(x)
+        if (!is.null(x_rowids))
+            ans_rowids <- x_rowids[rowidx]
+    }
+    if (as.data.frame)
+        .make_data_frame(ans_listData, ans_seqnames, ans_rowids)
+    else
+        .make_DataFrame(ans_listData, ans_seqnames, ans_rowids,
+                        nrows=length(rowidx))
 }
 
 
@@ -661,13 +700,15 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
 ### Note that we do NOT set the row names to 'rowids' on the returned DataFrame
 ### because we want to support duplicates in 'rowids'.
 getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx=NULL,
-                                              as.data.frame=FALSE)
+                                           with.rowids=FALSE,
+                                           as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
     rowidx <- .rowids2rowidx(x, rowids)
-    getRowsByIndexFromOnDiskLongTable(x, rowidx, colidx,
-                                         as.data.frame=as.data.frame)
+    getRowsByIndexFromOnDiskLongTable(x, rowidx, colidx=colidx,
+                                      with.rowids=with.rowids,
+                                      as.data.frame=as.data.frame)
 }
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -682,29 +723,6 @@ getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx=NULL,
     tmp <- lapply(batchidx,
         function(b) .read_OnDiskLongTable_block(x@dirpath, b, c))
     S4Vectors:::quick_unlist(tmp)
-}
-
-### seqnames: factor-Rle.
-### rowids: integer vector of row ids, or NULL.
-.make_DataFrame_or_data_frame <- function(seqnames,
-                                          listData=list(), rowids=NULL,
-                                          as.data.frame=FALSE)
-{
-    if (as.data.frame) {
-        seqnames <- S4Vectors:::decodeRle(seqnames)
-        ans_listData <- c(list(seqnames=seqnames), listData)
-        ans <- data.frame(ans_listData, row.names=rowids,
-                          stringsAsFactors=FALSE)
-        return(ans)
-    }
-    ans_listData <- c(list(seqnames=seqnames), listData)
-    ## Unfortunately, DataFrame cannot store its row names as an integer
-    ## vector.
-    if (!is.null(rowids))
-        rowids <- as.character(rowids)
-    new("DataFrame", listData=ans_listData,
-                     nrows=length(seqnames),
-                     rownames=rowids)
 }
 
 ### ranges: GenomicRanges object.
@@ -744,7 +762,10 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
             ans_rowids <- x_rowids[rowidx]
         }
     }
-    .make_DataFrame_or_data_frame(ans_seqnames, ans_listData, ans_rowids,
-                                  as.data.frame)
+    if (as.data.frame)
+        .make_data_frame(ans_listData, ans_seqnames, ans_rowids)
+    else
+        .make_DataFrame(ans_listData, ans_seqnames, ans_rowids,
+                        nrows=length(ans_seqnames))
 }
 
