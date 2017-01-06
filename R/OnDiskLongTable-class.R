@@ -167,12 +167,23 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
     saveRDS(object, file=filepath, compress=compress)
 }
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Read/write block to/from disk
+###
+### In all the functions below:
+###     b: batch number
+###     c: column number
+###
+
 ### Make batch/col physical name from batch/col number.
 .BATCH_FMT <- "b%05d"  # nb of batches must be <= 99999
 .COL_FMT <- "c%03d"    # nb of cols must be <= 999
+
 .batch_physname <- function(b) sprintf(.BATCH_FMT, b)
 .col_physname <- function(c) sprintf(.COL_FMT, c)
 
+### Make block physical name from batch/col numbers.
 .block_physname <- function(b, c, bybatch=FALSE)
 {
     batch_physname <- .batch_physname(b)
@@ -248,6 +259,8 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
 ### .append_df_to_OnDiskLongTable()
 ###
 
+### b_offset: batch index offset (integer)
+### c: column number
 .write_OnDiskLongTable_column <- function(df_col, dirpath,
                                           breakpoints, b_offset, c,
                                           compress=TRUE)
@@ -563,8 +576,8 @@ setMethod("rowids", "OnDiskLongTable",
 }
 
 ### Translation from row index to "row key".
-###   breakpoints: integer vector of break points.
-###   rowidx:      integer vector containing valid row indices.
+###     breakpoints: integer vector of break points.
+###     rowidx:      integer vector containing valid row indices.
 ### Return a list of 2 integer vectors parallel to 'rowidx'. The 1st vector
 ### contains batch indices. The 2nd vector contains row indices relative to
 ### the batch indicated by the corresponding element in the 1st vector.
@@ -579,7 +592,7 @@ setMethod("rowids", "OnDiskLongTable",
     list(batchidx, rowrelidx)
 }
 
-### c: column index of length 1
+### c: column number
 ### rowkeys: list of 2 integer vectors as returned by .rowidx2rowkeys()
 .read_OnDiskLongTable_column <- function(x, c, rowkeys)
 {
@@ -587,16 +600,16 @@ setMethod("rowids", "OnDiskLongTable",
         return(x@header[[c]])
     list_of_keys <- split(unname(rowkeys[[2L]]), rowkeys[[1L]])
     tmp <- lapply(seq_along(list_of_keys),
-             function(i) {
-               b <- as.integer(names(list_of_keys)[[i]])
-               block_data <- .read_OnDiskLongTable_block(x@dirpath, b, c)
-               block_data[list_of_keys[[i]]]
-             })
+        function(i) {
+            b <- as.integer(names(list_of_keys)[[i]])
+            block_data <- .read_OnDiskLongTable_block(x@dirpath, b, c)
+            block_data[list_of_keys[[i]]]
+        })
     S4Vectors:::quick_unsplit(tmp, rowkeys[[1L]])
 }
 
-### rowidx: integer vector.
-### colidx: integer or character vector, or NULL.
+### rowidx: integer vector of row indices.
+### colidx: integer or character vector of column indices, or NULL.
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowidx'.
 ### Note that we do NOT set the row names to 'rowidx' on the returned DataFrame
 ### because we want to support duplicates in 'rowidx'.
@@ -642,8 +655,8 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
     rowidx
 }
 
-### rowids: integer vector.
-### colidx: integer or character vector, or NULL.
+### rowids: integer vector of row ids.
+### colidx: integer or character vector of column indices, or NULL.
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowids'.
 ### Note that we do NOT set the row names to 'rowids' on the returned DataFrame
 ### because we want to support duplicates in 'rowids'.
@@ -661,19 +674,18 @@ getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx=NULL,
 ### getBatchesByOverlapsFromOnDiskLongTable()
 ###
 
-### c: column index of length 1
+### c: column number
 .read_OnDiskLongTable_batch_column <- function(x, batchidx, c)
 {
     if (length(batchidx) == 0L)
         return(x@header[[c]])
     tmp <- lapply(batchidx,
-        function(b) .read_OnDiskLongTable_block(x@dirpath, b, c)
-    )
+        function(b) .read_OnDiskLongTable_block(x@dirpath, b, c))
     S4Vectors:::quick_unlist(tmp)
 }
 
 ### seqnames: factor-Rle.
-### rowids: integer vector or NULL.
+### rowids: integer vector of row ids, or NULL.
 .make_DataFrame_or_data_frame <- function(seqnames,
                                           listData=list(), rowids=NULL,
                                           as.data.frame=FALSE)
@@ -696,7 +708,7 @@ getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx=NULL,
 }
 
 ### ranges: GenomicRanges object.
-### colidx: integer or character vector, or NULL.
+### colidx: integer or character vector of column indices, or NULL.
 getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
                                                     maxgap=0L, minoverlap=1L,
                                                     colidx=NULL,
