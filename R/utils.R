@@ -33,5 +33,5 @@ read_seqinfo_table <- function(filepath, genome=NA)
 ### could be used for that!
 encode_letters_as_bytes <- function(x) charToRaw(paste(x, collapse=""))
 
-decode_bytes_as_letters <- function(x) rawToChar(alleles, multiple=TRUE)
+decode_bytes_as_letters <- function(x) rawToChar(x, multiple=TRUE)
 
