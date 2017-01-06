@@ -1,7 +1,7 @@
 ### =========================================================================
 ### OnDiskLongTable objects
 ### -------------------------------------------------------------------------
-###
+
 
 setClassUnion("GRangesORNULL", c("GRanges", "NULL"))
 
@@ -535,16 +535,17 @@ setMethod("rowids", "OnDiskLongTable",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### getRowsByIndexFromOnDiskLongTable()
+### getBatchesFromOnDiskLongTable()
 ###
 
-.normarg_rowidx <- function(rowidx, x)
+### Return an integer vector of valid batch indices.
+.normarg_batchidx <- function(batchidx, x)
 {
-    if (!is.integer(rowidx))
-        stop(wmsg("'rowidx' must be an integer vector"))
-    if (S4Vectors:::anyMissingOrOutside(rowidx, 1L, nrow(x)))
-        stop(wmsg("'rowidx' contains NAs or invalid row indices"))
-    rowidx
+    if (!is.integer(batchidx))
+        stop(wmsg("'batchidx' must be an integer vector"))
+    if (S4Vectors:::anyMissingOrOutside(batchidx, 1L, length(breakpoints(x))))
+        stop(wmsg("'batchidx' contains NAs or invalid batch indices"))
+    batchidx
 }
 
 ### Return an integer vector of valid column indices.
@@ -563,8 +564,98 @@ setMethod("rowids", "OnDiskLongTable",
     if (!is.integer(colidx))
         colidx <- as.integer(colidx)
     if (S4Vectors:::anyMissingOrOutside(colidx, 1L, ncol(x)))
-        stop(wmsg("'colidx' contains invalid column indices"))
+        stop(wmsg("'colidx' contains NAs or invalid column indices"))
     colidx
+}
+
+### batchidx: integer vector of batch indices.
+### c: column number
+.read_OnDiskLongTable_batch_column <- function(x, batchidx, c)
+{
+    if (length(batchidx) == 0L)
+        return(x@header[[c]])
+    tmp <- lapply(batchidx,
+        function(b) .read_OnDiskLongTable_block(x@dirpath, b, c))
+    S4Vectors:::quick_unlist(tmp)
+}
+
+
+### seqnames: factor-Rle or NULL.
+### rowids: integer vector of row ids, or NULL.
+.as_data.frame <- function(listData, seqnames=NULL, rowids=NULL)
+{
+    if (!is.null(seqnames)) {
+        seqnames <- S4Vectors:::decodeRle(seqnames)
+        listData <- c(list(seqnames=seqnames), listData)
+    }
+    data.frame(listData, row.names=rowids, stringsAsFactors=FALSE)
+}
+
+.as_DataFrame <- function(listData, seqnames=NULL, rowids=NULL, nrows)
+{
+    if (!is.null(seqnames))
+        listData <- c(list(seqnames=seqnames), listData)
+    ## Unfortunately, DataFrame cannot store its row names as an integer
+    ## vector.
+    if (!is.null(rowids))
+        rowids <- as.character(rowids)
+    new("DataFrame", listData=listData,
+                     nrows=nrows,
+                     rownames=rowids)
+}
+
+getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,
+                                          with.rowids=FALSE,
+                                          as.data.frame=FALSE)
+{
+    if (!is(x, "OnDiskLongTable"))
+        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    batchidx <- .normarg_batchidx(batchidx, x)
+    colidx <- .normarg_colidx(colidx, x)
+    names(colidx) <- colnames(x)[colidx]
+    if (!isTRUEorFALSE(with.rowids))
+        stop(wmsg("'with.rowids' must be TRUE or FALSE"))
+    if (!isTRUEorFALSE(as.data.frame))
+        stop(wmsg("'as.data.frame' must be TRUE or FALSE"))
+    ans_listData <- lapply(colidx,
+        function(c) .read_OnDiskLongTable_batch_column(x, batchidx, c))
+    x_batchsizes <- batchsizes(x)
+    ans_batchsizes <- x_batchsizes[batchidx]
+    x_spatial_index <- spatialIndex(x)
+    if (is.null(x_spatial_index)) {
+        ans_seqnames <- NULL
+    } else {
+        ans_seqnames <- rep.int(seqnames(x_spatial_index)[batchidx],
+                                ans_batchsizes)
+    }
+    ans_rowids <- NULL
+    if (with.rowids) {
+        x_rowids <- rowids(x)
+        if (!is.null(x_rowids)) {
+            rowidx <- successiveIRanges(x_batchsizes)[batchidx]
+            ans_rowids <- extractROWS(x_rowids, rowidx)
+        }
+    }
+    if (as.data.frame)
+        .as_data.frame(ans_listData, ans_seqnames, ans_rowids)
+    else
+        .as_DataFrame(ans_listData, ans_seqnames, ans_rowids,
+                      nrows=sum(ans_batchsizes))
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### getRowsFromOnDiskLongTable()
+###
+
+### Return an integer vector of valid row indices.
+.normarg_rowidx <- function(rowidx, x)
+{
+    if (!is.integer(rowidx))
+        stop(wmsg("'rowidx' must be an integer vector"))
+    if (S4Vectors:::anyMissingOrOutside(rowidx, 1L, nrow(x)))
+        stop(wmsg("'rowidx' contains NAs or invalid row indices"))
+    rowidx
 }
 
 .breakpoints2offsets <- function(breakpoints)
@@ -608,39 +699,14 @@ setMethod("rowids", "OnDiskLongTable",
     S4Vectors:::quick_unsplit(tmp, rowkeys[[1L]])
 }
 
-### seqnames: factor-Rle or NULL.
-### rowids: integer vector of row ids, or NULL.
-.make_data_frame <- function(listData, seqnames=NULL, rowids=NULL)
-{
-    if (!is.null(seqnames)) {
-        seqnames <- S4Vectors:::decodeRle(seqnames)
-        listData <- c(list(seqnames=seqnames), listData)
-    }
-    data.frame(listData, row.names=rowids, stringsAsFactors=FALSE)
-}
-
-.make_DataFrame <- function(listData, seqnames=NULL, rowids=NULL,
-                            nrows)
-{
-    if (!is.null(seqnames))
-        listData <- c(list(seqnames=seqnames), listData)
-    ## Unfortunately, DataFrame cannot store its row names as an integer
-    ## vector.
-    if (!is.null(rowids))
-        rowids <- as.character(rowids)
-    new("DataFrame", listData=listData,
-                     nrows=nrows,
-                     rownames=rowids)
-}
-
 ### rowidx: integer vector of row indices.
 ### colidx: integer or character vector of column indices, or NULL.
 ### Return a DataFrame (or data.frame) with 1 row per row id in 'rowidx'.
 ### Note that we do NOT set the row names to 'rowidx' on the returned DataFrame
 ### because we want to support duplicates in 'rowidx'.
-getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
-                                              with.rowids=FALSE,
-                                              as.data.frame=FALSE)
+getRowsFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
+                                       with.rowids=FALSE,
+                                       as.data.frame=FALSE)
 {
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
@@ -669,10 +735,10 @@ getRowsByIndexFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
             ans_rowids <- x_rowids[rowidx]
     }
     if (as.data.frame)
-        .make_data_frame(ans_listData, ans_seqnames, ans_rowids)
+        .as_data.frame(ans_listData, ans_seqnames, ans_rowids)
     else
-        .make_DataFrame(ans_listData, ans_seqnames, ans_rowids,
-                        nrows=length(rowidx))
+        .as_DataFrame(ans_listData, ans_seqnames, ans_rowids,
+                      nrows=length(rowidx))
 }
 
 
@@ -706,24 +772,14 @@ getRowsByIdFromOnDiskLongTable <- function(x, rowids, colidx=NULL,
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
     rowidx <- .rowids2rowidx(x, rowids)
-    getRowsByIndexFromOnDiskLongTable(x, rowidx, colidx=colidx,
-                                      with.rowids=with.rowids,
-                                      as.data.frame=as.data.frame)
+    getRowsFromOnDiskLongTable(x, rowidx, colidx=colidx,
+                               with.rowids=with.rowids,
+                               as.data.frame=as.data.frame)
 }
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### getBatchesByOverlapsFromOnDiskLongTable()
 ###
-
-### c: column number
-.read_OnDiskLongTable_batch_column <- function(x, batchidx, c)
-{
-    if (length(batchidx) == 0L)
-        return(x@header[[c]])
-    tmp <- lapply(batchidx,
-        function(b) .read_OnDiskLongTable_block(x@dirpath, b, c))
-    S4Vectors:::quick_unlist(tmp)
-}
 
 ### ranges: GenomicRanges object.
 ### colidx: integer or character vector of column indices, or NULL.
@@ -735,12 +791,6 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
 {
     if (!is(x, "OnDiskLongTable"))
         stop(wmsg("'x' must be an OnDiskLongTable object"))
-    colidx <- .normarg_colidx(colidx, x)
-    names(colidx) <- colnames(x)[colidx]
-    if (!isTRUEorFALSE(with.rowids))
-        stop(wmsg("'with.rowids' must be TRUE or FALSE"))
-    if (!isTRUEorFALSE(as.data.frame))
-        stop(wmsg("'as.data.frame' must be TRUE or FALSE"))
     x_spatial_index <- spatialIndex(x)
     if (is.null(x_spatial_index))
         stop(wmsg("'x' has no spatial index: cannot use ",
@@ -748,24 +798,8 @@ getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
     hits <- findOverlaps(ranges, x_spatial_index,
                          maxgap=maxgap, minoverlap=minoverlap)
     batchidx <- sort(unique(subjectHits(hits)))
-    ans_listData <- lapply(colidx,
-        function(c) .read_OnDiskLongTable_batch_column(x, batchidx, c))
-    x_batchsizes <- batchsizes(x)
-    ans_batchsizes <- x_batchsizes[batchidx]
-    ans_seqnames <- rep.int(seqnames(x_spatial_index)[batchidx],
-                            ans_batchsizes)
-    ans_rowids <- NULL
-    if (with.rowids) {
-        x_rowids <- rowids(x)
-        if (!is.null(x_rowids)) {
-            rowidx <- as.integer(successiveIRanges(x_batchsizes)[batchidx])
-            ans_rowids <- x_rowids[rowidx]
-        }
-    }
-    if (as.data.frame)
-        .make_data_frame(ans_listData, ans_seqnames, ans_rowids)
-    else
-        .make_DataFrame(ans_listData, ans_seqnames, ans_rowids,
-                        nrows=length(ans_seqnames))
+    getBatchesFromOnDiskLongTable(x, batchidx, colidx=colidx,
+                                  with.rowids=with.rowids,
+                                  as.data.frame=as.data.frame)
 }
 

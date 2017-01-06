@@ -103,7 +103,8 @@ export(
 
     ## OnDiskLongTable-class.R:
     OnDiskLongTable, writeOnDiskLongTable, writeOnDiskLongTableRowids,
-    getRowsByIndexFromOnDiskLongTable,
+    getBatchesFromOnDiskLongTable,
+    getRowsFromOnDiskLongTable,
     getRowsByIdFromOnDiskLongTable,
     getBatchesByOverlapsFromOnDiskLongTable,
 
