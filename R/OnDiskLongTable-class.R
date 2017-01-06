@@ -624,6 +624,8 @@ setMethod("show", "OnDiskLongTable",
     new("DataFrame", listData=listData, nrows=nrows)
 }
 
+### batchidx: integer vector of batch indices.
+### colidx: integer or character vector of column indices, or NULL.
 getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,
                                           with.rowids=FALSE,
                                           as.data.frame=FALSE)
@@ -661,6 +663,45 @@ getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,
     else
         .as_DataFrame(ans_listData, ans_seqnames, ans_rowids,
                       nrows=sum(ans_batchsizes))
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### getBatchesBySeqnameFromOnDiskLongTable()
+###
+
+.seqnames2batchidx <- function(seqnames, spatial_index)
+{
+    if (!is.character(seqnames)
+     || anyNA(seqnames)
+     || any(duplicated(seqnames)))
+        stop(wmsg("'seqnames' must be a character vector ",
+                  "with no NAs and no duplicates"))
+    seqinfo <- seqinfo(spatial_index)
+    seqlevels <- seqlevels(seqinfo)
+    seqrank <- match(seqnames, seqlevels)
+    if (anyNA(seqrank))
+        stop(wmsg("'seqnames' must be a subset of: ",
+                  paste(seqlevels, collapse=", ")))
+    as.integer(successiveIRanges(runLength(seqnames(spatial_index)))[seqrank])
+}
+
+### seqnames: character vector of unique sequence names.
+### colidx: integer or character vector of column indices, or NULL.
+getBatchesBySeqnameFromOnDiskLongTable <- function(x, seqnames, colidx=NULL,
+                                                   with.rowids=FALSE,
+                                                   as.data.frame=FALSE)
+{
+    if (!is(x, "OnDiskLongTable"))
+        stop(wmsg("'x' must be an OnDiskLongTable object"))
+    x_spatial_index <- spatialIndex(x)
+    if (is.null(x_spatial_index))
+        stop(wmsg("'x' has no spatial index: cannot use ",
+                  "getBatchesBySeqnameFromOnDiskLongTable() on it"))
+    batchidx <- .seqnames2batchidx(seqnames, x_spatial_index)
+    getBatchesFromOnDiskLongTable(x, batchidx, colidx=colidx,
+                                  with.rowids=with.rowids,
+                                  as.data.frame=as.data.frame)
 }
 
 
