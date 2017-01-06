@@ -112,8 +112,6 @@ setMethod("snpsBySeqname", "ODLT_SNPlocs", .snpsBySeqname_ODLT_SNPlocs)
                 drop.rs.prefix=FALSE, ...)
 {
     ranges <- normarg_ranges(ranges)
-    x_spatial_index <- spatialIndex(x@snp_table)
-    x_seqinfo <- seqinfo(x_spatial_index)
     if (!isTRUEorFALSE(drop.rs.prefix))
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
 
@@ -121,6 +119,8 @@ setMethod("snpsBySeqname", "ODLT_SNPlocs", .snpsBySeqname_ODLT_SNPlocs)
                                                   maxgap=maxgap,
                                                   minoverlap=minoverlap,
                                                   with.rowids=TRUE)
+    x_spatial_index <- spatialIndex(x@snp_table)
+    x_seqinfo <- seqinfo(x_spatial_index)
     gpos <- .as_GPos(df, x_seqinfo, drop.rs.prefix=drop.rs.prefix)
     subsetByOverlaps(gpos, ranges,
                      maxgap=maxgap, minoverlap=minoverlap,
@@ -140,6 +140,8 @@ setMethod("snpsByOverlaps", "ODLT_SNPlocs", .snpsByOverlaps_ODLT_SNPlocs)
     df <- getRowsFromOnDiskLongTable(x@snp_table, rowidx[[1L]],
                                      with.rowids=FALSE)
     df$rowids <- rowidx[[2L]]
+    x_spatial_index <- spatialIndex(x@snp_table)
+    x_seqinfo <- seqinfo(x_spatial_index)
     .as_GPos(df, x_seqinfo, drop.rs.prefix=FALSE)
 }
 
