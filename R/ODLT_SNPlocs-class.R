@@ -55,6 +55,25 @@ setMethod("snpcount", "ODLT_SNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### snplocs()
+###
+### Used internally for SNP injection. Not intended for the end user.
+### Must return a 2-col data-frame-like object with columns "loc" (integer)
+### and "alleles_as_ambig" (character).
+###
+
+setMethod("snplocs", "ODLT_SNPlocs",
+    function(x, seqname)
+    {
+        df <- getBatchesBySeqnameFromOnDiskLongTable(x@snp_table, seqname)
+        data.frame(loc=df[ , "pos"],
+                   alleles_as_ambig=decode_bytes_as_letters(df[ , "alleles"]),
+                   stringsAsFactors=FALSE)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### .as_GPos()
 ###
 
@@ -65,15 +84,15 @@ setMethod("snpcount", "ODLT_SNPlocs",
     ans_strand <- Rle(factor("+", levels=levels(strand())), nrow(df))
     gr <- GRanges(ans_seqnames, ans_ranges, ans_strand, seqinfo=seqinfo)
 
-    ans_alleles_as_ambig <- safeExplode(rawToChar(df[ , "alleles"]))
+    alleles_as_ambig <- decode_bytes_as_letters(df[ , "alleles"])
     rowids <- df$rowids
     if (is.null(rowids)) {
-        ans_mcols <- DataFrame(alleles_as_ambig=ans_alleles_as_ambig)
+        ans_mcols <- DataFrame(alleles_as_ambig=alleles_as_ambig)
     } else {
         if (!drop.rs.prefix && length(gr) != 0L)
             rowids <- paste0("rs", rowids)
         ans_mcols <- DataFrame(RefSNP_id=rowids,
-                               alleles_as_ambig=ans_alleles_as_ambig)
+                               alleles_as_ambig=alleles_as_ambig)
     }
     mcols(gr) <- ans_mcols
     as(gr, "GPos")

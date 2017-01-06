@@ -165,7 +165,7 @@ setMethod("snpcount", "OldFashionSNPlocs",
 {
     rsids <- as.character(.load_rsids(x, seqname))
     snplocs <- .load_raw_snplocs(x, seqname, caching)
-    alleles <- safeExplode(rawToChar(snplocs$alleles))
+    alleles <- decode_bytes_as_letters(snplocs$alleles)
     data.frame(RefSNP_id=rsids,
                alleles_as_ambig=alleles,
                loc=snplocs$loc,
@@ -372,7 +372,7 @@ setMethod("snpid2alleles", "OldFashionSNPlocs",
                 })
             ans <- unsplit(alleles_list, names(rowidx))
         }
-        ans <- safeExplode(rawToChar(ans))
+        ans <- decode_bytes_as_letters(ans)
         names(ans) <- names(rowidx)
         ans
     }

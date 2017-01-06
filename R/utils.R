@@ -27,3 +27,11 @@ read_seqinfo_table <- function(filepath, genome=NA)
     )
 }
 
+### Encode/decode character vector of single letters as/from raw object.
+### Used in SNPlocs packages to store IUPAC ambiguity letters on disk as
+### a raw vector with 1 byte per letter. Alternatively a DNAString object
+### could be used for that!
+encode_letters_as_bytes <- function(x) charToRaw(paste(x, collapse=""))
+
+decode_bytes_as_letters <- function(x) rawToChar(alleles, multiple=TRUE)
+
