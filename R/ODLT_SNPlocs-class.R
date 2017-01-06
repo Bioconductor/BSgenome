@@ -142,7 +142,7 @@ setMethod("snpsByOverlaps", "ODLT_SNPlocs", .snpsByOverlaps_ODLT_SNPlocs)
     df$rowids <- rowidx[[2L]]
     x_spatial_index <- spatialIndex(x@snp_table)
     x_seqinfo <- seqinfo(x_spatial_index)
-    .as_GPos(df, x_seqinfo, drop.rs.prefix=FALSE)
+    .as_GPos(df, x_seqinfo, drop.rs.prefix=TRUE)
 }
 
 setMethod("snpsById", "ODLT_SNPlocs", .snpsById_ODLT_SNPlocs)
