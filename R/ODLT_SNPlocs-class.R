@@ -55,8 +55,24 @@ setMethod("snpcount", "ODLT_SNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### SNP extractors: snpsBySeqname(), snpsByOverlaps(), snpsById()
+### Some low-level helper functions
 ###
+
+.seqnames2batchidx <- function(seqnames, spatial_index)
+{
+    if (!is.character(seqnames)
+     || anyNA(seqnames)
+     || any(duplicated(seqnames)))
+        stop(wmsg("'seqnames' must be a character vector ",
+                  "with no NAs and no duplicates"))
+    seqinfo <- seqinfo(spatial_index)
+    seqlevels <- seqlevels(seqinfo)
+    seqrank <- match(seqnames, seqlevels)
+    if (anyNA(seqrank))
+        stop(wmsg("'seqnames' must be a subset of: ",
+                  paste(seqlevels, collapse=", ")))
+    as.integer(successiveIRanges(runLength(seqnames(spatial_index)))[seqrank])
+}
 
 .as_GPos <- function(df, seqinfo, drop.rs.prefix=FALSE)
 {
@@ -79,28 +95,21 @@ setMethod("snpcount", "ODLT_SNPlocs",
     as(gr, "GPos")
 }
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### SNP extractors: snpsBySeqname(), snpsByOverlaps(), snpsById()
+###
+
 .snpsBySeqname_ODLT_SNPlocs <- function(x, seqnames, drop.rs.prefix=FALSE)
 {
-    if (!is.character(seqnames)
-     || anyNA(seqnames)
-     || any(duplicated(seqnames)))
-        stop(wmsg("'seqnames' must be a character vector ",
-                  "with no NAs and no duplicates"))
     x_spatial_index <- spatialIndex(x@snp_table)
-    x_seqinfo <- seqinfo(x_spatial_index)
-    x_seqlevels <- seqlevels(x_seqinfo)
-    seqrank <- match(seqnames, x_seqlevels)
-    if (anyNA(seqrank))
-        stop(wmsg("'seqnames' must be a subset of: ",
-                  paste(x_seqlevels, collapse=", ")))
+    batchidx <- .seqnames2batchidx(seqnames, x_spatial_index)
     if (!isTRUEorFALSE(drop.rs.prefix))
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
 
-    batchidx <- as.integer(
-        successiveIRanges(runLength(seqnames(x_spatial_index)))[seqrank]
-    )
     df <- getBatchesFromOnDiskLongTable(x@snp_table, batchidx,
                                         with.rowids=TRUE)
+    x_seqinfo <- seqinfo(x_spatial_index)
     .as_GPos(df, x_seqinfo, drop.rs.prefix=drop.rs.prefix)
 }
 

@@ -460,22 +460,6 @@ setMethod("dimnames", "OnDiskLongTable",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### "show" method
-###
-
-setMethod("show", "OnDiskLongTable",
-    function(object)
-    {
-        cat(class(object), " object with ",
-            nrow(object), " row", if (nrow(object) >= 2L) "s" else "",
-            " and ",
-            ncol(object), " column", if (ncol(object) >= 2L) "s" else "",
-            "\n", sep="")
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### OnDiskLongTable specific getters
 ###
 
@@ -503,6 +487,17 @@ setMethod("spatialIndex", "OnDiskLongTable", function(x) x@spatial_index)
 ### Generic defined in OnDiskLongTable_old-class.R
 #setGeneric("rowids", function(x) standardGeneric("rowids"))
 
+### Return NA if 'x' has no row ids.
+.get_rowids_path <- function(x)
+{
+    if (is.na(x@dirpath))
+        return(NA_character_)
+    rowids_path <- .make_filepath(x@dirpath, "rowids")
+    if (!file.exists(rowids_path))
+        return(NA_character_)
+    rowids_path
+}
+
 ### Return NULL or an integer vector with no NAs or duplicated values.
 setMethod("rowids", "OnDiskLongTable",
     function(x)
@@ -510,26 +505,53 @@ setMethod("rowids", "OnDiskLongTable",
         objname <- "rowids"
 
         ## 1. Try to get the row ids from the cache.
-        ans <- try(get(objname, envir=x@.rowids_cache, inherits=FALSE),
-                   silent=TRUE)
-        if (!inherits(ans, "try-error"))
-            return(ans)
+        rowids <- try(get(objname, envir=x@.rowids_cache, inherits=FALSE),
+                      silent=TRUE)
+        if (!inherits(rowids, "try-error"))
+            return(rowids)
 
         ## 2. Try to get the row ids from disk.
-        ans <- NULL
-        if (!is.na(x@dirpath)) {
-            filepath <- .make_filepath(x@dirpath, objname)
-            if (file.exists(filepath)) {
-                ans <- readRDS(filepath)
-                .check_OnDiskLongTable_rowids(ans)
-                if (length(ans) != nrow(x))
-                    stop(wmsg("length(rowids) != nrow(x)"))
-            }
+        rowids_path <- .get_rowids_path(x)
+        if (is.na(rowids_path)) {
+            rowids <- NULL
+        } else {
+            rowids <- readRDS(rowids_path)
+            .check_OnDiskLongTable_rowids(rowids)
+            if (length(rowids) != nrow(x))
+                stop(wmsg("length(rowids) != nrow(x)"))
         }
 
         ## 3. Cache the row ids.
-        assign(objname, ans, envir=x@.rowids_cache)
-        ans
+        assign(objname, rowids, envir=x@.rowids_cache)
+        rowids
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### "show" method
+###
+
+setMethod("show", "OnDiskLongTable",
+    function(object)
+    {
+        cat(class(object), " object with ",
+            nrow(object), " row", if (nrow(object) >= 2L) "s" else "",
+            " x ",
+            ncol(object), " col", if (ncol(object) >= 2L) "s" else "",
+            sep="")
+        rowids_path <- .get_rowids_path(object)
+        spatial_index <- spatialIndex(object)
+        if (!is.na(rowids_path)) {
+            if (is.null(spatial_index))
+                cat(" and ")
+            else
+                cat(", ")
+            cat("row ids")
+        }
+        if (!is.null(spatial_index))
+            cat(" and spatial index")
+        cat("\n")
     }
 )
 
