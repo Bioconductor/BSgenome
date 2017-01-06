@@ -98,6 +98,19 @@ setGeneric("snpcount", function(x) standardGeneric("snpcount"))
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### snplocs()
+###
+### Used internally for SNP injection. Not intended for the end user.
+### Must return a 2-col data-frame-like object with columns "loc" (integer)
+### and "alleles_as_ambig" (character).
+###
+
+setGeneric("snplocs", signature="x",
+    function(x, seqname, ...) standardGeneric("snplocs")
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### SNP extractors: snpsBySeqname(), snpsByOverlaps(), snpsById()
 ###
 

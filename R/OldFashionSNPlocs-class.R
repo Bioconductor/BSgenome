@@ -124,31 +124,22 @@ setMethod("snpcount", "OldFashionSNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### OLD API: snplocs(), snpid2loc(), snpid2alleles(), and snpid2grange()
+### snplocs()
+###
+### Used internally for SNP injection. Not intended for the end user.
+### Must return a 2-col data-frame-like object with columns "loc" (integer)
+### and "alleles_as_ambig" (character).
 ###
 
-setGeneric("snplocs", signature="x",
-    function(x, seqname, ...) standardGeneric("snplocs")
-)
-
-### Returns a named integer vector where each (name, value) pair corresponds
-### to a supplied SNP id (typically an rs id). The name is the chromosome of
-### the SNP id and the value is its position on the chromosome.
-setGeneric("snpid2loc", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2loc")
-)
-
-### Returns a named character vector where each (name, value) pair corresponds
-### to a supplied SNP id (typically an rs id). The name is the chromosome of
-### the SNP id and the value is a single IUPAC code representing the associated
-### alleles.
-setGeneric("snpid2alleles", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2alleles")
-)
-
-setGeneric("snpid2grange", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2grange")
-)
+### Load rs ids for a given sequence. Return them in an integer vector.
+.load_rsids <- function(x, seqname)
+{
+    all_rsids <- .get_SNPlocs_data(x, "all_rsids")
+    seq_pos <- match(seqname, names(snpcount(x)))
+    offset <- .get_rsid_offsets(x)[seq_pos]
+    idx <- seq_len(snpcount(x)[seq_pos]) + offset
+    all_rsids[idx]
+}
 
 ### Load raw snplocs.
 .load_raw_snplocs <- function(x, seqname, caching)
@@ -167,24 +158,6 @@ setGeneric("snpid2grange", signature="x",
              "       Please contact the maintainer of the ",
              x@data_pkgname, "\n       package.")
     ans
-}
-
-.get_rsid_offsets <- function(x)
-{
-    offsets <- c(0L, cumsum(snpcount(x)))
-    offsets <- offsets[-length(offsets)]
-    names(offsets) <- names(snpcount(x))
-    offsets
-}
-
-### Load rs ids for a given sequence. Return them in an integer vector.
-.load_rsids <- function(x, seqname)
-{
-    all_rsids <- .get_SNPlocs_data(x, "all_rsids")
-    seq_pos <- match(seqname, names(snpcount(x)))
-    offset <- .get_rsid_offsets(x)[seq_pos]
-    idx <- seq_len(snpcount(x)[seq_pos]) + offset
-    all_rsids[idx]
 }
 
 ### Get user-friendly snplocs.
@@ -264,6 +237,41 @@ setMethod("snplocs", "OldFashionSNPlocs",
     }
 )
 
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Old SNPlocs extractors (deprecated in BioC 3.5):
+###    snpid2loc()
+###    snpid2alleles()
+###    snpid2grange()
+###
+
+### Returns a named integer vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is its position on the chromosome.
+setGeneric("snpid2loc", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2loc")
+)
+
+### Returns a named character vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is a single IUPAC code representing the associated
+### alleles.
+setGeneric("snpid2alleles", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2alleles")
+)
+
+setGeneric("snpid2grange", signature="x",
+    function(x, snpid, ...) standardGeneric("snpid2grange")
+)
+
+.get_rsid_offsets <- function(x)
+{
+    offsets <- c(0L, cumsum(snpcount(x)))
+    offsets <- offsets[-length(offsets)]
+    names(offsets) <- names(snpcount(x))
+    offsets
+}
+
 .normarg_snpid <- function(snpid)
 {
     if (!is.vector(snpid))
@@ -324,6 +332,7 @@ setMethod("snplocs", "OldFashionSNPlocs",
 setMethod("snpid2loc", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
+        .Deprecated("snpsById")
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
@@ -347,6 +356,7 @@ setMethod("snpid2loc", "OldFashionSNPlocs",
 setMethod("snpid2alleles", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
+        .Deprecated("snpsById")
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
@@ -368,19 +378,25 @@ setMethod("snpid2alleles", "OldFashionSNPlocs",
     }
 )
 
+.snpid2grange_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
+{
+    snpid <- .normarg_snpid(snpid)
+    if (!isTRUEorFALSE(caching))
+        stop("'caching' must be TRUE or FALSE")
+    loc <- snpid2loc(x, snpid, caching=caching)
+    alleles <- snpid2alleles(x, snpid, caching=caching)
+    ufsnplocs <- data.frame(RefSNP_id=as.character(snpid),
+                            alleles_as_ambig=unname(alleles),
+                            loc=unname(loc),
+                            stringsAsFactors=FALSE)
+    .SNPlocsAsGRanges(x, ufsnplocs, names(loc))
+}
+
 setMethod("snpid2grange", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        snpid <- .normarg_snpid(snpid)
-        if (!isTRUEorFALSE(caching))
-            stop("'caching' must be TRUE or FALSE")
-        loc <- snpid2loc(x, snpid, caching=caching)
-        alleles <- snpid2alleles(x, snpid, caching=caching)
-        ufsnplocs <- data.frame(RefSNP_id=as.character(snpid),
-                                alleles_as_ambig=unname(alleles),
-                                loc=unname(loc),
-                                stringsAsFactors=FALSE)
-        .SNPlocsAsGRanges(x, ufsnplocs, names(loc))
+        .Deprecated("snpsById")
+        .snpid2grange_OldFashionSNPlocs(x, snpid, caching=caching)
     }
 )
 
@@ -448,7 +464,7 @@ setMethod("snpsByOverlaps", "OldFashionSNPlocs",
     ifnotfound <- match.arg(ifnotfound)
     x_rowids <- .get_SNPlocs_data(x, "all_rsids")
     rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
-    gr <- snpid2grange(x, rowidx[[2L]])
+    gr <- .snpid2grange_OldFashionSNPlocs(x, rowidx[[2L]])
     mcols(gr)[ , "RefSNP_id"] <- rowidx[[2L]]
     as(gr, "GPos")
 }

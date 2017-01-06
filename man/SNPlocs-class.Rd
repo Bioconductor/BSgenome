@@ -39,6 +39,10 @@
 \alias{snpcount,SNPlocs-method}
 \alias{snpcount,ODLT_SNPlocs-method}
 \alias{snpcount,OldFashionSNPlocs-method}
+\alias{snplocs}
+\alias{snplocs,SNPlocs-method}
+\alias{snplocs,ODLT_SNPlocs-method}
+\alias{snplocs,OldFashionSNPlocs-method}
 \alias{snpsBySeqname}
 \alias{snpsBySeqname,SNPlocs-method}
 \alias{snpsBySeqname,ODLT_SNPlocs-method}
@@ -52,10 +56,7 @@
 \alias{snpsById,ODLT_SNPlocs-method}
 \alias{snpsById,OldFashionSNPlocs-method}
 
-% OLD API (to be deprecated soon)
-\alias{snplocs}
-\alias{snplocs,SNPlocs-method}
-\alias{snplocs,OldFashionSNPlocs-method}
+% Old SNPlocs extractors (deprecated)
 \alias{snpid2loc}
 \alias{snpid2loc,SNPlocs-method}
 \alias{snpid2loc,OldFashionSNPlocs-method}

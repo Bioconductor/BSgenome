@@ -155,8 +155,10 @@ export(
     ## SNPlocs-class.R:
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
-    snpid2loc, snpid2alleles, snpid2grange,
     snpsBySeqname, snpsByOverlaps, snpsById,
+
+    ## OldFashionSNPlocs-class.R:
+    snpid2loc, snpid2alleles, snpid2grange,
 
     ## InjectSNPsHandler-class.R:
     SNPlocs_pkgname,
@@ -180,8 +182,8 @@ exportMethods(
     batchsizes, spatialIndex,
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
-    snpid2loc, snpid2alleles, snpid2grange,
     snpsBySeqname, snpsByOverlaps, snpsById,
+    snpid2loc, snpid2alleles, snpid2grange,
     SNPlocs_pkgname,
     sourceUrl,
     mseqnames,
