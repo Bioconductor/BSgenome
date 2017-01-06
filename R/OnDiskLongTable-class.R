@@ -588,20 +588,18 @@ setMethod("rowids", "OnDiskLongTable",
         seqnames <- S4Vectors:::decodeRle(seqnames)
         listData <- c(list(seqnames=seqnames), listData)
     }
-    data.frame(listData, row.names=rowids, stringsAsFactors=FALSE)
+    if (!is.null(rowids))
+        listData <- c(list(rowids=rowids), listData)
+    data.frame(listData, stringsAsFactors=FALSE)
 }
 
 .as_DataFrame <- function(listData, seqnames=NULL, rowids=NULL, nrows)
 {
     if (!is.null(seqnames))
         listData <- c(list(seqnames=seqnames), listData)
-    ## Unfortunately, DataFrame cannot store its row names as an integer
-    ## vector.
     if (!is.null(rowids))
-        rowids <- as.character(rowids)
-    new("DataFrame", listData=listData,
-                     nrows=nrows,
-                     rownames=rowids)
+        listData <- c(list(rowids=rowids), listData)
+    new("DataFrame", listData=listData, nrows=nrows)
 }
 
 getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,

@@ -66,13 +66,13 @@ setMethod("snpcount", "ODLT_SNPlocs",
     gr <- GRanges(ans_seqnames, ans_ranges, ans_strand, seqinfo=seqinfo)
 
     ans_alleles_as_ambig <- safeExplode(rawToChar(df[ , "alleles"]))
-    ans_RefSNP_id <- rownames(df)
-    if (is.null(ans_RefSNP_id)) {
+    rowids <- df$rowids
+    if (is.null(rowids)) {
         ans_mcols <- DataFrame(alleles_as_ambig=ans_alleles_as_ambig)
     } else {
         if (!drop.rs.prefix && length(gr) != 0L)
-            ans_RefSNP_id <- paste0("rs", ans_RefSNP_id)
-        ans_mcols <- DataFrame(RefSNP_id=ans_RefSNP_id,
+            rowids <- paste0("rs", rowids)
+        ans_mcols <- DataFrame(RefSNP_id=rowids,
                                alleles_as_ambig=ans_alleles_as_ambig)
     }
     mcols(gr) <- ans_mcols
@@ -82,20 +82,23 @@ setMethod("snpcount", "ODLT_SNPlocs",
 .snpsBySeqname_ODLT_SNPlocs <- function(x, seqnames, drop.rs.prefix=FALSE)
 {
     if (!is.character(seqnames)
-     || any(is.na(seqnames))
+     || anyNA(seqnames)
      || any(duplicated(seqnames)))
         stop(wmsg("'seqnames' must be a character vector ",
                   "with no NAs and no duplicates"))
     x_spatial_index <- spatialIndex(x@snp_table)
     x_seqinfo <- seqinfo(x_spatial_index)
     x_seqlevels <- seqlevels(x_seqinfo)
-    if (!all(seqnames %in% x_seqlevels))
+    seqrank <- match(seqnames, x_seqlevels)
+    if (anyNA(seqrank))
         stop(wmsg("'seqnames' must be a subset of: ",
                   paste(x_seqlevels, collapse=", ")))
     if (!isTRUEorFALSE(drop.rs.prefix))
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
 
-    batchidx <- which(seqnames(x_spatial_index) %in% seqnames)
+    batchidx <- as.integer(
+        successiveIRanges(runLength(seqnames(x_spatial_index)))[seqrank]
+    )
     df <- getBatchesFromOnDiskLongTable(x@snp_table, batchidx,
                                         with.rowids=TRUE)
     .as_GPos(df, x_seqinfo, drop.rs.prefix=drop.rs.prefix)
@@ -113,6 +116,7 @@ setMethod("snpsBySeqname", "ODLT_SNPlocs", .snpsBySeqname_ODLT_SNPlocs)
     x_seqinfo <- seqinfo(x_spatial_index)
     if (!isTRUEorFALSE(drop.rs.prefix))
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
+
     df <- getBatchesByOverlapsFromOnDiskLongTable(x@snp_table, ranges,
                                                   maxgap=maxgap,
                                                   minoverlap=minoverlap,
@@ -132,9 +136,10 @@ setMethod("snpsByOverlaps", "ODLT_SNPlocs", .snpsByOverlaps_ODLT_SNPlocs)
     ifnotfound <- match.arg(ifnotfound)
     x_rowids <- rowids(x@snp_table)
     rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
+
     df <- getRowsFromOnDiskLongTable(x@snp_table, rowidx[[1L]],
                                      with.rowids=FALSE)
-    df$RefSNP_id <- rowidx[[2L]]
+    df$rowids <- rowidx[[2L]]
     .as_GPos(df, x_seqinfo, drop.rs.prefix=FALSE)
 }
 
