@@ -180,8 +180,8 @@ setMethod("seqnames", "XtraSNPlocs", function(x) seqnames(referenceGenome(x)))
 ###
 
 ### Not intended to be used directly.
-### 'download_url' argument is for backward compatibility with SNPlocs
-### packages < 0.99.12.
+### 'download_url' argument is for backward compatibility with XtraSNPlocs
+### packages <= 0.99.12.
 newXtraSNPlocs <- function(pkgname, snp_data_dirpath,
                            provider, provider_version,
                            release_date, release_name,

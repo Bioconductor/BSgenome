@@ -1,6 +1,10 @@
 ### =========================================================================
 ### OldFashionSNPlocs objects
 ### -------------------------------------------------------------------------
+###
+### Implement old fashion on-disk storage used by SNPlocs packages < 0.99.20.
+### TODO: Remove once all SNPlocs packages < 0.99.20 are gone.
+###
 
 
 setClass("OldFashionSNPlocs",
@@ -23,7 +27,7 @@ setClass("OldFashionSNPlocs",
 
 ### Not intended to be used directly.
 ### 'download_url' argument is for backward compatibility with SNPlocs
-### packages < 0.99.12.
+### packages < 0.99.20.
 newSNPlocs <- function(provider, provider_version,
                        release_date, release_name,
                        source_data_url, download_date,
