@@ -53,8 +53,7 @@ export(
 exportMethods(
     ## Methods for generics defined in the base package:
     length, names,
-    nrow, ncol, dim,
-    colnames, dimnames,
+    dim, dimnames,
     as.character, as.list, as.data.frame,
     "[[", "$", unlist,
     nchar,

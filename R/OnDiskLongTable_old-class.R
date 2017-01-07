@@ -312,10 +312,6 @@ setMethod("blocksizes", "OnDiskLongTable_old",
     }
 )
 
-setMethod("nrow", "OnDiskLongTable_old",
-    function(x) .OnDiskLongTable_old_get_nrow_from_breakpoints(breakpoints(x))
-)
-
 setGeneric("rowids", function(x) standardGeneric("rowids"))
 
 ### Return NULL or an integer vector with no NAs or duplicated values.
@@ -348,13 +344,18 @@ setMethod("rowids", "OnDiskLongTable_old",
     }
 )
 
-setMethod("colnames", "OnDiskLongTable_old",
-    function(x, do.NULL=TRUE, prefix="col") x@colnames
+setMethod("dim", "OnDiskLongTable_old",
+    function(x)
+    {
+        x_nrow <- .OnDiskLongTable_old_get_nrow_from_breakpoints(breakpoints(x))
+        x_ncol <- length(colnames(x))
+        c(x_nrow, x_ncol)
+    }
 )
 
-setMethod("ncol", "OnDiskLongTable_old", function(x) length(colnames(x)))
-
-setMethod("dim", "OnDiskLongTable_old", function(x) c(nrow(x), ncol(x)))
+setMethod("dimnames", "OnDiskLongTable_old",
+    function(x) list(NULL, x@colnames)
+)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

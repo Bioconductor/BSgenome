@@ -4,6 +4,47 @@
 ###
 
 
+setClassUnion("OnDiskLongTable_OR_old",
+    c("OnDiskLongTable", "OnDiskLongTable_old")
+)
+
+setClass("XtraSNPlocs",
+    representation(
+        ## Name of the XtraSNPlocs data package where the XtraSNPlocs
+        ## object is defined.
+        pkgname="character",
+
+        ## OnDiskLongTable_old object containing the SNP data.
+        snp_table="OnDiskLongTable_OR_old",
+
+        ## Provider of the SNPs (e.g. "dbSNP").
+        provider="character",
+
+        ## E.g. "dbSNP Human BUILD 141".
+        provider_version="character",
+
+        ## Official release date of the SNPs (e.g. "May 2014").
+        release_date="character",
+
+        ## Official release name of the SNPs (e.g. "dbSNP Human BUILD 141").
+        release_name="character",
+
+        ## URL to the place where the original SNP data was downloaded from.
+        source_data_url="character",
+
+        ## Date the original SNP data was downloaded.
+        download_date="character",
+
+        ## Reference genome of the SNPs.
+        reference_genome="GenomeDescription"
+    )
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Low-level helpers
+###
+
 .XTRASNPLOCS_COLUMNS <- c(
     "seqnames", "start", "end", "width", "strand",
     "RefSNP_id", "alleles", "snpClass", "loctype"
@@ -40,7 +81,7 @@
     physical_columns <-
         .XtraSNPlocs_get_physical_from_user_supplied_columns(columns)
     with_RefSNP_id <- "RefSNP_id" %in% columns
-    DF0 <- getBatchesFromOnDiskLongTable_old(snpData(x), seqnames,
+    DF0 <- getBatchesFromOnDiskLongTable_old(x@snp_table, seqnames,
                                          physical_columns,
                                          with.batch_label=TRUE,
                                          with.rowids=with_RefSNP_id,
@@ -75,7 +116,7 @@
 {
     physical_columns <-
         .XtraSNPlocs_get_physical_from_user_supplied_columns(columns)
-    DF0 <- getRowsByIndexFromOnDiskLongTable_old(snpData(x), rowidx[[1L]],
+    DF0 <- getRowsByIndexFromOnDiskLongTable_old(x@snp_table, rowidx[[1L]],
                                                  physical_columns,
                                                  with.batch_label=TRUE)
     if ("RefSNP_id" %in% columns)
@@ -98,59 +139,21 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### XtraSNPlocs class
-###
-
-setClass("XtraSNPlocs",
-    representation(
-        ## Name of the XtraSNPlocs data package where the XtraSNPlocs
-        ## object is defined.
-        pkgname="character",
-
-        ## OnDiskLongTable_old object containing the SNP data.
-        snp_data="OnDiskLongTable_old",
-
-        ## Provider of the SNPs (e.g. "dbSNP").
-        provider="character",
-
-        ## E.g. "dbSNP Human BUILD 141".
-        provider_version="character",
-
-        ## Official release date of the SNPs (e.g. "May 2014").
-        release_date="character",
-
-        ## Official release name of the SNPs (e.g. "dbSNP Human BUILD 141").
-        release_name="character",
-
-        ## URL to the place where the original SNP data was downloaded from.
-        source_data_url="character",
-
-        ## Date the original SNP data was downloaded.
-        download_date="character",
-
-        ## Reference genome of the SNPs.
-        reference_genome="GenomeDescription"
-    )
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Getters
 ###
 
-### NOT exported.
-setGeneric("snpData", function(x) standardGeneric("snpData"))
-setMethod("snpData", "XtraSNPlocs", function(x) x@snp_data)
-
-setMethod("colnames", "XtraSNPlocs",
-    function(x, do.NULL=TRUE, prefix="col") .XTRASNPLOCS_COLUMNS
+setMethod("dimnames", "XtraSNPlocs",
+    function(x) list(NULL, .XTRASNPLOCS_COLUMNS)
 )
 
-setMethod("nrow", "XtraSNPlocs", function(x) nrow(snpData(x)))
-
-setMethod("ncol", "XtraSNPlocs", function(x) length(colnames(x)))
-
-setMethod("dim", "XtraSNPlocs", function(x) c(nrow(x), ncol(x)))
+setMethod("dim", "XtraSNPlocs",
+    function(x)
+    {
+        x_nrow <- nrow(x@snp_table)
+        x_ncol <- length(.XTRASNPLOCS_COLUMNS)
+        c(x_nrow, x_ncol)
+    }
+)
 
 setMethod("provider", "XtraSNPlocs", function(x) x@provider)
 
@@ -182,7 +185,7 @@ setMethod("seqnames", "XtraSNPlocs", function(x) seqnames(referenceGenome(x)))
 ### Not intended to be used directly.
 ### 'download_url' argument is for backward compatibility with XtraSNPlocs
 ### packages <= 0.99.12.
-newXtraSNPlocs <- function(pkgname, snp_data_dirpath,
+newXtraSNPlocs <- function(pkgname, snp_table_dirpath,
                            provider, provider_version,
                            release_date, release_name,
                            source_data_url, download_date,
@@ -190,12 +193,12 @@ newXtraSNPlocs <- function(pkgname, snp_data_dirpath,
 {
     if (missing(source_data_url))
         source_data_url <- download_url
-    snp_data <- OnDiskLongTable_old(snp_data_dirpath)
-    stopifnot(identical(colnames(snp_data), .XTRASNPLOCS_PHYSICAL_COLUMNS))
+    snp_table <- OnDiskLongTable_old(snp_table_dirpath)
+    stopifnot(identical(colnames(snp_table), .XTRASNPLOCS_PHYSICAL_COLUMNS))
 
     new("XtraSNPlocs",
         pkgname=pkgname,
-        snp_data=snp_data,
+        snp_table=snp_table,
         provider=provider,
         provider_version=provider_version,
         release_date=release_date,
@@ -217,7 +220,7 @@ setMethod("show", "XtraSNPlocs",
             " (", releaseName(object), ")\n", sep="")
         cat("# reference genome: ",
             providerVersion(referenceGenome(object)), "\n", sep="")
-        cat("# nb of SNPs: ", nrow(snpData(object)), "\n", sep="")
+        cat("# nb of SNPs: ", nrow(object), "\n", sep="")
     }
 )
 
@@ -248,7 +251,7 @@ setMethod("show", "XtraSNPlocs",
 
 setMethod("snpcount", "XtraSNPlocs",
     function(x)
-        .get_snpcount_from_blocksizes(blocksizes(snpData(x)), seqlevels(x),
+        .get_snpcount_from_blocksizes(blocksizes(x@snp_table), seqlevels(x),
                                       class(x), x@pkgname)
 )
 
@@ -381,7 +384,7 @@ setMethod("snpsById", "XtraSNPlocs",
     {
         user_rowids <- ids2rowids(ids)
         ifnotfound <- match.arg(ifnotfound)
-        x_rowids <- rowids(snpData(x))
+        x_rowids <- rowids(x@snp_table)
         rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
         .XtraSNPlocs_check_user_supplied_columns(columns)
         if (!isTRUEorFALSE(as.DataFrame))

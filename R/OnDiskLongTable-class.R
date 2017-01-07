@@ -448,9 +448,9 @@ OnDiskLongTable <- function(dirpath=".")
 setMethod("dim", "OnDiskLongTable",
     function(x)
     {
-        nrow <- .get_OnDiskLongTable_nrow_from_breakpoints(x@breakpoints)
-        ncol <- length(x@header)
-        c(nrow, ncol)
+        x_nrow <- .get_OnDiskLongTable_nrow_from_breakpoints(x@breakpoints)
+        x_ncol <- length(x@header)
+        c(x_nrow, x_ncol)
     }
 )
 
