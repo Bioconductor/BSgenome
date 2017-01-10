@@ -81,7 +81,7 @@ setMethod("snplocs", "ODLT_SNPlocs",
 {
     ans_seqnames <- df[ , "seqnames"]
     ans_ranges <- IRanges(df[ , "pos"], width=1L)
-    ans_strand <- Rle(factor("+", levels=levels(strand())), nrow(df))
+    ans_strand <- Rle(strand("+"), nrow(df))
     gr <- GRanges(ans_seqnames, ans_ranges, ans_strand, seqinfo=seqinfo)
 
     alleles_as_ambig <- decode_bytes_as_letters(df[ , "alleles"])
