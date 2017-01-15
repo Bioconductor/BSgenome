@@ -74,16 +74,20 @@ setMethod("snplocs", "ODLT_SNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### .as_GPos()
+### .as_naked_GRanges() and .as_GPos()
 ###
 
-.as_GPos <- function(df, seqinfo, drop.rs.prefix=FALSE)
+.as_naked_GRanges <- function(df, seqinfo)
 {
     ans_seqnames <- df[ , "seqnames"]
     ans_ranges <- IRanges(df[ , "pos"], width=1L)
     ans_strand <- Rle(strand("+"), nrow(df))
-    gr <- GRanges(ans_seqnames, ans_ranges, ans_strand, seqinfo=seqinfo)
+    GRanges(ans_seqnames, ans_ranges, ans_strand, seqinfo=seqinfo)
+}
 
+.as_GPos <- function(df, seqinfo, drop.rs.prefix=FALSE)
+{
+    gr <- .as_naked_GRanges(df, seqinfo)
     alleles_as_ambig <- decode_bytes_as_letters(df[ , "alleles"])
     rowids <- df$rowids
     if (is.null(rowids)) {
@@ -132,10 +136,12 @@ setMethod("snpsBySeqname", "ODLT_SNPlocs", .snpsBySeqname_ODLT_SNPlocs)
                                                   with.rowids=TRUE)
     x_spatial_index <- spatialIndex(x@snp_table)
     x_seqinfo <- seqinfo(x_spatial_index)
-    gpos <- .as_GPos(df, x_seqinfo, drop.rs.prefix=drop.rs.prefix)
-    subsetByOverlaps(gpos, ranges,
-                     maxgap=maxgap, minoverlap=minoverlap,
-                     type=type, ...)
+    gr0 <- .as_naked_GRanges(df, x_seqinfo)
+    idx <- which(overlapsAny(gr0, ranges,
+                             maxgap=maxgap, minoverlap=minoverlap,
+                             type=type, ...))
+    df <- S4Vectors:::extract_data_frame_rows(df, idx)
+    .as_GPos(df, x_seqinfo, drop.rs.prefix=drop.rs.prefix)
 }
 
 setMethod("snpsByOverlaps", "ODLT_SNPlocs", .snpsByOverlaps_ODLT_SNPlocs)
