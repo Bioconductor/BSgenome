@@ -332,7 +332,8 @@ setGeneric("snpid2grange", signature="x",
 setMethod("snpid2loc", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        .Deprecated("snpsById")
+        .Deprecated(msg=wmsg("snpid2loc() is deprecated. ",
+                             "Please use snpsById() instead."))
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
@@ -356,7 +357,8 @@ setMethod("snpid2loc", "OldFashionSNPlocs",
 setMethod("snpid2alleles", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        .Deprecated("snpsById")
+        .Deprecated(msg=wmsg("snpid2alleles() is deprecated. ",
+                             "Please use snpsById() instead."))
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
@@ -395,7 +397,8 @@ setMethod("snpid2alleles", "OldFashionSNPlocs",
 setMethod("snpid2grange", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        .Deprecated("snpsById")
+        .Deprecated(msg=wmsg("snpid2grange() is deprecated. ",
+                             "Please use snpsById() instead."))
         .snpid2grange_OldFashionSNPlocs(x, snpid, caching=caching)
     }
 )
