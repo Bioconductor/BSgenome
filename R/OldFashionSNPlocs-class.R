@@ -392,6 +392,9 @@ setMethod("snpid2alleles", "OldFashionSNPlocs",
 
 .snpid2grange_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
 {
+    snpid <- .normarg_snpid(snpid)
+    if (!isTRUEorFALSE(caching))
+        stop("'caching' must be TRUE or FALSE")
     loc <- .snpid2loc_OldFashionSNPlocs(x, snpid, caching=caching)
     alleles <- .snpid2alleles_OldFashionSNPlocs(x, snpid, caching=caching)
     ufsnplocs <- data.frame(RefSNP_id=as.character(snpid),
@@ -406,9 +409,6 @@ setMethod("snpid2grange", "OldFashionSNPlocs",
     {
         .Deprecated(msg=wmsg("snpid2grange() is deprecated. ",
                              "Please use snpsById() instead."))
-        snpid <- .normarg_snpid(snpid)
-        if (!isTRUEorFALSE(caching))
-            stop("'caching' must be TRUE or FALSE")
         .snpid2grange_OldFashionSNPlocs(x, snpid, caching=caching)
     }
 )
