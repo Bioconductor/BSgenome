@@ -140,7 +140,7 @@ setMethod("snpsBySeqname", "ODLT_SNPlocs", .snpsBySeqname_ODLT_SNPlocs)
     idx <- which(overlapsAny(gr0, ranges,
                              maxgap=maxgap, minoverlap=minoverlap,
                              type=type, ...))
-    df <- S4Vectors:::extract_data_frame_rows(df, idx)
+    df <- df[idx, ]
     .as_GPos(df, x_seqinfo, drop.rs.prefix=drop.rs.prefix)
 }
 
