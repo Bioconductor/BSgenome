@@ -329,6 +329,24 @@ setGeneric("snpid2grange", signature="x",
     rowidx
 }
 
+.snpid2loc_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
+{
+    rowidx <- .snpid2rowidx(x, snpid)
+    if (length(rowidx) == 0L) {
+        ans <- integer(0)
+    } else {
+        rowidx_list <- split(unname(rowidx), names(rowidx))
+        loc_list <- lapply(names(rowidx_list),
+            function(seqname) {
+                idx <- rowidx_list[[seqname]]
+                .load_raw_snplocs(x, seqname, caching)$loc[idx]
+            })
+        ans <- unsplit(loc_list, names(rowidx))
+    }
+    names(ans) <- names(rowidx)
+    ans
+}
+
 setMethod("snpid2loc", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
@@ -337,22 +355,28 @@ setMethod("snpid2loc", "OldFashionSNPlocs",
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
-        rowidx <- .snpid2rowidx(x, snpid)
-        if (length(rowidx) == 0L) {
-            ans <- integer(0)
-        } else {
-            rowidx_list <- split(unname(rowidx), names(rowidx))
-            loc_list <- lapply(names(rowidx_list),
-                function(seqname) {
-                    idx <- rowidx_list[[seqname]]
-                    .load_raw_snplocs(x, seqname, caching)$loc[idx]
-                })
-            ans <- unsplit(loc_list, names(rowidx))
-        }
-        names(ans) <- names(rowidx)
-        ans
+        .snpid2loc_OldFashionSNPlocs(x, snpid, caching=caching)
     }
 )
+
+.snpid2alleles_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
+{
+    rowidx <- .snpid2rowidx(x, snpid)
+    if (length(rowidx) == 0L) {
+        ans <- raw(0)
+    } else {
+        rowidx_list <- split(unname(rowidx), names(rowidx))
+        alleles_list <- lapply(names(rowidx_list),
+            function(seqname) {
+                idx <- rowidx_list[[seqname]]
+                .load_raw_snplocs(x, seqname, caching)$alleles[idx]
+            })
+        ans <- unsplit(alleles_list, names(rowidx))
+    }
+    ans <- decode_bytes_as_letters(ans)
+    names(ans) <- names(rowidx)
+    ans
+}
 
 setMethod("snpid2alleles", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
@@ -362,31 +386,14 @@ setMethod("snpid2alleles", "OldFashionSNPlocs",
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
-        rowidx <- .snpid2rowidx(x, snpid)
-        if (length(rowidx) == 0L) {
-            ans <- raw(0)
-        } else {
-            rowidx_list <- split(unname(rowidx), names(rowidx))
-            alleles_list <- lapply(names(rowidx_list),
-                function(seqname) {
-                    idx <- rowidx_list[[seqname]]
-                    .load_raw_snplocs(x, seqname, caching)$alleles[idx]
-                })
-            ans <- unsplit(alleles_list, names(rowidx))
-        }
-        ans <- decode_bytes_as_letters(ans)
-        names(ans) <- names(rowidx)
-        ans
+        .snpid2alleles_OldFashionSNPlocs(x, snpid, caching=caching)
     }
 )
 
 .snpid2grange_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
 {
-    snpid <- .normarg_snpid(snpid)
-    if (!isTRUEorFALSE(caching))
-        stop("'caching' must be TRUE or FALSE")
-    loc <- snpid2loc(x, snpid, caching=caching)
-    alleles <- snpid2alleles(x, snpid, caching=caching)
+    loc <- .snpid2loc_OldFashionSNPlocs(x, snpid, caching=caching)
+    alleles <- .snpid2alleles_OldFashionSNPlocs(x, snpid, caching=caching)
     ufsnplocs <- data.frame(RefSNP_id=as.character(snpid),
                             alleles_as_ambig=unname(alleles),
                             loc=unname(loc),
@@ -399,6 +406,9 @@ setMethod("snpid2grange", "OldFashionSNPlocs",
     {
         .Deprecated(msg=wmsg("snpid2grange() is deprecated. ",
                              "Please use snpsById() instead."))
+        snpid <- .normarg_snpid(snpid)
+        if (!isTRUEorFALSE(caching))
+            stop("'caching' must be TRUE or FALSE")
         .snpid2grange_OldFashionSNPlocs(x, snpid, caching=caching)
     }
 )
