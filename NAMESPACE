@@ -20,7 +20,7 @@ import(rtracklayer)
 
 exportClasses(
     OnDiskLongTable_old,
-    GRangesORNULL, OnDiskLongTable,
+    GRanges_OR_NULL, OnDiskLongTable,
     SNPlocs, ODLT_SNPlocs, OldFashionSNPlocs,
     InjectSNPsHandler,
     XtraSNPlocs,

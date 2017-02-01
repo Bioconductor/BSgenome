@@ -3,7 +3,7 @@
 ### -------------------------------------------------------------------------
 
 
-setClassUnion("GRangesORNULL", c("GRanges", "NULL"))
+setClassUnion("GRanges_OR_NULL", c("GRanges", "NULL"))
 
 setClass("OnDiskLongTable",
     representation(
@@ -30,7 +30,7 @@ setClass("OnDiskLongTable",
         ## [OPTIONAL] A *sorted* *unstranded* GRanges object with 1 range per
         ## batch. The object must be naked i.e. no names and no metadata
         ## columns.
-        spatial_index="GRangesORNULL",
+        spatial_index="GRanges_OR_NULL",
 
         ## Where to load and cache the row ids. The row ids are stored in a
         ## vector of *unique* integer values of length the nb of rows. This
