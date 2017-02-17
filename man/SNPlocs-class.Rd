@@ -70,14 +70,15 @@
 \title{SNPlocs objects}
 
 \description{
-  The SNPlocs class is a container for storing known SNP locations for a
-  given organism. SNPlocs objects are usually made in advance by
-  a volunteer and made available to the Bioconductor community as
-  "SNPlocs data packages".
-  See \code{?\link{available.SNPs}} for how to get the list of
-  "SNPlocs data packages" curently available.
+  The SNPlocs class is a container for storing known SNP locations (of class
+  \emph{snp}) for a given organism.
 
-  This man page's main focus is on how to extract information from a
+  SNPlocs objects are usually made in advance by a volunteer and made
+  available to the Bioconductor community as \emph{SNPlocs data packages}.
+  See \code{?\link{available.SNPs}} for how to get the list of
+  \emph{SNPlocs and \link{XtraSNPlocs} data packages} curently available.
+
+  The main focus of this man page is on how to extract SNPs from an
   SNPlocs object.
 }
 
@@ -178,6 +179,10 @@ snpsById(x, ids, ...)
     \item \link[GenomicRanges]{GPos} and \link[GenomicRanges]{GRanges}
           objects in the \pkg{GenomicRanges} package.
 
+    \item \link{XtraSNPlocs} packages and objects for molecular variations
+          of class other than \emph{snp} e.g. of class \emph{in-del},
+          \emph{heterozygous}, \emph{microsatellite}, etc...
+
     \item \code{IRanges::\link[IRanges]{subsetByOverlaps}} in the
           \pkg{IRanges} package and
           \code{GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}}
@@ -200,27 +205,41 @@ snpcount(snps)
 ## ---------------------------------------------------------------------
 ## snpsBySeqname()
 ## ---------------------------------------------------------------------
-## Get all SNPs located on chromosome 22 and MT:
-snpsBySeqname(snps, c("ch22", "chMT"))
+
+## Get all SNPs located on chromosome 22 or MT:
+snpsBySeqname(snps, c("22", "MT"))
 
 ## ---------------------------------------------------------------------
 ## snpsByOverlaps()
 ## ---------------------------------------------------------------------
-## Get all SNPs overlapping some regions of interest:
-snpsByOverlaps(snps, "ch22:33.63e6-33.64e6")
+
+## Get all SNPs overlapping some genomic region of interest:
+snpsByOverlaps(snps, "22:33.63e6-33.64e6")
 
 ## With the regions of interest being all the known CDS for hg38
-## located on chr22 or chrMT (except for the chromosome naming
+## located on chromosome 22 or MT (except for the chromosome naming
 ## convention, hg38 is the same as GRCh38):
 library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 my_cds <- cds(txdb)
-seqlevels(my_cds, pruning.mode="coarse") <- c("chr22", "chrMT")
+seqlevels(my_cds, pruning.mode="coarse") <- c("chr22", "chrM")
 seqlevelsStyle(my_cds)  # UCSC
 seqlevelsStyle(snps)  # dbSNP
 seqlevelsStyle(my_cds) <- seqlevelsStyle(snps)
 genome(my_cds) <- genome(snps)
-snpsByOverlaps(snps, my_cds)
+my_snps <- snpsByOverlaps(snps, my_cds)
+my_snps
+table(my_snps %within% my_cds)
+
+## Note that, by default, in addition to the SNPs that are located
+## within the regions of interest, snpsByOverlaps() also returns SNPs
+## that are adjacent to these regions. Use 'minoverlap=1L' to omit these
+## SNPs:
+my_snps2 <- snpsByOverlaps(snps, my_cds, minoverlap=1)
+table(my_snps2 %within% my_cds)
+
+## SNPs adjacent to the regions of interest:
+setdiff(my_cds, my_snps2)
 
 ## ---------------------------------------------------------------------
 ## snpsById()

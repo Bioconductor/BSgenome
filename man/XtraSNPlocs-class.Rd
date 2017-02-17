@@ -45,9 +45,9 @@
   XtraSNPlocs objects are usually made in advance by a volunteer and made
   available to the Bioconductor community as \emph{XtraSNPlocs data packages}.
   See \code{?\link{available.SNPs}} for how to get the list of
-  \emph{SNPlocs and XtraSNPlocs data packages} curently available.
+  \emph{\link{SNPlocs} and XtraSNPlocs data packages} curently available.
 
-  This man page's main focus is on how to extract data from an
+  The main focus of this man page is on how to extract SNPs from an
   XtraSNPlocs object.
 }
 
@@ -202,7 +202,11 @@
   \itemize{
     \item \code{\link{available.SNPs}}
 
-    \item \link{SNPlocs} objects.
+    \item \link[GenomicRanges]{GRanges} objects in the \pkg{GenomicRanges}
+          package.
+
+    \item \link{SNPlocs} packages and objects for molecular variations
+          of class \emph{snp}.
   }
 }
 

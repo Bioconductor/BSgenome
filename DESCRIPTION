@@ -3,7 +3,7 @@ Title: Infrastructure for Biostrings-based genome data packages and support
 	for efficient SNP representation
 Description: Infrastructure shared by all the Biostrings-based genome data
 	packages
-Version: 1.43.6
+Version: 1.43.7
 Encoding: UTF-8
 Author: Hervé Pagès
 Maintainer: H. Pagès <hpages@fredhutch.org>
