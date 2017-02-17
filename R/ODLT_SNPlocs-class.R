@@ -81,7 +81,7 @@ setMethod("snplocs", "ODLT_SNPlocs",
 {
     ans_seqnames <- df[ , "seqnames"]
     ans_ranges <- IRanges(df[ , "pos"], width=1L)
-    ans_strand <- Rle(strand("+"), nrow(df))
+    ans_strand <- Rle(strand("*"), nrow(df))
     GRanges(ans_seqnames, ans_ranges, ans_strand, seqinfo=seqinfo)
 }
 

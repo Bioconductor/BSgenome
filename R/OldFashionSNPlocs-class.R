@@ -194,7 +194,7 @@ setMethod("snpcount", "OldFashionSNPlocs",
         ans_ranges <- IRanges()
     else
         ans_ranges <- IRanges(start=ufsnplocs$loc, width=1L)
-    ans_strand <- Rle(strand("+"), nrow(ufsnplocs))
+    ans_strand <- Rle(strand("*"), nrow(ufsnplocs))
     ans <- GRanges(seqnames=ans_seqnames,
                    ranges=ans_ranges,
                    strand=ans_strand,

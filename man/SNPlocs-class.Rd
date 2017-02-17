@@ -119,8 +119,9 @@ snpsById(x, ids, ...)
   }
   \item{ranges}{
     One or more regions of interest specified as a
-    \link[GenomicRanges]{GRanges} object. A single region of interest can
-    be specified as a character string of the form \code{"ch14:5201-5300"}.
+    \link[GenomicRanges]{GRanges} or \link[GenomicRanges]{GPos} object.
+    A single region of interest can be specified as a character string of
+    the form \code{"ch14:5201-5300"}.
   }
   \item{maxgap, minoverlap, type}{
     These arguments are passed to \code{\link[IRanges]{subsetByOverlaps}()}
@@ -145,8 +146,8 @@ snpsById(x, ids, ...)
   of SNPs for each sequence in the reference genome.
 
   \code{snpsBySeqname}, \code{snpsByOverlaps}, and \code{snpsById} return
-  a \link[GenomicRanges]{GPos} object with 1 element (genomic position)
-  per SNP and the following metadata columns:
+  an \emph{unstranded} \link[GenomicRanges]{GPos} object with 1 element
+  (genomic position) per SNP and the following metadata columns:
   \itemize{
     \item \code{RefSNP_id}: RefSNP ID (aka "rs id"). Character vector
           with no NAs and no duplicates.
@@ -155,9 +156,11 @@ snpsById(x, ids, ...)
           nucleotide ambiguity code.
           See \code{?\link[Biostrings]{IUPAC_CODE_MAP}} in the
           \pkg{Biostrings} package for more information.
+          The alleles are always reported with respect to the positive
+          strand.
   }
-  Note that all the elements (genomic positions) in this
-  \link[GenomicRanges]{GRanges} object have their strand set to \code{"+"}.
+  Note that this \link[GenomicRanges]{GPos} object is \emph{unstranded} i.e.
+  all the SNPs in it have their strand set to \code{"*"}.
 
   If \code{ifnotfound="error"}, the object returned by \code{snpsById}
   is guaranteed to be \emph{parallel} to \code{ids}, that is, the i-th
