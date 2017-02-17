@@ -118,7 +118,7 @@ snpsById(x, ids, ...)
     returned object.)
   }
   \item{ranges}{
-    One or more regions of interest specified as a
+    One or more genomic regions of interest specified as a
     \link[GenomicRanges]{GRanges} or \link[GenomicRanges]{GPos} object.
     A single region of interest can be specified as a character string of
     the form \code{"ch14:5201-5300"}.
@@ -126,11 +126,12 @@ snpsById(x, ids, ...)
   \item{maxgap, minoverlap, type}{
     These arguments are passed to \code{\link[IRanges]{subsetByOverlaps}()}
     which is used internally by \code{snpsByOverlaps}.
-    See \code{?IRanges::\link[IRanges]{subsetByOverlaps}} in the \pkg{IRanges}
-    package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}}
-    in the \pkg{GenomicRanges} package for more information about the
-    \code{subsetByOverlaps()} generic and its method for
-    \link[GenomicRanges]{GenomicRanges} objects.
+
+    Note that the default value for \code{minoverlap} is 0 which means
+    that, by default, in addition to the SNPs that are located \emph{within}
+    the genomic regions specified thru the \code{ranges} argument,
+    \code{snpsByOverlaps} also returns SNPs that are \emph{adjacent} to
+    these regions. Use \code{minoverlap=1L} to omit these SNPs.
   }
   \item{ids}{
     The RefSNP ids to look up (a.k.a. rs ids). Can be integer or character
@@ -177,6 +178,13 @@ snpsById(x, ids, ...)
     \item \link[GenomicRanges]{GPos} and \link[GenomicRanges]{GRanges}
           objects in the \pkg{GenomicRanges} package.
 
+    \item \code{IRanges::\link[IRanges]{subsetByOverlaps}} in the
+          \pkg{IRanges} package and
+          \code{GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}}
+          in the \pkg{GenomicRanges} package for more information about the
+          \code{subsetByOverlaps()} generic and its method for
+          \link[GenomicRanges]{GenomicRanges} objects.
+
     \item \code{\link{injectSNPs}}
 
     \item \code{\link[Biostrings]{IUPAC_CODE_MAP}} in the \pkg{Biostrings}
@@ -185,8 +193,8 @@ snpsById(x, ids, ...)
 }
 
 \examples{
-library(SNPlocs.Hsapiens.dbSNP141.GRCh38)
-snps <- SNPlocs.Hsapiens.dbSNP141.GRCh38
+library(SNPlocs.Hsapiens.dbSNP144.GRCh38)
+snps <- SNPlocs.Hsapiens.dbSNP144.GRCh38
 snpcount(snps)
 
 ## ---------------------------------------------------------------------

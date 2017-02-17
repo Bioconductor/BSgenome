@@ -23,8 +23,8 @@ Suggests: BiocInstaller, Biobase,
 	BSgenome.Rnorvegicus.UCSC.rn5,
 	TxDb.Hsapiens.UCSC.hg38.knownGene,
 	TxDb.Mmusculus.UCSC.mm10.knownGene,
-	SNPlocs.Hsapiens.dbSNP141.GRCh38,
-	XtraSNPlocs.Hsapiens.dbSNP141.GRCh38,
+	SNPlocs.Hsapiens.dbSNP144.GRCh38,
+	XtraSNPlocs.Hsapiens.dbSNP144.GRCh38,
 	hgu95av2probe,
 	RUnit
 License: Artistic-2.0

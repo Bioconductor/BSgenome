@@ -207,8 +207,8 @@
 }
 
 \examples{
-library(XtraSNPlocs.Hsapiens.dbSNP141.GRCh38)
-snps <- XtraSNPlocs.Hsapiens.dbSNP141.GRCh38
+library(XtraSNPlocs.Hsapiens.dbSNP144.GRCh38)
+snps <- XtraSNPlocs.Hsapiens.dbSNP144.GRCh38
 snpcount(snps)
 colnames(snps)
 
@@ -247,7 +247,7 @@ my_rsids <- c("rs367617508", "rs398104919", "rs3831697", "rs372470289",
               "rs141568169", "rs34628976", "rs67551854")
 snpsById(snps, my_rsids, c("RefSNP_id", "alleles"))
 
-## See ?XtraSNPlocs.Hsapiens.dbSNP141.GRCh38 for examples of using
+## See ?XtraSNPlocs.Hsapiens.dbSNP144.GRCh38 for examples of using
 ## snpsBySeqname() and snpsById().
 }
 
