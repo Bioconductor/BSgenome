@@ -219,13 +219,15 @@ colnames(snps)
 ## ---------------------------------------------------------------------
 ## snpsBySeqname()
 ## ---------------------------------------------------------------------
+
 ## Get the location, RefSNP id, and alleles for all "extra SNPs"
-## located on chromosome 22 and MT:
+## located on chromosome 22 or MT:
 snpsBySeqname(snps, c("ch22", "chMT"), columns=c("RefSNP_id", "alleles"))
 
 ## ---------------------------------------------------------------------
 ## snpsByOverlaps()
 ## ---------------------------------------------------------------------
+
 ## Get the location, RefSNP id, and alleles for all "extra SNPs"
 ## overlapping some regions of interest:
 snpsByOverlaps(snps, "ch22:33.63e6-33.64e6",
@@ -238,7 +240,7 @@ library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 hg38_cds <- cds(txdb)
 seqlevelsStyle(hg38_cds)  # UCSC
-seqlevelsStyle(snps)  # dbSNP
+seqlevelsStyle(snps)      # dbSNP
 seqlevelsStyle(hg38_cds) <- seqlevelsStyle(snps)
 genome(hg38_cds) <- genome(snps)
 snpsByOverlaps(snps, hg38_cds, columns=c("RefSNP_id", "alleles"))
@@ -246,12 +248,13 @@ snpsByOverlaps(snps, hg38_cds, columns=c("RefSNP_id", "alleles"))
 ## ---------------------------------------------------------------------
 ## snpsById()
 ## ---------------------------------------------------------------------
+
 ## Get the location and alleles for some RefSNP ids:
 my_rsids <- c("rs367617508", "rs398104919", "rs3831697", "rs372470289",
               "rs141568169", "rs34628976", "rs67551854")
 snpsById(snps, my_rsids, c("RefSNP_id", "alleles"))
 
-## See ?XtraSNPlocs.Hsapiens.dbSNP144.GRCh38 for examples of using
+## See ?XtraSNPlocs.Hsapiens.dbSNP144.GRCh38 for more examples of using
 ## snpsBySeqname() and snpsById().
 }
 

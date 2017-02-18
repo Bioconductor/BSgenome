@@ -224,7 +224,7 @@ txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 my_cds <- cds(txdb)
 seqlevels(my_cds, pruning.mode="coarse") <- c("chr22", "chrM")
 seqlevelsStyle(my_cds)  # UCSC
-seqlevelsStyle(snps)  # dbSNP
+seqlevelsStyle(snps)    # NCBI
 seqlevelsStyle(my_cds) <- seqlevelsStyle(snps)
 genome(my_cds) <- genome(snps)
 my_snps <- snpsByOverlaps(snps, my_cds)
@@ -244,6 +244,7 @@ setdiff(my_cds, my_snps2)
 ## ---------------------------------------------------------------------
 ## snpsById()
 ## ---------------------------------------------------------------------
+
 ## Lookup some RefSNP ids:
 my_rsids <- c("rs10458597", "rs12565286", "rs7553394")
 \dontrun{
