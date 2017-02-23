@@ -229,14 +229,14 @@ seqlevelsStyle(my_cds) <- seqlevelsStyle(snps)
 genome(my_cds) <- genome(snps)
 my_snps <- snpsByOverlaps(snps, my_cds)
 my_snps
-table(my_snps %within% my_cds)
+table(my_snps \%within\% my_cds)
 
 ## Note that, by default, in addition to the SNPs that are located
 ## within the regions of interest, snpsByOverlaps() also returns SNPs
 ## that are adjacent to these regions. Use 'minoverlap=1L' to omit these
 ## SNPs:
 my_snps2 <- snpsByOverlaps(snps, my_cds, minoverlap=1)
-table(my_snps2 %within% my_cds)
+table(my_snps2 \%within\% my_cds)
 
 ## SNPs adjacent to the regions of interest:
 setdiff(my_cds, my_snps2)
