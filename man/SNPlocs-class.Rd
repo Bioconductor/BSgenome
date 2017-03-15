@@ -250,8 +250,11 @@ my_rsids <- c("rs10458597", "rs12565286", "rs7553394")
 \dontrun{
   snpsById(snps, my_rsids)  # error, rs7553394 not found
 }
-## This example requires too much memory on 32-bit Windows!
-if (.Platform$OS.type != "windows" || .Platform$r_arch != "i386") {
+## The following example requires more memory than 32-bit Windows can
+## handle:
+is_32bit_windows <- .Platform$OS.type == "windows" &&
+                    .Platform$r_arch == "i386"
+if (!is_32bit_windows) {
     snpsById(snps, my_rsids, ifnotfound="drop")
 }
 }
