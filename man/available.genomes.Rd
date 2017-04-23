@@ -126,8 +126,10 @@ table(av_gen$organism)
 table(av_gen$provider)
 
 # Make your choice and install with:
-library(BiocInstaller)
-biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
+if (interactive()) {
+    library(BiocInstaller)
+    biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
+}
 
 # Have a coffee 8-)
 

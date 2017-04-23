@@ -2,8 +2,8 @@ Package: BSgenome
 Title: Infrastructure for Biostrings-based genome data packages and support
 	for efficient SNP representation
 Description: Infrastructure shared by all the Biostrings-based genome data
-	packages
-Version: 1.43.7
+	packages.
+Version: 1.43.8
 Encoding: UTF-8
 Author: Hervé Pagès
 Maintainer: H. Pagès <hpages@fredhutch.org>
@@ -21,6 +21,7 @@ Suggests: BiocInstaller, Biobase,
 	BSgenome.Hsapiens.UCSC.hg38.masked,
 	BSgenome.Mmusculus.UCSC.mm10,
 	BSgenome.Rnorvegicus.UCSC.rn5,
+	BSgenome.Scerevisiae.UCSC.sacCer1,
 	TxDb.Hsapiens.UCSC.hg38.knownGene,
 	TxDb.Mmusculus.UCSC.mm10.knownGene,
 	SNPlocs.Hsapiens.dbSNP144.GRCh38,
