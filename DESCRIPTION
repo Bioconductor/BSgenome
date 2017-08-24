@@ -1,9 +1,8 @@
 Package: BSgenome
-Title: Infrastructure for Biostrings-based genome data packages and support
-	for efficient SNP representation
+Title: Software infrastructure for efficient representation of full genomes and their SNPs
 Description: Infrastructure shared by all the Biostrings-based genome data
 	packages.
-Version: 1.45.1
+Version: 1.45.2
 Encoding: UTF-8
 Author: Hervé Pagès
 Maintainer: H. Pagès <hpages@fredhutch.org>
