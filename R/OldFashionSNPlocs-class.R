@@ -447,11 +447,13 @@ setMethod("snpsBySeqname", "OldFashionSNPlocs",
 )
 
 .snpsByOverlaps_OldFashionSNPlocs <- function(x, ranges,
-                maxgap=0L, minoverlap=0L,
-                type=c("any", "start", "end", "within", "equal"),
-                drop.rs.prefix=FALSE, ...)
+                                              drop.rs.prefix=FALSE, ...)
 {
     ranges <- normarg_ranges(ranges)
+    dots <- list(...)
+    if (isTRUE(dots$invert))
+        stop(wmsg("snpsByOverlaps() does not support 'invert=TRUE'"))
+
     ## The only purpose of the line below is to check that 'x' and 'ranges'
     ## are based on the same reference genome (merge() will raise an error
     ## if they are not).
@@ -461,9 +463,7 @@ setMethod("snpsBySeqname", "OldFashionSNPlocs",
     snps_by_seqname <- .snpsBySeqname_OldFashionSNPlocs(x,
                                       seqlevels(ranges),
                                       drop.rs.prefix=drop.rs.prefix)
-    subsetByOverlaps(snps_by_seqname, ranges,
-                     maxgap=maxgap, minoverlap=minoverlap,
-                     type=type, ...)
+    subsetByOverlaps(snps_by_seqname, ranges, ...)
 }
 
 setMethod("snpsByOverlaps", "OldFashionSNPlocs",

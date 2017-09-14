@@ -122,9 +122,7 @@ setGeneric("snpsBySeqname", signature="x",
 ### EXCEPT for 'minoverlap' default value that we set to zero so we also
 ### get SNPs that are insertions (relevant for XtraSNPlocs objects).
 setGeneric("snpsByOverlaps", signature="x",
-    function(x, ranges, maxgap=0L, minoverlap=0L,
-             type=c("any", "start", "end", "within", "equal"), ...)
-        standardGeneric("snpsByOverlaps")
+    function(x, ranges, ...) standardGeneric("snpsByOverlaps")
 )
 
 setGeneric("snpsById", signature="x",

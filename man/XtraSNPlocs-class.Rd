@@ -55,19 +55,16 @@
 \S4method{snpcount}{XtraSNPlocs}(x)
 
 \S4method{snpsBySeqname}{XtraSNPlocs}(x, seqnames,
-              columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
-              drop.rs.prefix=FALSE,
-              as.DataFrame=FALSE)
+        columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
+        drop.rs.prefix=FALSE, as.DataFrame=FALSE)
 
-\S4method{snpsByOverlaps}{XtraSNPlocs}(x, ranges, maxgap=0L, minoverlap=0L,
-               type=c("any", "start", "end", "within", "equal"),
-               columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
-               drop.rs.prefix=FALSE, as.DataFrame=FALSE, ...)
+\S4method{snpsByOverlaps}{XtraSNPlocs}(x, ranges,
+        columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
+        drop.rs.prefix=FALSE, as.DataFrame=FALSE, ...)
 
 \S4method{snpsById}{XtraSNPlocs}(x, ids,
-         columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
-         ifnotfound=c("error", "warning", "drop"),
-         as.DataFrame=FALSE)
+        columns=c("seqnames", "start", "end", "strand", "RefSNP_id"),
+        ifnotfound=c("error", "warning", "drop"), as.DataFrame=FALSE)
 
 \S4method{colnames}{XtraSNPlocs}(x, do.NULL=TRUE, prefix="col")
 }
@@ -101,12 +98,15 @@
     object. A single region of interest can be specified as a character string
     of the form \code{"ch14:5201-5300"}.
   }
-  \item{maxgap, minoverlap, type}{
-    These arguments are passed to \code{\link[IRanges]{subsetByOverlaps}()}
-    which is used internally by \code{snpsByOverlaps}.
+  \item{...}{
+    Additional arguments, for use in specific methods.
+
+    Arguments passed to the \code{snpsByOverlaps} method for XtraSNPlocs
+    objects thru \code{...} are used internally in the call to
+    \code{\link[IRanges]{subsetByOverlaps}()}.
     See \code{?IRanges::\link[IRanges]{subsetByOverlaps}} in the \pkg{IRanges}
-    package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}} in
-    the \pkg{GenomicRanges} package for more information about the
+    package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}}
+    in the \pkg{GenomicRanges} package for more information about the
     \code{subsetByOverlaps()} generic and its method for
     \link[GenomicRanges]{GenomicRanges} objects.
   }
@@ -117,12 +117,6 @@
   }
   \item{ifnotfound}{
     What to do if SNP ids are not found.
-  }
-  \item{...}{
-    Additional arguments, for use in specific methods.
-    Further arguments passed to the \code{snpsByOverlaps} method for
-    XtraSNPlocs objects (thru \code{...}) are passed to
-    \code{\link[IRanges]{subsetByOverlaps}()}.
   }
   \item{do.NULL, prefix}{
     These arguments are ignored.

@@ -88,11 +88,8 @@ snpcount(x)
 snpsBySeqname(x, seqnames, ...)
 \S4method{snpsBySeqname}{SNPlocs}(x, seqnames, drop.rs.prefix=FALSE)
 
-snpsByOverlaps(x, ranges, maxgap=0L, minoverlap=0L,
-               type=c("any", "start", "end", "within", "equal"), ...)
-\S4method{snpsByOverlaps}{SNPlocs}(x, ranges, maxgap=0L, minoverlap=0L,
-               type=c("any", "start", "end", "within", "equal"),
-               drop.rs.prefix=FALSE, ...)
+snpsByOverlaps(x, ranges, ...)
+\S4method{snpsByOverlaps}{SNPlocs}(x, ranges, drop.rs.prefix=FALSE, ...)
 
 snpsById(x, ids, ...)
 \S4method{snpsById}{SNPlocs}(x, ids, ifnotfound=c("error", "warning", "drop"))
@@ -110,8 +107,13 @@ snpsById(x, ids, ...)
     Additional arguments, for use in specific methods.
 
     Arguments passed to the \code{snpsByOverlaps} method for SNPlocs
-    objects thru \code{...} are passed to internal call to
+    objects thru \code{...} are used internally in the call to
     \code{\link[IRanges]{subsetByOverlaps}()}.
+    See \code{?IRanges::\link[IRanges]{subsetByOverlaps}} in the \pkg{IRanges}
+    package and \code{?GenomicRanges::\link[GenomicRanges]{subsetByOverlaps}}
+    in the \pkg{GenomicRanges} package for more information about the
+    \code{subsetByOverlaps()} generic and its method for
+    \link[GenomicRanges]{GenomicRanges} objects.
   }
   \item{drop.rs.prefix}{
     Should the \code{rs} prefix be dropped from the returned RefSNP ids?
@@ -123,16 +125,6 @@ snpsById(x, ids, ...)
     \link[GenomicRanges]{GRanges} or \link[GenomicRanges]{GPos} object.
     A single region of interest can be specified as a character string of
     the form \code{"ch14:5201-5300"}.
-  }
-  \item{maxgap, minoverlap, type}{
-    These arguments are passed to \code{\link[IRanges]{subsetByOverlaps}()}
-    which is used internally by \code{snpsByOverlaps}.
-
-    Note that the default value for \code{minoverlap} is 0 which means
-    that, by default, in addition to the SNPs that are located \emph{within}
-    the genomic regions specified thru the \code{ranges} argument,
-    \code{snpsByOverlaps} also returns SNPs that are \emph{adjacent} to
-    these regions. Use \code{minoverlap=1L} to omit these SNPs.
   }
   \item{ids}{
     The RefSNP ids to look up (a.k.a. rs ids). Can be integer or character
@@ -230,16 +222,6 @@ genome(my_cds) <- genome(snps)
 my_snps <- snpsByOverlaps(snps, my_cds)
 my_snps
 table(my_snps \%within\% my_cds)
-
-## Note that, by default, in addition to the SNPs that are located
-## within the regions of interest, snpsByOverlaps() also returns SNPs
-## that are adjacent to these regions. Use 'minoverlap=1L' to omit these
-## SNPs:
-my_snps2 <- snpsByOverlaps(snps, my_cds, minoverlap=1)
-table(my_snps2 \%within\% my_cds)
-
-## SNPs adjacent to the regions of interest:
-setdiff(my_cds, my_snps2)
 
 ## ---------------------------------------------------------------------
 ## snpsById()

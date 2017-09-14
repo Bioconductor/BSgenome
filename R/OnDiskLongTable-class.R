@@ -712,7 +712,7 @@ getBatchesBySeqnameFromOnDiskLongTable <- function(x, seqnames, colidx=NULL,
 ### ranges: GenomicRanges object.
 ### colidx: integer or character vector of column indices, or NULL.
 getBatchesByOverlapsFromOnDiskLongTable <- function(x, ranges,
-                                                    maxgap=0L, minoverlap=1L,
+                                                    maxgap=-1L, minoverlap=0L,
                                                     colidx=NULL,
                                                     with.rowids=FALSE,
                                                     as.data.frame=FALSE)
