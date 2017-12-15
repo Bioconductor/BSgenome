@@ -12,7 +12,7 @@
 ###
 ### TODO: A cleaner class design would be to have 2 abstractions: IViews and
 ### GViews. For IViews: the subject is a Vector and the ranges slot is an
-### IRanges object. Note that this is how the current Views class is defined. 
+### IRanges object. Note that this is how the current Views class is defined.
 ### For GViews: the subject is a named List and the granges slot is a
 ### GRanges object. Both IViews and GViews would be direct subclasses of a
 ### more general Views class that contains List and has a subject slot.
@@ -255,14 +255,17 @@ setMethod("extractROWS", "BSgenomeViews",
 )
 
 ### Extracting a view.
-setMethod("getListElement", "BSgenomeViews",
-    function(x, i, exact=TRUE)
-    {
-        i <- normalizeDoubleBracketSubscript(i, x, exact=exact,
-                                             error.if.nomatch=TRUE)
-        getSeq(subject(x), granges(x)[i])[[1L]]
-    }
-)
+.getListElement_BSgenomeViews <- function(x, i, exact=TRUE)
+{
+    i2 <- normalizeDoubleBracketSubscript(i, x, exact=exact,
+                                          allow.NA=TRUE,
+                                          allow.nomatch=TRUE)
+    if (is.na(i2))
+        return(NULL)
+    getSeq(subject(x), granges(x)[i2])[[1L]]
+}
+
+setMethod("getListElement", "BSgenomeViews", .getListElement_BSgenomeViews)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -408,7 +411,7 @@ setMethod("consensusMatrix", "BSgenomeViews",
 #)
 # Unfortunately, because of bug 16141 (see above), we have to do this:
 setMethod("consensusString", "BSgenomeViews",
-    function(x, ambiguityMap=IUPAC_CODE_MAP, threshold=0.25, 
+    function(x, ambiguityMap=IUPAC_CODE_MAP, threshold=0.25,
                 shift=0L, width=NULL)
     {
         x <- .extract_dna_from_BSgenomeViews(x)
