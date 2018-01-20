@@ -75,7 +75,7 @@
     GRanges(seqnames=seqnames, ranges=ranges, strand=strand)
 }
 
-### Assumes 'x' is a Ranges object with names.
+### Assumes 'x' is an IntegerRanges object with names.
 .newGRangesFromNamedRanges <- function(x, strand)
 {
     strand <- .normargStrand(strand, length(x))
@@ -86,9 +86,9 @@
 ### .toGRanges() is called.
 .toGRanges <- function(x, strand)
 {
-    if (is(x, "RangesList") || is(x, "Ranges")) {
+    if (is(x, "RangesList") || is(x, "IntegerRanges")) {
         if (is.null(names(x)))
-            stop("when 'names' is a RangesList or Ranges object, ",
+            stop("when 'names' is a RangesList or IntegerRanges object, ",
                  "it must be named with the sequence names")
         if (is(x, "RangesList"))
             ans <- .newGRangesFromNamedRangesList(x, strand)

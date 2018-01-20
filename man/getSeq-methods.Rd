@@ -35,8 +35,8 @@
     or a \link[GenomicRanges]{GRanges} object,
     or a \link[GenomicRanges]{GRangesList} object,
     or a named \link[IRanges]{RangesList} object,
-    or a named \link[IRanges]{Ranges} object.
-    The \link[IRanges]{RangesList} or \link[IRanges]{Ranges} object
+    or a named \link[IRanges]{IntegerRanges} object.
+    The \link[IRanges]{RangesList} or \link[IRanges]{IntegerRanges} object
     must be named according to the sequences
     in \code{x} where to get the subsequences from.
 
@@ -56,7 +56,7 @@
     These are not needed (and it's an error to supply them)
     when \code{names} is a \link[GenomicRanges]{GRanges},
     \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangesList},
-    or \link[IRanges]{Ranges} object.
+    or \link[IRanges]{IntegerRanges} object.
   }
   \item{strand}{
     A vector containing \code{"+"}s or/and \code{"-"}s.
@@ -75,7 +75,7 @@
   L, the number of sequences to extract, is determined as follow:
   \itemize{
   \item If \code{names} is a \link[GenomicRanges]{GRanges} or
-        \link[IRanges]{Ranges} object then L = \code{length(names)}.
+        \link[IRanges]{IntegerRanges} object then L = \code{length(names)}.
   \item If \code{names} is a \link[GenomicRanges]{GRangesList} or
         \link[IRanges]{RangesList} object then
         L = \code{length(unlist(names))}.
@@ -112,12 +112,11 @@
 
   There are convenience methods for extracting sequences from
   \link[Biostrings]{XStringSet} objects using a
-  \link[GenomicRanges:GenomicRanges-class]{GenomicRanges} or
-  \link[GenomicRanges]{GRangesList} subscript (character subscripts are
-  implicitly supported). Both methods are simple wrappers around
-  \code{getSeq}, although the GRangesList method differs from the
-  \code{getSeq} behavior in that the within-element results are
-  concatenated and returned as an XStringSet, rather than an
+  \link[GenomicRanges]{GenomicRanges} or \link[GenomicRanges]{GRangesList}
+  subscript (character subscripts are implicitly supported). Both methods
+  are simple wrappers around \code{getSeq}, although the GRangesList method
+  differs from the \code{getSeq} behavior in that the within-element results
+  are concatenated and returned as an XStringSet, rather than an
   XStringSetList. See the examples.
 }
 
@@ -135,7 +134,7 @@
           if \code{as.character=TRUE}) if L = 1 and \code{names}
           is not a \link[GenomicRanges]{GRanges},
           \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangesList},
-          or \link[IRanges]{Ranges} object.
+          or \link[IRanges]{IntegerRanges} object.
   }
 }
 
@@ -163,7 +162,7 @@
   \link[GenomicRanges]{GRanges-class},
   \link[GenomicRanges]{GRangesList-class},
   \link[IRanges]{RangesList-class},
-  \link[IRanges]{Ranges-class},
+  \link[IRanges]{IntegerRanges-class},
   \code{\link[base]{grep}}
 }
 

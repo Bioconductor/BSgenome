@@ -192,8 +192,8 @@ setMethod("[[", "FastaNamedSequences",
 setMethod("loadSubseqsFromLinearSequence", "FastaNamedSequences",
     function(x, seqname, ranges)
     {
-        if (!is(ranges, "Ranges"))
-            stop("'ranges' must be a Ranges object")
+        if (!is(ranges, "IntegerRanges"))
+            stop("'ranges' must be an IntegerRanges object")
         fafile <- x@fafile
         seqlength <- .get_seqlength(fafile, seqname)
         if (length(ranges) != 0L &&
@@ -258,8 +258,8 @@ setMethod("[[", "TwobitNamedSequences",
 setMethod("loadSubseqsFromLinearSequence", "TwobitNamedSequences",
     function(x, seqname, ranges)
     {
-        if (!is(ranges, "Ranges"))
-            stop("'ranges' must be a Ranges object")
+        if (!is(ranges, "IntegerRanges"))
+            stop("'ranges' must be an IntegerRanges object")
         twobitfile <- x@twobitfile
         seqlength <- .get_seqlength(twobitfile, seqname)
         if (length(ranges) != 0L &&
@@ -278,8 +278,8 @@ setMethod("loadSubseqsFromLinearSequence", "TwobitNamedSequences",
 
 .loadSubseqsFromCircularSequence <- function(x, seqname, ranges)
 {
-    if (!is(ranges, "Ranges"))
-        stop("'ranges' must be a Ranges object")
+    if (!is(ranges, "IntegerRanges"))
+        stop("'ranges' must be an IntegerRanges object")
     seqlength <- .get_seqlength(x, seqname)
     ranges_start <- start(ranges)
     ranges_end <- end(ranges)

@@ -2,16 +2,16 @@ Package: BSgenome
 Title: Software infrastructure for efficient representation of full genomes and their SNPs
 Description: Infrastructure shared by all the Biostrings-based genome data
 	packages.
-Version: 1.47.1
+Version: 1.47.2
 Encoding: UTF-8
 Author: Hervé Pagès
 Maintainer: H. Pagès <hpages@fredhutch.org>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
 Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.13.8),
-	S4Vectors (>= 0.17.4), IRanges (>= 2.11.16),
-	GenomeInfoDb (>= 1.13.1), GenomicRanges (>= 1.29.14),
-	Biostrings (>= 2.35.3), rtracklayer (>= 1.25.8)
+	S4Vectors (>= 0.17.24), IRanges (>= 2.13.11),
+	GenomeInfoDb (>= 1.13.1), GenomicRanges (>= 1.31.7),
+	Biostrings (>= 2.47.5), rtracklayer (>= 1.39.6)
 Imports: methods, utils, stats, BiocGenerics, S4Vectors, IRanges, XVector,
 	GenomeInfoDb, GenomicRanges, Biostrings, Rsamtools, rtracklayer
 Suggests: BiocInstaller, Biobase,
