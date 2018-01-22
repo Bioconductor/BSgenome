@@ -24,11 +24,11 @@
 \S4method{vmatchPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
             with.indels = FALSE, fixed = TRUE, algorithm = "auto",
             exclude = "", maskList = logical(0),  userMask =
-               RangesList(), invertUserMask = FALSE)
+               IRangesList(), invertUserMask = FALSE)
 \S4method{vcountPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
             with.indels = FALSE, fixed = TRUE, algorithm = "auto",
             exclude = "", maskList = logical(0),  userMask =
-               RangesList(), invertUserMask = FALSE)
+               IRangesList(), invertUserMask = FALSE)
 \S4method{vmatchPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
           fixed = TRUE, algorithm = "auto", verbose = FALSE,
           exclude = "", maskList = logical(0))
@@ -96,8 +96,8 @@
     be set to the states in this vector.
   }
   \item{userMask}{
-    A \linkS4class{RangesList}, containing a mask to be applied to each
-    chromosome. See \code{\link{bsapply}}.
+    An \linkS4class{IntegerRangesList}, containing a mask to be applied
+    to each chromosome. See \code{\link{bsapply}}.
   }
   \item{invertUserMask}{
     Whether the \code{userMask} should be inverted.

@@ -6,7 +6,7 @@ setClass("BSParams",
            simplify="logical",
            maskList="logical",
            motifList="character",
-           userMask="RangesList",
+           userMask="IntegerRangesList",
            invertUserMask="logical"),
          prototype=prototype(
            exclude=character(0),
@@ -14,7 +14,7 @@ setClass("BSParams",
            maskList=logical(0),
            motifList=character(0),
            invertUserMask=FALSE,
-           userMask=RangesList()
+           userMask=IRangesList()
            ),
          validity=function(object) {
              msg <- TRUE

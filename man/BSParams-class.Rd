@@ -42,7 +42,7 @@ Objects can be created by calls of the form \code{new("BSParams", ...)}.
       wishes to mask from the sequence.
     }
     \item{\code{userMask}:}{
-      A \linkS4class{RangesList} object, where each element masks the
+      A \linkS4class{IntegerRangesList} object, where each element masks the
       corresponding chromosome in \code{X}. This allows the user to
       conveniently apply masks besides those included in \code{X}.
     }

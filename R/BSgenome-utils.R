@@ -4,7 +4,7 @@ setMethod("vmatchPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
              algorithm="auto", exclude="", maskList=logical(0),
-             userMask=RangesList(), invertUserMask=FALSE)
+             userMask=IRangesList(), invertUserMask=FALSE)
     {
         matchFUN <- function(posPattern, negPattern, chr,
                              seqlengths,
@@ -79,7 +79,7 @@ setMethod("vcountPattern", "BSgenome",
     function(pattern, subject,
              max.mismatch=0, min.mismatch=0, with.indels=FALSE, fixed=TRUE,
              algorithm="auto", exclude="", maskList=logical(0),
-             userMask=RangesList(), invertUserMask=FALSE)
+             userMask=IRangesList(), invertUserMask=FALSE)
     {
         countFUN <- function(posPattern, negPattern, chr,
                              max.mismatch = max.mismatch,

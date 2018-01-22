@@ -34,10 +34,10 @@
     in \code{x} where to get the subsequences from,
     or a \link[GenomicRanges]{GRanges} object,
     or a \link[GenomicRanges]{GRangesList} object,
-    or a named \link[IRanges]{RangesList} object,
+    or a named \link[IRanges]{IntegerRangesList} object,
     or a named \link[IRanges]{IntegerRanges} object.
-    The \link[IRanges]{RangesList} or \link[IRanges]{IntegerRanges} object
-    must be named according to the sequences
+    The \link[IRanges]{IntegerRangesList} or \link[IRanges]{IntegerRanges}
+    object must be named according to the sequences
     in \code{x} where to get the subsequences from.
 
     If \code{names} is missing, then \code{seqnames(x)} is used.
@@ -55,7 +55,7 @@
     of the subsequences to extract.
     These are not needed (and it's an error to supply them)
     when \code{names} is a \link[GenomicRanges]{GRanges},
-    \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangesList},
+    \link[GenomicRanges]{GRangesList}, \link[IRanges]{IntegerRangesList},
     or \link[IRanges]{IntegerRanges} object.
   }
   \item{strand}{
@@ -77,7 +77,7 @@
   \item If \code{names} is a \link[GenomicRanges]{GRanges} or
         \link[IRanges]{IntegerRanges} object then L = \code{length(names)}.
   \item If \code{names} is a \link[GenomicRanges]{GRangesList} or
-        \link[IRanges]{RangesList} object then
+        \link[IRanges]{IntegerRangesList} object then
         L = \code{length(unlist(names))}.
   \item Otherwise, L is the length of the longest of \code{names},
         \code{start}, \code{end} and \code{width} and all these
@@ -133,7 +133,7 @@
     \item A \link[Biostrings]{DNAString} object (or single character string
           if \code{as.character=TRUE}) if L = 1 and \code{names}
           is not a \link[GenomicRanges]{GRanges},
-          \link[GenomicRanges]{GRangesList}, \link[IRanges]{RangesList},
+          \link[GenomicRanges]{GRangesList}, \link[IRanges]{IntegerRangesList},
           or \link[IRanges]{IntegerRanges} object.
   }
 }
@@ -161,7 +161,7 @@
   \link[Biostrings]{MaskedDNAString-class},
   \link[GenomicRanges]{GRanges-class},
   \link[GenomicRanges]{GRangesList-class},
-  \link[IRanges]{RangesList-class},
+  \link[IRanges]{IntegerRangesList-class},
   \link[IRanges]{IntegerRanges-class},
   \code{\link[base]{grep}}
 }

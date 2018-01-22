@@ -66,7 +66,7 @@
     list(names=names, start=start, end=end, width=width, strand=strand)
 }
 
-### Assumes 'x' is a RangesList object with names.
+### Assumes 'x' is an IntegerRangesList object with names.
 .newGRangesFromNamedRangesList <- function(x, strand)
 {
     seqnames <- rep.int(names(x), elementNROWS(x))
@@ -86,11 +86,11 @@
 ### .toGRanges() is called.
 .toGRanges <- function(x, strand)
 {
-    if (is(x, "RangesList") || is(x, "IntegerRanges")) {
+    if (is(x, "IntegerRangesList") || is(x, "IntegerRanges")) {
         if (is.null(names(x)))
-            stop("when 'names' is a RangesList or IntegerRanges object, ",
-                 "it must be named with the sequence names")
-        if (is(x, "RangesList"))
+            stop("when 'names' is an IntegerRangesList or IntegerRanges ",
+                 "object, it must be named with the sequence names")
+        if (is(x, "IntegerRangesList"))
             ans <- .newGRangesFromNamedRangesList(x, strand)
         else
             ans <- .newGRangesFromNamedRanges(x, strand)
@@ -376,7 +376,7 @@ setMethod("getSeq", "XStringSet",
             warning("some strand(x) != '*' but ",
                     "strand has no meaning for ", class(x))
         }
-        rl <- as(gr, "RangesList")
+        rl <- as(gr, "IntegerRangesList")
         ans <- relist(unsplit(x[rl], rep(seqnames(gr), width(gr))),
                       PartitioningByWidth(width(gr)))
         if (!ignoringStrand) {
