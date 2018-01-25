@@ -9,7 +9,7 @@ assembly_report <- GenomeInfoDb:::fetch_assembly_report("GCF_000364345.1")
 Mfascicularis <- readDNAStringSet(INFILE)
 
 ## Clean names on Mfascicularis to keep only the RefSeq accession.
-names(Mfascicularis) <- as.character(phead(
+names(Mfascicularis) <- as.character(heads(
                           CharacterList(
                             strsplit(names(Mfascicularis), " ", fixed=TRUE)
                           ),
