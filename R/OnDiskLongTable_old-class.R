@@ -198,7 +198,7 @@ setClass("OnDiskLongTable_old",
     ## Append 'df' columns.
     col_dirpaths <- .OnDiskLongTable_old_colidx2dirpath(dirpath,
                                                         seq_len(ncol(df)))
-    breakpoints2 <- end(breakInChunks(nrow(df), blocksize))
+    breakpoints2 <- end(breakInChunks(nrow(df), chunksize=blocksize))
     blockidx_offset <- length(breakpoints1)
     for (j in seq_len(ncol(df)))
         .write_column(df[[j]], col_dirpaths[[j]],

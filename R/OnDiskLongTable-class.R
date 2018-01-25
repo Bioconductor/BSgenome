@@ -296,7 +296,7 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
     ## Append 'df' columns.
     colpaths <- file.path(dirpath, .col_physname(seq_len(ncol(df))))
     if (is.null(spatial_index)) {
-        breakpoints <- end(breakInChunks(nrow(df), batchsize))
+        breakpoints <- end(breakInChunks(nrow(df), chunksize=batchsize))
     } else {
         breakpoints <- cumsum(batchsize)
         spatial_index0 <- .read_object(dirpath, "spatial_index")
