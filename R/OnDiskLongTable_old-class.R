@@ -452,7 +452,9 @@ getBatchesFromOnDiskLongTable_old <- function(x, batch_labels, colidx,
         ans_listData[["batch_label"]] <- ans_batch_label
     }
     if (with.rowids) {
-        rowidx <- as.integer(successiveIRanges(x_blocksizes)[blockidx])
+        rowidx <- IRanges:::unlist_as_integer(
+                      successiveIRanges(x_blocksizes)[blockidx]
+                  )
         ans_rowids <- rowids(x)[rowidx]
     } else {
         ans_rowids <- NULL

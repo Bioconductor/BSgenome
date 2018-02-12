@@ -683,7 +683,9 @@ getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,
     if (anyNA(seqrank))
         stop(wmsg("'seqnames' must be a subset of: ",
                   paste(seqlevels, collapse=", ")))
-    as.integer(successiveIRanges(runLength(seqnames(spatial_index)))[seqrank])
+    IRanges:::unlist_as_integer(
+        successiveIRanges(runLength(seqnames(spatial_index)))[seqrank]
+    )
 }
 
 ### seqnames: character vector of unique sequence names.
