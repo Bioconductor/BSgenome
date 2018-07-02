@@ -72,7 +72,7 @@ getBSgenome(genome, masked=FALSE)
           organisation for this particular genome assembly. We formally
           refer to it as the \emph{provider version} of the genome.
           E.g. \code{hg38}, \code{GRCh38}, \code{hg19}, \code{mm10},
-          \code{susScr3}, etc...
+          \code{susScr11}, etc...
 
     \item If the package contains masked sequences, its name has the
           \code{.masked} suffix added to it, which is typically the 5th part.
