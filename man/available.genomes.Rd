@@ -127,8 +127,9 @@ table(av_gen$provider)
 
 # Make your choice and install with:
 if (interactive()) {
-    library(BiocInstaller)
-    biocLite("BSgenome.Scerevisiae.UCSC.sacCer1")
+    if (!require("BiocManager"))
+        install.packages("BiocManager")
+    BiocManager::install("BSgenome.Scerevisiae.UCSC.sacCer1")
 }
 
 # Have a coffee 8-)

@@ -115,8 +115,9 @@ available.SNPs()
 
 if (interactive()) {
   ## Make your choice and install with:
-  source("http://bioconductor.org/biocLite.R")
-  biocLite("SNPlocs.Hsapiens.dbSNP144.GRCh38")
+  if (!require("BiocManager"))
+    install.packages("BiocManager")
+  BiocManager::install("SNPlocs.Hsapiens.dbSNP144.GRCh38")
 }
 
 ## Inject SNPs from dbSNP into the Human genome:

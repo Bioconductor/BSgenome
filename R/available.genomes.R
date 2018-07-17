@@ -92,8 +92,8 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
 .stopOnAvailablePkg <- function(genome, is.source=FALSE)
     stop(genome, " package is not currently installed.\n",
          "  You first need to install it, which you can do with:\n",
-         "      library(BiocInstaller)\n",
-         "      biocLite(\"", genome, "\"",
+         "      library(BiocManager)\n",
+         "      install(\"", genome, "\"",
          ifelse(is.source, ", type=\"source\"", ""), ")")
 
 .stopOnMoreThanOneAvailablePkg <- function(genome, masked, is.source=FALSE)
@@ -104,8 +104,8 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
          "  You first need to choose one (use 'available.genomes(",
          ifelse(is.source, "type=\"source\"", ""), ")' to get\n  the list). ",
          "Then install it, which you can do with:\n",
-         "      library(BiocInstaller)\n",
-         "      biocLite(\"<pkgname>\"",
+         "      library(BiocManager)\n",
+         "      install(\"<pkgname>\"",
          ifelse(is.source, ", type=\"source\"", ""), ")")
 
 .getInstalledPkgnameFromProviderVersion <- function(genome, masked=FALSE)
