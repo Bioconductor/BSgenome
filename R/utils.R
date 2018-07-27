@@ -7,7 +7,6 @@ get_data_annotation_contrib_url <- function(type=getOption("pkgType"))
 {
     ## The BiocManager package is needed for repositories().
     if (!requireNamespace("BiocManager", quietly=TRUE)) {
-        ## Sourcing this file will install and load the BiocInstaller package.
         stop("Install 'BiocManager' from CRAN to get 'BioCann' contrib.url")
     }
     contrib.url(BiocManager::repositories()["BioCann"], type=type)
