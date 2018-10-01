@@ -377,8 +377,7 @@ setMethod("getSeq", "XStringSet",
                     "strand has no meaning for ", class(x))
         }
         rl <- as(gr, "IntegerRangesList")
-        ans <- relist(unsplit(x[rl], rep(seqnames(gr), width(gr))),
-                      PartitioningByWidth(width(gr)))
+        ans <- unsplit(extractAt(x[names(rl)], unname(rl)), seqnames(gr))
         if (!ignoringStrand) {
             minus <- strand(gr) == "-"
             ans[minus] <- reverseComplement(ans[minus])
