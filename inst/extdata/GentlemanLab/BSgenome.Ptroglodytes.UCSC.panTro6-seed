@@ -1,0 +1,18 @@
+Package: BSgenome.Ptroglodytes.UCSC.panTro6
+Title: Full genome sequences for Pan troglodytes (UCSC version panTro6)
+Description: Full genome sequences for Pan troglodytes (Chimp) as provided by UCSC (panTro6, Jan. 2018) and stored in Biostrings objects.
+Version: 1.4.2
+organism: Pan troglodytes
+common_name: Chimp
+provider: UCSC
+provider_version: panTro6
+release_date: Jan. 2018
+release_name: Clint_PTRv2
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/panTro6/bigZips/
+organism_biocview: Pan_troglodytes
+BSgenomeObjname: Ptroglodytes
+circ_seqs: "chrM"
+SrcDataFiles: panTro6.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/panTro6/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro6/seqs
+seqfile_name: panTro6.sorted.2bit
