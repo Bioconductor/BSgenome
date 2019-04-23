@@ -1,0 +1,17 @@
+Package: BSgenome.Cjacchus.UCSC.calJac3
+Title: Full genome sequences for Callithrix jacchus (UCSC version calJac3)
+Description: Full genome sequences for Callithrix jacchus (Marmoset) as provided by UCSC (calJac3, Mar. 2009) and stored in Biostrings objects.
+Version: 1.4.2
+organism: Callithrix jacchus
+common_name: Marmoset
+provider: UCSC
+provider_version: calJac3
+release_date: Mar. 2009
+release_name: WUSTL Callithrix_jacchus-v3.2
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/calJac3/bigZips/
+organism_biocview: Callithrix_jacchus
+BSgenomeObjname: Cjacchus
+SrcDataFiles: calJac3.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/calJac3/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Cjacchus.UCSC.calJac3/seqs
+seqfile_name: calJac3.sorted.2bit
