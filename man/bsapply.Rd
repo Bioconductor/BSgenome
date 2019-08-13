@@ -99,6 +99,8 @@ bsapply(BSParams, ...)
   ##Disable all standard masks
   params@maskList <- c(AGAPS=FALSE,AMB=FALSE)
   bsapply(params)
+
+  options(verbose=FALSE)
 }
 
 

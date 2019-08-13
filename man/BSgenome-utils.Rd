@@ -17,44 +17,32 @@
 }
 
 \usage{
-\S4method{matchPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "",
-       maskList = logical(0))
-\S4method{countPWM}{BSgenome}(pwm, subject, min.score = "80\%", exclude = "", 
-       maskList = logical(0))
-\S4method{vmatchPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
-            with.indels = FALSE, fixed = TRUE, algorithm = "auto",
-            exclude = "", maskList = logical(0),  userMask =
-               IRangesList(), invertUserMask = FALSE)
-\S4method{vcountPattern}{BSgenome}(pattern, subject, max.mismatch = 0, min.mismatch = 0,
-            with.indels = FALSE, fixed = TRUE, algorithm = "auto",
-            exclude = "", maskList = logical(0),  userMask =
-               IRangesList(), invertUserMask = FALSE)
-\S4method{vmatchPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
-          fixed = TRUE, algorithm = "auto", verbose = FALSE,
-          exclude = "", maskList = logical(0))
-\S4method{vcountPDict}{BSgenome}(pdict, subject, max.mismatch = 0, min.mismatch = 0,
-          fixed = TRUE, algorithm = "auto", collapse = FALSE,
-          weight = 1L, verbose = FALSE, exclude = "", maskList = logical(0))
+\S4method{vmatchPattern}{BSgenome}(pattern, subject, max.mismatch=0, min.mismatch=0,
+              with.indels=FALSE, fixed=TRUE, algorithm="auto",
+              exclude="", maskList=logical(0), userMask=IRangesList(),
+              invertUserMask=FALSE)
+\S4method{vcountPattern}{BSgenome}(pattern, subject, max.mismatch=0, min.mismatch=0,
+              with.indels=FALSE, fixed=TRUE, algorithm="auto",
+              exclude="", maskList=logical(0), userMask=IRangesList(),
+              invertUserMask=FALSE)
+
+\S4method{vmatchPDict}{BSgenome}(pdict, subject, max.mismatch=0, min.mismatch=0,
+            fixed=TRUE, algorithm="auto", verbose=FALSE,
+            exclude="", maskList=logical(0))
+\S4method{vcountPDict}{BSgenome}(pdict, subject, max.mismatch=0, min.mismatch=0,
+            fixed=TRUE, algorithm="auto", collapse=FALSE,
+            weight=1L, verbose=FALSE, exclude="", maskList=logical(0))
+
+\S4method{matchPWM}{BSgenome}(pwm, subject, min.score="80\%", exclude="", maskList=logical(0))
+\S4method{countPWM}{BSgenome}(pwm, subject, min.score="80\%", exclude="", maskList=logical(0))
 }
 
 \arguments{
-  \item{pwm}{
-    A numeric matrix with row names A, C, G and T representing a Position
-    Weight Matrix.
-  }
   \item{pattern}{
     A \link[Biostrings]{DNAString} object containing the pattern sequence.
   }
-  \item{pdict}{
-    A \link[Biostrings]{DNAStringSet} object containing the pattern sequences.
-  }
   \item{subject}{
     A \link{BSgenome} object containing the subject sequences.
-  }
-  \item{min.score}{
-    The minimum score for counting a match.
-    Can be given as a character string containing a percentage (e.g.
-    \code{"85\%"}) of the highest possible score or as a single number.
   }
   \item{max.mismatch, min.mismatch}{
     The maximum and minimum number of mismatching letters allowed (see
@@ -80,12 +68,6 @@
     \code{"auto"}, \code{"naive-exact"}, \code{"naive-inexact"},
     \code{"boyer-moore"}, or \code{"shift-or"}.
   }
-  \item{collapse, weight}{
-    ignored arguments.
-  }
-  \item{verbose}{
-    \code{TRUE} or \code{FALSE}.
-  }
   \item{exclude}{
     A character vector with strings that will be used to filter out
     chromosomes whose names match these strings.
@@ -101,6 +83,25 @@
   }
   \item{invertUserMask}{
     Whether the \code{userMask} should be inverted.
+  }
+  \item{collapse, weight}{
+    ignored arguments.
+  }
+  \item{pdict}{
+    A \link[Biostrings]{PDict} or \link[Biostrings]{DNAStringSet} object
+    containing the pattern sequences.
+  }
+  \item{verbose}{
+    \code{TRUE} or \code{FALSE}.
+  }
+  \item{pwm}{
+    A numeric matrix with row names A, C, G and T representing a Position
+    Weight Matrix.
+  }
+  \item{min.score}{
+    The minimum score for counting a match.
+    Can be given as a character string containing a percentage (e.g.
+    \code{"85\%"}) of the highest possible score or as a single number.
   }
 }
 
@@ -135,19 +136,19 @@
 }
 
 \examples{
-  library(BSgenome.Celegans.UCSC.ce2)
-  data(HNF4alpha)
+library(BSgenome.Celegans.UCSC.ce2)
+data(HNF4alpha)
 
-  pwm <- PWM(HNF4alpha)
-  matchPWM(pwm, Celegans)
-  countPWM(pwm, Celegans)
+pattern <- consensusString(HNF4alpha)
+vmatchPattern(pattern, Celegans, fixed="subject")
+vcountPattern(pattern, Celegans, fixed="subject")
 
-  pattern <- consensusString(HNF4alpha)
-  vmatchPattern(pattern, Celegans, fixed = "subject")
-  vcountPattern(pattern, Celegans, fixed = "subject")
+vmatchPDict(HNF4alpha[1:10], Celegans)
+vcountPDict(HNF4alpha[1:10], Celegans)
 
-  vmatchPDict(HNF4alpha[1:10], Celegans)
-  vcountPDict(HNF4alpha[1:10], Celegans)
+pwm <- PWM(HNF4alpha)
+matchPWM(pwm, Celegans)
+countPWM(pwm, Celegans)
 }
 
 \keyword{methods}

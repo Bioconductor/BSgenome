@@ -1,4 +1,8 @@
-## vmatchPattern/vcountPattern for BSgenome
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### vmatchPattern/vcountPattern for BSgenome
+###
 
 setMethod("vmatchPattern", "BSgenome",
     function(pattern, subject,
@@ -29,7 +33,7 @@ setMethod("vmatchPattern", "BSgenome",
                            algorithm = algorithm)
             COUNTER <<- COUNTER + 1L
             seqnames <- names(seqlengths)
-            GRanges(seqnames = 
+            GRanges(seqnames =
                     Rle(factor(seqnames[COUNTER], levels = seqnames),
                         length(posMatches) + length(negMatches)),
                     ranges =
@@ -43,8 +47,8 @@ setMethod("vmatchPattern", "BSgenome",
         if (!is(pattern, "DNAString"))
             pattern <- DNAString(pattern)
         algorithm <- Biostrings:::normargAlgorithm(algorithm)
-        if (Biostrings:::isCharacterAlgo(algorithm)) 
-            stop("'subject' must be a single (non-empty) string ", 
+        if (Biostrings:::isCharacterAlgo(algorithm))
+            stop("'subject' must be a single (non-empty) string ",
                  "for this algorithm")
         pattern <- Biostrings:::normargPattern(pattern, DNAStringSet())
         max.mismatch <- Biostrings:::normargMaxMismatch(max.mismatch)
@@ -106,8 +110,8 @@ setMethod("vcountPattern", "BSgenome",
         if (!is(pattern, "DNAString"))
             pattern <- DNAString(pattern)
         algorithm <- Biostrings:::normargAlgorithm(algorithm)
-        if (Biostrings:::isCharacterAlgo(algorithm)) 
-            stop("'subject' must be a single (non-empty) string ", 
+        if (Biostrings:::isCharacterAlgo(algorithm))
+            stop("'subject' must be a single (non-empty) string ",
                  "for this algorithm")
         pattern <- Biostrings:::normargPattern(pattern, DNAStringSet())
         max.mismatch <- Biostrings:::normargMaxMismatch(max.mismatch)
@@ -134,7 +138,41 @@ setMethod("vcountPattern", "BSgenome",
 )
 
 
-## vmatchPDict/vcountPDict for BSgenome
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### vmatchPDict/vcountPDict for BSgenome
+###
+
+### A reverseComplement() for rectangular (i.e. constant-width) PDict objects.
+### Note that the error messages make sense within the context of vmatchPDict()
+### or vcountPDict() only so would need to be modified if this was to be moved
+### to the Biostrings package to become the reverseComplement() method for
+### PDict objects.
+.reverseComplement_PDict <- function(pdict)
+{
+    error_msg <- c("variable-width PDict objects are not supported at ",
+                   "the moment when 'subject' is a BSgenome object")
+    if (is(pdict, "TB_PDict")) {
+        if (!(isConstant(width(pdict@threeparts@head)) &&
+              isConstant(width(pdict@threeparts@tail))))
+            stop(wmsg(error_msg))
+        x <- reverseComplement(pdict@dict0)
+        tb.start <- 1L + width(pdict@threeparts@tail)[[1L]]
+        tb.end <- -1L - width(pdict@threeparts@head)[[1L]]
+        algorithm <- class(pdict@threeparts@pptb)
+        return(PDict(x, tb.start=tb.start, tb.end=tb.end, algorithm=algorithm))
+    }
+    if (is(pdict, "MTB_PDict")) {
+        if (!pdict@constant_width)
+            stop(wmsg(error_msg))
+        x <- reverseComplement(pdict@dict0)
+        max.mismatch <- length(pdict@threeparts_list) - 1L
+        algorithm <- class(pdict@threeparts_list[[1L]]@pptb)
+        return(PDict(x, max.mismatch=max.mismatch, algorithm=algorithm))
+    }
+    stop(wmsg(class(pdict), " objects are not supported at the moment ",
+              "when 'subject' is a BSgenome object"))
+}
+
 setMethod("vmatchPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
@@ -166,7 +204,7 @@ setMethod("vmatchPDict", "BSgenome",
             negCounts <- elementNROWS(negMatches)
             COUNTER <<- COUNTER + 1L
             seqnames <- names(seqlengths)
-            GRanges(seqnames = 
+            GRanges(seqnames =
                     Rle(factor(seqnames[COUNTER], levels = seqnames),
                         sum(posCounts) + sum(negCounts)),
                     ranges = c(unlist(posMatches), unlist(negMatches)),
@@ -179,23 +217,25 @@ setMethod("vmatchPDict", "BSgenome",
                     seqlengths = seqlengths)
         }
 
-        if (is(pdict, "PDict"))
-            stop("'pdict' must be a DNAStringSet object ")
-        if (!is(pdict, "DNAStringSet"))
-            pdict <- DNAStringSet(pdict)
+        posPDict <- pdict
+        if (is(posPDict, "PDict")) {
+            negPDict <- .reverseComplement_PDict(posPDict)
+        } else {
+            if (!is(posPDict, "DNAStringSet"))
+                posPDict <- DNAStringSet(posPDict)
+            negPDict <- reverseComplement(posPDict)
+        }
         max.mismatch <- Biostrings:::normargMaxMismatch(max.mismatch)
         min.mismatch <-
           Biostrings:::normargMinMismatch(min.mismatch, max.mismatch)
         fixed <- Biostrings:::normargFixed(fixed, DNAStringSet())
         algorithm <- Biostrings:::normargAlgorithm(algorithm)
-        if (Biostrings:::isCharacterAlgo(algorithm)) 
-            stop("'subject' must be a single (non-empty) string ", 
+        if (Biostrings:::isCharacterAlgo(algorithm))
+            stop("'subject' must be a single (non-empty) string ",
                  "for this algorithm")
         if (!isTRUEorFALSE(verbose))
             stop("'verbose' must be TRUE or FALSE")
 
-        posPDict <- pdict
-        negPDict <- reverseComplement(posPDict)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
               simplify = FALSE, maskList = logical(0))
@@ -203,8 +243,7 @@ setMethod("vmatchPDict", "BSgenome",
         seqlengths <- seqlengths(subject)
         matches <-
           bsapply(bsParams,
-                  posPDict = PDict(posPDict, max.mismatch = max.mismatch),
-                  negPDict = PDict(negPDict, max.mismatch = max.mismatch),
+                  posPDict = posPDict, negPDict = negPDict,
                   seqlengths = seqlengths,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
@@ -215,7 +254,6 @@ setMethod("vmatchPDict", "BSgenome",
         matches
     }
 )
-
 
 setMethod("vcountPDict", "BSgenome",
     function(pdict, subject,
@@ -252,17 +290,21 @@ setMethod("vcountPDict", "BSgenome",
                       count = c(Rle(posCounts), Rle(negCounts)))
         }
 
-        if (is(pdict, "PDict"))
-            stop("'pdict' must be a DNAStringSet object ")
-        if (!is(pdict, "DNAStringSet"))
-            pdict <- DNAStringSet(pdict)
+        posPDict <- pdict
+        if (is(posPDict, "PDict")) {
+            negPDict <- .reverseComplement_PDict(posPDict)
+        } else {
+            if (!is(posPDict, "DNAStringSet"))
+                posPDict <- DNAStringSet(posPDict)
+            negPDict <- reverseComplement(posPDict)
+        }
         max.mismatch <- Biostrings:::normargMaxMismatch(max.mismatch)
         min.mismatch <-
           Biostrings:::normargMinMismatch(min.mismatch, max.mismatch)
         fixed <- Biostrings:::normargFixed(fixed, DNAStringSet())
         algorithm <- Biostrings:::normargAlgorithm(algorithm)
-        if (Biostrings:::isCharacterAlgo(algorithm)) 
-            stop("'subject' must be a single (non-empty) string ", 
+        if (Biostrings:::isCharacterAlgo(algorithm))
+            stop("'subject' must be a single (non-empty) string ",
                  "for this algorithm")
         if (!identical(collapse, FALSE))
             stop("'collapse' is not supported in BSgenome method")
@@ -271,15 +313,12 @@ setMethod("vcountPDict", "BSgenome",
         if (!isTRUEorFALSE(verbose))
             stop("'verbose' must be TRUE or FALSE")
 
-        posPDict <- pdict
-        negPDict <- reverseComplement(posPDict)
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
               simplify = FALSE, maskList = logical(0))
         counts <-
           bsapply(bsParams,
-                  posPDict = PDict(posPDict, max.mismatch = max.mismatch),
-                  negPDict = PDict(negPDict, max.mismatch = max.mismatch),
+                  posPDict = posPDict, negPDict = negPDict,
                   max.mismatch = max.mismatch, min.mismatch = min.mismatch,
                   fixed = fixed, algorithm = algorithm, verbose = verbose)
         DataFrame(DataFrame(seqname =
@@ -290,7 +329,11 @@ setMethod("vcountPDict", "BSgenome",
     }
 )
 
-## matchPWM/countPWM for BSgenome
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### matchPWM/countPWM for BSgenome
+###
+
 setMethod("matchPWM", "BSgenome",
     function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
     {
@@ -307,7 +350,7 @@ setMethod("matchPWM", "BSgenome",
                                  starting.at = start(negMatches))
             COUNTER <<- COUNTER + 1L
             seqnames <- names(seqlengths)
-            GRanges(seqnames = 
+            GRanges(seqnames =
                     Rle(factor(seqnames[COUNTER], levels = seqnames),
                         length(posMatches) + length(negMatches)),
                     ranges =
