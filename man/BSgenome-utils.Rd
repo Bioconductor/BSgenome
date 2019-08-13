@@ -2,13 +2,12 @@
 
 \alias{BSgenome-utils}
 
-\alias{matchPWM,BSgenome-method}
-\alias{countPWM,BSgenome-method}
 \alias{vmatchPattern,BSgenome-method}
 \alias{vcountPattern,BSgenome-method}
 \alias{vmatchPDict,BSgenome-method}
 \alias{vcountPDict,BSgenome-method}
-
+\alias{matchPWM,BSgenome-method}
+\alias{countPWM,BSgenome-method}
 
 \title{BSgenome utilities}
 
@@ -106,32 +105,32 @@
 }
 
 \value{
-  A \link[GenomicRanges]{GRanges} object for \code{matchPWM} with two
-  elementMetadata columns: "score" (numeric), and "string" (DNAStringSet).
-
   A \link[GenomicRanges]{GRanges} object for \code{vmatchPattern}.
 
-  A \link[GenomicRanges]{GRanges} object for \code{vmatchPDict} with
-  one elementMetadata column: "index", which represents a mapping to a
-  position in the original pattern dictionary.
-
-  A data.frame object for \code{countPWM} and \code{vcountPattern}
+  A data.frame object for \code{vcountPattern} and \code{countPWM}
   with three columns: "seqname" (factor), "strand" (factor), and
   "count" (integer).
+
+  A \link[GenomicRanges]{GRanges} object for \code{vmatchPDict} with
+  one metadata column: "index", which represents a mapping to a
+  position in the original pattern dictionary.
 
   A \link[S4Vectors]{DataFrame} object for \code{vcountPDict} with four
   columns: "seqname" ('factor' Rle), "strand" ('factor' Rle), 
   "index" (integer) and "count" ('integer' Rle). As with \code{vmatchPDict}
   the index column represents a mapping to a position in the original
   pattern dictionary.
+
+  A \link[GenomicRanges]{GRanges} object for \code{matchPWM} with two
+  metadata columns: "score" (numeric), and "string" (DNAStringSet).
 }
 
 \author{P. Aboyoun}
 
 \seealso{
-  \code{\link[Biostrings]{matchPWM}},
   \code{\link[Biostrings]{matchPattern}},
   \code{\link[Biostrings]{matchPDict}},
+  \code{\link[Biostrings]{matchPWM}},
   \code{\link{bsapply}}
 }
 
@@ -143,8 +142,9 @@ pattern <- consensusString(HNF4alpha)
 vmatchPattern(pattern, Celegans, fixed="subject")
 vcountPattern(pattern, Celegans, fixed="subject")
 
-vmatchPDict(HNF4alpha[1:10], Celegans)
-vcountPDict(HNF4alpha[1:10], Celegans)
+pdict <- PDict(HNF4alpha)
+vmatchPDict(pdict, Celegans)
+vcountPDict(pdict, Celegans)
 
 pwm <- PWM(HNF4alpha)
 matchPWM(pwm, Celegans)
