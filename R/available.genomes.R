@@ -165,31 +165,43 @@ available.genomes <- function(splitNameParts=FALSE, type=getOption("pkgType"))
          "for your organism of interest.")
 }
 
-.getBSgenomeObjectFromInstalledPkgname <- function(genome)
+.getBSgenomeObjectFromInstalledPkgname <- function(genome, load.only=FALSE)
 {
-    if (suppressWarnings(require(genome, quietly=TRUE, character.only=TRUE))) {
-        ## 'genome' package is on the search list.
-        pkgenvir <- as.environment(paste("package", genome, sep=":"))
-        ans <- try(get(genome, envir=pkgenvir, inherits=FALSE), silent=TRUE)
-        if (!is(ans, "BSgenome"))
-            stop(genome, " doesn't look like a valid BSgenome data package")
-        return(ans)
+    if (!isTRUEorFALSE(load.only))
+        stop("'load.only' must be TRUE or FALSE")
+    if (load.only) {
+        ## Try to load name space of package 'genome'.
+        pkgenvir <- try(loadNamespace(genome), silent=TRUE)
+        ok <- !inherits(pkgenvir, "try-error")
+    } else {
+        ## Try to load and attach package 'genome'.
+        ok <- suppressWarnings(require(genome, quietly=TRUE,
+                                       character.only=TRUE))
+        if (ok)
+            pkgenvir <- as.environment(paste("package", genome, sep=":"))
     }
-    av_pkgs <- available.genomes()
-    if (genome %in% av_pkgs)
-        .stopOnAvailablePkg(genome)
-    if (getOption("pkgType") != "source") {
-        av_srcpkgs <- available.genomes(type="source")
-        if (genome %in% av_srcpkgs)
-            .stopOnAvailablePkg(genome, is.source=TRUE)
+    if (!ok) {
+        av_pkgs <- available.genomes()
+        if (genome %in% av_pkgs)
+            .stopOnAvailablePkg(genome)
+        if (getOption("pkgType") != "source") {
+            av_srcpkgs <- available.genomes(type="source")
+            if (genome %in% av_srcpkgs)
+                .stopOnAvailablePkg(genome, is.source=TRUE)
+        }
+        stop(c("Package ", genome, " is not available.\n  ",
+               wmsg("Please see the BSgenomeForge vignette in the BSgenome ",
+                    "software package for how to forge a BSgenome data ",
+                    "package for your organism of interest.")))
     }
-    stop("Package ", genome, " is not available.\n",
-         "  Please see the BSgenomeForge vignette in the BSgenome software ",
-         "package\n  for how to forge a BSgenome data package for ",
-         "your organism of interest.")
+    ## Package 'genome' was successfully loaded.
+    ans <- try(get(genome, envir=pkgenvir, inherits=FALSE), silent=TRUE)
+    if (!is(ans, "BSgenome"))
+        stop(genome, " doesn't look like a valid BSgenome data package")
+    ans
 }
 
-getBSgenome <- function(genome, masked=FALSE)
+getBSgenome <- function(genome, masked=FALSE, load.only=FALSE)
 {
     if (!isTRUEorFALSE(masked))
         stop("'masked' must be TRUE or FALSE")
@@ -207,6 +219,6 @@ getBSgenome <- function(genome, masked=FALSE)
         warning("'masked' is ignored when 'genome' is supplied as ",
                 "a full package name")
     }
-    .getBSgenomeObjectFromInstalledPkgname(genome)
+    .getBSgenomeObjectFromInstalledPkgname(genome, load.only=load.only)
 }
 

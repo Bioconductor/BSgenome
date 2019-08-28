@@ -24,7 +24,7 @@ available.genomes(splitNameParts=FALSE, type=getOption("pkgType"))
 
 installed.genomes(splitNameParts=FALSE)
 
-getBSgenome(genome, masked=FALSE)
+getBSgenome(genome, masked=FALSE, load.only=FALSE)
 }
 
 \arguments{
@@ -46,6 +46,13 @@ getBSgenome(genome, masked=FALSE)
     \code{TRUE} or \code{FALSE}. Whether to search for the \emph{masked}
     BSgenome object (i.e. the object that contains the masked sequences)
     or not (the default).
+  }
+  \item{load.only}{
+    \code{TRUE} or \code{FALSE}. By default \code{getBSgenome} loads
+    and attaches the BSgenome data package containing the requested genome,
+    resulting in its addition to the search path. Use \code{load.only=TRUE}
+    to prevent this, in which case the BSgenome data package is loaded but
+    not attached.
   }
 }
 
