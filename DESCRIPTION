@@ -2,7 +2,7 @@ Package: BSgenome
 Title: Software infrastructure for efficient representation of full genomes and their SNPs
 Description: Infrastructure shared by all the Biostrings-based genome data
 	packages.
-Version: 1.55.0
+Version: 1.55.1
 Encoding: UTF-8
 Author: Hervé Pagès
 Maintainer: H. Pagès <hpages@fredhutch.org>
@@ -42,6 +42,7 @@ Collate: utils.R
 	available.genomes.R
 	injectSNPs.R
 	getSeq-methods.R
+	extractAt-methods.R
 	bsapply.R
 	BSgenomeViews-class.R
 	BSgenome-utils.R

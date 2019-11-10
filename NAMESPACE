@@ -78,7 +78,7 @@ exportMethods(
     granges,
 
     ## Methods for generics defined in the Biostrings package:
-    getSeq,
+    getSeq, extractAt,
     seqtype, alphabetFrequency, hasOnlyBaseLetters,
     uniqueLetters, letterFrequency,
     oligonucleotideFrequency, nucleotideFrequencyAt,

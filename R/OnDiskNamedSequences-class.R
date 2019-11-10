@@ -281,23 +281,10 @@ setMethod("loadSubseqsFromLinearSequence", "TwobitNamedSequences",
     if (!is(ranges, "IntegerRanges"))
         stop("'ranges' must be an IntegerRanges object")
     seqlength <- .get_seqlength(x, seqname)
-    ranges_start <- start(ranges)
-    ranges_end <- end(ranges)
-    if (max(ranges_end - ranges_start) >= seqlength)
-        stop("loading regions that are longer than the whole circular ",
-             "sequence \"", seqname, "\" is not supported")
-    start0 <- ranges_start - 1L  # 0-based start
-    shift <- start0 %% seqlength - start0
-    L_start <- ranges_start + shift
-    end1 <- ranges_end + shift
-    L_end <- pmin(end1, seqlength)
-    R_start <- 1L
-    R_end <- pmax(end1, seqlength) - seqlength
-    L_ans <- loadSubseqsFromLinearSequence(x, seqname,
-                                           IRanges(L_start, L_end))
-    R_ans <- loadSubseqsFromLinearSequence(x, seqname,
-                                           IRanges(R_start, R_end))
-    xscat(L_ans, R_ans)
+    LRranges <- splitLRranges(ranges, seqlength, seqname)
+    Lans <- loadSubseqsFromLinearSequence(x, seqname, LRranges$L)
+    Rans <- loadSubseqsFromLinearSequence(x, seqname, LRranges$R)
+    xscat(Lans, Rans)
 }
 
 loadSubseqsFromStrandedSequence <- function(x, seqname, ranges, strand,
