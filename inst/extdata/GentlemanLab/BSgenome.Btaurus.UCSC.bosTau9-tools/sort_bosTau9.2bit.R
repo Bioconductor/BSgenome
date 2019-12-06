@@ -5,7 +5,7 @@ bosTau9 <- import("bosTau9.2bit")
 seqlevels1 <- paste0("chr", c(1:29, "X", "M"))
 
 tmp <- CharacterList(strsplit(names(bosTau9), "_"))
-npart <- elementNROWS(tmp)
+npart <- lengths(tmp)
 stopifnot(all(npart %in% c(1L, 3L)))
 
 idx1 <- which(npart == 1L)

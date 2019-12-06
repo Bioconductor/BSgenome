@@ -1,0 +1,18 @@
+Package: BSgenome.Ggallus.UCSC.galGal6
+Title: Full genome sequences for Gallus gallus (UCSC version galGal6)
+Description: Full genome sequences for Gallus gallus (Chicken) as provided by UCSC (galGal6, Mar. 2018) and stored in Biostrings objects.
+Version: 1.4.2
+organism: Gallus gallus
+common_name: Chicken
+provider: UCSC
+provider_version: galGal6
+release_date: Mar. 2018
+release_name: GRCg6 Gallus-gallus-6.0
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/galGal6/bigZips/
+organism_biocview: Gallus_gallus
+BSgenomeObjname: Ggallus
+circ_seqs: "chrM"
+SrcDataFiles: galGal6.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/galGal6/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal6/seqs
+seqfile_name: galGal6.sorted.2bit

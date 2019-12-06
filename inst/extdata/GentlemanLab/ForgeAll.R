@@ -37,6 +37,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Ggallus.UCSC.galGal3",
   "BSgenome.Ggallus.UCSC.galGal4",
   "BSgenome.Ggallus.UCSC.galGal5",
+  "BSgenome.Ggallus.UCSC.galGal6",
   "BSgenome.Hsapiens.UCSC.hg17",
   "BSgenome.Hsapiens.UCSC.hg18",
   "BSgenome.Hsapiens.UCSC.hg19",

@@ -11,12 +11,6 @@ stopifnot(all(npart <= 3L))
 idx1 <- which(npart == 1L)
 stopifnot(setequal(names(danRer11)[idx1], seqlevels1))
 
-idx2 <- which(npart == 2L)
-m2 <- matrix(unlist(tmp[idx2]), ncol=2L, byrow=TRUE)
-stopifnot(all(m2[ , 1L] == "chrUn"))
-oo2 <- order(m2[ , 2L])
-seqlevels2 <- names(danRer11)[idx2[oo2]]
-
 idx3 <- which(npart == 3L)
 m3 <- matrix(unlist(tmp[idx3]), ncol=3L, byrow=TRUE)
 m31 <- match(m3[ , 1L], seqlevels1)
@@ -25,7 +19,13 @@ stopifnot(all(m3[ , 3L] == "alt"))
 oo3 <- order(m31, m3[ , 2L])
 seqlevels3 <- names(danRer11)[idx3[oo3]]
 
-danRer11_seqlevels <- c(seqlevels1, seqlevels2, seqlevels3)
+idx2 <- which(npart == 2L)
+m2 <- matrix(unlist(tmp[idx2]), ncol=2L, byrow=TRUE)
+stopifnot(all(m2[ , 1L] == "chrUn"))
+oo2 <- order(m2[ , 2L])
+seqlevels2 <- names(danRer11)[idx2[oo2]]
+
+danRer11_seqlevels <- c(seqlevels1, seqlevels3, seqlevels2)
 
 export(danRer11[danRer11_seqlevels], "danRer11.sorted.2bit")
 
