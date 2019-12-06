@@ -16,6 +16,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Btaurus.UCSC.bosTau4",
   "BSgenome.Btaurus.UCSC.bosTau6",
   "BSgenome.Btaurus.UCSC.bosTau8",
+  "BSgenome.Btaurus.UCSC.bosTau9",
   "BSgenome.Celegans.UCSC.ce2",
   "BSgenome.Celegans.UCSC.ce6",
   "BSgenome.Celegans.UCSC.ce10",
