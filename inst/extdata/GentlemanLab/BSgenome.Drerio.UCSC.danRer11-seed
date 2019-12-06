@@ -1,0 +1,41 @@
+Package: BSgenome.Drerio.UCSC.danRer11
+Title: Full genome sequences for Danio rerio (UCSC version danRer11)
+Description: Full genome sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer11, May 2017) and stored in Biostrings objects.
+Version: 1.4.2
+Suggests: GenomicFeatures
+organism: Danio rerio
+common_name: Zebrafish
+provider: UCSC
+provider_version: danRer11
+release_date: May 2017
+release_name: Genome Reference Consortium GRCz11
+source_url: http://hgdownload.soe.ucsc.edu/goldenPath/danRer11/bigZips/
+organism_biocview: Danio_rerio
+BSgenomeObjname: Drerio
+circ_seqs: "chrM"
+SrcDataFiles: danRer11.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/danRer11/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Extract the upstream sequences
+	## ---------------------------------------------------------------------
+	## The upstream sequences located in
+	##   http://hgdownload.cse.ucsc.edu/goldenPath/danRer11/bigZips/
+	## are based on RefSeq genes (RefSeq Genes track in the Genome Browser).
+	## These can easily be extracted from the full genome sequences with:
+	.
+	library(GenomicFeatures)
+	refGene_txdb <- suppressWarnings(makeTxDbFromUCSC("danRer11", "refGene"))
+	refGene_up1000seqs <- extractUpstreamSeqs(genome, refGene_txdb)
+	.
+	## Note that you can make TxDb objects from various annotation
+	## resources. See the makeTxDbFromUCSC(), makeTxDbFromEnsembl(), and
+	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
+	## information.
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object) that
+	## contains a gene model based on danRer11 or on a compatible genome
+	## (i.e. a genome with sequences identical to the sequences in
+	## danRer11). See ?extractUpstreamSeqs in the GenomicFeatures package
+	## for more information.
+seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Drerio.UCSC.danRer11/seqs
+seqfile_name: danRer11.sorted.2bit
