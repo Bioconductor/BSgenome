@@ -2,6 +2,7 @@ import(methods)
 importFrom(utils, read.table, available.packages, contrib.url,
                   installed.packages, str)
 importFrom(stats, setNames)
+importFrom(matrixStats, rowAlls)
 
 import(BiocGenerics)
 import(S4Vectors)
@@ -156,6 +157,7 @@ export(
     referenceGenome, compatibleGenomes,
     snpcount, snplocs,
     snpsBySeqname, snpsByOverlaps, snpsById,
+    inferRefAndAltAlleles,
 
     ## OldFashionSNPlocs-class.R:
     snpid2loc, snpid2alleles, snpid2grange,
