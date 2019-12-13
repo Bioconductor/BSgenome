@@ -113,7 +113,7 @@ inferRefAndAltAlleles <- function(gpos, genome)
     ## different genome names (e.g. GRCh38.p2 and GRCh38) so we get rid of
     ## the genome information in 'gpos'.
     genome(gpos) <- NA_character_
-    ref_allele <- getSeq(BSgenome.Hsapiens.NCBI.GRCh38, gpos)
+    ref_allele <- getSeq(genome, gpos)
 
     ## Compute 'genome_compat'.
     ## Note that a small percentage of SNPs in dbSNP have alleles that
