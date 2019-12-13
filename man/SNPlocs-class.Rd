@@ -212,8 +212,8 @@ inferRefAndAltAlleles(gpos, genome)
           reference genome.
     \item \code{ref_allele}: A character vector containing the
           \emph{inferred} reference allele for each SNP.
-    \item \code{alt_alleles}: A \link[IRange]{CharacterList} object where
-          each list element is a character vector containing the
+    \item \code{alt_alleles}: A \link[IRanges]{CharacterList} object
+          where each list element is a character vector containing the
           \emph{inferred} alternate allele(s) for the corresponding SNP.
   }
 
