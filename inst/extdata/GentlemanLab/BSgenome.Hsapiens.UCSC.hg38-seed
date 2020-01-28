@@ -1,48 +1,17 @@
 Package: BSgenome.Hsapiens.UCSC.hg38
-Title: Full genome sequences for Homo sapiens (UCSC version hg38)
-Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg38, Dec. 2013) and stored in Biostrings objects.
-Version: 1.4.2
-Suggests: TxDb.Hsapiens.UCSC.hg38.knownGene
+Title: Full genome sequences for Homo sapiens (UCSC version hg38, based on GRCh38.p12)
+Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg38, based on GRCh38.p12) and stored in Biostrings objects.
+Version: 1.4.3
 organism: Homo sapiens
 common_name: Human
 provider: UCSC
 provider_version: hg38
-release_date: Dec. 2013
-release_name: Genome Reference Consortium GRCh38
-source_url: http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/
+release_date: Dec. 2017
+release_name: Genome Reference Consortium GRCh38.p12
+source_url: https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/latest/
 organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
-circ_seqs: "chrM"
-SrcDataFiles: hg38.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/
+SrcDataFiles: hg38.2bit, downloaded from https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/latest/ on Jan. 27, 2020
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-	.
-	## ---------------------------------------------------------------------
-	## Extract the upstream sequences
-	## ---------------------------------------------------------------------
-	## The upstream sequences located in
-	##   http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/
-	## are based on RefSeq genes (RefSeq Genes track in the Genome Browser).
-	## Upstream sequences based on UCSC genes (UCSC Genes track in the
-	## Genome Browser) can easily be extracted from the full genome
-	## sequences with:
-	.
-	library(TxDb.Hsapiens.UCSC.hg38.knownGene)
-	knownGene_txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
-	knownGene_up1000seqs <- extractUpstreamSeqs(genome, knownGene_txdb)
-	.
-	## Or, to get upstream sequences based on RefSeq genes:
-	.
-	refGene_txdb <- makeTxDbFromUCSC("hg38", "refGene")
-	refGene_up1000seqs <- extractUpstreamSeqs(genome, refGene_txdb)
-	.
-	## Note that you can make a TxDb object from various annotation
-	## resources. See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
-	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
-	## information.
-	## IMPORTANT: Make sure you use a TxDb package (or TxDb object) that
-	## contains a gene model based on hg38 or on a compatible genome (i.e.
-	## a genome with sequences identical to the sequences in hg38). See
-	## ?extractUpstreamSeqs in the GenomicFeatures package for more
-	## information.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg38/seqs
-seqfile_name: hg38.sorted.2bit
+seqfile_name: hg38.2bit

@@ -3,6 +3,19 @@
 ### -------------------------------------------------------------------------
 
 
+.get_circ_seqs <- function(provider, provider_version, circ_seqs)
+{
+    if (provider == "UCSC") {
+        UCSC_genomes <- registered_UCSC_genomes()
+        if (provider_version %in% UCSC_genomes[ , "genome"]) {
+            chrom_info <- getChromInfoFromUCSC(provider_version)
+            circ_idx <- which(chrom_info[ , "circular"])
+            circ_seqs <- deparse(chrom_info[circ_idx, "chrom"])
+        }
+    }
+    circ_seqs
+}
+
 .getMasksObjname <- function(seqnames)
 {
     if (length(seqnames) == 0)
@@ -196,9 +209,9 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     non_ACGTN <- setdiff(names(af), c(DNA_BASES, "N"))
     if (sum(af[non_ACGTN]) == 0L)
         return(x)
-    warning("DNA sequence contains letters not supported by UCSC twoBit ",
-            "format (the format\n  only supports A, C, G, T, and N). ",
-            "Replacing them with Ns.")
+    warning(wmsg("DNA sequence contains letters not supported by UCSC 2bit ",
+                 "format (the format\n  only supports A, C, G, T, and N). ",
+                 "Replacing them with Ns."))
     old <- paste(non_ACGTN, collapse="")
     new <- paste(rep.int("N", length(non_ACGTN)), collapse="")
     chartr(old, new, x)
@@ -240,28 +253,6 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         cat("DONE\n")
 }
 
-.copySeqFile <- function(seqfile_name,
-                         seqs_srcdir, seqs_destdir,
-                         verbose=TRUE)
-{
-    src_filepath <- file.path(seqs_srcdir, seqfile_name)
-    if (!file.exists(src_filepath))
-        stop("File not found: ", src_filepath)
-    dest_filename <- "single_sequences.2bit"
-    dest_filepath <- file.path(seqs_destdir, dest_filename)
-    if (verbose)
-        cat("Copying '", src_filepath, "' to '", dest_filepath, "' ... ",
-            sep="")
-    if (!file.copy(src_filepath, dest_filepath,
-                   copy.mode=FALSE, copy.date=FALSE)) {
-        if (verbose)
-            stop("FAILED")
-        stop("Failed to copy '", src_filepath, "' to '", dest_filepath, "'")
-    }
-    if (verbose)
-        cat("DONE\n")
-}
-
 .subsetTwobitFile <- function(seqfile_name, seqnames,
                               seqs_srcdir, seqs_destdir,
                               verbose=verbose)
@@ -287,7 +278,69 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         cat("DONE\n")
 }
 
-forgeSeqFiles <- function(seqnames, mseqnames=NULL,
+.copyTwobitFile <- function(seqfile_name,
+                            seqs_srcdir, seqs_destdir,
+                            verbose=TRUE)
+{
+    src_filepath <- file.path(seqs_srcdir, seqfile_name)
+    if (!file.exists(src_filepath))
+        stop("File not found: ", src_filepath)
+    dest_filename <- "single_sequences.2bit"
+    dest_filepath <- file.path(seqs_destdir, dest_filename)
+    if (verbose)
+        cat("Copying '", src_filepath, "' to '", dest_filepath, "' ... ",
+            sep="")
+    if (!file.copy(src_filepath, dest_filepath,
+                   copy.mode=FALSE, copy.date=FALSE)) {
+        if (verbose)
+            stop("FAILED")
+        stop("Failed to copy '", src_filepath, "' to '", dest_filepath, "'")
+    }
+    if (verbose)
+        cat("DONE\n")
+}
+
+.sortUCSCTwobitFile <- function(provider_version, seqs_dir, verbose=TRUE)
+{
+    if (verbose)
+        cat("Getting chrom info from UCSC with 'getChromInfoFromUCSC(\"",
+            provider_version, "\")' ... ", sep="")
+    chrom_info <- getChromInfoFromUCSC(provider_version)
+    if (verbose)
+        cat("DONE\n")
+    filename <- "single_sequences.2bit"
+    filepath <- file.path(seqs_dir, filename)
+    if (verbose)
+        cat("Loading '", filepath, "' ... ", sep="")
+    seqs <- import(filepath)
+    if (verbose)
+        cat("DONE\n")
+    m <- match(chrom_info[ , "chrom"], names(seqs))
+    if (nrow(chrom_info) != length(seqs) || anyNA(m))
+        stop(wmsg("nb of sequences in 'chromInfo' table and 2bit file ",
+                  "don't match for UCSC genome ", provider_version))
+    if (verbose)
+        cat("Sorting sequences as in 'getChromInfoFromUCSC(\"",
+            provider_version, "\")' ... ", sep="")
+    seqs <- seqs[m]
+    if (verbose)
+        cat("DONE\n")
+    if (verbose)
+        cat("Checking the sequence lengths ... ")
+    if (!identical(chrom_info[ , "size"], width(seqs)))
+        stop(wmsg("sequence lengths in 'chromInfo' table and 2bit file ",
+                  "don't match for UCSC genome ", provider_version))
+    if (verbose)
+        cat("OK\n")
+    if (verbose)
+        cat("Writing sequences to '", filepath, "' ... ", sep="")
+    export(seqs, filepath, format="2bit")
+    if (verbose)
+        cat("DONE\n")
+}
+
+forgeSeqFiles <- function(provider, provider_version,
+                          seqnames, mseqnames=NULL,
                           seqfile_name=NA, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
                           ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
@@ -310,14 +363,20 @@ forgeSeqFiles <- function(seqnames, mseqnames=NULL,
             .forgeTwobitFileFromFastaFiles(seqnames, prefix, suffix,
                                            seqs_srcdir, seqs_destdir,
                                            verbose=verbose)
-        } else if (length(seqnames) == 0L) {
-            .copySeqFile(seqfile_name,
-                         seqs_srcdir, seqs_destdir,
-                         verbose=verbose)
-        } else {
+        } else if (length(seqnames) != 0L) {
             .subsetTwobitFile(seqfile_name, seqnames,
                               seqs_srcdir, seqs_destdir,
                               verbose=verbose)
+        } else {
+            .copyTwobitFile(seqfile_name,
+                            seqs_srcdir, seqs_destdir,
+                            verbose=verbose)
+            if (provider == "UCSC") {
+                UCSC_genomes <- registered_UCSC_genomes()
+                if (provider_version %in% UCSC_genomes[ , "genome"])
+                    .sortUCSCTwobitFile(provider_version, seqs_destdir,
+                                        verbose=verbose)
+            }
         }
     } else {  # "fa" and "fa.rz" formats
         .forgeFastaRzFileFromFastaFiles(seqnames, prefix, suffix,
@@ -701,6 +760,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         template_path <- system.file("pkgtemplates", "BSgenome_datapkg",
                                      package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
+	circ_seqs <- .get_circ_seqs(x@provider, x@provider_version, x@circ_seqs)
         symvals <- list(
             PKGTITLE=x@Title,
             PKGDESCRIPTION=x@Description,
@@ -720,7 +780,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             ORGANISMBIOCVIEW=x@organism_biocview,
             BSGENOMEOBJNAME=x@BSgenomeObjname,
             SEQNAMES=ifelse(is.na(x@seqfile_name), x@seqnames, "NULL"),
-            CIRCSEQS=x@circ_seqs,
+            CIRCSEQS=circ_seqs,
             MSEQNAMES=x@mseqnames,
             PKGDETAILS=x@PkgDetails,
             SRCDATAFILES=x@SrcDataFiles,
@@ -753,7 +813,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                                 verbose=verbose)
         }
         ## Forge the sequence files (either "2bit", "rda", "fa.rz", or "fa")
-        forgeSeqFiles(.seqnames, mseqnames=.mseqnames,
+        forgeSeqFiles(x@provider, x@provider_version,
+                      .seqnames, mseqnames=.mseqnames,
                       seqfile_name=x@seqfile_name,
                       prefix=x@seqfiles_prefix,
                       suffix=x@seqfiles_suffix,
