@@ -760,7 +760,7 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         template_path <- system.file("pkgtemplates", "BSgenome_datapkg",
                                      package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
-	circ_seqs <- .get_circ_seqs(x@provider, x@provider_version, x@circ_seqs)
+        circ_seqs <- .get_circ_seqs(x@provider, x@provider_version, x@circ_seqs)
         symvals <- list(
             PKGTITLE=x@Title,
             PKGDESCRIPTION=x@Description,
