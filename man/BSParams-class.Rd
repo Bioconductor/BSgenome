@@ -25,8 +25,9 @@ Objects can be created by calls of the form \code{new("BSParams", ...)}.
       the function to apply to each chromosome in the BSgenome object 'X'
     }
     \item{\code{exclude}:}{
-      this is a character vector with strings that will be used to filter
-      out chromosomes whose names match these strings.
+      this is a character vector with strings that will be treated as
+      \emph{regular expressions} to filter out chromosomes whose names
+      match these strings.
     }
     \item{\code{simplify}:}{
       TRUE/FALSE value to indicate whether or not the function should try

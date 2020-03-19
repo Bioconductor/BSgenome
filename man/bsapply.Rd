@@ -23,9 +23,10 @@ bsapply(BSParams, ...)
 }
 
 \details{
-  By default the exclude parameter is set to not exclude anything.  A
-  popular option will probably be to set this to "rand" so that random
-  bits of unassigned contigs are filtered out.
+  The \code{exclude} parameter of the \code{BSParams} object must be a
+  character vector containing \emph{regular expressions}. By default it's
+  empty so nothing gets excluded. A popular option will probably be to set
+  this to "rand" so that random bits of unassigned contigs are filtered out.
 }
 
 \value{
@@ -48,12 +49,12 @@ bsapply(BSParams, ...)
   ## Count the alphabet frequencies for every chromosome but exclude
   ## mitochrondrial and scaffold ones:
   params <- new("BSParams", X = Celegans, FUN = alphabetFrequency,
-  exclude = c("M", "_"))
+                            exclude = c("M", "_"))
   bsapply(params)
 
   ## Or we can do this same function with simplify = TRUE:
   params <- new("BSParams", X = Celegans, FUN = alphabetFrequency,
-  exclude = c("M", "_"), simplify = TRUE)
+                            exclude = c("M", "_"), simplify = TRUE)
   bsapply(params)
 
 
@@ -80,7 +81,7 @@ bsapply(BSParams, ...)
   options(verbose=TRUE)
   ## For the 1st example, lets use default masks
   params <- new("BSParams", X = genome, FUN = alphabetFrequency,
-  exclude = c(1:8,"M","X","_"), simplify = TRUE)
+                            exclude = c(1:8,"M","X","_"), simplify = TRUE)
   bsapply(params)
 
   if (interactive()) {
