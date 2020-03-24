@@ -4,7 +4,7 @@ Description: @PKGDESCRIPTION@
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: @MAINTAINER@
-Depends: BSgenome (>= @BSGENOMEVERSION@), @REFPKGNAME@
+Depends: R (>= 3.5.0), BSgenome (>= @BSGENOMEVERSION@), @REFPKGNAME@
 Imports: BSgenome, @REFPKGNAME@
 Suggests: @SUGGESTS@
 License: @LICENSE@
