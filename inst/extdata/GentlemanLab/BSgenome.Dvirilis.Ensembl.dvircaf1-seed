@@ -1,0 +1,18 @@
+Package: BSgenome.Dvirilis.Ensembl.dvircaf1
+Title: Full genome sequences for Drosophila virilis (assembly dvir_caf1)
+Description: Full genome sequences for Drosophila virilis (assembly dvir_caf1, GenBank assembly accession GCA_000005245.1) as provided by Ensembl and stored in Biostrings objects.
+Version: 1.4.3
+organism: Drosophila virilis
+common_name:
+provider: Ensembl
+provider_version: dvir_caf1
+release_date: Aug. 2005
+release_name: dvir_caf1
+source_url: ftp://ftp.ensemblgenomes.org/pub/release-46/metazoa/fasta/drosophila_virilis/dna/
+organism_biocview: Drosophila_virilis
+BSgenomeObjname: Dvirilis
+circ_seqs: character(0)
+SrcDataFiles: Drosophila_virilis.dvir_caf1.dna.toplevel.fa.gz, downloaded from ftp://ftp.ensemblgenomes.org/pub/release-46/metazoa/fasta/drosophila_virilis/dna/ and converted to 2bit format on March 2020
+PkgExamples: genome$scaffold_13049  # same as genome[["scaffold_13049"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Dvirilis.Ensembl.dvircaf1/seqs
+seqfile_name: Drosophila_virilis.dvir_caf1.dna.toplevel.2bit
