@@ -30,13 +30,7 @@ setClass("BSgenome",
 
         ## Used for caching the single and multiple on-disk sequences.
         .seqs_cache="environment",
-        .link_counts="environment",
-
-        ## TODO: Remove the 2 slots below once all the BSgenome data packages
-        ## with masks have been split in 2 packages (naked BSgenome +
-        ## MaskedBSgenome).
-        nmask_per_seq="integer",
-        masks="RdaCollection"
+        .link_counts="environment"
     )
 )
 
@@ -159,13 +153,14 @@ setMethod("mseqnames", "BSgenome",
 setMethod("names", "BSgenome", function(x) c(seqnames(x), mseqnames(x)))
 
 setGeneric("masknames", function(x) standardGeneric("masknames"))
-setMethod("masknames", "BSgenome",
+
+setMethod("masknames", "BSgenome", function(x) NULL)
+
+setMethod("masknames", "MaskedBSgenome",
     function(x)
     {
-        if (x@nmask_per_seq == 0L)
-            return(NULL)
-        ## TODO: Put this kind of checking in a validity method for BSgenome
-        ## objects (that's what validity methods are for).
+        ## TODO: Put this kind of checking in a validity method for
+        ## MaskedBSgenome objects (that's what validity methods are for).
         if (x@nmask_per_seq > length(BUILTIN_MASKNAMES))
             stop("internal anomaly: x@nmask_per_seq > ",
                  length(BUILTIN_MASKNAMES))
@@ -286,10 +281,9 @@ setMethod("snplocs", "BSgenome",
 }
 
 ### NOTES:
-### - In BioC 2.14, the 'seqs_pkgname' and 'masks_pkgname' BSgenome slots
-###   were replaced with the 'pkgname' slot but the 2 corresponding
-###   arguments were kept for backward compatibility with existing
-###   BSgenome packages.
+### - In BioC 2.14, the 'seqs_pkgname' BSgenome slot was renamed 'pkgname'
+###   but the corresponding argument was not renamed for backward
+###   compatibility with existing BSgenome packages.
 ### - In BioC 3.1, the 'species' argument was replaced with the 'common_name'
 ###   argument but the former was kept for backward compatibility with
 ###   existing BSgenome packages.
@@ -297,7 +291,6 @@ BSgenome <- function(organism, common_name, provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
                      seqs_pkgname, seqs_dirpath,
-                     nmask_per_seq=0, masks_pkgname=NA, masks_dirpath=NA,
                      species=NA_character_)
 {
     twobit_filename <- "single_sequences.2bit"
@@ -331,13 +324,6 @@ BSgenome <- function(organism, common_name, provider, provider_version,
         mseqnames <- character(0)
     multiple_sequences <- RdaCollection(seqs_dirpath, mseqnames)
     names(user_seqnames) <- user_seqnames <- seqnames
-    nmask_per_seq <- as.integer(nmask_per_seq)
-    masks_dirpath <- as.character(masks_dirpath)
-    if (nmask_per_seq == 0L || length(seqnames) == 0L) {
-        masks <- RdaCollection(masks_dirpath, character(0))
-    } else {
-        masks <- RdaCollection(masks_dirpath, paste0(seqnames, ".masks"))
-    }
 
     new("BSgenome", genome_description,
         pkgname=seqs_pkgname,
@@ -346,9 +332,7 @@ BSgenome <- function(organism, common_name, provider, provider_version,
         source_url=source_url,
         user_seqnames=user_seqnames,
         .seqs_cache=new.env(parent=emptyenv()),
-        .link_counts=new.env(parent=emptyenv()),
-        nmask_per_seq=nmask_per_seq,
-        masks=masks
+        .link_counts=new.env(parent=emptyenv())
     )
 }
 

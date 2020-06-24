@@ -15,6 +15,7 @@
 \alias{names,BSgenome-method}
 \alias{masknames}
 \alias{masknames,BSgenome-method}
+\alias{masknames,MaskedBSgenome-method}
 \alias{seqinfo,BSgenome-method}
 \alias{seqinfo<-,BSgenome-method}
 \alias{seqnames<-,BSgenome-method}
