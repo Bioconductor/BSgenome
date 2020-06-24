@@ -1,0 +1,17 @@
+Package: BSgenome.Ppaniscus.UCSC.panPan1
+Title: Full genome sequences for Pan paniscus (UCSC version panPan1)
+Description: Full genome sequences for Pan paniscus (Bonobo) as provided by UCSC (panPan1, May 2012) and stored in Biostrings objects.
+Version: 1.4.3
+organism: Pan paniscus
+common_name: Bonobo
+provider: UCSC
+provider_version: panPan1
+release_date: May 2012
+release_name: Max-Planck Institute panpan1
+source_url: https://hgdownload.cse.ucsc.edu/goldenPath/panPan1/bigZips/
+organism_biocview: Pan_paniscus
+BSgenomeObjname: Ppaniscus
+SrcDataFiles: panPan1.2bit from https://hgdownload.cse.ucsc.edu/goldenPath/panPan1/bigZips/
+PkgExamples: genome$AJFE01000001  # same as genome[["AJFE01000001"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Ppaniscus.UCSC.panPan1/seqs
+seqfile_name: panPan1.2bit
