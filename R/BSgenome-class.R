@@ -450,7 +450,7 @@ setMethod("show", "BSgenome",
         return(ans)
     }
     # single sequence
-    ans <- x@single_sequences[[seqname]]
+    ans <- getListElement(x@single_sequences, seqname)
     ## Check the length of the sequence
     if (length(ans) != seqlengths(x)[[user_seqname]]) {
         stop(user_seqname, " sequence does not have the expected length. ",
@@ -539,10 +539,10 @@ setMethod("[[", "BSgenome",
         ## to be of length <= 1
         if (length(subscripts) == 0L)
             stop("no index specified")
-        i <- subscripts[[1]]
-        if (length(i) < 1)
+        i <- subscripts[[1L]]
+        if (length(i) < 1L)
             stop("attempt to select less than one element")
-        if (length(i) > 1)
+        if (length(i) > 1L)
             stop("attempt to select more than one element")
         if (is.character(i)) {
             user_seqname <- try(match.arg(i, names(x)), silent=TRUE)

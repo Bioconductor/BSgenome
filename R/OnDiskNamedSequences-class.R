@@ -12,7 +12,7 @@ setClass("OnDiskNamedSequences")  # VIRTUAL class with no slots
 ###   - seqlengthsFilepath()
 ###   - seqinfo API (implementing seqinfo() is enough to make seqlengths(),
 ###                  seqlevels(), etc... work)
-###   - [[ -- load full sequence as XString object
+###   - getListElement() -- load full sequence as XString derivative
 ### Default methods are provided for the following:
 ###   - length()
 ###   - seqnames()
@@ -30,8 +30,18 @@ setGeneric("loadSubseqsFromLinearSequence",
 
 ### Low-level utilities
 
-### Works on an XString object or any object 'x' for which seqlengths() is
-### defined.
+.check_getListElement_index <- function(i, what)
+{
+    if (!is.character(i))
+        stop(wmsg(what, " can only be subsetted by name"))
+    if (length(i) < 1L)
+        stop(wmsg("attempt to select less than one element"))
+    if (length(i) > 1L)
+        stop(wmsg("attempt to select more than one element"))
+}
+
+### Works on an XString derivative or any object 'x' for which seqlengths()
+### is defined.
 .get_seqlength <- function(x, seqname)
 {
     if (!isSingleString(seqname))
@@ -60,7 +70,7 @@ setMethod("show", "OnDiskNamedSequences",
     }
 )
 
-### Load regions from a single sequence as an XStringSet object.
+### Load regions from a single sequence as an XStringSet derivative.
 
 ### 'seqname' is ignored.
 setMethod("loadSubseqsFromLinearSequence", "XString",
@@ -70,15 +80,22 @@ setMethod("loadSubseqsFromLinearSequence", "XString",
 
 setMethod("loadSubseqsFromLinearSequence", "OnDiskNamedSequences",
     function(x, seqname, ranges)
-        loadSubseqsFromLinearSequence(x[[seqname]], seqname, ranges)
+    {
+        seq <- getListElement(x, seqname)
+        loadSubseqsFromLinearSequence(seq, seqname, ranges)
+    }
 )
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### RdaNamedSequences objects
 ###
-### The "dirpath" slot should contain 1 serialized XString object per
-### sequence + a serialized named integer vector ('seqlengths.rda')
+### June 2020: THE RdaNamedSequences CLASS IS SUPERSEDED BY THE
+### RdsNamedSequences CLASS!
+### TODO: Deprecate the RdaNamedSequences class.
+###
+### The "dirpath" slot should contain 1 serialized XString derivative
+### per sequence + a serialized named integer vector ('seqlengths.rda')
 ### containing the sequence names and lengths.
 ###
 
@@ -123,14 +140,97 @@ RdaNamedSequences <- function(dirpath, seqnames)
     new("RdaNamedSequences", sequences, seqlengths=seqlengths)
 }
 
-### Load a full sequence as an XString object.
-setMethod("[[", "RdaNamedSequences",
-    function(x, i, j, ...)
+### Load a full sequence as an XString derivative.
+setMethod("getListElement", "RdaNamedSequences",
+    function(x, i, exact=TRUE)
     {
-        ans <- callNextMethod()
+        .check_getListElement_index(i, "an RdaNamedSequences object")
+        ans <- x[[i]]
         if (!is(ans, "XString"))
             stop("serialized object in file '", rdaPath(x, i), "' ",
-                 "must be an XString object")
+                 "must be an XString derivative")
+        updateObject(ans)
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### RdsNamedSequences objects
+###
+### The 'dirpath' slot should point to a directory that contains one .rds
+### file per XString derivative + a seqlengths.rds file that contains a
+### serialized named integer vector with the sequence names and lengths.
+###
+
+setClass("RdsNamedSequences",
+    contains=c("RdsCollection", "OnDiskNamedSequences"),
+    prototype=prototype(
+        elementType="XString"
+    )
+)
+
+setMethod("seqlevels", "RdsNamedSequences", function(x) names(x))
+
+setMethod("seqlengthsFilepath", "RdsNamedSequences",
+    function(x) file.path(path(x), "seqlengths.rds")
+)
+
+.read_seqlengths_from_file <- function(x) readRDS(seqlengthsFilepath(x))
+
+setMethod("seqlengths", "RdsNamedSequences",
+    function(x)
+    {
+        noext_ends <- nchar(x@filenames) - nchar(".rds")
+        noext_filenames <- substr(x@filenames, 1L, noext_ends)
+        setNames(.read_seqlengths_from_file(x)[noext_filenames], names(x))
+    }
+)
+
+setMethod("seqinfo", "RdsNamedSequences",
+    function(x)
+    {
+        x_seqlengths <- seqlengths(x)
+        Seqinfo(names(x_seqlengths), unname(x_seqlengths))
+    }
+)
+
+setAs("RdsCollection", "RdsNamedSequences",
+    function(from)
+    {
+        ans <- new2("RdsNamedSequences", from, elementType="XString",
+                                         check=FALSE)
+        seqlengths_from_file <- .read_seqlengths_from_file(ans)
+        if (!is.integer(seqlengths_from_file))
+            stop(wmsg("object serialized in ",
+                      "file '", seqlengthsFilepath(ans), "' ",
+                      "must be a named integer vector"))
+        if (!all(names(from) %in% names(seqlengths_from_file)))
+            stop(wmsg("the names on the RdsCollection object to coerce ",
+                      "to RdsNamedSequences must be a subset of ",
+                      "the names on the integer vector serialized ",
+                      "in file '", seqlengthsFilepath(ans), "'"))
+        ans
+    }
+)
+
+### Constructor.
+RdsNamedSequences <- function(path, seqnames)
+{
+    filenames <- paste0(seqnames, ".rds")
+    as(RdsCollection(path, filenames), "RdsNamedSequences")
+}
+
+### Load a full sequence as an XString derivative.
+setMethod("getListElement", "RdsNamedSequences",
+    function(x, i, exact=TRUE)
+    {
+        .check_getListElement_index(i, "an RdsNamedSequences object")
+        ans <- callNextMethod()
+        if (!is(ans, "XString")) {
+            filepath <- file.path(path(x), x@filenames[[i]])
+            stop("serialized object in file '", filepath, "' ",
+                 "must be an XString derivative")
+        }
         updateObject(ans)
     }
 )
@@ -165,19 +265,11 @@ FastaNamedSequences <- function(filepath)
     new("FastaNamedSequences", fafile=fafile)
 }
 
-### We only support subetting by name.
 ### Load a full sequence as a DNAString object.
-setMethod("[[", "FastaNamedSequences",
-    function(x, i, j, ...)
+setMethod("getListElement", "FastaNamedSequences",
+    function(x, i, exact=TRUE)
     {
-        if (!missing(j) || length(list(...)) > 0L)
-            stop("invalid subsetting")
-        if (!is.character(i))
-            stop("a FastaNamedSequences object can only be subsetted by name")
-        if (length(i) < 1L)
-            stop("attempt to select less than one element")
-        if (length(i) > 1L)
-            stop("attempt to select more than one element")
+        .check_getListElement_index(i, "a FastaNamedSequences object")
         fafile <- x@fafile
         seqlength <- .get_seqlength(fafile, i)
         param <- GRanges(i, IRanges(1L, seqlength))
@@ -234,19 +326,11 @@ TwobitNamedSequences <- function(filepath)
     new("TwobitNamedSequences", twobitfile=twobitfile)
 }
 
-### We only support subetting by name.
 ### Load a full sequence as a DNAString object.
-setMethod("[[", "TwobitNamedSequences",
-    function(x, i, j, ...)
+setMethod("getListElement", "TwobitNamedSequences",
+    function(x, i, exact=TRUE)
     {
-        if (!missing(j) || length(list(...)) > 0L)
-            stop("invalid subsetting")
-        if (!is.character(i))
-            stop("a FastaNamedSequences object can only be subsetted by name")
-        if (length(i) < 1L)
-            stop("attempt to select less than one element")
-        if (length(i) > 1L)
-            stop("attempt to select more than one element")
+        .check_getListElement_index(i, "a TwobitNamedSequences object")
         twobitfile <- x@twobitfile
         seqlength <- .get_seqlength(twobitfile, i)
         which <- GRanges(i, IRanges(1L, seqlength))
@@ -301,7 +385,8 @@ loadSubseqsFromStrandedSequence <- function(x, seqname, ranges, strand,
     }
     ans <- loadFUN(x, seqname, ranges)
     idx <- which(strand == "-")
-    ans[idx] <- reverseComplement(ans[idx])
+    if (length(idx) != 0L)
+        ans[idx] <- reverseComplement(ans[idx])
     ans
 }
 
