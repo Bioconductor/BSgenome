@@ -336,12 +336,6 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       this field corresponds to the \code{RELEASE DATE} field of the
       \textit{List of UCSC genome releases} table.
 
-\item \code{release\_name}: The release name or build number of this assembly
-      of the genome.
-      For the packages built by the Bioconductor project from a UCSC genome,
-      this field corresponds to the \code{RELEASE NAME} field of the
-      \textit{List of UCSC genome releases} table.
-
 \item \code{source\_url}: The permanent URL where the \term{sequence data
       files} used to forge the \term{target package} can be found.
 

@@ -24,7 +24,6 @@
         genome="@GENOME@",
         provider="@PROVIDER@",
         release_date="@RELEASEDATE@",
-        release_name="@RELEASENAME@",
         source_url="@SOURCEURL@",
         seqnames=.seqnames,
         circ_seqs=.circ_seqs,

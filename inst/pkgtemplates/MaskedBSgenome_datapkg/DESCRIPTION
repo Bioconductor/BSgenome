@@ -13,6 +13,5 @@ common_name: @COMMONNAME@
 genome: @GENOME@
 provider: @PROVIDER@
 release_date: @RELEASEDATE@
-release_name: @RELEASENAME@
 source_url: @SOURCEURL@
 biocViews: AnnotationData, Genetics, BSgenome, @ORGANISMBIOCVIEW@

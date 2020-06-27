@@ -286,6 +286,9 @@ setMethod("snplocs", "BSgenome",
 ### - In BioC 3.1, the 'species' argument was replaced with the 'common_name'
 ###   argument but the former was kept for backward compatibility with
 ###   existing BSgenome packages.
+### - In BioC 3.12, the 'provider_version' argument was replaced with the
+###   'genome' argument, and the 'release_name' became ignored and was only
+###   kept for backward compatibility.
 BSgenome <- function(organism, common_name, genome,
                      provider, provider_version,
                      release_date, release_name, source_url,
@@ -302,8 +305,7 @@ BSgenome <- function(organism, common_name, genome,
     if (missing(common_name))
         common_name <- species
     genome_description <-
-        GenomeDescription(organism, common_name,
-                          provider, release_date, release_name,
+        GenomeDescription(organism, common_name, provider, release_date,
                           seqinfo)
     if (is.null(mseqnames))
         mseqnames <- character(0)

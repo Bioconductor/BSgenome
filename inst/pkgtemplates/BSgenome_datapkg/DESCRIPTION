@@ -4,7 +4,7 @@ Description: @PKGDESCRIPTION@
 Version: @PKGVERSION@
 Author: @AUTHOR@
 Maintainer: @MAINTAINER@
-Depends: BSgenome (>= @BSGENOMEVERSION@)
+Depends: R (>= 3.5.0), BSgenome (>= @BSGENOMEVERSION@)
 Imports: BSgenome
 Suggests: @SUGGESTS@
 License: @LICENSE@
@@ -13,6 +13,5 @@ common_name: @COMMONNAME@
 genome: @GENOME@
 provider: @PROVIDER@
 release_date: @RELEASEDATE@
-release_name: @RELEASENAME@
 source_url: @SOURCEURL@
 biocViews: AnnotationData, Genetics, BSgenome, @ORGANISMBIOCVIEW@

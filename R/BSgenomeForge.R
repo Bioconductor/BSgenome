@@ -675,7 +675,7 @@ setClass("BSgenomeDataPkgSeed",
         provider="character",
         provider_version="character", # deprecated in favor of 'genome'
         release_date="character",
-        release_name="character",
+        release_name="character",    # deprecated (not replaced by anything)
         source_url="character",
         organism_biocview="character",
         BSgenomeObjname="character",
@@ -696,8 +696,8 @@ setClass("BSgenomeDataPkgSeed",
         Suggests="",
         License="Artistic-2.0",
         genome=NA_character_,
-        provider_version="",
-        release_name="",
+        provider_version=NA_character_,
+        release_name=NA_character_,
         source_url="-- information not available --",
         seqnames=NA_character_,
         circ_seqs=NA_character_,
@@ -820,6 +820,8 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                     "in favor of 'genome'")
             x@genome <- x@provider_version
         }
+        if (!is.na(x@release_name))
+            warning("field 'release_name' is deprecated")
         seqnames <- x@seqnames
         if (!is.na(seqnames)) {
             .seqnames <- eval(parse(text=seqnames))
@@ -853,7 +855,6 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             GENOME=x@genome,
             PROVIDER=x@provider,
             RELEASEDATE=x@release_date,
-            RELEASENAME=x@release_name,
             SOURCEURL=x@source_url,
             ORGANISMBIOCVIEW=x@organism_biocview,
             BSGENOMEOBJNAME=x@BSgenomeObjname,
@@ -1036,7 +1037,6 @@ setMethod("forgeMaskedBSgenomeDataPkg", "MaskedBSgenomeDataPkgSeed",
             GENOME=genome(ref_bsgenome)[[1L]],
             PROVIDER=provider(ref_bsgenome),
             RELEASEDATE=releaseDate(ref_bsgenome),
-            RELEASENAME=releaseName(ref_bsgenome),
             SOURCEURL=x@source_url,
             ORGANISMBIOCVIEW=x@organism_biocview,
             NMASKPERSEQ=as.character(x@nmask_per_seq),
