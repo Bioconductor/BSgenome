@@ -38,9 +38,11 @@ getBSgenome(genome, masked=FALSE, load.only=FALSE)
   }
   \item{genome}{
     A \link{BSgenome} object, or the full name of an installed BSgenome
-    data package, or a short string specifying a genome assembly (a.k.a.
-    provider version) that refers unambiguously to an installed BSgenome
-    data package.
+    data package, or a short string specifying the name of an NCBI assembly
+    (e.g. \code{"GRCh38"}, \code{"TAIR10.1"}, etc...) or UCSC genome (e.g.
+    \code{"hg38"}, \code{"bosTau9"}, \code{"galGal6"}, \code{"ce11"}, etc...).
+    The supplied short string must refer unambiguously to an installed
+    BSgenome data package.
   }
   \item{masked}{
     \code{TRUE} or \code{FALSE}. Whether to search for the \emph{masked}
@@ -75,11 +77,10 @@ getBSgenome(genome, masked=FALSE, load.only=FALSE)
           genome sequences. We formally refer to it as the \emph{provider}
           of the genome. E.g. \code{UCSC}, \code{NCBI}, \code{TAIR}, etc...
 
-    \item The 4th part is the release string or number used by this
-          organisation for this particular genome assembly. We formally
-          refer to it as the \emph{provider version} of the genome.
-          E.g. \code{hg38}, \code{GRCh38}, \code{hg19}, \code{mm10},
-          \code{susScr11}, etc...
+    \item The 4th part is a short string specifying the name of an NCBI
+          assembly (e.g. \code{GRCh38}, \code{TAIR10.1}, etc...) or UCSC
+          genome (e.g. \code{hg38}, \code{mm10}, \code{susScr11},
+          \code{bosTau9}, \code{galGal6}, \code{ce11}, etc...).
 
     \item If the package contains masked sequences, its name has the
           \code{.masked} suffix added to it, which is typically the 5th part.
@@ -98,7 +99,7 @@ getBSgenome(genome, masked=FALSE, load.only=FALSE)
   \code{installed.genomes}). If \code{splitNameParts=TRUE}, the list of
   packages is returned in a data frame with one row per package and the
   following columns: \code{pkgname} (character), \code{organism} (factor),
-  \code{provider} (factor), \code{provider_version} (character), and
+  \code{provider} (factor), \code{genome} (character), and
   \code{masked} (logical).
 
   For \code{getBSgenome}: the \link{BSgenome} object containing the sequences
@@ -153,15 +154,15 @@ Scerevisiae  # same as BSgenome.Scerevisiae.UCSC.sacCer1
 genome <- getBSgenome("BSgenome.Celegans.UCSC.ce2")
 genome
 
-## Specify a genome assembly (a.k.a. provider version):
+## Specify a UCSC genome:
 genome <- getBSgenome("hg38")
 class(genome)  # BSgenome object
-providerVersion(genome)
+seqinfo(genome)
 genome$chrM
 
 genome <- getBSgenome("hg38", masked=TRUE)
 class(genome)  # MaskedBSgenome object
-providerVersion(genome)
+seqinfo(genome)
 genome$chr22
 }
 

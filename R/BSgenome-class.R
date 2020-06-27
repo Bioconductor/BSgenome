@@ -256,9 +256,8 @@ setMethod("snplocs", "BSgenome",
 ###
 
 ### 'seqnames' only used for sanity check.
-.makeBSgenomeSeqinfo <- function(single_sequences,
-                                 circ_seqs, provider_version,
-                                 seqnames)
+.make_BSgenome_Seqinfo <- function(single_sequences, circ_seqs,
+                                   genome, seqnames)
 {
     seqlengths <- seqlengths(single_sequences)
     if (length(seqnames) == 0L) {
@@ -277,7 +276,7 @@ setMethod("snplocs", "BSgenome",
     Seqinfo(seqnames=seqnames,
             seqlengths=seqlengths,
             isCircular=is_circ,
-            genome=provider_version)
+            genome=genome)
 }
 
 ### NOTES:
@@ -287,52 +286,38 @@ setMethod("snplocs", "BSgenome",
 ### - In BioC 3.1, the 'species' argument was replaced with the 'common_name'
 ###   argument but the former was kept for backward compatibility with
 ###   existing BSgenome packages.
-BSgenome <- function(organism, common_name, provider, provider_version,
+BSgenome <- function(organism, common_name, genome,
+                     provider, provider_version,
                      release_date, release_name, source_url,
                      seqnames, circ_seqs=NA, mseqnames,
                      seqs_pkgname, seqs_dirpath,
                      species=NA_character_)
 {
-    twobit_filename <- "single_sequences.2bit"
-    twobit_filepath <- file.path(seqs_dirpath, twobit_filename)
-    if (file.exists(twobit_filepath)) {
-        single_sequences <- TwobitNamedSequences(twobit_filepath)
-    } else {
-        fa_filename <- "single_sequences.fa"
-        fa_filepath <- file.path(seqs_dirpath, fa_filename)
-        farz_filename <- paste0(fa_filename, ".rz")
-        farz_filepath <- file.path(seqs_dirpath, farz_filename)
-        if (file.exists(farz_filepath)) {
-            single_sequences <- FastaNamedSequences(farz_filepath)
-        } else if (file.exists(fa_filepath)) {
-            single_sequences <- FastaNamedSequences(fa_filepath)
-        } else {
-            single_sequences <- RdaNamedSequences(seqs_dirpath, seqnames)
-        }
-    }
-    seqinfo <- .makeBSgenomeSeqinfo(single_sequences,
-                                    circ_seqs, provider_version,
-                                    seqnames)
+    single_sequences <- OnDiskNamedSequences(seqs_dirpath, seqnames=seqnames)
+    if (missing(genome))
+        genome <- provider_version
+    seqinfo <- .make_BSgenome_Seqinfo(single_sequences, circ_seqs,
+                                      genome, seqnames)
     seqnames <- seqnames(seqinfo)
     if (missing(common_name))
         common_name <- species
-    genome_description <- GenomeDescription(organism, common_name,
-                                            provider, provider_version,
-                                            release_date, release_name,
-                                            seqinfo)
+    genome_description <-
+        GenomeDescription(organism, common_name,
+                          provider, release_date, release_name,
+                          seqinfo)
     if (is.null(mseqnames))
         mseqnames <- character(0)
     multiple_sequences <- RdaCollection(seqs_dirpath, mseqnames)
     names(user_seqnames) <- user_seqnames <- seqnames
 
     new("BSgenome", genome_description,
-        pkgname=seqs_pkgname,
-        single_sequences=single_sequences,
-        multiple_sequences=multiple_sequences,
-        source_url=source_url,
-        user_seqnames=user_seqnames,
-        .seqs_cache=new.env(parent=emptyenv()),
-        .link_counts=new.env(parent=emptyenv())
+                    pkgname=seqs_pkgname,
+                    single_sequences=single_sequences,
+                    multiple_sequences=multiple_sequences,
+                    source_url=source_url,
+                    user_seqnames=user_seqnames,
+                    .seqs_cache=new.env(parent=emptyenv()),
+                    .link_counts=new.env(parent=emptyenv())
     )
 }
 
@@ -466,17 +451,17 @@ setMethod("show", "BSgenome",
         masks_objname <- paste0(seqname, ".masks")
         builtinmasks <- x@masks[[masks_objname]]
         if (length(builtinmasks) < nmask_per_seq) {
-            masks_filepath <- rdaPath(x@masks, masks_objname)
+            masks_path <- rdaPath(x@masks, masks_objname)
             stop("expecting ", nmask_per_seq, " built-in masks per ",
                  "single sequence, found only ", length(builtinmasks),
-                 " in file '", masks_filepath, "'. ",
+                 " in file '", masks_path, "'. ",
                  "May be the data on disk is corrupted?")
         }
         if (length(builtinmasks) > nmask_per_seq)
             builtinmasks <- builtinmasks[seq_len(nmask_per_seq)]
         if (!identical(names(builtinmasks), masknames(x))) {
-            masks_filepath <- rdaPath(x@masks, masks_objname)
-            stop("mask names found in file '", masks_filepath, "' are not ",
+            masks_path <- rdaPath(x@masks, masks_objname)
+            stop("mask names found in file '", masks_path, "' are not ",
                  "identical to the names returned by masknames(). ",
                  "May be the data on disk is corrupted?")
         }

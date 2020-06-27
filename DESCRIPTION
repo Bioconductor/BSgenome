@@ -10,7 +10,7 @@ biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
 Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.13.8),
 	S4Vectors (>= 0.17.28), IRanges (>= 2.13.16),
-	GenomeInfoDb (>= 1.23.9), GenomicRanges (>= 1.31.10),
+	GenomeInfoDb (>= 1.25.5), GenomicRanges (>= 1.31.10),
 	Biostrings (>= 2.47.6), rtracklayer (>= 1.39.7)
 Imports: methods, utils, stats, matrixStats,
 	BiocGenerics, S4Vectors, IRanges, XVector (>= 0.29.3),

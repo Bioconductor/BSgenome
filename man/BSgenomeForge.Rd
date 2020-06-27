@@ -10,7 +10,8 @@
 \alias{forgeBSgenomeDataPkg,BSgenomeDataPkgSeed-method}
 \alias{forgeBSgenomeDataPkg,list-method}
 \alias{forgeBSgenomeDataPkg,character-method}
-\alias{forgeSeqlengthsFile}
+\alias{forgeSeqlengthsRdsFile}
+\alias{forgeSeqlengthsRdaFile}
 \alias{forgeSeqFiles}
 \alias{forgeMasksFiles}
 
@@ -28,14 +29,17 @@ forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
 
 ## Low-level BSgenomeForge functions:
 
-forgeSeqlengthsFile(seqnames, prefix="", suffix=".fa",
-                    seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+forgeSeqlengthsRdsFile(seqnames, prefix="", suffix=".fa",
+                       seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
 
-forgeSeqFiles(provider, provider_version,
+forgeSeqlengthsRdaFile(seqnames, prefix="", suffix=".fa",
+                       seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+
+forgeSeqFiles(provider, genome,
               seqnames, mseqnames=NULL,
               seqfile_name=NA, prefix="", suffix=".fa",
               seqs_srcdir=".", seqs_destdir=".",
-              ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
+              ondisk_seq_format=c("2bit", "rds", "rda", "fa.rz", "fa"),
               verbose=TRUE)
 
 forgeMasksFiles(seqnames, nmask_per_seq,
@@ -74,11 +78,11 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     The provider of the \emph{sequence data files} e.g.
     \code{"UCSC"}, \code{"NCBI"}, \code{"BDGP"}, \code{"FlyBase"}, etc...
   }
-  \item{provider_version}{
-    The provider-side version of the genome e.g. \code{"hg38"}
-    or \code{"bosTau9"} if the genome is provided by UCSC,
-    or \code{"GRCh38.p12"} or \code{"ARS-UCD1.2"} if it's provided
-    by NCBI.
+  \item{genome}{
+    The name of the genome. Typically the name of an NCBI assembly (e.g.
+    \code{"GRCh38.p12"}, \code{"WBcel235"}, \code{"TAIR10.1"},
+    \code{"ARS-UCD1.2"}, etc...) or UCSC genome (e.g. \code{"hg38"},
+    \code{"bosTau9"}, \code{"galGal6"}, \code{"ce11"}, etc...).
   }
   \item{seqnames, mseqnames}{
     A character vector containing the names of the single (for \code{seqnames})
@@ -98,17 +102,21 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     serialized objects should be saved.
     These directories must already exist.
 
-    \code{forgeSeqlengthsFile} will produce a single .rda file.
+    Both \code{forgeSeqlengthsRdsFile} and \code{forgeSeqlengthsRdaFile}
+    will produce a single \code{.rds} or \code{.rda} file.
     Both \code{forgeSeqFiles} and \code{forgeMasksFiles} will produce one
-    .rda file per sequence.
+    file per sequence (all files being either \code{.rds} or \code{.rda}
+    files).
   }
   \item{ondisk_seq_format}{
     Specifies how the single sequences should be stored in the forged package.
-    Can be \code{"2bit"}, \code{"rda"}, \code{"fa.rz"}, or \code{"fa"}.
+    Can be \code{"2bit"}, \code{"rds"}, \code{"rda"}, \code{"fa.rz"},
+    or \code{"fa"}.
     If \code{"2bit"} (the default), then all the single sequences are stored
     in a single twoBit file.
-    If \code{"rda"}, then each single sequence is stored in a separated
-    serialized \link[Biostrings]{XString} object (one per single sequence).
+    If \code{"rds"} or \code{"rda"}, then each single sequence is stored in
+    a separated serialized \link[Biostrings]{XString} derivative (one per
+    single sequence).
     If \code{"fa.rz"} or \code{"fa"}, then all the single sequences are stored
     in a single FASTA file (compressed in the RAZip format if \code{"fa.rz"}).
   }
@@ -139,31 +147,31 @@ forgeMasksFiles(seqnames, nmask_per_seq,
 seqs_srcdir <- system.file("extdata", package="BSgenome")
 seqnames <- c("chrX", "chrM")
 
-## Forge .rda sequence files:
-forgeSeqFiles("UCSC", "ce2",
-              seqnames, prefix="ce2", suffix=".fa.gz",
-              seqs_srcdir=seqs_srcdir,
-              seqs_destdir=tempdir(), ondisk_seq_format="rda")
-
 ## Forge .2bit sequence files:
 forgeSeqFiles("UCSC", "ce2",
               seqnames, prefix="ce2", suffix=".fa.gz",
               seqs_srcdir=seqs_srcdir,
               seqs_destdir=tempdir(), ondisk_seq_format="2bit")
 
+## Forge .rds sequence files:
+forgeSeqFiles("UCSC", "ce2",
+              seqnames, prefix="ce2", suffix=".fa.gz",
+              seqs_srcdir=seqs_srcdir,
+              seqs_destdir=tempdir(), ondisk_seq_format="rds")
+
 ## Sanity checks:
 library(BSgenome.Celegans.UCSC.ce2)
 genome <- BSgenome.Celegans.UCSC.ce2
 
-load(file.path(tempdir(), "chrX.rda"))
-stopifnot(genome$chrX == chrX)
-load(file.path(tempdir(), "chrM.rda"))
-stopifnot(genome$chrM == chrM)
-
 ce2_sequences <- import(file.path(tempdir(), "single_sequences.2bit"))
 ce2_sequences0 <- DNAStringSet(list(chrX=genome$chrX, chrM=genome$chrM))
-stopifnot(identical(names(ce2_sequences0), names(ce2_sequences)) &&
+stopifnot(identical(names(ce2_sequences0), names(ce2_sequences)),
           all(ce2_sequences0 == ce2_sequences))
+
+chrX <- readRDS(file.path(tempdir(), "chrX.rds"))
+stopifnot(genome$chrX == chrX)
+chrM <- readRDS(file.path(tempdir(), "chrM.rds"))
+stopifnot(genome$chrM == chrM)
 }
 
 \keyword{manip}

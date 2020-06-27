@@ -3,30 +3,32 @@
 ### -------------------------------------------------------------------------
 
 
-.get_circ_seqs <- function(provider, provider_version, circ_seqs)
-{
-    if (provider == "UCSC") {
-        UCSC_genomes <- registered_UCSC_genomes()
-        if (provider_version %in% UCSC_genomes[ , "genome"]) {
-            chrom_info <- getChromInfoFromUCSC(provider_version)
-            circ_idx <- which(chrom_info[ , "circular"])
-            circ_seqs <- deparse(chrom_info[circ_idx, "chrom"])
-        }
-    }
-    circ_seqs
-}
-
 .getMasksObjname <- function(seqnames)
 {
     if (length(seqnames) == 0)
         return(character(0))
-    paste(seqnames, ".masks", sep="")
+    paste0(seqnames, ".masks")
 }
 
-.saveObject <- function(object, objname, destdir=".", verbose=TRUE)
+.saveObjectToRdsFile <- function(object, objname, destdir=".", verbose=TRUE)
+{
+    destfile <- file.path(destdir, paste0(objname, ".rds"))
+    if (verbose)
+        cat("Saving '", objname, "' object to compressed data file '",
+            destfile, "' ... ", sep="")
+    ## Using compress="xz" (instead of compress="gzip") would produce a .rds
+    ## file that is about 20% smaller on disk but it would also take almost 3x
+    ## longer to load it later on with load(). Tested on hg19 chr1 with R-2.14
+    ## (2011-09-20 r57033). This is why we stick to compress="gzip".
+    saveRDS(object, file=destfile, compress="gzip")
+    if (verbose)
+        cat("DONE\n")
+}
+
+.saveObjectToRdaFile <- function(object, objname, destdir=".", verbose=TRUE)
 {
     assign(objname, object)
-    destfile <- file.path(destdir, paste(objname, ".rda", sep=""))
+    destfile <- file.path(destdir, paste0(objname, ".rda"))
     if (verbose)
         cat("Saving '", objname, "' object to compressed data file '",
             destfile, "' ... ", sep="")
@@ -49,9 +51,9 @@ getSeqSrcpaths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
 {
     if (!is.null(seqnames) && !is.character(seqnames))
         stop("'seqnames' must be a character vector (or NULL)")
-    if (length(seqnames) == 0) {
+    if (length(seqnames) == 0L) {
         warning("'seqnames' is empty")
-        return(character(0))
+        return(setNames(character(0), character(0)))
     }
     if (!isSingleString(prefix))
         stop("'prefix' must be a single string")
@@ -59,7 +61,7 @@ getSeqSrcpaths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
         stop("'suffix' must be a single string")
     if (!isSingleString(seqs_srcdir))
         stop("'seqs_srcdir' must be a single string")
-    srcfiles <- paste(prefix, seqnames, suffix, sep="")
+    srcfiles <- paste0(prefix, seqnames, suffix)
     ans <- file.path(seqs_srcdir, srcfiles)
     is_OK <- file.exists(ans)
     if (!all(is_OK)) {
@@ -72,52 +74,92 @@ getSeqSrcpaths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The getSeqlengths() and forgeSeqlengthsFile() functions.
+### getSeqlengths(), forgeSeqlengthsRdsFile(), and forgeSeqlengthsRdaFile()
 ###
 
-getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".")
+getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".",
+                          genome=NA_character_)
 {
-    if (length(seqnames) == 0) {
-        warning("'seqnames' is empty")
-        return(integer(0))
-    }
     srcpaths <- getSeqSrcpaths(seqnames, prefix=prefix, suffix=suffix,
                                seqs_srcdir=seqs_srcdir)
-    sapply(seqnames, function(seqname)
-           {
-               srcpath <- srcpaths[[seqname]]
-               ans <- fasta.seqlengths(srcpath)
-               if (length(ans) == 0)
-                   stop("In file '", srcpath, "': no sequence found")
-               if (length(ans) > 1)
-                   warning("In file '", srcpath, "': ", length(ans),
-                           " sequences found, using first sequence only")
-               if (names(ans)[1] != seqname)
-                   warning("In file '", srcpath, "': sequence description \"",
-                           names(ans), "\" doesn't match user-specified ",
-                           "sequence name \"", seqname, "\"")
-               ans[[1]]
-           },
-           USE.NAMES=TRUE
+    ans <- vapply(seqnames,
+        function(seqname) {
+            srcpath <- srcpaths[[seqname]]
+            ans <- fasta.seqlengths(srcpath)
+            if (length(ans) == 0L)
+                stop("In file '", srcpath, "': no sequence found")
+            if (length(ans) > 1L)
+                warning("In file '", srcpath, "': ", length(ans),
+                        " sequences found, using first sequence only")
+            if (names(ans)[[1L]] != seqname)
+                warning("In file '", srcpath, "': sequence description \"",
+                        names(ans), "\" doesn't match user-specified ",
+                        "sequence name \"", seqname, "\"")
+            ans[[1L]]
+        },
+        integer(1),
+        USE.NAMES=TRUE
     )
+    if (!is.na(genome)) {
+        expected <- seqlengths(Seqinfo(genome=genome))
+        if (!identical(expected[names(ans)], ans))
+            stop("the sequences in the files have lengths that don't match ",
+                 "the lengths reported by 'Seqinfo(genome=\"", genome, "\")'")
+    }
+    ans
 }
 
-forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
-                                seqs_srcdir=".", seqs_destdir=".",
-                                verbose=TRUE)
+forgeSeqlengthsRdsFile <- function(seqnames, prefix="", suffix=".fa",
+                                   seqs_srcdir=".", seqs_destdir=".",
+                                   genome=NA_character_, verbose=TRUE)
 {
-    seqlengths <- getSeqlengths(seqnames, prefix=prefix, suffix=suffix,
-                                seqs_srcdir=seqs_srcdir)
     if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
-    .saveObject(seqlengths, "seqlengths", destdir=seqs_destdir,
-                verbose=verbose)
+    seqlengths <- getSeqlengths(seqnames, prefix=prefix, suffix=suffix,
+                                seqs_srcdir=seqs_srcdir, genome=genome)
+    .saveObjectToRdsFile(seqlengths, "seqlengths", destdir=seqs_destdir,
+                         verbose=verbose)
+}
+
+forgeSeqlengthsRdaFile <- function(seqnames, prefix="", suffix=".fa",
+                                   seqs_srcdir=".", seqs_destdir=".",
+                                   genome=NA_character_, verbose=TRUE)
+{
+    if (!isSingleString(seqs_destdir))
+        stop("'seqs_destdir' must be a single string")
+    seqlengths <- getSeqlengths(seqnames, prefix=prefix, suffix=suffix,
+                                seqs_srcdir=seqs_srcdir, genome=genome)
+    .saveObjectToRdaFile(seqlengths, "seqlengths", destdir=seqs_destdir,
+                         verbose=verbose)
 }
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "forgeSeqFiles" function.
+### forgeSeqFiles()
 ###
+
+.forgeRdsSeqFile <- function(name, prefix, suffix, seqs_srcdir, seqs_destdir,
+                             is.single.seq=TRUE, verbose=TRUE)
+{
+    if (!isSingleString(name))
+        stop("'name' must be a single string")
+    srcpath <- getSeqSrcpaths(name, prefix=prefix, suffix=suffix,
+                              seqs_srcdir=seqs_srcdir)
+    if (verbose)
+        cat("Loading FASTA file '", srcpath, "' ... ", sep="")
+    seq <- readDNAStringSet(srcpath, "fasta")
+    if (verbose)
+        cat("DONE\n")
+    if (is.single.seq) {
+        if (length(seq) == 0L)
+            stop("file contains no DNA sequence")
+        if (length(seq) > 1L)
+            warning("file contains ", length(seq), " sequences, ",
+                    "using the first sequence only")
+        seq <- seq[[1L]] # now 'seq' is a DNAString object
+    }
+    .saveObjectToRdsFile(seq, name, destdir=seqs_destdir, verbose=verbose)
+}
 
 .forgeRdaSeqFile <- function(name, prefix, suffix, seqs_srcdir, seqs_destdir,
                              is.single.seq=TRUE, verbose=TRUE)
@@ -133,14 +175,14 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     if (verbose)
         cat("DONE\n")
     if (is.single.seq) {
-        if (length(seq) == 0)
+        if (length(seq) == 0L)
             stop("file contains no DNA sequence")
-        if (length(seq) > 1)
+        if (length(seq) > 1L)
             warning("file contains ", length(seq), " sequences, ",
                     "using the first sequence only")
         seq <- seq[[1]] # now 'seq' is a DNAString object
     }
-    .saveObject(seq, name, destdir=seqs_destdir, verbose=verbose)
+    .saveObjectToRdaFile(seq, name, destdir=seqs_destdir, verbose=verbose)
 }
 
 .forgeFastaRzFileFromFastaFiles <- function(seqnames, prefix, suffix,
@@ -300,12 +342,12 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         cat("DONE\n")
 }
 
-.sortUCSCTwobitFile <- function(provider_version, seqs_dir, verbose=TRUE)
+.sortUCSCTwobitFile <- function(genome, seqs_dir, verbose=TRUE)
 {
     if (verbose)
         cat("Getting chrom info from UCSC with 'getChromInfoFromUCSC(\"",
-            provider_version, "\")' ... ", sep="")
-    chrom_info <- getChromInfoFromUCSC(provider_version)
+            genome, "\")' ... ", sep="")
+    chrom_info <- getChromInfoFromUCSC(genome)
     if (verbose)
         cat("DONE\n")
     filename <- "single_sequences.2bit"
@@ -318,10 +360,10 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
     m <- match(chrom_info[ , "chrom"], names(seqs))
     if (nrow(chrom_info) != length(seqs) || anyNA(m))
         stop(wmsg("nb of sequences in 'chromInfo' table and 2bit file ",
-                  "don't match for UCSC genome ", provider_version))
+                  "don't match for UCSC genome ", genome))
     if (verbose)
         cat("Sorting sequences as in 'getChromInfoFromUCSC(\"",
-            provider_version, "\")' ... ", sep="")
+            genome, "\")' ... ", sep="")
     seqs <- seqs[m]
     if (verbose)
         cat("DONE\n")
@@ -329,7 +371,7 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         cat("Checking the sequence lengths ... ")
     if (!identical(chrom_info[ , "size"], width(seqs)))
         stop(wmsg("sequence lengths in 'chromInfo' table and 2bit file ",
-                  "don't match for UCSC genome ", provider_version))
+                  "don't match for UCSC genome ", genome))
     if (verbose)
         cat("OK\n")
     if (verbose)
@@ -339,11 +381,11 @@ forgeSeqlengthsFile <- function(seqnames, prefix="", suffix=".fa",
         cat("DONE\n")
 }
 
-forgeSeqFiles <- function(provider, provider_version,
+forgeSeqFiles <- function(provider, genome,
                           seqnames, mseqnames=NULL,
                           seqfile_name=NA, prefix="", suffix=".fa",
                           seqs_srcdir=".", seqs_destdir=".",
-                          ondisk_seq_format=c("2bit", "rda", "fa.rz", "fa"),
+                          ondisk_seq_format=c("2bit", "rds", "rda", "fa.rz", "fa"),
                           verbose=TRUE)
 {
     if (length(seqnames) == 0L && is.na(seqfile_name))
@@ -353,7 +395,12 @@ forgeSeqFiles <- function(provider, provider_version,
     if (!isSingleString(seqs_destdir))
         stop("'seqs_destdir' must be a single string")
     ondisk_seq_format <- match.arg(ondisk_seq_format)
-    if (ondisk_seq_format == "rda") {  # "rda" format
+    if (ondisk_seq_format == "rds") {          # "rds" format
+        for (name in seqnames) {
+            .forgeRdsSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
+                             is.single.seq=TRUE, verbose=verbose)
+        }
+    } else if (ondisk_seq_format == "rda") {   # "rda" format
         for (name in seqnames) {
             .forgeRdaSeqFile(name, prefix, suffix, seqs_srcdir, seqs_destdir,
                              is.single.seq=TRUE, verbose=verbose)
@@ -373,8 +420,8 @@ forgeSeqFiles <- function(provider, provider_version,
                             verbose=verbose)
             if (provider == "UCSC") {
                 UCSC_genomes <- registered_UCSC_genomes()
-                if (provider_version %in% UCSC_genomes[ , "genome"])
-                    .sortUCSCTwobitFile(provider_version, seqs_destdir,
+                if (genome %in% UCSC_genomes[ , "genome"])
+                    .sortUCSCTwobitFile(genome, seqs_destdir,
                                         verbose=verbose)
             }
         }
@@ -391,7 +438,7 @@ forgeSeqFiles <- function(provider, provider_version,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### The "forgeMasksFiles" function.
+### forgeMasksFiles()
 ###
 
 ## AGAPS is the mask of "assembly gaps" (inter-contig Ns).
@@ -417,7 +464,7 @@ forgeSeqFiles <- function(provider, provider_version,
         desc(ans) <- "assembly gaps (empty)"
     } else {
         if (is.na(filename))
-            filename <- paste(fileprefix, seqname, filesuffix, sep="")
+            filename <- paste0(fileprefix, seqname, filesuffix)
         filepath <- file.path(masks_srcdir, filename)
         if (filetype == "gap")
             ans <- read.gapMask(filepath, seqname=seqname, mask.width=mask_width)
@@ -441,7 +488,7 @@ forgeSeqFiles <- function(provider, provider_version,
     ans <- collapse(masks(seq)[-1])
     desc(ans) <- "intra-contig ambiguities"
     if (isEmpty(ans))
-        desc(ans) <- paste(desc(ans), "(empty)")
+        desc(ans) <- paste0(desc(ans), " (empty)")
     active(ans) <- TRUE
     names(ans) <- "AMB"
     ans
@@ -459,7 +506,7 @@ forgeSeqFiles <- function(provider, provider_version,
     if (!isSingleStringOrNA(filesuffix))
         stop("'filesuffix' must be a single string or NA")
     if (is.na(filename))
-        filename <- paste(fileprefix, seqname, filesuffix, sep="")
+        filename <- paste0(fileprefix, seqname, filesuffix)
     filepath <- file.path(masks_srcdir, filename)
     if (file.exists(filepath)) {
         ans <- read.rmMask(filepath, seqname=seqname, mask.width=mask_width)
@@ -486,7 +533,7 @@ forgeSeqFiles <- function(provider, provider_version,
     if (!isSingleStringOrNA(filesuffix))
         stop("'filesuffix' must be a single string or NA")
     if (is.na(filename))
-        filename <- paste(fileprefix, seqname, filesuffix, sep="")
+        filename <- paste0(fileprefix, seqname, filesuffix)
     filepath <- file.path(masks_srcdir, filename)
     if (file.exists(filepath)) {
         ans <- read.trfMask(filepath, seqname=seqname, mask.width=mask_width)
@@ -528,7 +575,7 @@ forgeSeqFiles <- function(provider, provider_version,
     ## Load the sequence.
     ondisk_seq_format <- match.arg(ondisk_seq_format)
     if (ondisk_seq_format == "rda") {  # "rda" format
-        seqfile <- file.path(seqs_destdir, paste(seqname, ".rda", sep=""))
+        seqfile <- file.path(seqs_destdir, paste0(seqname, ".rda"))
         load(seqfile)
         seq <- get(seqname)
         remove(list=seqname)
@@ -576,7 +623,7 @@ forgeSeqFiles <- function(provider, provider_version,
         masks <- append(masks, TRFmask)
     }
     objname <- .getMasksObjname(seqname)
-    .saveObject(masks, objname, destdir=masks_destdir, verbose=verbose)
+    .saveObjectToRdaFile(masks, objname, destdir=masks_destdir, verbose=verbose)
 }
 
 forgeMasksFiles <- function(seqnames, nmask_per_seq,
@@ -589,7 +636,7 @@ forgeMasksFiles <- function(seqnames, nmask_per_seq,
                             TRFfiles_name=NA, TRFfiles_prefix="", TRFfiles_suffix=".bed",
                             verbose=TRUE)
 {
-    if (length(seqnames) == 0)
+    if (length(seqnames) == 0L)
         warning("'seqnames' is empty")
     for (seqname in seqnames) {
         .forgeMasksFile(seqname, nmask_per_seq,
@@ -622,8 +669,11 @@ setClass("BSgenomeDataPkgSeed",
         License="character",
         organism="character",
         common_name="character",
+        ## Should be accepted by 'Seqinfo(genome=genome)' e.g. "TAIR10.1",
+        ## "hg38", "ce11" etc...
+        genome="character",
         provider="character",
-        provider_version="character",
+        provider_version="character", # deprecated in favor of 'genome'
         release_date="character",
         release_name="character",
         source_url="character",
@@ -645,9 +695,12 @@ setClass("BSgenomeDataPkgSeed",
         Maintainer="Bioconductor Package Maintainer <maintainer@bioconductor.org>",
         Suggests="",
         License="Artistic-2.0",
+        genome=NA_character_,
+        provider_version="",
+        release_name="",
         source_url="-- information not available --",
-        seqnames="NULL",             # equivalent to "character(0)"
-        circ_seqs="NULL",            # equivalent to "character(0)"
+        seqnames=NA_character_,
+        circ_seqs=NA_character_,
         mseqnames="NULL",            # equivalent to "character(0)"
         PkgDetails="",
         SrcDataFiles="-- information not available --",
@@ -760,7 +813,32 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         template_path <- system.file("pkgtemplates", "BSgenome_datapkg",
                                      package="BSgenome")
         BSgenome_version <- installed.packages()['BSgenome','Version']
-        circ_seqs <- .get_circ_seqs(x@provider, x@provider_version, x@circ_seqs)
+        if (is.na(x@genome)) {
+            if (is.na(x@provider_version))
+                stop("'genome' field is missing in seed file")
+            warning("field 'provider_version' is deprecated ",
+                    "in favor of 'genome'")
+            x@genome <- x@provider_version
+        }
+        seqnames <- x@seqnames
+        if (!is.na(seqnames)) {
+            .seqnames <- eval(parse(text=seqnames))
+        } else {
+            if (is.na(x@seqfile_name)) {
+                .seqnames <- seqlevels(Seqinfo(genome=x@genome))
+            } else {
+                .seqnames <- NULL
+            }
+            seqnames <- deparse(.seqnames)
+	}
+        circ_seqs <- x@circ_seqs
+        if (!is.na(circ_seqs)) {
+            .circ_seqs <- eval(parse(text=circ_seqs))
+        } else {
+            si <- Seqinfo(genome=x@genome)
+	    .circ_seqs <- seqlevels(si)[isCircular(si)]
+            circ_seqs <- deparse(.circ_seqs)
+        }
         symvals <- list(
             PKGTITLE=x@Title,
             PKGDESCRIPTION=x@Description,
@@ -772,14 +850,14 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             LICENSE=x@License,
             ORGANISM=x@organism,
             COMMONNAME=x@common_name,
+            GENOME=x@genome,
             PROVIDER=x@provider,
-            PROVIDERVERSION=x@provider_version,
             RELEASEDATE=x@release_date,
             RELEASENAME=x@release_name,
             SOURCEURL=x@source_url,
             ORGANISMBIOCVIEW=x@organism_biocview,
             BSGENOMEOBJNAME=x@BSgenomeObjname,
-            SEQNAMES=ifelse(is.na(x@seqfile_name), x@seqnames, "NULL"),
+            SEQNAMES=seqnames,
             CIRCSEQS=circ_seqs,
             MSEQNAMES=x@mseqnames,
             PKGDETAILS=x@PkgDetails,
@@ -800,20 +878,30 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         Biobase::createPackage(x@Package, destdir, template_path, symvals)
         pkgdir <- file.path(destdir, x@Package)
 
-        .seqnames <- eval(parse(text=x@seqnames))
         .mseqnames <- eval(parse(text=x@mseqnames))
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
-        if (x@ondisk_seq_format == "rda") {
+        if (x@ondisk_seq_format == "rds") {
+            ## Forge the "seqlengths.rds" file
+            forgeSeqlengthsRdsFile(.seqnames,
+                                   prefix=x@seqfiles_prefix,
+                                   suffix=x@seqfiles_suffix,
+                                   seqs_srcdir=seqs_srcdir,
+                                   seqs_destdir=seqs_destdir,
+                                   genome=x@genome,
+                                   verbose=verbose)
+        } else if (x@ondisk_seq_format == "rda") {
             ## Forge the "seqlengths.rda" file
-            forgeSeqlengthsFile(.seqnames,
-                                prefix=x@seqfiles_prefix,
-                                suffix=x@seqfiles_suffix,
-                                seqs_srcdir=seqs_srcdir,
-                                seqs_destdir=seqs_destdir,
-                                verbose=verbose)
+            forgeSeqlengthsRdaFile(.seqnames,
+                                   prefix=x@seqfiles_prefix,
+                                   suffix=x@seqfiles_suffix,
+                                   seqs_srcdir=seqs_srcdir,
+                                   seqs_destdir=seqs_destdir,
+                                   genome=x@genome,
+                                   verbose=verbose)
         }
-        ## Forge the sequence files (either "2bit", "rda", "fa.rz", or "fa")
-        forgeSeqFiles(x@provider, x@provider_version,
+        ## Forge the sequence files (either "2bit", "rds", "rda", "fa.rz",
+        ## or "fa").
+        forgeSeqFiles(x@provider, x@genome,
                       .seqnames, mseqnames=.mseqnames,
                       seqfile_name=x@seqfile_name,
                       prefix=x@seqfiles_prefix,
@@ -879,7 +967,7 @@ read.dcf2 <- function(file, ...)
         seed_dir <- system.file("extdata", "GentlemanLab", package="BSgenome")
         file <- file.path(seed_dir, file)
         if (!file.exists(file)) {
-            file <- paste(file, "-seed", sep="")
+            file <- paste0(file, "-seed")
             if (!file.exists(file))
                 stop("seed file '", file0, "' not found")
         }
@@ -945,8 +1033,8 @@ setMethod("forgeMaskedBSgenomeDataPkg", "MaskedBSgenomeDataPkgSeed",
             LICENSE=x@License,
             ORGANISM=organism(ref_bsgenome),
             COMMONNAME=commonName(ref_bsgenome),
+            GENOME=genome(ref_bsgenome)[[1L]],
             PROVIDER=provider(ref_bsgenome),
-            PROVIDERVERSION=providerVersion(ref_bsgenome),
             RELEASEDATE=releaseDate(ref_bsgenome),
             RELEASENAME=releaseName(ref_bsgenome),
             SOURCEURL=x@source_url,

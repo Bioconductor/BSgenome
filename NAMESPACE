@@ -136,7 +136,8 @@ export(
     writeBSgenomeToTwobit,
 
     ## BSgenomeForge.R:
-    forgeSeqlengthsFile,
+    forgeSeqlengthsRdsFile,
+    forgeSeqlengthsRdaFile,
     forgeSeqFiles,
     forgeMasksFiles
 )

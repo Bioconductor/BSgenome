@@ -318,15 +318,18 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       the \textit{List of UCSC genome releases} table
       \footnote{\url{http://genome.ucsc.edu/FAQ/FAQreleases\#release1}}.
 
-\item \code{provider}: The provider of the \term{sequence data files} e.g.
-      \code{UCSC}, \code{NCBI}, \code{BDGP}, \code{FlyBase}, etc...
-      Should preferably match part 3 of the package name (field \code{Package}).
-
-\item \code{provider\_version}: The provider-side version of the genome.
+\item \code{genome}: The name of the genome. Typically the name of an NCBI
+      assembly (e.g. \code{GRCh38.p12}, \code{WBcel235}, \code{TAIR10.1},
+      \code{ARS-UCD1.2}, etc...) or UCSC genome (e.g. \code{hg38},
+      \code{bosTau9}, \code{galGal6}, \code{ce11}, etc...).
       Should preferably match part 4 of the package name (field \code{Package}).
       For the packages built by the Bioconductor project from a UCSC genome,
       this field corresponds to the \code{UCSC VERSION} field of the
       \textit{List of UCSC genome releases} table.
+
+\item \code{provider}: The provider of the \term{sequence data files} e.g.
+      \code{UCSC}, \code{NCBI}, \code{BDGP}, \code{FlyBase}, etc...
+      Should preferably match part 3 of the package name (field \code{Package}).
 
 \item \code{release\_date}: When this assembly of the genome was released.
       For the packages built by the Bioconductor project from a UCSC genome,
