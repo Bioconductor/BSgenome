@@ -4,7 +4,16 @@
 
 
 setClass("BSgenome",
-    contains="GenomeDescription",
+    ## Expected metadata data are:
+    ## - organism
+    ## - common_name
+    ## - genome
+    ## - provider
+    ## - release_date
+    ## - source_url: permanent URL to the place where the 2bit and/or FASTA
+    ##   files used to produce the "single" and "multiple" sequences can be
+    ##   found (and downloaded).
+    contains="Annotated",
     representation(
         ## Name of the BSgenome data package where the BSgenome object is
         ## defined.
@@ -14,15 +23,11 @@ setClass("BSgenome",
         single_sequences="OnDiskNamedSequences",
         multiple_sequences="RdaCollection",
 
-        ## Permanent URL to the place where the FASTA files that were used
-        ## to produce the "single" and "multiple" sequences above can be
-        ## found (and downloaded).
-        source_url="character",
+        ## Original seqinfo.
+        seqinfo0="Seqinfo",
 
         ## Named vector representing the translation table from the original
-        ## seqnames (as stored in self@seqinfo@seqnames, the 'seqinfo' slot
-        ## being inherited from the GenomeDescription class) to the user
-        ## seqnames.
+        ## seqnames (as stored in self@seqinfo0@seqnames) to the user seqnames.
         user_seqnames="character",
 
         ## For SNPs injection.
@@ -137,7 +142,7 @@ BUILTIN_MASKNAMES <- c("AGAPS", "AMB", "RM", "TRF")
 setMethod("length", "BSgenome", function(x) length(names(x)))
 
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
-setMethod("sourceUrl", "BSgenome", function(x) x@source_url)
+setMethod("sourceUrl", "BSgenome", function(x) metadata(x)$source_url)
 
 setGeneric("mseqnames", function(x) standardGeneric("mseqnames"))
 setMethod("mseqnames", "BSgenome",
@@ -173,18 +178,21 @@ setMethod("masknames", "MaskedBSgenome",
 ### seqinfo() accessor and related.
 ###
 
+setMethod("seqnames", "BSgenome", function(x) unname(x@user_seqnames))
+
 setMethod("seqinfo", "BSgenome",
     function(x)
     {
-        ans <- x@seqinfo
-        seqlevels(ans) <- x@user_seqnames
+        ans <- x@seqinfo0
+        seqlevels(ans) <- seqnames(x)
         ans
     }
 )
 
 ### This is a restricted "seqinfo<-" method for BSgenome objects that
-### only supports replacement of the sequence names, i.e., except for their
-### sequence names, Seqinfo objects 'value' and 'seqinfo(x)' must be identical.
+### only supports replacement of the sequence names and genome, i.e.,
+### except for their seqnames() and genome(), Seqinfo objects 'value'
+### and 'seqinfo(x)' must be identical.
 setReplaceMethod("seqinfo", "BSgenome",
     function(x, new2old=NULL,
              pruning.mode=c("error", "coarse", "fine", "tidy"),
@@ -212,13 +220,17 @@ setReplaceMethod("seqinfo", "BSgenome",
                  IN_THIS_CONTEXT)
         new_seqnames <- seqnames(value)
         seqnames(x_seqinfo) <- new_seqnames
+        new_genome <- genome(value)
+        genome(x_seqinfo) <- new_genome
         if (!identical(value, x_seqinfo))
-            stop("the supplied and current 'seqinfo' can differ only ",
-                 "in their sequence names ", IN_THIS_CONTEXT)
+            stop("seqlengths() and isCircular() of the supplied 'seqinfo' ",
+                 "must be identical to seqlengths() and isCircular() of ",
+                 "the current 'seqinfo' ", IN_THIS_CONTEXT)
         if (any(new_seqnames %in% mseqnames(x)))
             stop("the supplied 'seqnames' cannot match any of the ",
                  "multiple sequence names (as returned by 'mseqnames(x)')")
         x@user_seqnames[] <- new_seqnames  # using [] to preserve the names
+        genome(x@seqinfo0) <- new_genome
         x
     }
 )
@@ -256,8 +268,8 @@ setMethod("snplocs", "BSgenome",
 ###
 
 ### 'seqnames' only used for sanity check.
-.make_BSgenome_Seqinfo <- function(single_sequences, circ_seqs,
-                                   genome, seqnames)
+.make_BSgenome_seqinfo0 <- function(single_sequences, circ_seqs,
+                                    genome, seqnames)
 {
     seqlengths <- seqlengths(single_sequences)
     if (length(seqnames) == 0L) {
@@ -299,24 +311,27 @@ BSgenome <- function(organism, common_name, genome,
     single_sequences <- OnDiskNamedSequences(seqs_dirpath, seqnames=seqnames)
     if (missing(genome))
         genome <- provider_version
-    seqinfo <- .make_BSgenome_Seqinfo(single_sequences, circ_seqs,
-                                      genome, seqnames)
-    seqnames <- seqnames(seqinfo)
+    seqinfo0 <- .make_BSgenome_seqinfo0(single_sequences, circ_seqs,
+                                        genome, seqnames)
+    seqnames <- seqnames(seqinfo0)
     if (missing(common_name))
         common_name <- species
-    genome_description <-
-        GenomeDescription(organism, common_name, provider, release_date,
-                          seqinfo)
+    metadata <- list(organism=organism,
+                     common_name=common_name,
+                     genome=genome,
+                     provider=provider,
+                     release_date=release_date,
+                     source_url=source_url)
     if (is.null(mseqnames))
         mseqnames <- character(0)
     multiple_sequences <- RdaCollection(seqs_dirpath, mseqnames)
     names(user_seqnames) <- user_seqnames <- seqnames
 
-    new("BSgenome", genome_description,
+    new("BSgenome", metadata=metadata,
                     pkgname=seqs_pkgname,
                     single_sequences=single_sequences,
                     multiple_sequences=multiple_sequences,
-                    source_url=source_url,
+                    seqinfo0=seqinfo0,
                     user_seqnames=user_seqnames,
                     .seqs_cache=new.env(parent=emptyenv()),
                     .link_counts=new.env(parent=emptyenv())
@@ -352,6 +367,18 @@ setMethod("as.list", "BSgenome",
 ### The "show" method
 ###
 
+.print_BSgenome_metadata <- function(metadata, prefix="")
+{
+    common_name <- metadata$common_name
+    if (!is.na(common_name))
+        cat(common_name, "genome:\n")
+    cat(prefix, "organism: ", metadata$organism,
+                " (", common_name, ")\n", sep="")
+    cat(prefix, "genome: ", metadata$genome, "\n", sep="")
+    cat(prefix, "provider: ", metadata$provider, "\n", sep="")
+    cat(prefix, "release date: ", metadata$release_data, "\n", sep="")
+}
+
 .SHOW_BSGENOME_PREFIX <- "# "
 .SHOW_SEQSECTION_PREFIX <- "#   "
 
@@ -361,10 +388,7 @@ setMethod("show", "BSgenome",
         mystrwrap <- function(line)
             writeLines(strwrap(line, width=getOption("width")+1,
                                exdent=0L, prefix=.SHOW_BSGENOME_PREFIX))
-        if (!is.na(object@common_name))
-            cat(object@common_name, "genome:\n")
-        GenomeInfoDb:::showGenomeDescription(object,
-                                             margin=.SHOW_BSGENOME_PREFIX)
+        .print_BSgenome_metadata(metadata(object), prefix=.SHOW_BSGENOME_PREFIX)
         if (!is.null(SNPlocs_pkgname(object)))
             cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
         if (length(mseqnames(object)) == 0L) {

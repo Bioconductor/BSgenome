@@ -17,7 +17,6 @@
 \alias{provider,SNPlocs-method}
 \alias{providerVersion,SNPlocs-method}
 \alias{releaseDate,SNPlocs-method}
-\alias{releaseName}
 \alias{releaseName,SNPlocs-method}
 \alias{referenceGenome}
 \alias{referenceGenome,SNPlocs-method}

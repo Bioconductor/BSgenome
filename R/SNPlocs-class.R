@@ -50,8 +50,6 @@ setMethod("providerVersion", "SNPlocs", function(x) x@provider_version)
 
 setMethod("releaseDate", "SNPlocs", function(x) x@release_date)
 
-setGeneric("releaseName", function(x) standardGeneric("releaseName"))
-
 setMethod("releaseName", "SNPlocs", function(x) x@release_name)
 
 setGeneric("referenceGenome", function(x) standardGeneric("referenceGenome"))
