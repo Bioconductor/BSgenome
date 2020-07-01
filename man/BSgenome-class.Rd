@@ -7,9 +7,13 @@
 \alias{BSgenome}
 
 % Accessors:
-\alias{length,BSgenome-method}
+\alias{organism,BSgenome-method}
+\alias{commonName,BSgenome-method}
+\alias{provider,BSgenome-method}
+\alias{releaseDate,BSgenome-method}
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
+\alias{length,BSgenome-method}
 \alias{mseqnames}
 \alias{mseqnames,BSgenome-method}
 \alias{names,BSgenome-method}
@@ -44,16 +48,31 @@
 
 \section{Accessor methods}{
   In the code snippets below, \code{x} is a BSgenome object.
-  Note that, because the BSgenome class contains the
-  \link[GenomeInfoDb]{GenomeDescription} class, then all the accessor methods
-  for \link[GenomeInfoDb]{GenomeDescription} objects can also be used on
-  \code{x}.
 
   \describe{
-    \item{\code{sourceUrl(x)}}{
-      Returns the source URL i.e. the permanent URL to the place where the
-      FASTA files used to produce the sequences contained in \code{x} can
-      be found (and downloaded).
+    \item{\code{metadata(x)}}{
+      Returns a named list containing metadata associated with the BSgenome
+      object. The components of the list are:
+      \itemize{
+        \item \code{organism}: The scientific name of the organism that this
+              BSgenome object is for. E.g. \code{"Homo sapiens"},
+              \code{"Mus musculus"}, \code{"Caenorhabditis elegans"}, etc...
+        \item \code{common_name}: The common name of the organism that this
+              BSgenome object is for. E.g. \code{"Human"}, \code{"Mouse"},
+              \code{"Worm"}, etc...
+        \item \code{genome}: The name of the genome. Typically the name of
+              an NCBI assembly (e.g. \code{"GRCh38.p12"}, \code{"WBcel235"},
+              \code{"TAIR10.1"}, \code{"ARS-UCD1.2"}, etc...) or UCSC genome
+              (e.g. \code{"hg38"}, \code{"bosTau9"}, \code{"galGal6"},
+              \code{"ce11"}, etc...).
+        \item \code{provider}: The provider of this genome. E.g.
+              \code{"UCSC"}, \code{"BDGP"}, \code{"FlyBase"}, etc...
+        \item \code{release_date}:  The release date of this genome e.g.
+              \code{"Mar. 2006"}.
+        \item \code{source_url}: The permanent URL to the place where the
+              FASTA files used to produce the sequences contained in
+              \code{x} can be found (and downloaded).
+      }
     }
     \item{\code{seqnames(x)}, \code{seqnames(x) <- value}}{
       Gets or sets the names of the single sequences contained in \code{x}.
@@ -167,6 +186,8 @@
 ## Loading a BSgenome data package doesn't load its sequences
 ## into memory:
 library(BSgenome.Celegans.UCSC.ce2)
+
+metadata(Celegans)
 
 ## Number of sequences in this genome:
 length(Celegans) 

@@ -129,8 +129,7 @@ an additional index of {\it multiple} sequences.
 Methods (adequately called {\it accessor methods}) are defined
 for individual access to this information:
 <<b3>>=
-organism(genome)
-provider(genome)
+metadata(genome)
 seqnames(genome)
 seqinfo(genome)
 @
@@ -327,7 +326,7 @@ runAnalysis1 <- function(dict0, outfile="")
     genome <- BSgenome.Celegans.UCSC.ce2
     seqnames <- seqnames(genome)
     seqnames_in1string <- paste(seqnames, collapse=", ")
-    cat("Target:", genome(genome)[1],
+    cat("Target:", metadata(genome)$genome,
         "chromosomes", seqnames_in1string, "\n")
     append <- FALSE
     for (seqname in seqnames) {
@@ -736,7 +735,7 @@ Here is how our \Rfunction{runAnalysis1} function can be modified in order to us
 runOneStrandAnalysis <- function(dict0, bsgenome, seqnames, strand,
                                  outfile="", append=FALSE)
 {
-    cat("\nTarget: strand", strand, "of", genome(bsgenome)[1],
+    cat("\nTarget: strand", strand, "of", metadata(bsgenome)$genome,
         "chromosomes", paste(seqnames, collapse=", "), "\n")
     if (strand == "-")
         dict0 <- reverseComplement(dict0)

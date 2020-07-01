@@ -30,10 +30,12 @@ forgeBSgenomeDataPkg(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
 ## Low-level BSgenomeForge functions:
 
 forgeSeqlengthsRdsFile(seqnames, prefix="", suffix=".fa",
-                       seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+                       seqs_srcdir=".", seqs_destdir=".",
+                       genome=NA_character_, verbose=TRUE)
 
 forgeSeqlengthsRdaFile(seqnames, prefix="", suffix=".fa",
-                       seqs_srcdir=".", seqs_destdir=".", verbose=TRUE)
+                       seqs_srcdir=".", seqs_destdir=".",
+                       genome=NA_character_, verbose=TRUE)
 
 forgeSeqFiles(provider, genome,
               seqnames, mseqnames=NULL,
