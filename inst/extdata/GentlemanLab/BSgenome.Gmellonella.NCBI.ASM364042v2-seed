@@ -1,0 +1,17 @@
+Package: BSgenome.Gmellonella.NCBI.ASM364042v2
+Title: Full genome sequences for Galleria mellonella (ASM364042v2)
+Description: Full genome sequences for Galleria mellonella as provided by NCBI (assembly ASM364042v2, assembly accession GCF_003640425.2) and stored in Biostrings objects.
+Version: 1.5.0
+organism: Galleria mellonella
+common_name: Greater wax moth
+genome: ASM364042v2
+provider: NCBI
+release_date: 2019/11/06
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_003640425.2
+organism_biocview: Galleria_mellonella
+BSgenomeObjname: Gmellonella
+circ_seqs: "NC_028532.1"
+SrcDataFiles: GCF_003640425.2_ASM364042v2_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/003/640/425/GCF_003640425.2_ASM364042v2/
+PkgExamples: genome[["NC_028532.1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Gmellonella.NCBI.ASM364042v2/seqs
+seqfile_name: ASM364042v2.sorted.2bit

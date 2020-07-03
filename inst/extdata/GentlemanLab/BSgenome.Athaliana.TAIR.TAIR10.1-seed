@@ -7,7 +7,7 @@ common_name: Thale cress
 genome: TAIR10.1
 provider: TAIR
 release_date: 2018/03/15
-source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_000001735.4/
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_000001735.4
 organism_biocview: Arabidopsis_thaliana
 BSgenomeObjname: Athaliana
 SrcDataFiles: GCF_000001735.4_TAIR10.1_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/735/GCF_000001735.4_TAIR10.1/

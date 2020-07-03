@@ -36,6 +36,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Dvirilis.Ensembl.dvircaf1",
   "BSgenome.Ecoli.NCBI.20080805",
   "BSgenome.Gaculeatus.UCSC.gasAcu1",
+  "BSgenome.Gmellonella.NCBI.ASM364042v2",
   "BSgenome.Ggallus.UCSC.galGal3",
   "BSgenome.Ggallus.UCSC.galGal4",
   "BSgenome.Ggallus.UCSC.galGal5",
