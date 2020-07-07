@@ -199,7 +199,7 @@ setMethod("seqinfo", "BSgenome",
 )
 
 ### This is a restricted "seqinfo<-" method for BSgenome objects that
-### only supports replacement of the sequence names and genome, i.e.,
+### only supports replacement of the sequence names and genome. That is,
 ### except for their seqnames() and genome(), Seqinfo objects 'value'
 ### and 'seqinfo(x)' must be identical.
 setReplaceMethod("seqinfo", "BSgenome",
@@ -369,6 +369,29 @@ setMethod("as.list", "BSgenome",
     function(x)
         lapply(setNames(seqnames(x), seqnames(x)),
                function(seqname) x[[seqname]])
+)
+
+setAs("BSgenome", "GenomeDescription",
+    function(from)
+    {
+        metadata <- metadata(from)
+        GenomeDescription(organism=metadata$organism,
+                          common_name=metadata$common_name,
+                          provider=metadata$provider,
+                          provider_version=metadata$genome,
+                          release_date=metadata$release_date,
+                          release_name=NA_character_,
+                          seqinfo=seqinfo(from))
+    }
+)
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### bsgenomeName()
+###
+
+setMethod("bsgenomeName", "BSgenome",
+    function(x) bsgenomeName(as(x, "GenomeDescription"))
 )
 
 

@@ -30,6 +30,8 @@
 
 % Other methods:
 \alias{as.list,BSgenome-method}
+\alias{coerce,BSgenome,GenomeDescription-method}
+\alias{bsgenomeName,BSgenome-method}
 \alias{show,BSgenome-method}
 \alias{[[,BSgenome-method}
 \alias{$,BSgenome-method}
