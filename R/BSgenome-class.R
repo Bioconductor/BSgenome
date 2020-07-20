@@ -198,58 +198,58 @@ setMethod("seqinfo", "BSgenome",
     }
 )
 
-### This is a restricted "seqinfo<-" method for BSgenome objects that
-### only supports replacement of the sequence names and genome. That is,
-### except for their seqnames() and genome(), Seqinfo objects 'value'
-### and 'seqinfo(x)' must be identical.
-setReplaceMethod("seqinfo", "BSgenome",
+### We implement a restricted seqinfo() setter for BSgenome object 'x' that
+### supports altering **only** the seqlevels and/or genome of 'seqinfo(x)'.
+### It does NOT allow subsetting 'seqinfo(x)' (by dropping/reordering some
+### of its seqlevels), or altering its seqlengths or circularity flags!
+### In other words, except for their seqnames() and genome(), Seqinfo
+### objects 'new_seqinfo' and 'old_seqinfo' must be identical. This is all
+### we need to make the seqlevelsStyle() setter work on a BSgenome object.
+.check_new2old_and_new_seqinfo <-
+    function(new2old, new_seqinfo, old_seqinfo, context="")
+{
+    if (length(new_seqinfo) != length(old_seqinfo))
+        stop(wmsg("the supplied 'seqinfo' must have the same ",
+                  "length as the current 'seqinfo'", context))
+    if (!(is.null(new2old) || identical(new2old, seq_along(new_seqinfo))))
+        stop(wmsg("'new2old' can only be set to NULL or ",
+                  "'seq_along(seqinfo(x))'", context))
+    seqnames(old_seqinfo) <- seqnames(new_seqinfo)
+    genome(old_seqinfo) <- genome(new_seqinfo)
+    if (!identical(new_seqinfo, old_seqinfo))
+        stop(wmsg("seqlengths() and isCircular() of the supplied 'seqinfo' ",
+                  "must be identical to seqlengths() and isCircular() of ",
+                  "the current 'seqinfo'", context))
+}
+
+.set_BSgenome_seqinfo <-
     function(x, new2old=NULL,
-             pruning.mode=c("error", "coarse", "fine", "tidy"),
-             value)
-    {
-        if (!is(value, "Seqinfo"))
-            stop("the supplied 'seqinfo' must be a Seqinfo object")
-        IN_THIS_CONTEXT <- paste0("when replacing the 'seqinfo' ",
-                                  "of a BSgenome object")
-        pruning.mode <- match.arg(pruning.mode)
-        if (pruning.mode != "error")
-            stop("'pruning.mode' not supported ", IN_THIS_CONTEXT)
-        x_seqinfo <- seqinfo(x)
-        if (is.null(new2old)) {
-            ## Support no-op seqinfo(x) <- seqinfo(x).
-            if (!identical(value, x_seqinfo))
-                stop("'new2old' must be specified ", IN_THIS_CONTEXT)
-            return(x)
-        }
-        if (length(value) != length(x_seqinfo))
-            stop("the supplied 'seqinfo' must have the same length ",
-                 "as the current 'seqinfo' ", IN_THIS_CONTEXT)
-        if (!identical(new2old, seq_along(value)))
-            stop("'new2old' must be NULL or equal to 'seq_along(value)' ",
-                 IN_THIS_CONTEXT)
-        new_seqnames <- seqnames(value)
-        seqnames(x_seqinfo) <- new_seqnames
-        new_genome <- genome(value)
-        genome(x_seqinfo) <- new_genome
-        if (!identical(value, x_seqinfo))
-            stop("seqlengths() and isCircular() of the supplied 'seqinfo' ",
-                 "must be identical to seqlengths() and isCircular() of ",
-                 "the current 'seqinfo' ", IN_THIS_CONTEXT)
-        if (any(new_seqnames %in% mseqnames(x)))
-            stop("the supplied 'seqnames' cannot match any of the ",
-                 "multiple sequence names (as returned by 'mseqnames(x)')")
-        x@user_seqnames[] <- new_seqnames  # using [] to preserve the names
-        genome(x@seqinfo) <- new_genome
-        x
-    }
-)
+                pruning.mode=c("error", "coarse", "fine", "tidy"),
+                value)
+{
+    if (!is(value, "Seqinfo"))
+        stop(wmsg("the supplied 'seqinfo' must be a Seqinfo object"))
+    context <- paste0(" when replacing the 'seqinfo' of a ",
+                      classNameForDisplay(x), " object")
+    pruning.mode <- match.arg(pruning.mode)
+    if (pruning.mode != "error")
+        stop(wmsg("'pruning.mode' is not supported", context))
+    .check_new2old_and_new_seqinfo(new2old, value, seqinfo(x), context)
+    new_seqnames <- seqnames(value)
+    if (any(new_seqnames %in% mseqnames(x)))
+        stop(wmsg("the supplied 'seqnames' cannot match any of the ",
+                  "multiple sequence names (as returned by 'mseqnames(x)')"))
+    x@user_seqnames[] <- new_seqnames  # using [] to preserve the names
+    genome(x@seqinfo) <- unname(genome(value))
+    x
+}
+
+setReplaceMethod("seqinfo", "BSgenome", .set_BSgenome_seqinfo)
 
 setReplaceMethod("seqnames", "BSgenome",
     function(x, value)
     {
-        x_seqinfo <- seqinfo(x)
-        seqnames(x_seqinfo) <- value
-        seqinfo(x, new2old=seq_along(x_seqinfo)) <- x_seqinfo
+        seqnames(seqinfo(x)) <- value
         x
     }
 )
