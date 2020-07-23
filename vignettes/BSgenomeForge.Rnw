@@ -75,13 +75,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-IMPORTANT NOTE: Starting with Bioconductor 2.14, the
-\Rfunction{forgeBSgenomeDataPkg} function doesn't handle masks anymore
-i.e. now it produces a \term{BSgenome data package} that contains only
-the bare sequences. A new function \Rfunction{forgeMaskedBSgenomeDataPkg}
-has been added to forge a \term{BSgenome data package} with masked
-sequences. This vignette has been updated to reflect these changes.
-
 This vignette describes the process of forging a \term{BSgenome data package}.
 It is intended for Bioconductor users who want to make a new \term{BSgenome
 data package}, not for regular users of these packages.
