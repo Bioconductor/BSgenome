@@ -152,7 +152,7 @@ setMethod("providerVersion", "BSgenome",
     {
         msg <- c("Using providerVersion() on a ", class(x), " object ",
                  "is deprecated. Please use 'metadata(x)$genome' instead.")
-        .Deprecated(msg=wmsg(msg))
+        .Deprecated(msg=c("  ", wmsg(msg)))
         metadata(x)$genome
     }
 )
