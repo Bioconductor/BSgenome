@@ -157,6 +157,17 @@ setMethod("providerVersion", "BSgenome",
     }
 )
 setMethod("releaseDate", "BSgenome", function(x) metadata(x)$release_date)
+setMethod("releaseName", "BSgenome",
+    function(x)
+    {
+        msg <- c("Starting with Bioconductor 3.12, BSgenome objects no ",
+                 "longer have a \"release name\". As a consequence of ",
+                 "this change calling releaseName() on a BSgenome object ",
+                 "now always returns NA and is deprecated.")
+        .Deprecated(msg=c("  ", wmsg(msg)))
+        NA_character_
+    }
+)
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
 setMethod("sourceUrl", "BSgenome", function(x) metadata(x)$source_url)
 

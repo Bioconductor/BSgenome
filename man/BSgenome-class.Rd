@@ -12,6 +12,7 @@
 \alias{provider,BSgenome-method}
 \alias{providerVersion,BSgenome-method}
 \alias{releaseDate,BSgenome-method}
+\alias{releaseName,BSgenome-method}
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
 \alias{length,BSgenome-method}
