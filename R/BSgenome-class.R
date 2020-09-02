@@ -147,6 +147,15 @@ setMethod("commonName", "BSgenome",
     function(object) metadata(object)$common_name
 )
 setMethod("provider", "BSgenome", function(x) metadata(x)$provider)
+setMethod("providerVersion", "BSgenome",
+    function(x)
+    {
+        msg <- c("Using providerVersion() on a ", class(x), " object ",
+                 "is deprecated. Please use 'metadata(x)$genome' instead.")
+        .Deprecated(msg=wmsg(msg))
+        metadata(x)$genome
+    }
+)
 setMethod("releaseDate", "BSgenome", function(x) metadata(x)$release_date)
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
 setMethod("sourceUrl", "BSgenome", function(x) metadata(x)$source_url)

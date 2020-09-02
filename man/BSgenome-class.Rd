@@ -10,6 +10,7 @@
 \alias{organism,BSgenome-method}
 \alias{commonName,BSgenome-method}
 \alias{provider,BSgenome-method}
+\alias{providerVersion,BSgenome-method}
 \alias{releaseDate,BSgenome-method}
 \alias{sourceUrl}
 \alias{sourceUrl,BSgenome-method}
