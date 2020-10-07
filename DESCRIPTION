@@ -5,7 +5,7 @@ Description: Infrastructure shared by all the Biostrings-based genome data
 Version: 1.57.6
 Encoding: UTF-8
 Author: Hervé Pagès
-Maintainer: H. Pagès <hpages@fredhutch.org>
+Maintainer: H. Pagès <hpages.on.github@gmail.com>
 biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
 Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.13.8),
