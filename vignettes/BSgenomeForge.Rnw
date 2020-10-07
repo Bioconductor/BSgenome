@@ -121,9 +121,12 @@ on the Bioconductor website if you need to install or update the
 \Rpackage{Biostrings} or \Rpackage{BSgenome} packages.
 
 Questions, comments or bug reports about this vignette or about the
-BSgenomeForge functions are welcome. Please address them to the author
-(\code{hpages@fredhutch.org}) or post them on the Bioconductor support
-site \footnote{\url{https://support.bioconductor.org/}}.
+BSgenomeForge functions are welcome. Please use the Bioconductor support
+site \footnote{\url{https://support.bioconductor.org/}} if you have
+questions or need help about forging a \term{BSgenome data package},
+or about anything related to the \Rpackage{BSgenome} package. For bug
+reports or feature requests, please open an issue on GitHub at
+\url{https://github.com/Bioconductor/BSgenome/issues}.
 
 In the next section (``How to forge a BSgenome data package with bare
 sequences''), we describe how to forge a \term{BSgenome data package}
