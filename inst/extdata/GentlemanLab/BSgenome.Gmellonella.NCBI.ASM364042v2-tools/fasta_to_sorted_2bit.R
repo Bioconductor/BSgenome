@@ -22,5 +22,5 @@ names(dna) <- expected_RefSeqAccn
 
 ### Export as 2bit.
 library(rtracklayer)
-export(dna, "ASM364042v2.sorted.2bit")
+export.2bit(dna, "ASM364042v2.sorted.2bit")
 

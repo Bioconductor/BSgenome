@@ -1,0 +1,17 @@
+Package: BSgenome.Amellifera.NCBI.AmelHAv3.1
+Title: Full genome sequences for Apis mellifera (Amel_HAv3.1)
+Description: Full genome sequences for Apis mellifera as provided by NCBI (assembly Amel_HAv3.1, assembly accession GCF_003254395.2) and stored in Biostrings objects.
+Version: 1.5.0
+organism: Apis mellifera
+common_name: Honey bee
+genome: Amel_HAv3.1
+provider: NCBI
+release_date: 2018/09/10
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_003254395.2
+organism_biocview: Apis_mellifera
+BSgenomeObjname: Amellifera
+circ_seqs: "MT"
+SrcDataFiles: GCF_003254395.2_Amel_HAv3.1_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/003/254/395/GCF_003254395.2_Amel_HAv3.1/
+PkgExamples: genome[["Group1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Amellifera.NCBI.AmelHAv3.1/seqs
+seqfile_name: Amel_HAv3.1.sorted.2bit

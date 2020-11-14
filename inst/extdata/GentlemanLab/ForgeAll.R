@@ -10,6 +10,7 @@ library(BSgenome)
 BSgenome_datapkgs <- c(
   "BSgenome.Amellifera.BeeBase.assembly4",
   "BSgenome.Amellifera.UCSC.apiMel2",
+  "BSgenome.Amellifera.NCBI.AmelHAv3.1",
   "BSgenome.Athaliana.TAIR.04232008",
   "BSgenome.Athaliana.TAIR.TAIR9",
   "BSgenome.Athaliana.TAIR.TAIR10.1",
