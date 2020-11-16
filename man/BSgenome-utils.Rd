@@ -106,6 +106,8 @@
 
 \value{
   A \link[GenomicRanges]{GRanges} object for \code{vmatchPattern}.
+  \code{genome} and \code{seqinfo} information from "subject" are
+  propagated to the return object.
 
   A data.frame object for \code{vcountPattern} and \code{countPWM}
   with three columns: "seqname" (factor), "strand" (factor), and
@@ -113,7 +115,8 @@
 
   A \link[GenomicRanges]{GRanges} object for \code{vmatchPDict} with
   one metadata column: "index", which represents a mapping to a
-  position in the original pattern dictionary.
+  position in the original pattern dictionary. \code{genome} and
+  \code{seqinfo} information from "subject" are propagated.
 
   A \link[S4Vectors]{DataFrame} object for \code{vcountPDict} with four
   columns: "seqname" ('factor' Rle), "strand" ('factor' Rle), 
@@ -123,6 +126,9 @@
 
   A \link[GenomicRanges]{GRanges} object for \code{matchPWM} with two
   metadata columns: "score" (numeric), and "string" (DNAStringSet).
+  \code{genome} and \code{seqinfo} information from "subject" are
+  included.
+
 }
 
 \author{P. Aboyoun}
