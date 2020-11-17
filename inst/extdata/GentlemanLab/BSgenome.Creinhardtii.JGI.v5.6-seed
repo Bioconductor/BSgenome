@@ -1,6 +1,9 @@
 Package: BSgenome.Creinhardtii.JGI.v5.6
 Title: Full genome sequences for Chlamydomonas reinhardtii (v5.6)
 Description: Full genome sequences for Chlamydomonas reinhardtii (v5.6) as provided by JGI and stored in Biostrings objects.
+    The data in this package is public. Please cite the following:
+    Merchant, S. S., Prochnik, S. E., Vallon, O., Harris, E. H., Karpowicz, S. J., Witman, G. B., … Grossman, A. R. (2007). The Chlamydomonas Genome Reveals the Evolution of Key Animal and Plant Functions. Science, 318(5848), 245–250.
+    https://doi.org/10.1126/science.1143609
 Version: 1.5.0
 organism: Chlamydomonas reinhardtii
 common_name: Green algae
@@ -10,6 +13,7 @@ release_date: 2017/6/12
 source_url: https://phytozome-next.jgi.doe.gov/info/Creinhardtii_v5_6
 organism_biocview: Chlamydomonas_reinhardtii
 BSgenomeObjname: Creinhardtii
+circ_seqs: character(0)
 SrcDataFiles: Creinhardtii_281_v5.0.fa.gz from https://phytozome-next.jgi.doe.gov/info/Creinhardtii_v5_6
 PkgExamples: genome[["chromosome_1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Creinhardtii.JGI.v5.6/seqs
