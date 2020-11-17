@@ -438,6 +438,30 @@ forgeSeqFiles <- function(provider, genome,
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### .copy_CITATION_file()
+###
+
+.copy_CITATION_file <- function(citation_file, pkgdir, verbose=TRUE)
+{
+    if (!file.exists(citation_file))
+        stop("File not found: ", citation_file)
+    dest_filename <- "CITATION"
+    dest_filepath <- file.path(pkgdir, "inst", dest_filename)
+    if (verbose)
+        cat("Copying '", citation_file, "' to '", dest_filepath, "' ... ",
+            sep="")
+    if (!file.copy(citation_file, dest_filepath,
+                   copy.mode=FALSE, copy.date=FALSE)) {
+        if (verbose)
+            stop("FAILED")
+        stop("Failed to copy '", citation_file, "' to '", dest_filepath, "'")
+    }
+    if (verbose)
+        cat("DONE\n")
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### forgeMasksFiles()
 ###
 
@@ -688,7 +712,8 @@ setClass("BSgenomeDataPkgSeed",
         seqfile_name="character",
         seqfiles_prefix="character",
         seqfiles_suffix="character",
-        ondisk_seq_format="character"
+        ondisk_seq_format="character",
+        citation_file="character"    # a single string containing R source code
     ),
     prototype(
         Author="The Bioconductor Dev Team",
@@ -708,7 +733,8 @@ setClass("BSgenomeDataPkgSeed",
         seqfile_name=NA_character_,
         seqfiles_prefix="",
         seqfiles_suffix=".fa",
-        ondisk_seq_format="2bit"
+        ondisk_seq_format="2bit",
+        citation_file=NA_character_
     )
 )   
 
@@ -911,6 +937,10 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                       seqs_destdir=seqs_destdir,
                       ondisk_seq_format=x@ondisk_seq_format,
                       verbose=verbose)
+        if (!is.na(x@citation_file)) {
+            citation_file <- eval(parse(text=x@citation_file))
+            .copy_CITATION_file(citation_file, pkgdir, verbose=verbose)
+        }
     }
 )
 
