@@ -6,7 +6,7 @@ biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
 URL: https://bioconductor.org/packages/BSgenome
 BugReports: https://github.com/Bioconductor/BSgenome/issues
-Version: 1.59.1
+Version: 1.59.2
 License: Artistic-2.0
 Encoding: UTF-8
 Author: Hervé Pagès
