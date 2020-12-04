@@ -75,6 +75,8 @@ setMethod("vmatchPattern", "BSgenome",
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(matches))
         runValue(seqnames(matches)) <- nms
+        genome(matches) <- genome(subject)
+        seqinfo(matches) <- seqinfo(subject)
         matches
     }
 )
@@ -251,6 +253,8 @@ setMethod("vmatchPDict", "BSgenome",
         nms <- nms[unlist(lapply(matches, length), use.names=FALSE) > 0]
         matches <- do.call(c, unname(matches))
         runValue(seqnames(matches)) <- nms
+        genome(matches) <- genome(subject)
+        seqinfo(matches) <- seqinfo(subject)
         matches
     }
 )
@@ -388,6 +392,8 @@ setMethod("matchPWM", "BSgenome",
         string <- factor(mcols(matches)[["string"]])
         mcols(matches)[["string"]] <-
           DNAStringSet(levels(string))[as.integer(string)]
+        genome(matches) <- genome(subject)
+        seqinfo(matches) <- seqinfo(subject)
         matches
     }
 )
