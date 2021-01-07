@@ -179,7 +179,8 @@ setMethod("vmatchPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
              algorithm="auto", verbose=FALSE, exclude="",
-             maskList=logical(0))
+             maskList=logical(0), userMask=IRangesList(),
+             invertUserMask=FALSE)
     {
         matchFUN <- function(posPDict, negPDict, chr,
                              seqlengths,
@@ -240,7 +241,8 @@ setMethod("vmatchPDict", "BSgenome",
 
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = FALSE, maskList = logical(0))
+              simplify = FALSE, maskList = logical(0), userMask = userMask,
+		invertUserMask = invertUserMask)
         COUNTER <- 0L
         seqlengths <- seqlengths(subject)
         matches <-
@@ -263,7 +265,8 @@ setMethod("vcountPDict", "BSgenome",
     function(pdict, subject,
              max.mismatch=0, min.mismatch=0, fixed=TRUE,
              algorithm="auto", collapse=FALSE, weight=1L, verbose=FALSE,
-             exclude="", maskList=logical(0))
+             exclude="", maskList=logical(0), userMask=IRangesList(),
+	       invertUserMask=FALSE)
     {
         countFUN <- function(posPDict, negPDict, chr,
                              max.mismatch = max.mismatch,
@@ -319,7 +322,8 @@ setMethod("vcountPDict", "BSgenome",
 
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
-              simplify = FALSE, maskList = logical(0))
+              simplify = FALSE, maskList = logical(0), userMask = userMask,
+		invertUserMask = invertUserMask)
         counts <-
           bsapply(bsParams,
                   posPDict = posPDict, negPDict = negPDict,
@@ -339,19 +343,17 @@ setMethod("vcountPDict", "BSgenome",
 ###
 
 setMethod("matchPWM", "BSgenome",
-    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
+          function(pwm, subject, min.score="80%", exclude="", maskList=logical(0),
+                   userMask=IRangesList(), invertUserMask=FALSE)
     {
         matchFUN <- function(posPWM, negPWM, chr, seqlengths, min.score) {
             posMatches <-
-              matchPWM(pwm = posPWM, subject = chr, min.score = min.score)
-            posScores <-
-              PWMscoreStartingAt(pwm = posPWM, subject = chr,
-                                 starting.at = start(posMatches))
+                matchPWM(pwm = posPWM, subject = chr, min.score = min.score,
+                         with.score = TRUE)
             negMatches <-
-              matchPWM(pwm = negPWM, subject = chr, min.score = min.score)
-            negScores <-
-              PWMscoreStartingAt(pwm = negPWM, subject = chr,
-                                 starting.at = start(negMatches))
+                matchPWM(pwm = negPWM, subject = chr, min.score = min.score,
+                         with.score = TRUE)
+
             COUNTER <<- COUNTER + 1L
             seqnames <- names(seqlengths)
             GRanges(seqnames =
@@ -362,7 +364,7 @@ setMethod("matchPWM", "BSgenome",
                     strand =
                     Rle(strand(c("+", "-")),
                         c(length(posMatches), length(negMatches))),
-                    score = c(posScores, negScores),
+                    score = c(mcols(posMatches)$score, mcols(negMatches)$cores),
                     string =
                     c(as.character(posMatches),
                       as.character(reverseComplement(DNAStringSet(negMatches)))),
@@ -378,7 +380,8 @@ setMethod("matchPWM", "BSgenome",
         negPWM <- reverseComplement(posPWM)
         bsParams <-
           new("BSParams", X = subject, FUN = matchFUN, exclude = exclude,
-              simplify = FALSE, maskList = logical(0))
+              simplify = FALSE, maskList = logical(0), userMask = userMask,
+              invertUserMask = invertUserMask)
         COUNTER <- 0L
         seqlengths <- seqlengths(subject)
         matches <-
@@ -399,7 +402,8 @@ setMethod("matchPWM", "BSgenome",
 )
 
 setMethod("countPWM", "BSgenome",
-    function(pwm, subject, min.score="80%", exclude="", maskList=logical(0))
+          function(pwm, subject, min.score="80%", exclude="", maskList=logical(0),
+                   userMask=IRangesList(), invertUserMask=FALSE)
     {
         countFUN <- function(posPWM, negPWM, chr, min.score) {
             data.frame(strand = strand(c("+", "-")),
@@ -419,7 +423,8 @@ setMethod("countPWM", "BSgenome",
         negPWM <- reverseComplement(posPWM)
         bsParams <-
           new("BSParams", X = subject, FUN = countFUN, exclude = exclude,
-              simplify = FALSE, maskList = logical(0))
+              simplify = FALSE, maskList = logical(0), userMask = userMask,
+              invertUserMask = invertUserMask)
         counts <-
           bsapply(bsParams, posPWM = posPWM, negPWM = negPWM,
                   min.score = min.score)
