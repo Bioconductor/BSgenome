@@ -361,13 +361,14 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       E.g. \code{paste("chr", c(1:20, "X", "M", "Un", paste(c(1:20, "X", "Un"),
       "\_random", sep="")), sep="")}.
 
-\item \code{circ\_seqs}: [OPTIONAL] An {\R} expression returning the names of
-      the circular sequences (in a character vector). If the \code{seqnames}
-      field is specified, then \code{circ\_seqs} must be a subset of it.
-      E.g. \code{"chrM"} for rn4 or \code{c("chrM", "2micron")} for the sacCer2
-      genome (Yeast) from UCSC.
-      The default value for \code{circ\_seqs} is \code{NULL} (no circular
-      sequence).
+\item \code{circ\_seqs}: Not needed if your NCBI assembly or UCSC genome is
+      registered in the \pkg{GenomeInfoDb} package.
+      An {\R} expression returning the names of the circular sequences (in a
+      character vector). If the \code{seqnames} field is specified, then
+      \code{circ\_seqs} must be a subset of it. E.g. \code{"chrM"} for rn4
+      or \code{c("chrM", "2micron")} for the sacCer2 genome (Yeast) from UCSC.
+      If the assembly or genome has no circular sequence, set \code{circ\_seqs}
+      to \code{character(0)}.
 
 \item \code{mseqnames}: [OPTIONAL] An {\R} expression returning the names of
       the multiple sequences to forge (in a character vector).
