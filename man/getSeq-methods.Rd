@@ -2,24 +2,21 @@
 
 \alias{getSeq}
 \alias{getSeq,BSgenome-method}
-\alias{getSeq,XStringSet-method}
 
 \alias{[,XStringSet,GenomicRanges-method}
 \alias{[,XStringSet,GRangesList-method}
 
-\title{getSeq methods for BSgenome and XStringSet objects}
+
+\title{getSeq method for BSgenome objects}
 
 \description{
    \code{\link[Biostrings]{getSeq}} methods for extracting a set of
-   sequences (or subsequences) from a \link{BSgenome} or
-   \link[Biostrings]{XStringSet} object. For XStringSets, there are also
-   convenience methods on \code{[} that delegate to \code{getSeq}.
+   sequences (or subsequences) from a \link{BSgenome}.
 }
 
 \usage{
 \S4method{getSeq}{BSgenome}(x, names, start=NA, end=NA, width=NA,
                  strand="+", as.character=FALSE) 
-\S4method{getSeq}{XStringSet}(x, names)
 }
 
 \arguments{
@@ -71,7 +68,7 @@
 }
 
 \details{
-  L, the number of sequences to extract, is determined as follow:
+  L, the number of sequences to extract, is determined as follows:
   \itemize{
   \item If \code{names} is a \link[GenomicRanges]{GRanges} or
         \link[IRanges]{IntegerRanges} object then L = \code{length(names)}.
@@ -109,14 +106,6 @@
         more than 1 sequence is found) then an error is raised.
   }
 
-  There are convenience methods for extracting sequences from
-  \link[Biostrings]{XStringSet} objects using a
-  \link[GenomicRanges]{GenomicRanges} or \link[GenomicRanges]{GRangesList}
-  subscript (character subscripts are implicitly supported). Both methods
-  are simple wrappers around \code{getSeq}, although the GRangesList method
-  differs from the \code{getSeq} behavior in that the within-element results
-  are concatenated and returned as an XStringSet, rather than an
-  XStringSetList. See the examples.
 }
 
 \value{
