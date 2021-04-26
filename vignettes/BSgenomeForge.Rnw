@@ -362,7 +362,7 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       "\_random", sep="")), sep="")}.
 
 \item \code{circ\_seqs}: Not needed if your NCBI assembly or UCSC genome is
-      registered in the \pkg{GenomeInfoDb} package.
+      registered in the \Rpackage{GenomeInfoDb} package.
       An {\R} expression returning the names of the circular sequences (in a
       character vector). If the \code{seqnames} field is specified, then
       \code{circ\_seqs} must be a subset of it. E.g. \code{"chrM"} for rn4
