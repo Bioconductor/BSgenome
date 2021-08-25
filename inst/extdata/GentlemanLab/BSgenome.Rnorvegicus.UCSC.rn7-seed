@@ -1,0 +1,16 @@
+Package: BSgenome.Rnorvegicus.UCSC.rn7
+Title: Full genome sequences for Rattus norvegicus (UCSC genome rn7)
+Description: Full genome sequences for Rattus norvegicus (Rat) as provided by UCSC (genome rn7) and stored in Biostrings objects.
+Version: 1.4.3
+organism: Rattus norvegicus
+common_name: Rat
+provider: UCSC
+genome: rn7
+release_date: Nov. 2020
+source_url: https://hgdownload.soe.ucsc.edu/goldenPath/rn7/bigZips/
+organism_biocview: Rattus_norvegicus
+BSgenomeObjname: Rnorvegicus
+SrcDataFiles: rn7.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/rn7/bigZips/ on August 24, 2021
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn7/seqs
+seqfile_name: rn7.2bit
