@@ -1,0 +1,16 @@
+Package: BSgenome.Mmusculus.UCSC.mm39
+Title: Full genome sequences for Mus musculus (UCSC genome mm39, based on GRCm39)
+Description: Full genome sequences for Mus musculus (Mouse) as provided by UCSC (genome mm39, based on assembly GRCm39) and stored in Biostrings objects.
+Version: 1.4.3
+organism: Mus musculus
+common_name: Mouse
+provider: UCSC
+genome: mm39
+release_date: June 2020
+source_url: https://hgdownload.soe.ucsc.edu/goldenPath/mm39/bigZips/
+organism_biocview: Mus_musculus
+BSgenomeObjname: Mmusculus
+SrcDataFiles: mm39.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/mm39/bigZips/ on August 30, 2021
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Mmusculus.UCSC.mm39/seqs
+seqfile_name: mm39.2bit

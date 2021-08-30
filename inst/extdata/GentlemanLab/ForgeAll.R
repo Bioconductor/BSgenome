@@ -58,6 +58,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Mmusculus.UCSC.mm8",
   "BSgenome.Mmusculus.UCSC.mm9",
   "BSgenome.Mmusculus.UCSC.mm10",
+  "BSgenome.Mmusculus.UCSC.mm39",
   "BSgenome.Ppaniscus.UCSC.panPan1",
   "BSgenome.Ppaniscus.UCSC.panPan2",
   "BSgenome.Ptroglodytes.UCSC.panTro2",
