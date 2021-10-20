@@ -1,17 +1,16 @@
 Package: BSgenome.Hsapiens.UCSC.hg38
-Title: Full genome sequences for Homo sapiens (UCSC version hg38, based on GRCh38.p12)
-Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg38, based on GRCh38.p12) and stored in Biostrings objects.
+Title: Full genome sequences for Homo sapiens (UCSC version hg38, based on GRCh38.p13)
+Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg38, based on GRCh38.p13) and stored in Biostrings objects.
 Version: 1.4.3
 organism: Homo sapiens
 common_name: Human
 provider: UCSC
-provider_version: hg38
-release_date: Dec. 2017
-release_name: Genome Reference Consortium GRCh38.p12
-source_url: https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/latest/
+genome: hg38
+release_date: Feb 2019
+source_url: https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/p13/
 organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
-SrcDataFiles: hg38.2bit, downloaded from https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/latest/ on Jan. 27, 2020
+SrcDataFiles: hg38.p13.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/p13/ on October 20, 2021
 PkgExamples: genome$chr1  # same as genome[["chr1"]]
-seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg38/seqs
-seqfile_name: hg38.2bit
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg38/seqs
+seqfile_name: hg38.p13.2bit
