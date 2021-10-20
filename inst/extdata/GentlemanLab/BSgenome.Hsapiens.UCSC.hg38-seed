@@ -1,7 +1,7 @@
 Package: BSgenome.Hsapiens.UCSC.hg38
 Title: Full genome sequences for Homo sapiens (UCSC version hg38, based on GRCh38.p13)
 Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg38, based on GRCh38.p13) and stored in Biostrings objects.
-Version: 1.4.3
+Version: 1.4.4
 organism: Homo sapiens
 common_name: Human
 provider: UCSC
