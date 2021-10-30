@@ -239,7 +239,7 @@ setMethod("snplocs", "OldFashionSNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Old SNPlocs extractors (deprecated in BioC 3.5):
+### Old SNPlocs extractors (deprecated in BioC 3.5, defunct in BioC 3.15):
 ###    snpid2loc()
 ###    snpid2alleles()
 ###    snpid2grange()
@@ -350,8 +350,8 @@ setGeneric("snpid2grange", signature="x",
 setMethod("snpid2loc", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        .Deprecated(msg=wmsg("snpid2loc() is deprecated. ",
-                             "Please use snpsById() instead."))
+        .Defunct(msg=wmsg("snpid2loc() is defunct. ",
+                          "Please use snpsById() instead."))
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
@@ -381,8 +381,8 @@ setMethod("snpid2loc", "OldFashionSNPlocs",
 setMethod("snpid2alleles", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        .Deprecated(msg=wmsg("snpid2alleles() is deprecated. ",
-                             "Please use snpsById() instead."))
+        .Defunct(msg=wmsg("snpid2alleles() is defunct. ",
+                          "Please use snpsById() instead."))
         snpid <- .normarg_snpid(snpid)
         if (!isTRUEorFALSE(caching))
             stop("'caching' must be TRUE or FALSE")
@@ -407,8 +407,8 @@ setMethod("snpid2alleles", "OldFashionSNPlocs",
 setMethod("snpid2grange", "OldFashionSNPlocs",
     function(x, snpid, caching=TRUE)
     {
-        .Deprecated(msg=wmsg("snpid2grange() is deprecated. ",
-                             "Please use snpsById() instead."))
+        .Defunct(msg=wmsg("snpid2grange() is defunct. ",
+                          "Please use snpsById() instead."))
         .snpid2grange_OldFashionSNPlocs(x, snpid, caching=caching)
     }
 )
