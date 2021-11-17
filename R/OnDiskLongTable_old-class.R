@@ -467,9 +467,9 @@ getBatchesFromOnDiskLongTable_old <- function(x, batch_labels, colidx,
         ## vector.
         if (!is.null(ans_rowids))
             ans_rowids <- as.character(ans_rowids)
-        ans <- new("DataFrame", listData=ans_listData,
-                                nrows=sum(ans_blocksizes),
-                                rownames=ans_rowids)
+        ans <- new("DFrame", listData=ans_listData,
+                             nrows=sum(ans_blocksizes),
+                             rownames=ans_rowids)
     }
     ans
 }
@@ -559,8 +559,7 @@ getRowsByIndexFromOnDiskLongTable_old <- function(x, rowidx, colidx,
     if (as.data.frame) {
         ans <- data.frame(ans_listData, stringsAsFactors=FALSE)
     } else {
-        ans <- new("DataFrame", listData=ans_listData,
-                                nrows=length(rowidx))
+        ans <- S4Vectors:::new_DataFrame(ans_listData, nrows=length(rowidx))
     }
     ans
 }

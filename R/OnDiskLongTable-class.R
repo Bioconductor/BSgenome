@@ -621,7 +621,7 @@ setMethod("show", "OnDiskLongTable",
         listData <- c(list(seqnames=seqnames), listData)
     if (!is.null(rowids))
         listData <- c(list(rowids=rowids), listData)
-    new("DataFrame", listData=listData, nrows=nrows)
+    S4Vectors:::new_DataFrame(listData, nrows=nrows)
 }
 
 ### batchidx: integer vector of batch indices.
