@@ -1,0 +1,16 @@
+Package: BSgenome.Mfascicularis.NCBI.6.0
+Title: Full genome sequences for Macaca fascicularis (Macaca_fascicularis_6.0)
+Description: Full genome sequences for Macaca fascicularis (Crab-eating macaque) as provided by NCBI (assembly Macaca_fascicularis_6.0, assembly accession GCA_011100615.1) and stored in Biostrings objects.
+Version: 1.5.0
+organism: Macaca fascicularis
+common_name: Crab-eating macaque
+genome: Macaca_fascicularis_6.0
+provider: NCBI
+release_date: 2020/03/10
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCA_011100615.1
+organism_biocview: Macaca_fascicularis
+BSgenomeObjname: Mfascicularis
+SrcDataFiles: GCA_011100615.1_Macaca_fascicularis_6.0_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/011/100/615/GCA_011100615.1_Macaca_fascicularis_6.0/
+PkgExamples: genome[["1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Mfascicularis.NCBI.6.0/seqs
+seqfile_name: Macaca_fascicularis_6.0.sorted.2bit

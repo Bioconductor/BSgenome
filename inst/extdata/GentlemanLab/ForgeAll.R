@@ -50,6 +50,7 @@ BSgenome_datapkgs <- c(
   "BSgenome.Hsapiens.UCSC.hg38",
   "BSgenome.Mdomestica.UCSC.monDom5",
   "BSgenome.Mfascicularis.NCBI.5.0",
+  "BSgenome.Mfascicularis.NCBI.6.0",
   "BSgenome.Mfuro.UCSC.musFur1",
   "BSgenome.Mmulatta.UCSC.rheMac2",
   "BSgenome.Mmulatta.UCSC.rheMac3",
