@@ -736,7 +736,7 @@ setClass("BSgenomeDataPkgSeed",
         ondisk_seq_format="2bit",
         citation_file=NA_character_
     )
-)   
+)
 
 setClass("MaskedBSgenomeDataPkgSeed",
     representation(
@@ -787,7 +787,7 @@ setClass("MaskedBSgenomeDataPkgSeed",
         TRFfiles_prefix="",
         TRFfiles_suffix=".bed"
     )
-)   
+)
 
 ### Generic transformation of a named list into an S4 object with automatic
 ### coercion of the list elements to the required types.
@@ -857,14 +857,14 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             } else {
                 .seqnames <- NULL
             }
-            seqnames <- deparse(.seqnames)
-	}
+        }
+        seqnames <- deparse(.seqnames)
         circ_seqs <- x@circ_seqs
         if (!is.na(circ_seqs)) {
             .circ_seqs <- eval(parse(text=circ_seqs))
         } else {
             si <- Seqinfo(genome=x@genome)
-	    .circ_seqs <- seqlevels(si)[isCircular(si)]
+            .circ_seqs <- seqlevels(si)[isCircular(si)]
             circ_seqs <- deparse(.circ_seqs)
         }
         symvals <- list(
