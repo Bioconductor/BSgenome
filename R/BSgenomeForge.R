@@ -82,10 +82,21 @@ getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".",
 {
     srcpaths <- getSeqSrcpaths(seqnames, prefix=prefix, suffix=suffix,
                                seqs_srcdir=seqs_srcdir)
-    ans <- vapply(seqnames,
-        function(seqname) {
+    ans <- vapply(setNames(seq_along(seqnames), seqnames),
+        function(i) {
+            seqname <- seqnames[[i]]
             srcpath <- srcpaths[[seqname]]
             ans <- fasta.seqlengths(srcpath)
+            if (i %% 200L == 0L) {
+                ## Unfortunately, the files opened by fasta.seqlengths() only
+                ## get closed at garbage collection time! So if we don't
+                ## explicitly call gc() every once in a while in this loop,
+                ## we run into the risk of reaching the maximum number of
+                ## files that can be opened simultaneously on the system (this
+                ## is OS-dependent). This is a huge drawback of using
+                ## XVector::open_input_files() internally to open the files!
+                gc()
+            }
             if (length(ans) == 0L)
                 stop("In file '", srcpath, "': no sequence found")
             if (length(ans) > 1L)
@@ -858,15 +869,15 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                 .seqnames <- NULL
             }
         }
-        seqnames <- deparse(.seqnames)
+        seqnames <- deparse1(.seqnames)
         circ_seqs <- x@circ_seqs
         if (!is.na(circ_seqs)) {
             .circ_seqs <- eval(parse(text=circ_seqs))
         } else {
             si <- Seqinfo(genome=x@genome)
             .circ_seqs <- seqlevels(si)[isCircular(si)]
-            circ_seqs <- deparse(.circ_seqs)
         }
+        circ_seqs <- deparse1(.circ_seqs)
         symvals <- list(
             PKGTITLE=x@Title,
             PKGDESCRIPTION=x@Description,
