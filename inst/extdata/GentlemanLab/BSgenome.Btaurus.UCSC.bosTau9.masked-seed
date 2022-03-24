@@ -1,0 +1,18 @@
+Package: BSgenome.Btaurus.UCSC.bosTau9.masked
+Title: Full masked genome sequences for Bos taurus (UCSC version bosTau9)
+Description: Full genome sequences for Bos taurus (Cow) as provided by UCSC (genome bosTau9) and stored in Biostrings objects. The sequences are the same as in BSgenome.Btaurus.UCSC.bosTau9, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Version: 1.4.4
+RefPkgname: BSgenome.Btaurus.UCSC.bosTau9
+source_url: https://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/bigZips/
+organism_biocview: Bos_taurus
+nmask_per_seq: 4
+SrcDataFiles: AGAPS masks: gap.txt.gz, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/ on March 23, 2022
+	RM masks: bosTau9.fa.out.gz, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/bigZips/ on March 23, 2022
+	TRF masks: bosTau9.trf.bed.gz, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/bigZips/ on March 23, 2022
+PkgExamples: genome$chr1  # a MaskedDNAString object!
+	## To get rid of the masks altogether:
+	unmasked(genome$chr1)  # same as BSgenome.Btaurus.UCSC.bosTau9$chr1
+masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau9/masks
+AGAPSfiles_name: gap.txt.gz
+RMfiles_name: bosTau9.fa.out.gz
+TRFfiles_name: bosTau9.trf.bed.gz

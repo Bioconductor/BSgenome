@@ -94,6 +94,7 @@ MaskedBSgenome_datapkgs <- c(
   "BSgenome.Btaurus.UCSC.bosTau3.masked",
   "BSgenome.Btaurus.UCSC.bosTau4.masked",
   "BSgenome.Btaurus.UCSC.bosTau6.masked",
+  "BSgenome.Btaurus.UCSC.bosTau9.masked",
   "BSgenome.Cfamiliaris.UCSC.canFam2.masked",
   "BSgenome.Cfamiliaris.UCSC.canFam3.masked",
   "BSgenome.Dmelanogaster.UCSC.dm2.masked",
