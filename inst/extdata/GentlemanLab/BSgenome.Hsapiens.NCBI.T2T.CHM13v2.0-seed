@@ -1,0 +1,16 @@
+Package: BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0
+Title: T2T-CHM13v2.0 assembly (Homo sapiens) wrapped in a BSgenome object
+Description: The T2T-CHM13v2.0 assembly (accession GCA_009914755.4), as submitted to NCBI by the T2T Consortium, and wrapped in a BSgenome object. Companion paper: "The complete sequence of a human genome" by Nurk S, Koren S, Rhie A, Rautiainen M, et al. Science, 2022.
+Version: 1.5.0
+organism: Homo sapiens
+common_name: Human
+genome: T2T-CHM13v2.0
+provider: NCBI
+release_date: 2022/01/24
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCA_009914755.4
+organism_biocview: Homo_sapiens
+BSgenomeObjname: Hsapiens
+SrcDataFiles: GCA_009914755.4_T2T-CHM13v2.0_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/009/914/755/GCA_009914755.4_T2T-CHM13v2.0/
+PkgExamples: genome[["1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0/seqs
+seqfile_name: T2T-CHM13v2.0.sorted.2bit
