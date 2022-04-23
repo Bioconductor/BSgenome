@@ -1,0 +1,16 @@
+Package: BSgenome.Cjacchus.UCSC.calJac4
+Title: Full genome sequences for Callithrix jacchus (UCSC version calJac4)
+Description: Full genome sequences for Callithrix jacchus (Marmoset) as provided by UCSC (calJac4, May 2020) and wrapped in a BSgenome object.
+Version: 1.5.0
+organism: Callithrix jacchus
+common_name: Marmoset
+genome: calJac4
+provider: UCSC
+release_date: May 2020
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/calJac4/bigZips/
+organism_biocview: Callithrix_jacchus
+BSgenomeObjname: Cjacchus
+SrcDataFiles: calJac4.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/calJac4/bigZips/
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Cjacchus.UCSC.calJac4/seqs
+seqfile_name: calJac4.2bit
