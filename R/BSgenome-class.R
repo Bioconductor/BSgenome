@@ -143,10 +143,13 @@ BUILTIN_MASKNAMES <- c("AGAPS", "AMB", "RM", "TRF")
 setMethod("organism", "BSgenome",
     function(object) metadata(object)$organism
 )
+
 setMethod("commonName", "BSgenome",
     function(object) metadata(object)$common_name
 )
+
 setMethod("provider", "BSgenome", function(x) metadata(x)$provider)
+
 setMethod("providerVersion", "BSgenome",
     function(x)
     {
@@ -156,16 +159,9 @@ setMethod("providerVersion", "BSgenome",
         metadata(x)$genome
     }
 )
+
 setMethod("releaseDate", "BSgenome", function(x) metadata(x)$release_date)
-setMethod("releaseName", "BSgenome",
-    function(x)
-    {
-        msg <- c("starting with Bioconductor 3.15, calling releaseName() ",
-                 "on a BSgenome object is defunct")
-        .Defunct(msg=c("  ", wmsg(msg)))
-        NA_character_
-    }
-)
+
 setGeneric("sourceUrl", function(x) standardGeneric("sourceUrl"))
 setMethod("sourceUrl", "BSgenome", function(x) metadata(x)$source_url)
 
