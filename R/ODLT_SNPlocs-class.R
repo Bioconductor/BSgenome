@@ -175,6 +175,10 @@ inferRefAndAltAlleles <- function(gpos, genome)
 {
     if (!isTRUEorFALSE(drop.rs.prefix))
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
+    if (!is.null(genome)) {
+        genome <- getBSgenome(genome)
+        seqlevelsStyle(genome) <- "NCBI"
+    }
 
     df <- getBatchesBySeqnameFromOnDiskLongTable(x@snp_table, seqnames,
                                                  with.rowids=TRUE)
@@ -191,6 +195,11 @@ setMethod("snpsBySeqname", "ODLT_SNPlocs", .snpsBySeqname_ODLT_SNPlocs)
     ranges <- normarg_ranges(ranges)
     if (!isTRUEorFALSE(drop.rs.prefix))
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
+    if (!is.null(genome)) {
+        genome <- getBSgenome(genome)
+        seqlevelsStyle(genome) <- "NCBI"
+    }
+
     dots <- list(...)
     if (isTRUE(dots$invert))
         stop(wmsg("snpsByOverlaps() does not support 'invert=TRUE'"))
@@ -219,6 +228,11 @@ setMethod("snpsByOverlaps", "ODLT_SNPlocs", .snpsByOverlaps_ODLT_SNPlocs)
 {
     user_rowids <- ids2rowids(ids)
     ifnotfound <- match.arg(ifnotfound)
+    if (!is.null(genome)) {
+        genome <- getBSgenome(genome)
+        seqlevelsStyle(genome) <- "NCBI"
+    }
+
     x_rowids <- rowids(x@snp_table)
     rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
 
