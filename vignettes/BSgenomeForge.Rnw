@@ -113,17 +113,17 @@ Requirements:
 \end{itemize}
 
 Refer to the \textit{R Installation and Administration} manual
-\footnote{\url{http://cran.r-project.org/doc/manuals/R-admin.html}}
+\footnote{\url{https://cran.r-project.org/doc/manuals/R-admin.html}}
 if you need to install {\R} or upgrade your {\R} version,
 and to the \textit{Bioconductor - Install} page
-\footnote{\url{http://bioconductor.org/install/}}
+\footnote{\url{https://bioconductor.org/install/}}
 on the Bioconductor website if you need to install or update the
 \Rpackage{Biostrings} or \Rpackage{BSgenome} packages.
 
 Questions, comments or bug reports about this vignette or about the
 BSgenomeForge functions are welcome. Please use the Bioconductor support
 site \footnote{\url{https://support.bioconductor.org/}} if you have
-questions or need help about forging a \term{BSgenome data package},
+questions or need help to forge a \term{BSgenome data package},
 or about anything related to the \Rpackage{BSgenome} package. For bug
 reports or feature requests, please open an issue on GitHub at
 \url{https://github.com/Bioconductor/BSgenome/issues}.
@@ -166,13 +166,13 @@ the same for all the FASTA files.
 
 UCSC provides the genome sequences for Stickleback (gasAcu1) in various forms:
 (a) as a twoBit file (\textit{gasAcu1.2bit} located in
-\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/},
+\url{https://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/},
 (b) as a big compressed tarball containing one file per chromosome
 (\textit{chromFa.tar.gz} located in the same folder), and (c) as a
 collection of compressed FASTA files (\texttt{chrI.fa.gz},
 \texttt{chrII.fa.gz}, \texttt{chrIII.fa.gz}, ..., \texttt{chrXXI.fa.gz},
 \texttt{chrM.fa.gz} and \texttt{chrUn.fa.gz} located in
-\url{http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/chromosomes/}).
+\url{https://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/chromosomes/}).
 To forge a \term{BSgenome data package} for gasAcu1, the easiest would be
 to use (a) (the twoBit file). However it would also be possible to use (c)
 (the collection of compressed FASTA files). In that case the suffix would
@@ -195,13 +195,13 @@ fasta.seqlengths(file)
 For the \Rpackage{BSgenome.Mfuro.UCSC.musFur1} package, the twoBit file was
 used and downloaded with:
 \begin{verbatim}
-    wget http://hgdownload.soe.ucsc.edu/goldenPath/musFur1/bigZips/musFur1.2bit
+    wget https://hgdownload.soe.ucsc.edu/goldenPath/musFur1/bigZips/musFur1.2bit
 \end{verbatim}
 
 For the \Rpackage{BSgenome.Rnorvegicus.UCSC.rn4} package, the big compressed
 tarball was used. It was downloaded and extracted with:
 \begin{verbatim}
-    wget http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/chromFa.tar.gz
+    wget https://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/chromFa.tar.gz
     tar zxf chromFa.tar.gz
 \end{verbatim}
 
@@ -286,7 +286,7 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       found in any \texttt{DESCRIPTION} file.
       Please refer to the \textit{The DESCRIPTION file} subsection
       of the \textit{Writing R Extensions} manual
-      \footnote{\url{http://cran.r-project.org/doc/manuals/R-exts.html\#The-DESCRIPTION-file}}
+      \footnote{\url{https://cran.r-project.org/doc/manuals/R-exts.html\#The-DESCRIPTION-file}}
       for more information about these fields.
       If you plan to distribute the \term{target package} that you are about
       to forge, please pickup the license carefully and make sure that it is
@@ -312,7 +312,7 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       Note that for the packages built by the Bioconductor project from a
       UCSC genome, this field corresponds to the \code{SPECIES} column of
       the \textit{List of UCSC genome releases} table
-      \footnote{\url{http://genome.ucsc.edu/FAQ/FAQreleases\#release1}}.
+      \footnote{\url{https://genome.ucsc.edu/FAQ/FAQreleases\#release1}}.
 
 \item \code{genome}: The name of the genome. Typically the name of an NCBI
       assembly (e.g. \code{GRCh38.p12}, \code{WBcel235}, \code{TAIR10.1},
@@ -337,15 +337,14 @@ sub-subsection of this subsection for an example of a \term{seed file}.
 
 \item \code{organism\_biocview}: The official biocViews term for this organism.
       This is generally the same as the \code{organism} field except that spaces
-      should be replaced by underscores. The value of this field matters only if
-      the \term{target package} is going to be added to a Bioconductor
-      repository since it will determine under which subview of the
-      \textit{Bioconductor Task View} for \textit{Organism}
-      \footnote{\url{http://bioconductor.org/packages/release/Organism.html}}
-      the package will appear.
-      Note that this is the only field in this category that won't be stored
-      in the \Rclass{BSgenome} object that will be contained in the
-      \term{target package}.
+      should be replaced with underscores. The value of this field matters
+      only if the \term{target package} is going to be added to a Bioconductor
+      repository, because it will determine where the package will show
+      up in the biocViews tree
+      \footnote{\url{https://bioconductor.org/packages/release/BiocViews.html#___Organism}}.
+      Note that this is the only field in this category that won't get
+      stored in the \Rclass{BSgenome} object that will get wrapped in
+      the \term{target package}.
 \end{itemize}
 
 \subsubsection{Other fields}
@@ -537,7 +536,7 @@ Here is how the \term{mask data files} for the
 \begin{itemize}
   \item AGAPS masks: all the \texttt{chr*\_gap.txt.gz} files (UCSC ``gap''
         files) were downloaded from the UCSC \textit{database} folder
-        \footnote{\url{http://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}}
+        \footnote{\url{https://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/}}
         for \code{rn4}. This was done with the standard Unix/Linux
         \code{ftp} command:
         \begin{verbatim}
