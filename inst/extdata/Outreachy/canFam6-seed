@@ -1,0 +1,16 @@
+Package: BSgenome.Cfamiliaris.UCSC.canFam6
+Title: Full genome sequences for Canis lupus familiaris (UCSC version canFam6)
+Description: Full genome sequences for Canis lupus familiaris (Dog) as provided by UCSC (canFam6, Oct. 2020) and stored in Biostrings objects.
+Version: 0.0.1
+Suggests: GenomicFeatures
+organism: Canis lupus familiaris
+common_name: Dog
+provider: UCSC
+provider_version: canFam6
+release_date: Oct. 2020
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/canFam6/bigZips/
+organism_biocview: Canis_familiaris
+BSgenomeObjname: Cfamiliaris
+circ_seqs: "chrM"
+seqs_srcdir: /Users/prisca/Documents/canFam6
+SrcDataFiles: canFam6.fa.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam6/bigZips/
