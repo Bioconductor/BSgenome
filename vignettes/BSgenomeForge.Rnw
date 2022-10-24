@@ -341,7 +341,7 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       only if the \term{target package} is going to be added to a Bioconductor
       repository, because it will determine where the package will show
       up in the biocViews tree
-      \footnote{\url{https://bioconductor.org/packages/release/BiocViews.html#___Organism}}.
+      \footnote{\url{https://bioconductor.org/packages/release/BiocViews.html\#\_\_\_Organism}}.
       Note that this is the only field in this category that won't get
       stored in the \Rclass{BSgenome} object that will get wrapped in
       the \term{target package}.
