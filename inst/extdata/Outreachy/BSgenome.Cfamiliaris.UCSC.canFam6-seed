@@ -10,6 +10,7 @@ release_date: Oct. 2020
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/canFam6/bigZips/
 organism_biocview: Canis_familiaris
 BSgenomeObjname: Cfamiliaris
-seqs_srcdir: /Users/prisca/Documents/canFam6
-SrcDataFiles: canFam6.fa.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam6/bigZips/
+seqs_srcdir: /Users/prisca/Documents
+SrcDataFiles: canFam6.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/canFam6/bigZips/
+seqfile_name: canFam6.2bit
 PkgExamples: genome$chr1
