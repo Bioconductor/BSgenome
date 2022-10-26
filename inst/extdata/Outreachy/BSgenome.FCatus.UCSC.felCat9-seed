@@ -1,0 +1,16 @@
+Package: BSgenome.Fcatus.UCSC.felCat9
+Title: Full genome sequences for Felis catus (UCSC version felCat9)
+Description: Full genome sequences for Felis catus (Domestic cat) as provided by UCSC (felCat9, Nov. 2017) and stored in Biostrings objects.
+Version: 0.1.0
+organism: Felis catus
+common_name: Domestic cat
+provider: UCSC
+genome: felCat9
+release_date: Nov. 2017
+source_url: https://hgdownload.cse.ucsc.edu/goldenPath/felCat9/bigZips/
+organism_biocview: Felis_catus
+BSgenomeObjname: Fcatus
+SrcDataFiles: felCat9.2bit from https://hgdownload.cse.ucsc.edu/goldenPath/felCat9/bigZips/
+PkgExamples: genome$chrA1 # same as genome[["chrA1"]]
+seqs_srcdir: /home/dell/seqdatafile
+seqfile_name: felCat9.2bit
