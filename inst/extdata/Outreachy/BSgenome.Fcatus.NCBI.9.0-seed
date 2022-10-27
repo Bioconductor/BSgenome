@@ -7,7 +7,7 @@ common_name: Domestic cat
 provider: NCBI
 genome: Felis_catus_9.0
 release_date: 2017-11-20
-source_url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/181/335/GCF_000181335.3_Felis_catus_9.0/
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_000181335.3/
 organism_biocview: Felis_catus
 BSgenomeObjname: Fcatus
 SrcDataFiles: GCF_000181335.3_Felis_catus_9.0_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/181/335/GCF_000181335.3_Felis_catus_9.0/
