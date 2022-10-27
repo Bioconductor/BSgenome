@@ -1,0 +1,16 @@
+Package: BSgenome.Fcatus.NCBI.9.0
+Title: Full genome sequences for Felis catus (NCBI version Felis_catus_9.0)
+Description: Full genome sequences for Felis catus (Domestic cat) as provided by NCBI (Felis_catus_9.0, 2017-11-20) and stored in Biostrings objects.
+Version: 0.1.0
+organism: Felis catus
+common_name: Domestic cat
+provider: NCBI
+genome: Felis_catus_9.0
+release_date: 2017-11-20
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_000181335.3/
+organism_biocview: Felis_catus
+BSgenomeObjname: Fcatus
+SrcDataFiles: GCF_000181335.3_Felis_catus_9.0_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/181/335/GCF_000181335.3_Felis_catus_9.0/
+PkgExamples: genome$chrA1 # same as genome[["chrA1"]]
+seqs_srcdir: /home/dell/seqdatafile
+seqfile_name: Felis_catus.9.0.sorted.2bit
