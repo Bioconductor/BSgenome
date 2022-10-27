@@ -332,8 +332,11 @@ sub-subsection of this subsection for an example of a \term{seed file}.
       this field corresponds to the \code{RELEASE DATE} field of the
       \textit{List of UCSC genome releases} table.
 
-\item \code{source\_url}: The permanent URL where the \term{sequence data
-      files} used to forge the \term{target package} can be found.
+\item \code{source\_url}: The permanent URL where the \term{sequence
+      data files} used to forge the \term{target package} can be found.
+      If the \term{target package} is for an NCBI assembly, use
+      the link to the NCBI landing page for the assembly e.g.
+      \url{https://www.ncbi.nlm.nih.gov/assembly/GCF\_003254395.2/}.
 
 \item \code{organism\_biocview}: The official biocViews term for this organism.
       This is generally the same as the \code{organism} field except that spaces
