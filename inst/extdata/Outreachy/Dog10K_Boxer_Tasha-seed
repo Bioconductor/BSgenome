@@ -1,0 +1,16 @@
+Package: BSgenome.Cfamiliaris.NCBI.Dog10KBoxerTasha
+Title: Full genome sequences for Canis lupus familiaris (Dog10K_Boxer_Tasha)
+Description: Full genome sequences for Canis lupus familiaris as provided by NCBI (assembly Dog10K_Boxer_Tasha, assembly accession GCF_000002285.5) and stored in Biostrings objects.
+Version: 0.0.1
+organism: Canis lupus familiaris
+common_name: Dog
+genome: Dog10K_Boxer_Tasha
+provider: NCBI
+release_date: 2020/10/06
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_000002285.5
+organism_biocview: Canis_lupus_familiaris
+BSgenomeObjname: Cfamiliaris
+SrcDataFiles: GCF_000002285.5_Dog10K_Boxer_Tasha_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/002/285/GCF_000002285.5_Dog10K_Boxer_Tasha/
+PkgExamples: genome[["1"]]
+seqs_srcdir: /Users/prisca/Desktop/new/bsgenome
+seqfile_name: Dog10K_Boxer_Tasha.sorted.2bit
