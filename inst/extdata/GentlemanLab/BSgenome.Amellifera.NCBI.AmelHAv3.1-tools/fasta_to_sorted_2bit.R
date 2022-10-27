@@ -18,6 +18,10 @@ dna <- dna[match(expected_RefSeqAccn, current_RefSeqAccn)]
 ### Rename sequences.
 names(dna) <- chrominfo[ , "SequenceName"]
 
+### Check sequence lengths.
+expected_seqlengths <- chrominfo[ , "SequenceLength"]
+stopifnot(all(width(dna) == expected_seqlengths | is.na(expected_seqlengths)))
+
 ### Export as 2bit.
 library(rtracklayer)
 export.2bit(dna, "Amel_HAv3.1.sorted.2bit")
