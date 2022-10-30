@@ -3,7 +3,7 @@ Title: Full genome sequences for Xenopus tropicalis (UCSC version xenTro10)
 Description: Full genome sequences for Xenopus tropicalis (Western clawed frog) as provided by UCSC (xenTro10, Nov. 2019) and stored in Biostrings objects.
 Version: 0.1.0
 organism: Xenopus tropicalis
-common_name: western clawed frog
+common_name: Tropical clawed frog
 provider: UCSC
 genome: xenTro10
 release_date: Nov. 2019
