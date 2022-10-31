@@ -1,0 +1,16 @@
+Package: BSgenome.Xtropicalis.UCSC.xenTro10
+Title: Full genome sequences for Xenopus tropicalis (UCSC version xenTro10)
+Description: Full genome sequences for Xenopus tropicalis (Western clawed frog) as provided by UCSC (xenTro10, Nov. 2019) and stored in Biostrings objects.
+Version: 0.1.0
+organism: Xenopus tropicalis
+common_name: Tropical clawed frog
+provider: UCSC
+genome: xenTro10
+release_date: Nov. 2019
+source_url: https://hgdownload.cse.ucsc.edu/goldenPath/xenTro10/bigZips/
+organism_biocview: Xenopus_tropicalis
+BSgenomeObjname: Xtropicalis
+SrcDataFiles: xenTro10.2bit from https://hgdownload.cse.ucsc.edu/goldenPath/xenTro10/bigZips/
+PkgExamples: genome$chr1 # same as genome[["chr1"]]
+seqs_srcdir: /home/emmanuel/seqdatafile
+seqfile_name: xenTro10.2bit
