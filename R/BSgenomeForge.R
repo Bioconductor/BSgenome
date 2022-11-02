@@ -920,10 +920,10 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
         if (file.exists(pkgdir)) {
             if (replace) {
                 unlink(pkgdir, recursive=TRUE)
-          } else {
+            } else {
                 stop("directory ", pkgdir, " exists. ",
                      "Use replace=TRUE to replace it.")
-          }
+            }
         }
         Biobase::createPackage(x@Package, destdir, template_path, symvals)
 
