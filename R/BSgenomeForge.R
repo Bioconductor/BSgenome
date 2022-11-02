@@ -925,7 +925,6 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
                      "Use replace=TRUE to replace it.")
           }
         }
-
         Biobase::createPackage(x@Package, destdir, template_path, symvals)
 
         .mseqnames <- eval(parse(text=x@mseqnames))
