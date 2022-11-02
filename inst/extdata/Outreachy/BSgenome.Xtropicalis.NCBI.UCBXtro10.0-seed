@@ -1,0 +1,16 @@
+Package: BSgenome.Xtropicalis.NCBI.UCBXtro10.0
+Title: Full genome sequences for Xenopos tropicalis (NCBI version UCB_Xtro_10.0)
+Description: Full genome sequences for Xenopus tropicalis as provided by NCBI (UCB_Xtro_10.0, 2019/11/14) and stored in Biostrings objects.
+Version: 0.1.0
+organism: Xenopus tropicalis
+common_name: Tropical clawed frog
+genome: UCB_Xtro_10.0
+provider: NCBI
+release_date: 2019/11/14
+source_url: https://www.ncbi.nlm.nih.gov/assembly/GCF_000004195.4/
+organism_biocview: Xenopus_tropicalis
+BSgenomeObjname: Xtropicalis
+SrcDataFiles: GCF_000004195.4_UCB_Xtro_10.0_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/004/195/GCF_000004195.4_UCB_Xtro_10.0/
+PkgExamples: genome$Chr1 # same as genome[["Chr1"]]
+seqs_srcdir: /home/emmanuel/seqdatafile
+seqfile_name: UCB_Xtro_10.0.sorted.2bit
