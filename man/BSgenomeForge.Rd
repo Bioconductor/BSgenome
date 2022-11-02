@@ -73,9 +73,10 @@ forgeMasksFiles(seqnames, nmask_per_seq,
     This directory must already exist.
     See the BSgenomeForge vignette in this package for more information.
   }
-   \item{replace}{
+  \item{replace}{
     \code{TRUE} or \code{FALSE}.
-    When set to TRUE \code{replace} replaces package directory if it already exists.
+    When set to TRUE, \code{replace} replaces the package directory
+    if it already exists.
   }
   \item{verbose}{
     \code{TRUE} or \code{FALSE}.
