@@ -836,13 +836,16 @@ MaskedBSgenomeDataPkgSeed <- function(x)
 ###
 
 setGeneric("forgeBSgenomeDataPkg", signature="x",
-    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", replace=FALSE, verbose=TRUE)
         standardGeneric("forgeBSgenomeDataPkg")
 )
 
 setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
-    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", replace=FALSE, verbose=TRUE)
     {
+        if (!isTRUEorFALSE(replace))
+            stop("'replace' must be TRUE or FALSE")
+
         ## The Biobase package is needed for createPackage().
         if (!requireNamespace("Biobase", quietly=TRUE))
             stop("Couldn't load the Biobase package. Please install ",
@@ -913,8 +916,16 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
             bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
             stop("values for symbols ", bad_syms, " are not single strings")
         }
-        Biobase::createPackage(x@Package, destdir, template_path, symvals)
         pkgdir <- file.path(destdir, x@Package)
+        if (file.exists(pkgdir)) {
+            if (replace) {
+                unlink(pkgdir, recursive=TRUE)
+            } else {
+                stop("directory ", pkgdir, " exists. ",
+                     "Use replace=TRUE to replace it.")
+            }
+        }
+        Biobase::createPackage(x@Package, destdir, template_path, symvals)
 
         .mseqnames <- eval(parse(text=x@mseqnames))
         seqs_destdir <- file.path(pkgdir, "inst", "extdata")
@@ -956,11 +967,11 @@ setMethod("forgeBSgenomeDataPkg", "BSgenomeDataPkgSeed",
 )
 
 setMethod("forgeBSgenomeDataPkg", "list",
-    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", replace=FALSE, verbose=TRUE)
     {
         y <- BSgenomeDataPkgSeed(x)
         forgeBSgenomeDataPkg(y, seqs_srcdir=seqs_srcdir, destdir=destdir,
-                                verbose=verbose)
+                                replace=replace, verbose=verbose)
     }
 )
 
@@ -1024,7 +1035,7 @@ read.dcf2 <- function(file, ...)
 }
 
 setMethod("forgeBSgenomeDataPkg", "character",
-    function(x, seqs_srcdir=".", destdir=".", verbose=TRUE)
+    function(x, seqs_srcdir=".", destdir=".", replace=FALSE, verbose=TRUE)
     {
         y <- .readSeedFile(x, verbose=verbose)
         y <- as.list(y)
@@ -1036,7 +1047,7 @@ setMethod("forgeBSgenomeDataPkg", "character",
         }
         y <- y[!(names(y) %in% "seqs_srcdir")]
         forgeBSgenomeDataPkg(y, seqs_srcdir=seqs_srcdir, destdir=destdir,
-                                verbose=verbose)
+                                replace=replace, verbose=verbose)
     }
 )
 
