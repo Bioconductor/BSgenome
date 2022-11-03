@@ -131,6 +131,14 @@ setMethod("snpcount", "OldFashionSNPlocs",
 ### and "alleles_as_ambig" (character).
 ###
 
+.get_rsid_offsets <- function(x)
+{
+    offsets <- c(0L, cumsum(snpcount(x)))
+    offsets <- offsets[-length(offsets)]
+    names(offsets) <- names(snpcount(x))
+    offsets
+}
+
 ### Load rs ids for a given sequence. Return them in an integer vector.
 .load_rsids <- function(x, seqname)
 {
@@ -239,182 +247,6 @@ setMethod("snplocs", "OldFashionSNPlocs",
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Old SNPlocs extractors (deprecated in BioC 3.5, defunct in BioC 3.15):
-###    snpid2loc()
-###    snpid2alleles()
-###    snpid2grange()
-###
-
-### Returns a named integer vector where each (name, value) pair corresponds
-### to a supplied SNP id (typically an rs id). The name is the chromosome of
-### the SNP id and the value is its position on the chromosome.
-setGeneric("snpid2loc", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2loc")
-)
-
-### Returns a named character vector where each (name, value) pair corresponds
-### to a supplied SNP id (typically an rs id). The name is the chromosome of
-### the SNP id and the value is a single IUPAC code representing the associated
-### alleles.
-setGeneric("snpid2alleles", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2alleles")
-)
-
-setGeneric("snpid2grange", signature="x",
-    function(x, snpid, ...) standardGeneric("snpid2grange")
-)
-
-.get_rsid_offsets <- function(x)
-{
-    offsets <- c(0L, cumsum(snpcount(x)))
-    offsets <- offsets[-length(offsets)]
-    names(offsets) <- names(snpcount(x))
-    offsets
-}
-
-.normarg_snpid <- function(snpid)
-{
-    if (!is.vector(snpid))
-        stop("'snpid' must be an integer or character vector")
-    if (S4Vectors:::anyMissing(snpid))
-        stop("'snpid' cannot contain NAs")
-    if (is.numeric(snpid)) {
-        if (!is.integer(snpid))
-            snpid <- as.integer(snpid)
-        return(snpid)
-    }
-    if (!is.character(snpid))
-        stop("'snpid' must be an integer or character vector")
-    prefixes <- unique(substr(snpid, 1L, 2L))
-    if ("rs" %in% prefixes) {
-        if (!setequal(prefixes, "rs"))
-            stop("'snpid' cannot mix ids that are prefixed with \"rs\" ",
-                 "with ids that are not")
-        ## Drop the "rs" prefix.
-        snpid <- substr(snpid, 3, nchar(snpid))
-    }
-    snpid <- suppressWarnings(as.integer(snpid))
-    if (S4Vectors:::anyMissing(snpid))
-        stop("cannot extract the digital part of some ids in 'snpid'")
-    snpid
-}
-
-### Returns a named integer vector where each (name, value) pair corresponds
-### to a supplied SNP id (typically an rs id). The name is the chromosome of
-### the SNP id and the value is the row index in the serialized snplocs data
-### frame corresponding to the SNP id.
-.snpid2rowidx <- function(x, snpid)
-{
-    if (length(snpid) == 0L) {
-        idx <- integer(0)
-    } else {
-        all_rsids <- .get_SNPlocs_data(x, "all_rsids")
-        idx <- match(snpid, all_rsids)
-        bad_snpid_idx <- which(is.na(idx))
-        if (length(bad_snpid_idx) != 0L) {
-            bad_snpid <- snpid[bad_snpid_idx]
-            bad_snpid_in1string <- paste(bad_snpid, collapse=", ")
-            stop(wmsg("SNP id(s) not found: ", bad_snpid_in1string,
-                      "\n\nPlease note that rsid2loc(), snpid2loc(), ",
-                      "rsid2alleles(), snpid2alleles(), rsidsToGRanges(), ",
-                      "and snpid2grange() are superseded by snpsById(). ",
-                      "The latter can be called with 'ifnotfound=\"drop\"' ",
-                      "to drop unknown SNP ids. See '?snpsById' for more ",
-                      "information.\n\n "))
-        }
-    }
-    seqidx <- findInterval(idx - 1L, cumsum(snpcount(x))) + 1L
-    rowidx <- idx - .get_rsid_offsets(x)[seqidx]
-    names(rowidx) <- names(snpcount(x))[seqidx]
-    rowidx
-}
-
-.snpid2loc_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
-{
-    rowidx <- .snpid2rowidx(x, snpid)
-    if (length(rowidx) == 0L) {
-        ans <- integer(0)
-    } else {
-        rowidx_list <- split(unname(rowidx), names(rowidx))
-        loc_list <- lapply(names(rowidx_list),
-            function(seqname) {
-                idx <- rowidx_list[[seqname]]
-                .load_raw_snplocs(x, seqname, caching)$loc[idx]
-            })
-        ans <- unsplit(loc_list, names(rowidx))
-    }
-    names(ans) <- names(rowidx)
-    ans
-}
-
-setMethod("snpid2loc", "OldFashionSNPlocs",
-    function(x, snpid, caching=TRUE)
-    {
-        .Defunct(msg=wmsg("snpid2loc() is defunct. ",
-                          "Please use snpsById() instead."))
-        snpid <- .normarg_snpid(snpid)
-        if (!isTRUEorFALSE(caching))
-            stop("'caching' must be TRUE or FALSE")
-        .snpid2loc_OldFashionSNPlocs(x, snpid, caching=caching)
-    }
-)
-
-.snpid2alleles_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
-{
-    rowidx <- .snpid2rowidx(x, snpid)
-    if (length(rowidx) == 0L) {
-        ans <- raw(0)
-    } else {
-        rowidx_list <- split(unname(rowidx), names(rowidx))
-        alleles_list <- lapply(names(rowidx_list),
-            function(seqname) {
-                idx <- rowidx_list[[seqname]]
-                .load_raw_snplocs(x, seqname, caching)$alleles[idx]
-            })
-        ans <- unsplit(alleles_list, names(rowidx))
-    }
-    ans <- decode_bytes_as_letters(ans)
-    names(ans) <- names(rowidx)
-    ans
-}
-
-setMethod("snpid2alleles", "OldFashionSNPlocs",
-    function(x, snpid, caching=TRUE)
-    {
-        .Defunct(msg=wmsg("snpid2alleles() is defunct. ",
-                          "Please use snpsById() instead."))
-        snpid <- .normarg_snpid(snpid)
-        if (!isTRUEorFALSE(caching))
-            stop("'caching' must be TRUE or FALSE")
-        .snpid2alleles_OldFashionSNPlocs(x, snpid, caching=caching)
-    }
-)
-
-.snpid2grange_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
-{
-    snpid <- .normarg_snpid(snpid)
-    if (!isTRUEorFALSE(caching))
-        stop("'caching' must be TRUE or FALSE")
-    loc <- .snpid2loc_OldFashionSNPlocs(x, snpid, caching=caching)
-    alleles <- .snpid2alleles_OldFashionSNPlocs(x, snpid, caching=caching)
-    ufsnplocs <- data.frame(RefSNP_id=as.character(snpid),
-                            alleles_as_ambig=unname(alleles),
-                            loc=unname(loc),
-                            stringsAsFactors=FALSE)
-    .SNPlocsAsGRanges(x, ufsnplocs, names(loc))
-}
-
-setMethod("snpid2grange", "OldFashionSNPlocs",
-    function(x, snpid, caching=TRUE)
-    {
-        .Defunct(msg=wmsg("snpid2grange() is defunct. ",
-                          "Please use snpsById() instead."))
-        .snpid2grange_OldFashionSNPlocs(x, snpid, caching=caching)
-    }
-)
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### NEW API: snpsBySeqname(), snpsByOverlaps(), snpsById() (similar to API
 ### for querying an XtraSNPlocs object)
 ###
@@ -469,6 +301,111 @@ setMethod("snpsBySeqname", "OldFashionSNPlocs",
 setMethod("snpsByOverlaps", "OldFashionSNPlocs",
     .snpsByOverlaps_OldFashionSNPlocs
 )
+
+.normarg_snpid <- function(snpid)
+{
+    if (!is.vector(snpid))
+        stop("'snpid' must be an integer or character vector")
+    if (S4Vectors:::anyMissing(snpid))
+        stop("'snpid' cannot contain NAs")
+    if (is.numeric(snpid)) {
+        if (!is.integer(snpid))
+            snpid <- as.integer(snpid)
+        return(snpid)
+    }
+    if (!is.character(snpid))
+        stop("'snpid' must be an integer or character vector")
+    prefixes <- unique(substr(snpid, 1L, 2L))
+    if ("rs" %in% prefixes) {
+        if (!setequal(prefixes, "rs"))
+            stop("'snpid' cannot mix ids that are prefixed with \"rs\" ",
+                 "with ids that are not")
+        ## Drop the "rs" prefix.
+        snpid <- substr(snpid, 3, nchar(snpid))
+    }
+    snpid <- suppressWarnings(as.integer(snpid))
+    if (S4Vectors:::anyMissing(snpid))
+        stop("cannot extract the digital part of some ids in 'snpid'")
+    snpid
+}
+
+### Returns a named integer vector where each (name, value) pair corresponds
+### to a supplied SNP id (typically an rs id). The name is the chromosome of
+### the SNP id and the value is the row index in the serialized snplocs data
+### frame corresponding to the SNP id.
+.snpid2rowidx <- function(x, snpid)
+{
+    if (length(snpid) == 0L) {
+        idx <- integer(0)
+    } else {
+        all_rsids <- .get_SNPlocs_data(x, "all_rsids")
+        idx <- match(snpid, all_rsids)
+        bad_snpid_idx <- which(is.na(idx))
+        if (length(bad_snpid_idx) != 0L) {
+            bad_snpid <- snpid[bad_snpid_idx]
+            bad_snpid_in1string <- paste(bad_snpid, collapse=", ")
+            stop(wmsg("SNP id(s) not found: ", bad_snpid_in1string),
+                 "\n  ",
+                 "Use 'ifnotfound=\"drop\"' to drop unknown SNP ids. ",
+                 "See '?snpsById' for more information.")
+        }
+    }
+    seqidx <- findInterval(idx - 1L, cumsum(snpcount(x))) + 1L
+    rowidx <- idx - .get_rsid_offsets(x)[seqidx]
+    names(rowidx) <- names(snpcount(x))[seqidx]
+    rowidx
+}
+
+.snpid2loc_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
+{
+    rowidx <- .snpid2rowidx(x, snpid)
+    if (length(rowidx) == 0L) {
+        ans <- integer(0)
+    } else {
+        rowidx_list <- split(unname(rowidx), names(rowidx))
+        loc_list <- lapply(names(rowidx_list),
+            function(seqname) {
+                idx <- rowidx_list[[seqname]]
+                .load_raw_snplocs(x, seqname, caching)$loc[idx]
+            })
+        ans <- unsplit(loc_list, names(rowidx))
+    }
+    names(ans) <- names(rowidx)
+    ans
+}
+
+.snpid2alleles_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
+{
+    rowidx <- .snpid2rowidx(x, snpid)
+    if (length(rowidx) == 0L) {
+        ans <- raw(0)
+    } else {
+        rowidx_list <- split(unname(rowidx), names(rowidx))
+        alleles_list <- lapply(names(rowidx_list),
+            function(seqname) {
+                idx <- rowidx_list[[seqname]]
+                .load_raw_snplocs(x, seqname, caching)$alleles[idx]
+            })
+        ans <- unsplit(alleles_list, names(rowidx))
+    }
+    ans <- decode_bytes_as_letters(ans)
+    names(ans) <- names(rowidx)
+    ans
+}
+
+.snpid2grange_OldFashionSNPlocs <- function(x, snpid, caching=TRUE)
+{
+    snpid <- .normarg_snpid(snpid)
+    if (!isTRUEorFALSE(caching))
+        stop("'caching' must be TRUE or FALSE")
+    loc <- .snpid2loc_OldFashionSNPlocs(x, snpid, caching=caching)
+    alleles <- .snpid2alleles_OldFashionSNPlocs(x, snpid, caching=caching)
+    ufsnplocs <- data.frame(RefSNP_id=as.character(snpid),
+                            alleles_as_ambig=unname(alleles),
+                            loc=unname(loc),
+                            stringsAsFactors=FALSE)
+    .SNPlocsAsGRanges(x, ufsnplocs, names(loc))
+}
 
 .snpsById_OldFashionSNPlocs <- function(x, ids,
                                  ifnotfound=c("error", "warning", "drop"))

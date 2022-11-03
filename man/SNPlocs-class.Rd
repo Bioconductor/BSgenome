@@ -59,17 +59,6 @@
 
 \alias{inferRefAndAltAlleles}
 
-% Old SNPlocs extractors (defunct)
-\alias{snpid2loc}
-\alias{snpid2loc,SNPlocs-method}
-\alias{snpid2loc,OldFashionSNPlocs-method}
-\alias{snpid2alleles}
-\alias{snpid2alleles,SNPlocs-method}
-\alias{snpid2alleles,OldFashionSNPlocs-method}
-\alias{snpid2grange}
-\alias{snpid2grange,SNPlocs-method}
-\alias{snpid2grange,OldFashionSNPlocs-method}
-
 \title{SNPlocs objects}
 
 \description{
