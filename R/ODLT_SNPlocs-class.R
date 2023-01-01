@@ -233,8 +233,8 @@ setMethod("snpsByOverlaps", "ODLT_SNPlocs", .snpsByOverlaps_ODLT_SNPlocs)
         seqlevelsStyle(genome) <- "NCBI"
     }
 
-    x_rowids <- rowids(x@snp_table)
-    rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
+    x_rowids_env <- get_rowids_env(x@snp_table)
+    rowidx <- rowids2rowidx(user_rowids, ids, x_rowids_env, ifnotfound)
 
     df <- getRowsFromOnDiskLongTable(x@snp_table, rowidx[[1L]],
                                      with.rowids=FALSE)

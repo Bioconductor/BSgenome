@@ -386,8 +386,8 @@ setMethod("snpsById", "XtraSNPlocs",
     {
         user_rowids <- ids2rowids(ids)
         ifnotfound <- match.arg(ifnotfound)
-        x_rowids <- rowids(x@snp_table)
-        rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
+        x_rowids_env <- get_rowids_env_old(x@snp_table)
+        rowidx <- rowids2rowidx(user_rowids, ids, x_rowids_env, ifnotfound)
         .XtraSNPlocs_check_user_supplied_columns(columns)
         if (!isTRUEorFALSE(as.DataFrame))
             stop(wmsg("'as.DataFrame' must be TRUE or FALSE"))
