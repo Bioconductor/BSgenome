@@ -413,7 +413,9 @@ setMethod("snpsByOverlaps", "OldFashionSNPlocs",
     user_rowids <- ids2rowids(ids)
     ifnotfound <- match.arg(ifnotfound)
     x_rowids <- .get_SNPlocs_data(x, "all_rsids")
-    rowidx <- rowids2rowidx(user_rowids, ids, x_rowids, ifnotfound)
+    x_rowids_env <- new.env(parent=emptyenv())
+    assign("rowids", x_rowids, envir=x_rowids_env)
+    rowidx <- rowids2rowidx(user_rowids, ids, x_rowids_env, ifnotfound)
     gr <- .snpid2grange_OldFashionSNPlocs(x, rowidx[[2L]])
     mcols(gr)[ , "RefSNP_id"] <- rowidx[[2L]]
     as(gr, "GPos")

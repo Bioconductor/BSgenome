@@ -107,6 +107,37 @@ setClass("OnDiskLongTable_old",
     .load_object(col_dirpath, blockname)
 }
 
+### Return an environment (x@.rowids_cache) that contains the row ids as
+### one big integer vector.
+get_rowids_env_old <- function(x)
+{
+    stopifnot(is(x, "OnDiskLongTable_old"))
+
+    objname <- "rowids"
+
+    ## 1. Try to get the row ids from the cache.
+    tmp <- try(get(objname, envir=x@.rowids_cache, inherits=FALSE),
+               silent=TRUE)
+    if (!is(tmp, "try-error"))
+        return(x@.rowids_cache)
+
+    ## 2. Try to find them on disk.
+    filename <- paste0(objname, ".rda")
+    filepath <- file.path(x@dirpath, filename)
+    if (!file.exists(filepath))
+        return(x@.rowids_cache)
+
+    ## 3. Load the row ids from disk.
+    if (!identical(load(filepath, envir=x@.rowids_cache), objname))
+        stop(wmsg(filepath, " does not seem to belong ",
+                  "to an OnDiskLongTable_old object"))
+    tmp <- get(objname, envir=x@.rowids_cache, inherits=FALSE)
+    .OnDiskLongTable_old_check_rowids(tmp)
+    if (length(tmp) != nrow(x))
+        stop(wmsg("length(rowids) != nrow(x)"))
+    x@.rowids_cache
+}
+
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### .write_zero_row_OnDiskLongTable_old()
@@ -312,38 +343,6 @@ setMethod("blocksizes", "OnDiskLongTable_old",
     }
 )
 
-setGeneric("rowids", function(x) standardGeneric("rowids"))
-
-### Return NULL or an integer vector with no NAs or duplicated values.
-setMethod("rowids", "OnDiskLongTable_old",
-    function(x)
-    {
-        objname <- "rowids"
-
-        ## 1. Try to get the row ids from the cache.
-        ans <- try(get(objname, envir=x@.rowids_cache, inherits=FALSE),
-                   silent=TRUE)
-        if (!is(ans, "try-error"))
-            return(ans)
-
-        ## 2. Try to find them on disk.
-        filename <- paste0(objname, ".rda")
-        filepath <- file.path(x@dirpath, filename)
-        if (!file.exists(filepath))
-            return((assign(objname, NULL, envir=x@.rowids_cache)))
-
-        ## 3. Load the row ids from disk.
-        if (!identical(load(filepath, envir=x@.rowids_cache), objname))
-            stop(wmsg(filepath, " does not seem to belong ",
-                      "to an OnDiskLongTable_old object"))
-        ans <- get(objname, envir=x@.rowids_cache, inherits=FALSE)
-        .OnDiskLongTable_old_check_rowids(ans)
-        if (length(ans) != nrow(x))
-            stop(wmsg("length(rowids) != nrow(x)"))
-        ans
-    }
-)
-
 setMethod("dim", "OnDiskLongTable_old",
     function(x)
     {
@@ -451,13 +450,15 @@ getBatchesFromOnDiskLongTable_old <- function(x, batch_labels, colidx,
         ans_batch_label <- rep.int(ans_batch_label, ans_blocksizes)
         ans_listData[["batch_label"]] <- ans_batch_label
     }
+    ans_rowids <- NULL
     if (with.rowids) {
-        rowidx <- IRanges:::unlist_as_integer(
-                      successiveIRanges(x_blocksizes)[blockidx]
-                  )
-        ans_rowids <- rowids(x)[rowidx]
-    } else {
-        ans_rowids <- NULL
+        x_rowids_env <- get_rowids_env_old(x)
+        if (length(ls(x_rowids_env)) != 0L) {
+            rowidx <- IRanges:::unlist_as_integer(
+                          successiveIRanges(x_blocksizes)[blockidx]
+                      )
+            ans_rowids <- extract_rowids(x_rowids_env, rowidx)
+        }
     }
     if (as.data.frame) {
         ans <- data.frame(ans_listData, row.names=ans_rowids,
@@ -562,41 +563,5 @@ getRowsByIndexFromOnDiskLongTable_old <- function(x, rowidx, colidx,
         ans <- S4Vectors:::new_DataFrame(ans_listData, nrows=length(rowidx))
     }
     ans
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### getRowsByIdFromOnDiskLongTable_old()
-###
-
-.rowids2rowidx <- function(x, rowids)
-{
-    x_rowids <- rowids(x)
-    if (is.null(x_rowids))
-        stop(wmsg("'x' has no row ids: cannot use ",
-                  "getRowsByIdFromOnDiskLongTable_old() on it"))
-    if (!is.integer(rowids) || S4Vectors:::anyMissing(rowids))
-        stop(wmsg("'rowids' must be an integer vector with no NAs"))
-    rowidx <- match(rowids, x_rowids)
-    if (S4Vectors:::anyMissing(rowidx))
-        stop(wmsg("'rowids' contains invalid row ids"))
-    rowidx
-}
-
-### rowids: integer vector.
-### colidx: integer or character vector.
-### Return a DataFrame (or data.frame) with 1 row per row id in 'rowids'.
-### Note that we do NOT set the row names to 'rowids' on the returned DataFrame
-### because we want to support duplicates in 'rowids'.
-getRowsByIdFromOnDiskLongTable_old <- function(x, rowids, colidx,
-                                               with.batch_label=FALSE,
-                                               as.data.frame=FALSE)
-{
-    if (!is(x, "OnDiskLongTable_old"))
-        stop(wmsg("'x' must be an OnDiskLongTable_old object"))
-    rowidx <- .rowids2rowidx(x, rowids)
-    getRowsByIndexFromOnDiskLongTable_old(x, rowidx, colidx,
-                                          with.batch_label=with.batch_label,
-                                          as.data.frame=as.data.frame)
 }
 

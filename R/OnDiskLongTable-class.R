@@ -23,12 +23,13 @@ setClass("OnDiskLongTable",
         ## An integer vector of length the nb of batches. Contains the
         ## cumulated nb of rows in the batches. A batch cannot be empty so
         ## 'breakpoints' must contain *strictly* sorted positive integers.
-        ## If the table has zero rows, then 'breakpoints' is empty. Otherwise,
-        ## its last element is the nb of rows in the table.
+        ## If the table has zero rows, then 'breakpoints' must be empty.
+        ## Otherwise, its last element must be equal to the nb of rows in
+        ## the table.
         breakpoints="integer",
 
-        ## [OPTIONAL] A *sorted* *unstranded* GRanges object with 1 range per
-        ## batch. The object must be naked i.e. no names and no metadata
+        ## [OPTIONAL] A **sorted** **unstranded** GRanges object with 1 range
+        ## per batch. The object must be naked i.e. no names and no metadata
         ## columns.
         spatial_index="GRanges_OR_NULL",
 
@@ -144,6 +145,97 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Low-level handling of the row ids stored in an OnDiskLongTable object
+###
+
+.get_rowids_filepaths <- function(dirpath)
+    dir(dirpath, pattern="rowids[1-9]?\\.rds", full.names=TRUE)
+
+### Load the row ids into the 'envir' environment.
+.load_rowids <- function(rowids_paths, envir, total_nb_rowids)
+{
+    objnames <- sub("\\.rds$", "", basename(rowids_paths))
+    for (i in seq_along(objnames)) {
+        path <- rowids_paths[[i]]
+        rowids <- readRDS(path)
+        .check_OnDiskLongTable_rowids(rowids)
+        objname <- objnames[[i]]
+        assign(objname, rowids, envir=envir)
+    }
+    rowids_counts <- unlist(eapply(envir, length))
+    if (sum(rowids_counts) != total_nb_rowids)
+        stop(wmsg("unexpected nb of row ids"))
+}
+
+### Return an environment (x@.rowids_cache) that contains the row ids, either
+### as one big integer vector or in chunks.
+get_rowids_env <- function(x)
+{
+    stopifnot(is(x, "OnDiskLongTable"))
+    ans <- x@.rowids_cache
+    if (!is.na(x@dirpath)) {
+        keys <- ls(ans, sorted=TRUE)
+        if (length(keys) == 0L) {
+            rowids_paths <- .get_rowids_filepaths(x@dirpath)
+            if (length(rowids_paths) != 0L)
+                .load_rowids(rowids_paths, ans, nrow(x))
+        }
+    }
+    ans
+}
+
+extract_rowids <- function(rowids_env, idx)
+{
+    stopifnot(is.environment(rowids_env), is.integer(idx))
+    keys <- ls(rowids_env, sorted=TRUE)
+    nkeys <- length(keys)
+    stopifnot(nkeys != 0L)
+
+    rowids_counts <- unlist(eapply(rowids_env, length))[keys]
+    rowids_cumcounts <- cumsum(rowids_counts)
+    total_nb_rowids <- rowids_cumcounts[[length(rowids_cumcounts)]]
+    stopifnot(!S4Vectors:::anyMissingOrOutside(idx, 1L, total_nb_rowids))
+
+    f <- findInterval(idx, rowids_cumcounts, left.open=TRUE) + 1L
+    attributes(f) <- list(levels=keys, class="factor")
+    split_idx <- split(idx, f, drop=FALSE)
+    split_ans <- lapply(seq_len(nkeys),
+        function(k) {
+            rowids <- rowids_env[[keys[[k]]]]
+            i <- split_idx[[k]]
+            if (k >= 2L)
+                i <- i - rowids_cumcounts[k - 1L]
+            rowids[i]
+        })
+    unsplit(split_ans, f, drop=FALSE)
+}
+
+lookup_rowids <- function(rowids, rowids_env)
+{
+    stopifnot(is.environment(rowids_env))
+    keys <- ls(rowids_env, sorted=TRUE)
+    nkeys <- length(keys)
+    stopifnot(nkeys != 0L)
+
+    rowids_counts <- unlist(eapply(rowids_env, length))[keys]
+    rowids_cumcounts <- cumsum(rowids_counts)
+
+    all_matches <- lapply(seq_len(nkeys),
+        function(k) {
+            table <- rowids_env[[keys[[k]]]]
+            m <- match(rowids, table)
+            if (k >= 2L)
+                m <- m + rowids_cumcounts[k - 1L]
+            m[is.na(m)] <- 0L
+            m
+        })
+    ans <- Reduce(`+`, all_matches)
+    ans[ans == 0L] <- NA_integer_
+    ans
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Read/write data to/from disk
 ###
 
@@ -215,27 +307,30 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
 ### .write_zero_row_OnDiskLongTable()
 ###
 
-.remove_file <- function(dirpath, filename)
+.remove_files <- function(paths)
 {
-    filepath <- file.path(dirpath, filename)
-    if (file.exists(filepath)) {
-        if (!file.remove(filepath))
-            stop(wmsg("failed to remove file: ", filepath))
+    fail_idx <- which(!suppressWarnings(file.remove(paths)))
+    ## Unlikely to happen but ya never know.
+    if (length(fail_idx) != 0L) {
+        paths_in_1string <- paste0(paths[fail_idx], collapse=", ")
+        stop(wmsg("failed to remove file(s): ", paths_in_1string))
     }
 }
 
-.remove_dirs <- function(dirpaths)
+.remove_dirs <- function(paths)
 {
-    fail_idx <- which(as.logical(unlink(dirpaths, recursive=TRUE)))
-    if (length(fail_idx) != 0L)
-        stop(wmsg("failed to remove directories: ",
-                  paste0(dirpaths[fail_idx], collapse=", ")))
+    fail_idx <- which(as.logical(unlink(paths, recursive=TRUE)))
+    if (length(fail_idx) != 0L) {
+        paths_in_1string <- paste0(paths[fail_idx], collapse=", ")
+        stop(wmsg("failed to remove dir(s): ", paths_in_1string))
+    }
 }
 
 .write_zero_row_OnDiskLongTable <- function(df, dirpath, spatial_index)
 {
     ## Remove stuff.
-    .remove_file(dirpath, "rowids.rds")
+    rowids_paths <- .get_rowids_filepaths(dirpath)
+    .remove_files(rowids_paths)
     colpaths <- file.path(dirpath, .col_physname(seq_len(ncol(df))))
     .remove_dirs(colpaths)
 
@@ -278,9 +373,9 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
                                           batchsize, spatial_index,
                                           compress=TRUE)
 {
-    ## Check existence of rowids.rds file.
-    filepath <- file.path(dirpath, "rowids.rds")
-    if (file.exists(filepath))
+    ## An OnDiskLongTable object with rowids files is considered locked.
+    rowids_paths <- .get_rowids_filepaths(dirpath)
+    if (length(rowids_paths) != 0L)
         stop(wmsg("cannot append data to an ",
                   "OnDiskLongTable object with row ids"))
 
@@ -338,11 +433,11 @@ setValidity2("OnDiskLongTable", .valid_OnDiskLongTable)
 {
     if (!isSingleNumberOrNA(batchsize))
         stop(wmsg("'batchsize' must be a single integer or NA"))
-    if (!is.integer(batchsize)) 
+    if (!is.integer(batchsize))
         batchsize <- as.integer(batchsize)
     if (is.na(batchsize))
         return(totalsize)
-    if (batchsize < 0L) 
+    if (batchsize < 0L)
         stop(wmsg("'batchsize' cannot be negative"))
     if (batchsize == 0L && totalsize != 0L)
         stop(wmsg("'batchsize' can be 0 only if 'nrow(df)' is 0"))
@@ -355,7 +450,7 @@ writeOnDiskLongTable <- function(df, dirpath=".",
                                  batchsize=NA, spatial_index=NULL,
                                  append=FALSE, compress=TRUE)
 {
-    if (!is.data.frame(df) && !is(df, "DataFrame")) 
+    if (!is.data.frame(df) && !is(df, "DataFrame"))
         stop(wmsg("'df' must be a data.frame or DataFrame object"))
     .check_OnDiskLongTable_dirpath(dirpath)
     if (!isTRUEorFALSE(append))
@@ -391,18 +486,45 @@ writeOnDiskLongTable <- function(df, dirpath=".",
                                   compress=TRUE)
 }
 
-### After row ids are saved, data cannot be appended to the OnDiskLongTable
-### object.
-writeOnDiskLongTableRowids <- function(rowids, dirpath=".", compress=TRUE)
+.save_rowids_in_chunks <- function(rowids, nchunk=2L,
+                                   dirpath=".", compress=TRUE)
+{
+    stopifnot(isSingleNumber(nchunk), nchunk >= 2L, nchunk <= 9L)
+    chunks <- breakInChunks(length(rowids), nchunk=nchunk)
+    for (i in seq_along(chunks)) {
+        object <- rowids[chunks[[i]]]
+        opath <- paste0("rowids", i)
+        .write_object(object, dirpath, opath, compress=compress)
+    }
+}
+
+### After row ids are saved, the OnDiskLongTable object is considered locked
+### i.e. data can no longer be appended to it.
+### 'nchunk' must be small, typically <= 10.
+writeOnDiskLongTableRowids <- function(rowids, nchunk=1L,
+                                       dirpath=".", compress=TRUE)
 {
     .check_OnDiskLongTable_rowids(rowids)
+
+    if (!isSingleNumber(nchunk))
+        stop(wmsg("'nchunk' must be a single number"))
+    if (!is.integer(nchunk))
+        nchunk <- as.integer(nchunk)
+
     .check_OnDiskLongTable_dirpath(dirpath)
+
     breakpoints <- .read_object(dirpath, "breakpoints")
     nrow <- .get_OnDiskLongTable_nrow_from_breakpoints(breakpoints)
     if (length(rowids) != nrow)
         stop(wmsg("length of 'rowids' is incompatible ",
                   "with the OnDiskLongTable object in ", dirpath))
-    .write_object(rowids, dirpath, "rowids", compress=compress)
+
+    if (nchunk == 1L) {
+        .write_object(rowids, dirpath, "rowids", compress=compress)
+    } else {
+        .save_rowids_in_chunks(rowids, nchunk=nchunk,
+                               dirpath=dirpath, compress=compress)
+    }
 }
 
 
@@ -415,9 +537,9 @@ writeOnDiskLongTableRowids <- function(rowids, dirpath=".", compress=TRUE)
     object <- try(.read_object(dirpath, opath), silent=TRUE)
     if (inherits(object, "try-error"))
         stop(wmsg("Cannot open ", .make_filepath(dirpath, opath), ". ",
-                  "Please make sure that '", dirpath, "' is the path to a ",
-                  "valid OnDiskLongTable directory structure, that is, one ",
-                  "as written by writeOnDiskLongTable()."))
+                  "Please make sure that '", dirpath, "' is the path to ",
+                  "a valid OnDiskLongTable directory structure, e.g. one ",
+                  "written by writeOnDiskLongTable()."))
     object
 }
 
@@ -484,49 +606,6 @@ setGeneric("spatialIndex", function(x) standardGeneric("spatialIndex"))
 
 setMethod("spatialIndex", "OnDiskLongTable", function(x) x@spatial_index)
 
-### Generic defined in OnDiskLongTable_old-class.R
-#setGeneric("rowids", function(x) standardGeneric("rowids"))
-
-### Return NA if 'x' has no row ids.
-.get_rowids_path <- function(x)
-{
-    if (is.na(x@dirpath))
-        return(NA_character_)
-    rowids_path <- .make_filepath(x@dirpath, "rowids")
-    if (!file.exists(rowids_path))
-        return(NA_character_)
-    rowids_path
-}
-
-### Return NULL or an integer vector with no NAs or duplicated values.
-setMethod("rowids", "OnDiskLongTable",
-    function(x)
-    {
-        objname <- "rowids"
-
-        ## 1. Try to get the row ids from the cache.
-        rowids <- try(get(objname, envir=x@.rowids_cache, inherits=FALSE),
-                      silent=TRUE)
-        if (!inherits(rowids, "try-error"))
-            return(rowids)
-
-        ## 2. Try to get the row ids from disk.
-        rowids_path <- .get_rowids_path(x)
-        if (is.na(rowids_path)) {
-            rowids <- NULL
-        } else {
-            rowids <- readRDS(rowids_path)
-            .check_OnDiskLongTable_rowids(rowids)
-            if (length(rowids) != nrow(x))
-                stop(wmsg("length(rowids) != nrow(x)"))
-        }
-
-        ## 3. Cache the row ids.
-        assign(objname, rowids, envir=x@.rowids_cache)
-        rowids
-    }
-)
-
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### "show" method
@@ -540,9 +619,13 @@ setMethod("show", "OnDiskLongTable",
             " x ",
             ncol(object), " col", if (ncol(object) >= 2L) "s" else "",
             sep="")
-        rowids_path <- .get_rowids_path(object)
+        if (is.na(object@dirpath)) {
+            rowids_paths <- character(0)
+        } else {
+            rowids_paths <- .get_rowids_filepaths(object@dirpath)
+        }
         spatial_index <- spatialIndex(object)
-        if (!is.na(rowids_path)) {
+        if (length(rowids_paths) != 0L) {
             if (is.null(spatial_index))
                 cat(" and ")
             else
@@ -550,7 +633,7 @@ setMethod("show", "OnDiskLongTable",
             cat("row ids")
         }
         if (!is.null(spatial_index))
-            cat(" and spatial index")
+            cat(", and spatial index")
         cat("\n")
     }
 )
@@ -652,10 +735,10 @@ getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,
     }
     ans_rowids <- NULL
     if (with.rowids) {
-        x_rowids <- rowids(x)
-        if (!is.null(x_rowids)) {
+        x_rowids_env <- get_rowids_env(x)
+        if (length(ls(x_rowids_env)) != 0L) {
             rowidx <- successiveIRanges(x_batchsizes)[batchidx]
-            ans_rowids <- extractROWS(x_rowids, rowidx)
+            ans_rowids <- extract_rowids(x_rowids_env, rowidx)
         }
     }
     if (as.data.frame)
@@ -820,9 +903,9 @@ getRowsFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
     }
     ans_rowids <- NULL
     if (with.rowids) {
-        x_rowids <- rowids(x)
-        if (!is.null(x_rowids))
-            ans_rowids <- x_rowids[rowidx]
+        x_rowids_env <- get_rowids_env(x)
+        if (length(ls(x_rowids_env)) != 0L)
+            ans_rowids <- extract_rowids(x_rowids_env, rowidx)
     }
     if (as.data.frame)
         .as_data.frame(ans_listData, ans_seqnames, ans_rowids)
@@ -838,13 +921,13 @@ getRowsFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
 
 .rowids2rowidx <- function(x, rowids)
 {
-    x_rowids <- rowids(x)
-    if (is.null(x_rowids))
+    x_rowids_env <- get_rowids_env(x)
+    if (length(ls(x_rowids_env)) == 0L)
         stop(wmsg("'x' has no row ids: cannot use ",
                   "getRowsByIdFromOnDiskLongTable() on it"))
     if (!is.integer(rowids) || S4Vectors:::anyMissing(rowids))
         stop(wmsg("'rowids' must be an integer vector with no NAs"))
-    rowidx <- match(rowids, x_rowids)
+    rowidx <- lookup_rowids(rowids, x_rowids_env)
     if (S4Vectors:::anyMissing(rowidx))
         stop(wmsg("'rowids' contains invalid row ids"))
     rowidx

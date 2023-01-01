@@ -190,11 +190,11 @@ ids2rowids <- function(ids)
 ### removed from both of them.
 ### Note that, if 'ifnotfound="error"' then the 2 returned vectors are parallel
 ### to input vectors 'user_rowids' and 'user_ids'.
-rowids2rowidx <- function(user_rowids, user_ids, x_rowids, ifnotfound)
+rowids2rowidx <- function(user_rowids, user_ids, x_rowids_env, ifnotfound)
 {
-    if (is.null(x_rowids))
+    if (length(ls(x_rowids_env)) == 0L)
         stop(wmsg("BSgenome internal error: data contains no SNP ids"))
-    rowidx <- match(user_rowids, x_rowids)
+    rowidx <- lookup_rowids(user_rowids, x_rowids_env)
     notfound_idx <- which(is.na(rowidx))
     if (length(notfound_idx) != 0L) {
         if (length(notfound_idx) <= 10L) {

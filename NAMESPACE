@@ -100,7 +100,7 @@ export(
     saveAsOnDiskLongTable_old, saveRowidsForOnDiskLongTable_old,
     OnDiskLongTable_old,
     getBatchesFromOnDiskLongTable_old,
-    getRowsByIndexFromOnDiskLongTable_old, getRowsByIdFromOnDiskLongTable_old,
+    getRowsByIndexFromOnDiskLongTable_old,
 
     ## OnDiskLongTable-class.R:
     OnDiskLongTable, writeOnDiskLongTable, writeOnDiskLongTableRowids,
@@ -152,7 +152,7 @@ export(
 
 export(
     ## OnDiskLongTable_old-class.R:
-    breakpoints, blocksizes, rowids,
+    breakpoints, blocksizes,
 
     ## OnDiskLongTable-class.R:
     batchsizes, spatialIndex,
@@ -180,7 +180,7 @@ export(
 
 ### Exactly the same list as above.
 exportMethods(
-    breakpoints, blocksizes, rowids,
+    breakpoints, blocksizes,
     batchsizes, spatialIndex,
     releaseName, referenceGenome, compatibleGenomes,
     snpcount, snplocs,
