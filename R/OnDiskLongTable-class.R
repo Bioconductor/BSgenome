@@ -487,7 +487,7 @@ writeOnDiskLongTable <- function(df, dirpath=".",
 }
 
 .save_rowids_in_chunks <- function(rowids, nchunk=2L,
-                                   dirpath=".", compress=TRUE)
+                                   dirpath=".", compress=FALSE)
 {
     stopifnot(isSingleNumber(nchunk), nchunk >= 2L, nchunk <= 9L)
     chunks <- breakInChunks(length(rowids), nchunk=nchunk)
@@ -502,7 +502,7 @@ writeOnDiskLongTable <- function(df, dirpath=".",
 ### i.e. data can no longer be appended to it.
 ### 'nchunk' must be small, typically <= 10.
 writeOnDiskLongTableRowids <- function(rowids, nchunk=1L,
-                                       dirpath=".", compress=TRUE)
+                                       dirpath=".", compress=FALSE)
 {
     .check_OnDiskLongTable_rowids(rowids)
 
