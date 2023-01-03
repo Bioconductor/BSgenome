@@ -1,0 +1,16 @@
+Package: BSgenome.Hsapiens.UCSC.hs1
+Title: Full genomic sequences for UCSC genome hs1 (Homo sapiens)
+Description: Full genomic sequences for UCSC genome hs1 (the hs1 genome is based on assembly T2T-CHM13v2.0, with GenBank assembly accession GCA_009914755.4). The sequences are stored in DNAString objects.
+Version: 1.4.4
+organism: Homo sapiens
+common_name: Human
+provider: UCSC
+genome: hs1
+release_date: Jan 2022
+source_url: https://hgdownload.soe.ucsc.edu/goldenPath/hs1/
+organism_biocview: Homo_sapiens
+BSgenomeObjname: Hsapiens
+SrcDataFiles: hs1.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/hs1/bigZips/ on 2023-01-03
+PkgExamples: genome$chr1  # same as genome[["chr1"]]
+seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hs1/seqs
+seqfile_name: hs1.2bit
