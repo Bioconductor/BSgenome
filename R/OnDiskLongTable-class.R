@@ -737,7 +737,9 @@ getBatchesFromOnDiskLongTable <- function(x, batchidx, colidx=NULL,
     if (with.rowids) {
         x_rowids_env <- get_rowids_env(x)
         if (length(ls(x_rowids_env)) != 0L) {
-            rowidx <- successiveIRanges(x_batchsizes)[batchidx]
+            rowidx <- IRanges:::unlist_as_integer(
+                successiveIRanges(x_batchsizes)[batchidx]
+            )
             ans_rowids <- extract_rowids(x_rowids_env, rowidx)
         }
     }
