@@ -63,13 +63,13 @@
         \item \code{common_name}: The common name of the organism that this
               BSgenome object is for. E.g. \code{"Human"}, \code{"Mouse"},
               \code{"Worm"}, etc...
+        \item \code{provider}: The provider of this genome. E.g.
+              \code{"UCSC"}, \code{"BDGP"}, \code{"FlyBase"}, etc...
         \item \code{genome}: The name of the genome. Typically the name of
               an NCBI assembly (e.g. \code{"GRCh38.p12"}, \code{"WBcel235"},
               \code{"TAIR10.1"}, \code{"ARS-UCD1.2"}, etc...) or UCSC genome
               (e.g. \code{"hg38"}, \code{"bosTau9"}, \code{"galGal6"},
               \code{"ce11"}, etc...).
-        \item \code{provider}: The provider of this genome. E.g.
-              \code{"UCSC"}, \code{"BDGP"}, \code{"FlyBase"}, etc...
         \item \code{release_date}:  The release date of this genome e.g.
               \code{"Mar. 2006"}.
         \item \code{source_url}: The permanent URL to the place where the

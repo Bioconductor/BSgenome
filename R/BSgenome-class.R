@@ -7,8 +7,8 @@ setClass("BSgenome",
     ## Expected metadata data are:
     ## - organism
     ## - common_name
-    ## - genome
     ## - provider
+    ## - genome
     ## - release_date
     ## - source_url: permanent URL to the place where the 2bit and/or FASTA
     ##   files used to produce the "single" and "multiple" sequences can be
@@ -341,8 +341,8 @@ BSgenome <- function(organism, common_name, genome,
         common_name <- species
     metadata <- list(organism=organism,
                      common_name=common_name,
-                     genome=genome,
                      provider=provider,
+                     genome=genome,
                      release_date=release_date,
                      source_url=source_url)
     if (is.null(mseqnames))
@@ -413,58 +413,47 @@ setMethod("bsgenomeName", "BSgenome",
 ### The "show" method
 ###
 
-.print_BSgenome_metadata <- function(metadata, prefix="")
+.print_BSgenome_metadata <- function(metadata, margin="")
 {
+    cat(margin, "BSgenome object", sep="")
     common_name <- metadata$common_name
     if (!is.na(common_name))
-        cat(common_name, "genome:\n")
-    cat(prefix, "organism: ", metadata$organism,
-                " (", common_name, ")\n", sep="")
-    cat(prefix, "genome: ", metadata$genome, "\n", sep="")
-    cat(prefix, "provider: ", metadata$provider, "\n", sep="")
-    cat(prefix, "release date: ", metadata$release_date, "\n", sep="")
+        cat(" for ", common_name, sep="")
+    cat("\n")
+    cat(margin, "- organism: ", metadata$organism, "\n", sep="")
+    cat(margin, "- provider: ", metadata$provider, "\n", sep="")
+    cat(margin, "- genome: ", metadata$genome, "\n", sep="")
+    release_date <- metadata$release_date
+    if (!is.na(release_date))
+        cat(margin, "- release date: ", release_date, "\n", sep="")
 }
 
-.SHOW_BSGENOME_PREFIX <- "# "
-.SHOW_SEQSECTION_PREFIX <- "#   "
+.show_BSgenome <- function(x, margin="")
+{
+    mystrwrap <- function(line)
+        writeLines(strwrap(line, width=getOption("width")+1,
+                           exdent=0L, prefix=margin))
+    .print_BSgenome_metadata(metadata(x), margin=margin)
+    if (!is.null(SNPlocs_pkgname(x)))
+        cat(margin, "with SNPs injected from package: ",
+            SNPlocs_pkgname(x), "\n", sep="")
+    cat(margin, "- ", length(seqnames(x)), " sequence(s):\n", sep="")
+    margin2 <- paste0(margin, "    ")
+    if (length(seqnames(x)) == 0L) {
+        cat(margin2, "NONE\n", sep="")
+    } else {
+        printAtomicVectorInAGrid(seqnames(x), prefix=margin2)
+        cat(margin, "\n", sep="")
+        mystrwrap(paste0("Tips: call 'seqnames()' on the object to get all ",
+                         "the sequence names, call 'seqinfo()' to get the ",
+                         "full sequence info, use the '$' or '[[' operator ",
+                         "to access a given sequence, see '?BSgenome' for ",
+                         "more information."))
+    }
+}
 
 setMethod("show", "BSgenome",
-    function(object)
-    {
-        mystrwrap <- function(line)
-            writeLines(strwrap(line, width=getOption("width")+1,
-                               exdent=0L, prefix=.SHOW_BSGENOME_PREFIX))
-        .print_BSgenome_metadata(metadata(object), prefix=.SHOW_BSGENOME_PREFIX)
-        if (!is.null(SNPlocs_pkgname(object)))
-            cat(.SHOW_BSGENOME_PREFIX, "with SNPs injected from package: ", SNPlocs_pkgname(object), "\n", sep="")
-        if (length(mseqnames(object)) == 0L) {
-            what <- "sequence"
-        } else {
-            cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
-            what <- "single sequence"
-        }
-        mystrwrap(paste0(length(seqnames(object)), " ", what, "s:"))
-        if (length(seqnames(object)) != 0L) {
-            printAtomicVectorInAGrid(seqnames(object),
-                                     prefix=.SHOW_SEQSECTION_PREFIX)
-            mystrwrap(paste0("(use 'seqnames()' to see all the ",
-                             what, " names, ",
-                             "use the '$' or '[[' operator to access a given ",
-                             what, ")"))
-        } else {
-            cat(.SHOW_SEQSECTION_PREFIX, "NONE\n", sep="")
-        }
-        if (length(mseqnames(object)) != 0L) {
-            cat(.SHOW_BSGENOME_PREFIX, "\n", sep="")
-            mystrwrap("multiple sequences:")
-            printAtomicVectorInAGrid(mseqnames(object),
-                                     prefix=.SHOW_SEQSECTION_PREFIX)
-            mystrwrap(paste0("(use 'mseqnames()' to see all the ",
-                             "multiple sequence names, ",
-                             "use the '$' or '[[' operator to access a given ",
-                             "multiple sequence)"))
-        }
-    }
+    function(object) .show_BSgenome(object, margin="| ")
 )
 
 
