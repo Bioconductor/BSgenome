@@ -1,6 +1,6 @@
 Package: BSgenome.Dmelanogaster.UCSC.dm3
-Title: Full genome sequences for Drosophila melanogaster (UCSC version dm3)
-Description: Full genome sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects.
+Title: Full genomic sequences for Drosophila melanogaster (UCSC version dm3)
+Description: Full genomic sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm3, Apr. 2006) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: TxDb.Dmelanogaster.UCSC.dm3.ensGene
 organism: Drosophila melanogaster
@@ -15,7 +15,7 @@ BSgenomeObjname: Dmelanogaster
 seqnames: paste("chr", c("2L", "2R", "3L", "3R", "4", "X", "U", "M", "2LHet", "2RHet", "3LHet", "3RHet", "XHet", "YHet", "Uextra"), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/dm3/bigZips/
-PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
+PkgExamples: bsg$chr2L  # same as bsg[["chr2L"]]
 	.
 	## ---------------------------------------------------------------------
 	## Upstream sequences
@@ -23,7 +23,7 @@ PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
 	## upstream5000 sequences for dm3 are not included in the BSgenome data
 	## package anymore. However they can easily be extracted from the full
-	## genome sequences with something like:
+	## genomic sequences with something like:
 	.
 	library(TxDb.Dmelanogaster.UCSC.dm3.ensGene)
 	txdb <- TxDb.Dmelanogaster.UCSC.dm3.ensGene
@@ -33,7 +33,7 @@ PkgExamples: genome$chr2L  # same as genome[["chr2L"]]
 	## extracting the upstream sequences for genes located on these
 	## scaffolds is not reliable. So we exclude them:
 	exclude <- c("chrU", "chrUextra")
-	up1000seqs <- extractUpstreamSeqs(genome, txdb, width=1000,
+	up1000seqs <- extractUpstreamSeqs(bsg, txdb, width=1000,
 	                                  exclude.seqlevels=exclude)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),

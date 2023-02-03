@@ -1,6 +1,6 @@
 Package: BSgenome.Mmulatta.UCSC.rheMac2
-Title: Full genome sequences for Macaca mulatta (UCSC version rheMac2)
-Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac2, Jan. 2006) and stored in Biostrings objects.
+Title: Full genomic sequences for Macaca mulatta (UCSC version rheMac2)
+Description: Full genomic sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac2, Jan. 2006) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Macaca mulatta
@@ -15,7 +15,7 @@ BSgenomeObjname: Mmulatta
 seqnames: paste("chr", c(1:20, "X", "Ur"), sep="")
 circ_seqs: character(0)
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	.
 	## ---------------------------------------------------------------------
 	## Upstream sequences
@@ -23,13 +23,13 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
 	## upstream5000 sequences for rheMac2 are not included in the BSgenome
 	## data package anymore. However they can easily be extracted from the
-	## full genome sequences with something like:
+	## full genomic sequences with something like:
 	.
 	library(GenomicFeatures)
 	txdb <- makeTxDbFromUCSC("rheMac2", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- getSeq(bsg, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome

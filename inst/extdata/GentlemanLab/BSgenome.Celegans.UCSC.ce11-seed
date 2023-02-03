@@ -1,6 +1,6 @@
 Package: BSgenome.Celegans.UCSC.ce11
-Title: Full genome sequences for Caenorhabditis elegans (UCSC version ce11)
-Description: Full genome sequences for Caenorhabditis elegans (Worm) as provided by UCSC (ce11, Feb. 2013) and stored in Biostrings objects.
+Title: Full genomic sequences for Caenorhabditis elegans (UCSC version ce11)
+Description: Full genomic sequences for Caenorhabditis elegans (Worm) as provided by UCSC (ce11, Feb. 2013) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Caenorhabditis elegans
@@ -15,6 +15,6 @@ BSgenomeObjname: Celegans
 seqnames: paste("chr", c("I", "II", "III", "IV", "V", "X", "M"), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: ce11.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/ce11/bigZips/
-PkgExamples: genome$chrI  # same as genome[["chrI"]]
+PkgExamples: bsg$chrI  # same as bsg[["chrI"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Celegans.UCSC.ce11/seqs
 seqfile_name: ce11.2bit

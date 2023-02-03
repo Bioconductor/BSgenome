@@ -1,16 +1,58 @@
 Package: BSgenome.Hsapiens.UCSC.hg38
-Title: Full genome sequences for Homo sapiens (UCSC version hg38, based on GRCh38.p13)
-Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg38, based on GRCh38.p13) and stored in Biostrings objects.
-Version: 1.4.4
+Title: Full genomic sequences for Homo sapiens (UCSC genome hg38)
+Description: Full genomic sequences for Homo sapiens as provided by UCSC (genome hg38, based on assembly GRCh38.p14 since 2023/01/31). The sequences are stored in DNAString objects.
+Version: 1.4.5
 organism: Homo sapiens
 common_name: Human
 provider: UCSC
 genome: hg38
-release_date: Feb 2019
-source_url: https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/p13/
+release_date: 2023/01/31
+source_url: https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/p14/
 organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
-SrcDataFiles: hg38.p13.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/p13/ on October 20, 2021
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+SrcDataFiles: hg38.p14.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/p14/ on Feb 1st, 2023
+PkgExamples: ## Access individual sequences:
+	.
+	bsg$chr1  # same as bsg[["chr1"]]
+	alphabetFrequency(bsg[["chr1"]])
+	.
+	bsg[["chrM"]]  # same as bsg$chrM
+	reverseComplement(bsg$chrM)
+	.
+	## ---------------------------------------------------------------------
+	## Switch the sequence names back and forth between UCSC and NCBI
+	## ---------------------------------------------------------------------
+	.
+	## IMPORTANT NOTE: Even though hg38 is officially based on the
+	## GRCh38.p14 assembly (this is as of Jan 31, 2023, hg38 was based on
+	## GRCh38.p13 before that), it contains 2 sequences that do not belong
+	## to GRCh38.p14: chr11_KQ759759v1_fix and chr22_KQ759762v1_fix
+	## These 2 foreign sequences belong to GRCh38.p13 (they are named
+	## HG107_PATCH and HG1311_PATCH there), but they've been replaced with
+	## sequences HG107_HG2565_PATCH and HG1311_HG2539_PATCH in GRCh38.p14.
+	.
+	seqinfo(bsg)
+	seqlevelsStyle(bsg)  # UCSC
+	.
+	## --- switch to NCBI names ---
+	.
+	bsg0 <- bsg
+	seqlevelsStyle(bsg) <- "NCBI"
+	bsg
+	seqinfo(bsg)
+	bsg[["1"]]
+	.
+	## Surprise!
+	table(genome(bsg))   # 2 sequences belong to GRCh38.p13!
+	foreign_idx <- which(genome(bsg) == "GRCh38.p13")
+	seqinfo(bsg)[seqnames(bsg)[foreign_idx]]
+	seqlevelsStyle(bsg)  # NCBI
+	.
+	## --- switch back ---
+	.
+	seqlevelsStyle(bsg) <- "UCSC"
+	bsg
+	stopifnot(identical(bsg0, bsg))
+	seqinfo(bsg)[seqnames(bsg)[foreign_idx]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg38/seqs
-seqfile_name: hg38.p13.2bit
+seqfile_name: hg38.p14.2bit

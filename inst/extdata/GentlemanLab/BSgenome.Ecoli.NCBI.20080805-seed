@@ -186,7 +186,7 @@ SrcDataFiles: Escherichia_coli_536/NC_008253.fna
 	Escherichia_coli_W3110/AC_000091.fna
 	from ftp://ftp.ncbi.nih.gov/genomes/Bacteria/ (downloaded on 2008/08/05)
 PkgExamples: ## The names of the sequences are the Refseq numbers!
-	genome$NC_008253  # same as genome[["NC_008253"]]
+	bsg$NC_008253  # same as bsg[["NC_008253"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Ecoli.NCBI.20080805/seqs
 seqfiles_suffix: .fna
 ondisk_seq_format: rda

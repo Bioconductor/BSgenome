@@ -1,6 +1,6 @@
 Package: BSgenome.Ggallus.UCSC.galGal3
-Title: Full genome sequences for Gallus gallus (UCSC version galGal3)
-Description: Full genome sequences for Gallus gallus (Chicken) as provided by UCSC (galGal3, May 2006) and stored in Biostrings objects.
+Title: Full genomic sequences for Gallus gallus (UCSC version galGal3)
+Description: Full genomic sequences for Gallus gallus (Chicken) as provided by UCSC (galGal3, May 2006) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Gallus gallus
@@ -15,7 +15,7 @@ BSgenomeObjname: Ggallus
 seqnames: paste("chr", c(1:28, 32, "M", "W", "Z", "E64", "E22C19W28_E50C23", paste(c(1:2, 4:8, 10:13, 16:18, 20, 22, 25, 28, "W", "Z", "E64", "E22C19W28_E50C23", "Un"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/galGal3/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	.
 	## ---------------------------------------------------------------------
 	## Upstream sequences
@@ -23,13 +23,13 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
 	## upstream5000 sequences for galGal3 are not included in the BSgenome
 	## data package anymore. However they can easily be extracted from the
-	## full genome sequences with something like:
+	## full genomic sequences with something like:
 	.
 	library(GenomicFeatures)
 	txdb <- makeTxDbFromUCSC("galGal3", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- getSeq(bsg, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome

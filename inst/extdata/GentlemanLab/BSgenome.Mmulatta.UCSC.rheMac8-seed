@@ -1,6 +1,6 @@
 Package: BSgenome.Mmulatta.UCSC.rheMac8
-Title: Full genome sequences for Macaca mulatta (UCSC version rheMac8)
-Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac8, Nov. 2015) and stored in Biostrings objects.
+Title: Full genomic sequences for Macaca mulatta (UCSC version rheMac8)
+Description: Full genomic sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac8, Nov. 2015) and stored in Biostrings objects.
 Version: 1.4.2
 organism: Macaca mulatta
 common_name: Rhesus
@@ -13,6 +13,6 @@ organism_biocview: Macaca_mulatta
 BSgenomeObjname: Mmulatta
 circ_seqs: "chrM"
 SrcDataFiles: rheMac8.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/rheMac8/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac8/seqs
 seqfile_name: rheMac8.sorted.2bit

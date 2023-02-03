@@ -1,14 +1,14 @@
 Package: BSgenome.Mmusculus.UCSC.mm10.masked
-Title: Full masked genome sequences for Mus musculus (UCSC genome mm10, based on GRCm38.p6)
-Description: Full genome sequences for Mus musculus (Mouse) as provided by UCSC (genome mm10, based on GRCm38.p6) and stored in Biostrings objects. The sequences are the same as in BSgenome.Mmusculus.UCSC.mm10, except that each of them has the 2 following masks on top: (1) the mask of assembly gaps (AGAPS mask), and (2) the mask of intra-contig ambiguities (AMB mask).
+Title: Full masked genomic sequences for Mus musculus (UCSC genome mm10, based on GRCm38.p6)
+Description: Full genomic sequences for Mus musculus (Mouse) as provided by UCSC (genome mm10, based on GRCm38.p6) and stored in Biostrings objects. The sequences are the same as in BSgenome.Mmusculus.UCSC.mm10, except that each of them has the 2 following masks on top: (1) the mask of assembly gaps (AGAPS mask), and (2) the mask of intra-contig ambiguities (AMB mask).
 Version: 1.4.3
 RefPkgname: BSgenome.Mmusculus.UCSC.mm10
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/mm10/chromosomes/
 organism_biocview: Mus_musculus
 nmask_per_seq: 2
 SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/
-PkgExamples: genome$chr1  # a MaskedDNAString object!
+PkgExamples: mbsg$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
-	unmasked(genome$chr1)  # same as BSgenome.Mmusculus.UCSC.mm10$chr1
+	unmasked(mbsg$chr1)  # same as BSgenome.Mmusculus.UCSC.mm10$chr1
 masks_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Mmusculus.UCSC.mm10/masks
 AGAPSfiles_name: gap.txt

@@ -1,6 +1,6 @@
 Package: BSgenome.Creinhardtii.JGI.v5.6
-Title: Full genome sequences for Chlamydomonas reinhardtii (v5.6)
-Description: Full genome sequences for Chlamydomonas reinhardtii (v5.6) as provided by JGI and stored in Biostrings objects. The data in this package is public. See 'citation("BSgenome.Creinhardtii.JGI.v5.6")' for how to cite in publications.
+Title: Full genomic sequences for Chlamydomonas reinhardtii (v5.6)
+Description: Full genomic sequences for Chlamydomonas reinhardtii (v5.6) as provided by JGI and stored in Biostrings objects. The data in this package is public. See 'citation("BSgenome.Creinhardtii.JGI.v5.6")' for how to cite in publications.
 Version: 1.5.0
 organism: Chlamydomonas reinhardtii
 common_name: Green algae
@@ -12,7 +12,7 @@ organism_biocview: Chlamydomonas_reinhardtii
 BSgenomeObjname: Creinhardtii
 circ_seqs: character(0)
 SrcDataFiles: Creinhardtii_281_v5.0.fa.gz from https://phytozome-next.jgi.doe.gov/info/Creinhardtii_v5_6
-PkgExamples: genome[["chromosome_1"]]
+PkgExamples: bsg[["chromosome_1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Creinhardtii.JGI.v5.6/seqs
 seqfile_name: Creinhardtii_281_v5.0.2bit
 citation_file: system.file("extdata", "GentlemanLab", "BSgenome.Creinhardtii.JGI.v5.6-tools", "CITATION", package="BSgenome")

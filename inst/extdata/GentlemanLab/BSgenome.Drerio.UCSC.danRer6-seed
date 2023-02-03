@@ -1,6 +1,6 @@
 Package: BSgenome.Drerio.UCSC.danRer6
-Title: Full genome sequences for Danio rerio (UCSC version danRer6)
-Description: Full genome sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer6, Dec. 2008) and stored in Biostrings objects.
+Title: Full genomic sequences for Danio rerio (UCSC version danRer6)
+Description: Full genomic sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer6, Dec. 2008) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Danio rerio
@@ -16,20 +16,20 @@ seqnames: paste("chr", c(1:25, "M"), sep="")
 circ_seqs: "chrM"
 mseqnames: c("Zv8_NA", "Zv8_scaffold")
 SrcDataFiles: danRer6.fa.gz from http://hgdownload.cse.ucsc.edu/goldenPath/danRer6/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	.
 	## ---------------------------------------------------------------------	## Upstream sequences
 	## ---------------------------------------------------------------------
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
 	## upstream5000 sequences for danRer6 are not included in the BSgenome
 	## data package anymore. However they can easily be extracted from the 
-	## full genome sequences with something like:
+	## full genomic sequences with something like:
 	.
 	library(GenomicFeatures)
 	txdb <- makeTxDbFromUCSC("danRer6", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- getSeq(bsg, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome

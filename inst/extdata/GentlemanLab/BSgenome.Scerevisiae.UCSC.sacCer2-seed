@@ -14,5 +14,5 @@ BSgenomeObjname: Scerevisiae
 seqnames: c(paste("chr", c("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "M"), sep=""), "2micron")
 circ_seqs: c("chrM", "2micron")
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/sacCer2/bigZips/
-PkgExamples: genome$chrI  # same as genome[["chrI"]]
+PkgExamples: bsg$chrI  # same as bsg[["chrI"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Scerevisiae.UCSC.sacCer2/seqs

@@ -11,6 +11,6 @@ source_url: https://hgdownload.soe.ucsc.edu/goldenPath/hs1/
 organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
 SrcDataFiles: hs1.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/hs1/bigZips/ on 2023-01-03
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hs1/seqs
 seqfile_name: hs1.2bit

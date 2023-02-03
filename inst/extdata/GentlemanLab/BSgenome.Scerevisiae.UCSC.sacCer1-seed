@@ -14,5 +14,5 @@ BSgenomeObjname: Scerevisiae
 seqnames: paste("chr", c(1:16, "M"), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/sacCer1/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Scerevisiae.UCSC.sacCer1/seqs

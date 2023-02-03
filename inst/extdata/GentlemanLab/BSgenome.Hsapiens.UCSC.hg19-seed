@@ -1,6 +1,6 @@
 Package: BSgenome.Hsapiens.UCSC.hg19
-Title: Full genome sequences for Homo sapiens (UCSC version hg19, based on GRCh37.p13)
-Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg19, based on GRCh37.p13) and stored in Biostrings objects.
+Title: Full genomic sequences for Homo sapiens (UCSC version hg19, based on GRCh37.p13)
+Description: Full genomic sequences for Homo sapiens (Human) as provided by UCSC (hg19, based on GRCh37.p13) and stored in Biostrings objects.
 Version: 1.4.3
 organism: Homo sapiens
 common_name: Human
@@ -12,6 +12,6 @@ source_url: https://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/latest/
 organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
 SrcDataFiles: hg19.2bit, downloaded from https://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/latest/ on March 24, 2020
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg19/seqs
 seqfile_name: hg19.2bit

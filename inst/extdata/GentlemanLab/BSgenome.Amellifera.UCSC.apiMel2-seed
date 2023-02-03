@@ -1,6 +1,6 @@
 Package: BSgenome.Amellifera.UCSC.apiMel2
-Title: Full genome sequences for Apis mellifera (UCSC version apiMel2)
-Description: Full genome sequences for Apis mellifera (Honey Bee) as provided by UCSC (apiMel2, Jan. 2005) and stored in Biostrings objects.
+Title: Full genomic sequences for Apis mellifera (UCSC version apiMel2)
+Description: Full genomic sequences for Apis mellifera (Honey Bee) as provided by UCSC (apiMel2, Jan. 2005) and stored in Biostrings objects.
 Version: 1.4.2
 organism: Apis mellifera
 common_name: Honey Bee
@@ -12,6 +12,6 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
 organism_biocview: Apis_mellifera
 BSgenomeObjname: Amellifera
 SrcDataFiles: apiMel2.2bit from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
-PkgExamples: genome$Group1  # same as genome[["Group1"]]
+PkgExamples: bsg$Group1  # same as bsg[["Group1"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/seqs
 seqfile_name: apiMel2.2bit

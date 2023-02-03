@@ -1,6 +1,6 @@
 Package: BSgenome.Ggallus.UCSC.galGal3.masked
-Title: Full masked genome sequences for Gallus gallus (UCSC version galGal3)
-Description: Full genome sequences for Gallus gallus (Chicken) as provided by UCSC (galGal3, May 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Ggallus.UCSC.galGal3, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Title: Full masked genomic sequences for Gallus gallus (UCSC version galGal3)
+Description: Full genomic sequences for Gallus gallus (Chicken) as provided by UCSC (galGal3, May 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Ggallus.UCSC.galGal3, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Ggallus.UCSC.galGal3
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/galGal3/bigZips/
@@ -9,7 +9,7 @@ nmask_per_seq: 4
 SrcDataFiles: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/galGal3/database/
 	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/galGal3/bigZips/
 	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/galGal3/bigZips/
-PkgExamples: genome$chr1  # a MaskedDNAString object!
+PkgExamples: mbsg$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
-	unmasked(genome$chr1)  # same as BSgenome.Ggallus.UCSC.galGal3$chr1
+	unmasked(mbsg$chr1)  # same as BSgenome.Ggallus.UCSC.galGal3$chr1
 masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Ggallus.UCSC.galGal3/masks

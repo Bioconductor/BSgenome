@@ -11,6 +11,6 @@ source_url: https://www.ncbi.nlm.nih.gov/assembly/GCA_009914755.4
 organism_biocview: Homo_sapiens
 BSgenomeObjname: Hsapiens
 SrcDataFiles: GCA_009914755.4_T2T-CHM13v2.0_genomic.fna.gz from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/009/914/755/GCA_009914755.4_T2T-CHM13v2.0/
-PkgExamples: genome[["1"]]
+PkgExamples: bsg[["1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0/seqs
 seqfile_name: T2T-CHM13v2.0.sorted.2bit

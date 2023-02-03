@@ -1,6 +1,6 @@
 Package: BSgenome.Athaliana.TAIR.TAIR9
-Title: Full genome sequences for Arabidopsis thaliana (TAIR9)
-Description: Full genome sequences for Arabidopsis thaliana as provided by TAIR (TAIR9 Genome Release) and stored in Biostrings objects. Note that TAIR10 is an "annotation release" based on the same genome assembly as TAIR9.
+Title: Full genomic sequences for Arabidopsis thaliana (TAIR9)
+Description: Full genomic sequences for Arabidopsis thaliana as provided by TAIR (TAIR9 Genome Release) and stored in Biostrings objects. Note that TAIR10 is an "annotation release" based on the same genome assembly as TAIR9.
 Version: 1.4.2
 organism: Arabidopsis thaliana
 common_name: Arabidopsis
@@ -14,6 +14,6 @@ BSgenomeObjname: Athaliana
 seqnames: paste("Chr", c(1:5, "M", "C"), sep="")
 circ_seqs: c("ChrM", "ChrC")
 SrcDataFiles: ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR9_genome_release/TAIR9_chr_all.fas
-PkgExamples: genome$Chr1  # same as genome[["Chr1"]]
+PkgExamples: bsg$Chr1  # same as bsg[["Chr1"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.TAIR9/seqs
 ondisk_seq_format: rda

@@ -1,6 +1,6 @@
 Package: BSgenome.Celegans.UCSC.ce2
-Title: Full genome sequences for Caenorhabditis elegans (UCSC version ce2)
-Description: Full genome sequences for Caenorhabditis elegans (Worm) as provided by UCSC (ce2, Mar. 2004) and stored in Biostrings objects.
+Title: Full genomic sequences for Caenorhabditis elegans (UCSC version ce2)
+Description: Full genomic sequences for Caenorhabditis elegans (Worm) as provided by UCSC (ce2, Mar. 2004) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Caenorhabditis elegans
@@ -15,20 +15,20 @@ BSgenomeObjname: Celegans
 seqnames: paste("chr", c("I", "II", "III", "IV", "V", "X", "M"), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/ce2/bigZips/
-PkgExamples: genome$chrI  # same as genome[["chrI"]]
+PkgExamples: bsg$chrI  # same as bsg[["chrI"]]
 	.
 	## ---------------------------------------------------------------------	## Upstream sequences
 	## ---------------------------------------------------------------------
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
 	## upstream5000 sequences for ce2 are not included in the BSgenome data
 	## package anymore. However they can easily be extracted from the full
-	## genome sequences with something like:
+	## genomic sequences with something like:
 	.
 	library(GenomicFeatures)
 	txdb <- makeTxDbFromUCSC("ce2", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- getSeq(bsg, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome

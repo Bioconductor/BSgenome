@@ -1,6 +1,6 @@
 Package: BSgenome.Athaliana.TAIR.04232008
-Title: Full genome sequences for Arabidopsis thaliana (TAIR version from April 23, 2008)
-Description: Full genome sequences for Arabidopsis thaliana as provided by TAIR (snapshot from April 23, 2008) and stored in Biostrings objects.
+Title: Full genomic sequences for Arabidopsis thaliana (TAIR version from April 23, 2008)
+Description: Full genomic sequences for Arabidopsis thaliana as provided by TAIR (snapshot from April 23, 2008) and stored in Biostrings objects.
 Version: 1.4.2
 organism: Arabidopsis thaliana
 common_name: Arabidopsis
@@ -18,7 +18,7 @@ SrcDataFiles: all the chr*.fas file from ftp://ftp.arabidopsis.org/home/tair/Seq
 	NOT aimed to be the permanent URL for the 04232008 snapshot of the genome.
 	TAIR might update the content of this folder in the future with a new
 	snapshot and move the 04232008 snapshot to the OLD/ subfolder.
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Athaliana.TAIR.04232008/seqs
 seqfiles_suffix: .fas
 ondisk_seq_format: rda

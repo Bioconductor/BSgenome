@@ -1,3 +1,4 @@
+import(GenomeInfoDb)
 import(BSgenome)
 
 ### Don't export @PKGNAME@ or @BSGENOMEOBJNAME@ (the new and

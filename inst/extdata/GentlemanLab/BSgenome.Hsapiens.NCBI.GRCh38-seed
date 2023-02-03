@@ -1,6 +1,6 @@
 Package: BSgenome.Hsapiens.NCBI.GRCh38
-Title: Full genome sequences for Homo sapiens (GRCh38)
-Description: Full genome sequences for Homo sapiens (Human) as provided by NCBI (GRCh38, 2013-12-17) and stored in Biostrings objects.
+Title: Full genomic sequences for Homo sapiens (GRCh38)
+Description: Full genomic sequences for Homo sapiens (Human) as provided by NCBI (GRCh38, 2013-12-17) and stored in Biostrings objects.
 Version: 1.4.2
 organism: Homo sapiens
 common_name: Human
@@ -447,6 +447,6 @@ seqnames: c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
 	"HSCHR19KIR_RP5_B_HAP_CTG3_1")
 circ_seqs: "MT"
 SrcDataFiles: GCA_000001405.15_GRCh38_top-level.fna.gz from ftp://ftp.ncbi.nlm.nih.gov/genbank/genomes/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh38
-PkgExamples: genome[["1"]]
+PkgExamples: bsg[["1"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.NCBI.GRCh38/seqs
 ondisk_seq_format: rda

@@ -1,6 +1,6 @@
 Package: BSgenome.Btaurus.UCSC.bosTau3
-Title: Full genome sequences for Bos taurus (UCSC version bosTau3)
-Description: Full genome sequences for Bos taurus (Cow) as provided by UCSC (bosTau3, Aug. 2006) and stored in Biostrings objects.
+Title: Full genomic sequences for Bos taurus (UCSC version bosTau3)
+Description: Full genomic sequences for Bos taurus (Cow) as provided by UCSC (bosTau3, Aug. 2006) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Bos taurus
@@ -13,7 +13,7 @@ source_url: http://hgdownload.cse.ucsc.edu/goldenPath/bosTau3/bigZips/
 organism_biocview: Bos_taurus
 BSgenomeObjname: Btaurus
 SrcDataFiles: bosTau3.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/bosTau3/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	.
 	## ---------------------------------------------------------------------
 	## Upstream sequences
@@ -21,11 +21,11 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## UCSC makes the upstream sequences for bosTau3 available for download
 	## here http://hgdownload.soe.ucsc.edu/goldenPath/bosTau3/bigZips/
 	## Alternatively, the upstream sequences can be extracted from the full
-	## genome sequences with something like:
+	## genomic sequences with something like:
 	.
 	library(GenomicFeatures)
 	txdb <- makeTxDbFromUCSC("bosTau3", "refGene")
-	up1000seqs <- extractUpstreamSeqs(genome, txdb, width=1000)
+	up1000seqs <- extractUpstreamSeqs(bsg, txdb, width=1000)
 	.
 	## See ?extractUpstreamSeqs in the GenomicFeatures package for more
 	## information about this.

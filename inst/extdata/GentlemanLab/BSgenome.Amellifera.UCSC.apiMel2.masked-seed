@@ -1,6 +1,6 @@
 Package: BSgenome.Amellifera.UCSC.apiMel2.masked
-Title: Full masked genome sequences for Apis mellifera (UCSC version apiMel2)
-Description: Full genome sequences for Apis mellifera (Honey Bee) as provided by UCSC (apiMel2, Jan. 2005) and stored in Biostrings objects. The sequences are the same as in BSgenome.Amellifera.UCSC.apiMel2, except that each of them has the 3 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), and (3) the mask of repeats from RepeatMasker (RM mask). Only the AGAPS and AMB masks are "active" by default.
+Title: Full masked genomic sequences for Apis mellifera (UCSC version apiMel2)
+Description: Full genomic sequences for Apis mellifera (Honey Bee) as provided by UCSC (apiMel2, Jan. 2005) and stored in Biostrings objects. The sequences are the same as in BSgenome.Amellifera.UCSC.apiMel2, except that each of them has the 3 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), and (3) the mask of repeats from RepeatMasker (RM mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Amellifera.UCSC.apiMel2
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
@@ -8,9 +8,9 @@ organism_biocview: Apis_mellifera
 nmask_per_seq: 3
 SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/database/
 	RM masks: GroupOut.zip from http://hgdownload.cse.ucsc.edu/goldenPath/apiMel2/bigZips/
-PkgExamples: genome$Group1  # a MaskedDNAString object!
+PkgExamples: mbsg$Group1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
-	unmasked(genome$Group1)  # same as BSgenome.Amellifera.UCSC.apiMel2$Group1
+	unmasked(mbsg$Group1)  # same as BSgenome.Amellifera.UCSC.apiMel2$Group1
 masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Amellifera.UCSC.apiMel2/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .out

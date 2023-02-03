@@ -27,7 +27,7 @@
 
   See \code{?\link[BSgenome]{BSgenomeForge}} and the BSgenomeForge
   vignette (\code{vignette("BSgenomeForge")}) in the \pkg{BSgenome}
-  software package for how to make a BSgenome data package.
+  software package for how to create a BSgenome data package.
 }
 
 \author{@AUTHOR@}
@@ -36,24 +36,38 @@
   \itemize{
     \item \link[@REFPKGNAME@]{@REFPKGNAME@} in the \pkg{@REFPKGNAME@} package
           for information about how the sequences were obtained.
-    \item \link[BSgenome]{BSgenome} objects and the
-          \code{\link[BSgenome]{available.genomes}} function
-          in the \pkg{BSgenome} software package.
+
+    \item \link[BSgenome]{BSgenome} objects in the \pkg{BSgenome}
+          software package.
+
+    \item The \code{\link[GenomeInfoDb]{seqinfo}} getter and
+          \link[GenomeInfoDb]{Seqinfo} objects in the \pkg{GenomeInfoDb}
+          package.
+
+    \item The \code{\link[GenomeInfoDb]{seqlevelsStyle}} getter and
+          setter in the \pkg{GenomeInfoDb} package.
+
     \item \link[Biostrings]{MaskedDNAString} objects in the \pkg{Biostrings}
           package.
+
+    \item The \code{\link[BSgenome]{available.genomes}} function
+          in the \pkg{BSgenome} software package.
+
     \item The BSgenomeForge vignette (\code{vignette("BSgenomeForge")})
-          in the \pkg{BSgenome} software package for how to make a BSgenome
+          in the \pkg{BSgenome} software package for how to create a BSgenome
           data package.
   }
 }
 
 \examples{
 @PKGNAME@
-genome <- @PKGNAME@
-head(seqlengths(genome))
+mbsg <- @PKGNAME@
+head(seqlengths(mbsg))
+seqinfo(mbsg)
+
 @PKGEXAMPLES@
 
-if ("AGAPS" \%in\% masknames(genome)) {
+if ("AGAPS" \%in\% masknames(mbsg)) {
 
   ## Check that the assembly gaps contain only Ns:
   checkOnlyNsInGaps <- function(seq)
@@ -69,13 +83,17 @@ if ("AGAPS" \%in\% masknames(genome)) {
   ## from the cache:
   options(verbose=TRUE)
 
-  for (seqname in seqnames(genome)) {
+  for (seqname in seqnames(mbsg)) {
     cat("Checking sequence", seqname, "... ")
-    seq <- genome[[seqname]]
+    seq <- mbsg[[seqname]]
     checkOnlyNsInGaps(seq)
     cat("OK\n")
   }
 }
+
+## ---------------------------------------------------------------------
+## Genome-wide motif searching
+## ---------------------------------------------------------------------
 
 ## See the GenomeSearching vignette in the BSgenome software
 ## package for some examples of genome-wide motif searching using

@@ -1,6 +1,6 @@
 Package: BSgenome.Gaculeatus.UCSC.gasAcu1.masked
-Title: Full masked genome sequences for Gasterosteus aculeatus (UCSC version gasAcu1)
-Description: Full genome sequences for Gasterosteus aculeatus (Stickleback) as provided by UCSC (gasAcu1, Feb. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Gaculeatus.UCSC.gasAcu1, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Title: Full masked genomic sequences for Gasterosteus aculeatus (UCSC version gasAcu1)
+Description: Full genomic sequences for Gasterosteus aculeatus (Stickleback) as provided by UCSC (gasAcu1, Feb. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Gaculeatus.UCSC.gasAcu1, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Gaculeatus.UCSC.gasAcu1
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/
@@ -9,9 +9,9 @@ nmask_per_seq: 4
 SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/database/
 	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/
 	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/gasAcu1/bigZips/
-PkgExamples: genome$chrI  # a MaskedDNAString object!
+PkgExamples: mbsg$chrI  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
-	unmasked(genome$chrI)  # same as BSgenome.Gaculeatus.UCSC.gasAcu1$chrI
+	unmasked(mbsg$chrI)  # same as BSgenome.Gaculeatus.UCSC.gasAcu1$chrI
 masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/masks
 AGAPSfiles_name: gap.txt
 RMfiles_suffix: .fa.out

@@ -1,6 +1,6 @@
 Package: BSgenome.Hsapiens.UCSC.hg17
-Title: Full genome sequences for Homo sapiens (UCSC version hg17)
-Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg17, May 2004) and stored in Biostrings objects.
+Title: Full genomic sequences for Homo sapiens (UCSC version hg17)
+Description: Full genomic sequences for Homo sapiens (Human) as provided by UCSC (hg17, May 2004) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Homo sapiens
@@ -15,20 +15,20 @@ BSgenomeObjname: Hsapiens
 seqnames: paste("chr", c(1:22, "X", "Y", "M", "6_hla_hap1", "6_hla_hap2", paste(c((1:22)[-c(11, 14, 20, 21)], "X"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg17/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	.
 	## ---------------------------------------------------------------------	## Upstream sequences
 	## ---------------------------------------------------------------------
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
 	## upstream5000 sequences for hg17 are not included in the BSgenome data
 	## package anymore. However they can easily be extracted from the full
-	## genome sequences with something like:
+	## genomic sequences with something like:
 	.
 	library(GenomicFeatures)
 	txdb <- makeTxDbFromUCSC("hg17", "knownGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- getSeq(bsg, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome

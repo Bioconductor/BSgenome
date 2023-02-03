@@ -1,6 +1,6 @@
 Package: BSgenome.Mmulatta.UCSC.rheMac2.masked
-Title: Full masked genome sequences for Macaca mulatta (UCSC version rheMac2)
-Description: Full genome sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac2, Jan. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Mmulatta.UCSC.rheMac2, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.  NOTE: In most assemblies available at UCSC, Tandem Repeats Finder repeats were filtered to retain only the repeats with period <= 12.  However, the filtering was omitted for this assembly, so the TRF masks contain all Tandem Repeats Finder results.
+Title: Full masked genomic sequences for Macaca mulatta (UCSC version rheMac2)
+Description: Full genomic sequences for Macaca mulatta (Rhesus) as provided by UCSC (rheMac2, Jan. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Mmulatta.UCSC.rheMac2, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.  NOTE: In most assemblies available at UCSC, Tandem Repeats Finder repeats were filtered to retain only the repeats with period <= 12.  However, the filtering was omitted for this assembly, so the TRF masks contain all Tandem Repeats Finder results.
 Version: 1.3.99
 RefPkgname: BSgenome.Mmulatta.UCSC.rheMac2
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/
@@ -9,15 +9,15 @@ nmask_per_seq: 4
 SrcDataFiles: AGAPS masks: gap.txt.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/database/
 	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
 	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rheMac2/bigZips/
-PkgExamples: genome$chr1  # a MaskedDNAString object!
+PkgExamples: mbsg$chr1  # a MaskedDNAString object!
 	## NOTE: In most assemblies available at UCSC, Tandem Repeats
 	## Finder repeats were filtered to retain only the repeats
 	## with period <= 12.  However, the filtering was omitted for
 	## this assembly, so, despite the description being displayed
 	## for this mask, it contains all the Tandem Repeats Finder
 	## results.
-	masks(genome$chr1)$TRF
+	masks(mbsg$chr1)$TRF
 	## To get rid of the masks altogether:
-	unmasked(genome$chr1)  # same as BSgenome.Mmulatta.UCSC.rheMac2$chr1
+	unmasked(mbsg$chr1)  # same as BSgenome.Mmulatta.UCSC.rheMac2$chr1
 masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Mmulatta.UCSC.rheMac2/masks
 AGAPSfiles_name: gap.txt.gz

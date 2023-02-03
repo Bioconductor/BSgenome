@@ -1,6 +1,6 @@
 Package: BSgenome.Ptroglodytes.UCSC.panTro2.masked
-Title: Full masked genome sequences for Pan troglodytes (UCSC version panTro2)
-Description: Full genome sequences for Pan troglodytes (Chimp) as provided by UCSC (panTro2, Mar. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Ptroglodytes.UCSC.panTro2, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Title: Full masked genomic sequences for Pan troglodytes (UCSC version panTro2)
+Description: Full genomic sequences for Pan troglodytes (Chimp) as provided by UCSC (panTro2, Mar. 2006) and stored in Biostrings objects. The sequences are the same as in BSgenome.Ptroglodytes.UCSC.panTro2, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Ptroglodytes.UCSC.panTro2
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
@@ -9,8 +9,8 @@ nmask_per_seq: 4
 SrcDataFiles: AGAPS masks: gap.txt.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/panTro2/database/
 	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
 	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/panTro2/bigZips/
-PkgExamples: genome$chr1  # a MaskedDNAString object!
+PkgExamples: mbsg$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
-	unmasked(genome$chr1)  # same as BSgenome.Ptroglodytes.UCSC.panTro2$chr1
+	unmasked(mbsg$chr1)  # same as BSgenome.Ptroglodytes.UCSC.panTro2$chr1
 masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Ptroglodytes.UCSC.panTro2/masks
 AGAPSfiles_name: gap.txt

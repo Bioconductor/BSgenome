@@ -1,6 +1,6 @@
 Package: BSgenome.Mmusculus.UCSC.mm10
-Title: Full genome sequences for Mus musculus (UCSC version mm10, based on GRCm38.p6)
-Description: Full genome sequences for Mus musculus (Mouse) as provided by UCSC (mm10, based on GRCm38.p6) and stored in Biostrings objects.
+Title: Full genomic sequences for Mus musculus (UCSC version mm10, based on GRCm38.p6)
+Description: Full genomic sequences for Mus musculus (Mouse) as provided by UCSC (mm10, based on GRCm38.p6) and stored in Biostrings objects.
 Version: 1.4.3
 organism: Mus musculus
 common_name: Mouse
@@ -11,6 +11,6 @@ source_url: https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/p6/
 organism_biocview: Mus_musculus
 BSgenomeObjname: Mmusculus
 SrcDataFiles: mm10.p6.2bit, downloaded from https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/p6/ on July 1st, 2021
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 seqs_srcdir: /home/hpages/BSgenomeForge/srcdata/BSgenome.Mmusculus.UCSC.mm10/seqs
 seqfile_name: mm10.p6.2bit

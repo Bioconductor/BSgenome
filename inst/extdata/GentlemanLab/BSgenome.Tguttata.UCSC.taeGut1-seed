@@ -1,6 +1,6 @@
 Package: BSgenome.Tguttata.UCSC.taeGut1
-Title: Full genome sequences for Taeniopygia guttata (UCSC version taeGut1)
-Description: Full genome sequences for Taeniopygia guttata (Zebra finch) as provided by UCSC (taeGut1, Jul. 2008) and stored in Biostrings objects.
+Title: Full genomic sequences for Taeniopygia guttata (UCSC version taeGut1)
+Description: Full genomic sequences for Taeniopygia guttata (Zebra finch) as provided by UCSC (taeGut1, Jul. 2008) and stored in Biostrings objects.
 Version: 1.4.2
 organism: Taeniopygia guttata
 common_name: Zebra finch
@@ -14,5 +14,5 @@ BSgenomeObjname: Tguttata
 seqnames: paste0("chr", c(1, "1A", "1B", 2:4, "4A", 5:28, "LGE22", "LG2", "LG5", "Z", "M", "Un", paste0(c(1, "1A", "1B", 2:4, "4A", 5:28, "LGE22", "Z"), "_random")))
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.tar.gz from http://hgdownload.soe.ucsc.edu/goldenPath/taeGut1/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Tguttata.UCSC.taeGut1/seqs

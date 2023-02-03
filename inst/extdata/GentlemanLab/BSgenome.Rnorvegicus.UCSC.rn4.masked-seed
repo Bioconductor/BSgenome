@@ -1,6 +1,6 @@
 Package: BSgenome.Rnorvegicus.UCSC.rn4.masked
-Title: Full masked genome sequences for Rattus norvegicus (UCSC version rn4)
-Description: Full genome sequences for Rattus norvegicus (Rat) as provided by UCSC (rn4, Nov. 2004) and stored in Biostrings objects. The sequences are the same as in BSgenome.Rnorvegicus.UCSC.rn4, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
+Title: Full masked genomic sequences for Rattus norvegicus (UCSC version rn4)
+Description: Full genomic sequences for Rattus norvegicus (Rat) as provided by UCSC (rn4, Nov. 2004) and stored in Biostrings objects. The sequences are the same as in BSgenome.Rnorvegicus.UCSC.rn4, except that each of them has the 4 following masks on top: (1) the mask of assembly gaps (AGAPS mask), (2) the mask of intra-contig ambiguities (AMB mask), (3) the mask of repeats from RepeatMasker (RM mask), and (4) the mask of repeats from Tandem Repeats Finder (TRF mask). Only the AGAPS and AMB masks are "active" by default.
 Version: 1.3.99
 RefPkgname: BSgenome.Rnorvegicus.UCSC.rn4
 source_url: http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
@@ -9,7 +9,7 @@ nmask_per_seq: 4
 SrcDataFiles: AGAPS masks: all the chr*_gap.txt.gz files from ftp://hgdownload.cse.ucsc.edu/goldenPath/rn4/database/
 	RM masks: chromOut.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
 	TRF masks: chromTrf.tar.gz from http://hgdownload.cse.ucsc.edu/goldenPath/rn4/bigZips/
-PkgExamples: genome$chr1  # a MaskedDNAString object!
+PkgExamples: mbsg$chr1  # a MaskedDNAString object!
 	## To get rid of the masks altogether:
-	unmasked(genome$chr1)  # same as BSgenome.Rnorvegicus.UCSC.rn4$chr1
+	unmasked(mbsg$chr1)  # same as BSgenome.Rnorvegicus.UCSC.rn4$chr1
 masks_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn4/masks

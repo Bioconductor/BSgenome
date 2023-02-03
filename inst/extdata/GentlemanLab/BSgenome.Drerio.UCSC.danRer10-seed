@@ -1,6 +1,6 @@
 Package: BSgenome.Drerio.UCSC.danRer10
-Title: Full genome sequences for Danio rerio (UCSC version danRer10)
-Description: Full genome sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer10, Sep. 2014) and stored in Biostrings objects.
+Title: Full genomic sequences for Danio rerio (UCSC version danRer10)
+Description: Full genomic sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer10, Sep. 2014) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: GenomicFeatures
 organism: Danio rerio
@@ -14,7 +14,7 @@ organism_biocview: Danio_rerio
 BSgenomeObjname: Drerio
 circ_seqs: "chrM"
 SrcDataFiles: danRer10.2bit from http://hgdownload.soe.ucsc.edu/goldenPath/danRer10/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	.
 	## ---------------------------------------------------------------------
 	## Extract the upstream sequences
@@ -22,11 +22,11 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## The upstream sequences located in
 	##   http://hgdownload.cse.ucsc.edu/goldenPath/danRer10/bigZips/
 	## are based on RefSeq genes (RefSeq Genes track in the Genome Browser).
-	## These can easily be extracted from the full genome sequences with:
+	## These can easily be extracted from the full genomic sequences with:
 	.
 	library(GenomicFeatures)
 	refGene_txdb <- suppressWarnings(makeTxDbFromUCSC("danRer10", "refGene"))
-	refGene_up1000seqs <- extractUpstreamSeqs(genome, refGene_txdb)
+	refGene_up1000seqs <- extractUpstreamSeqs(bsg, refGene_txdb)
 	.
 	## Note that you can make a TxDb object from various annotation
 	## resources. See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and

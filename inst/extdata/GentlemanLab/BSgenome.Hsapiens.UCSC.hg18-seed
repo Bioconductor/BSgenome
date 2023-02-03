@@ -1,6 +1,6 @@
 Package: BSgenome.Hsapiens.UCSC.hg18
-Title: Full genome sequences for Homo sapiens (UCSC version hg18)
-Description: Full genome sequences for Homo sapiens (Human) as provided by UCSC (hg18, Mar. 2006) and stored in Biostrings objects.
+Title: Full genomic sequences for Homo sapiens (UCSC version hg18)
+Description: Full genomic sequences for Homo sapiens (Human) as provided by UCSC (hg18, Mar. 2006) and stored in Biostrings objects.
 Version: 1.4.2
 Suggests: TxDb.Hsapiens.UCSC.hg18.knownGene
 organism: Homo sapiens
@@ -15,7 +15,7 @@ BSgenomeObjname: Hsapiens
 seqnames: paste("chr", c(1:22, "X", "Y", "M", "5_h2_hap1", "6_cox_hap1", "6_qbl_hap2", "22_h2_hap1", paste(c((1:22)[-c(12, 14, 20)], "X"), "_random", sep="")), sep="")
 circ_seqs: "chrM"
 SrcDataFiles: chromFa.zip from http://hgdownload.cse.ucsc.edu/goldenPath/hg18/bigZips/
-PkgExamples: genome$chr1  # same as genome[["chr1"]]
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	.
 	## ---------------------------------------------------------------------
 	## Upstream sequences
@@ -23,13 +23,13 @@ PkgExamples: genome$chr1  # same as genome[["chr1"]]
 	## Starting with BioC 3.0, the upstream1000, upstream2000, and
 	## upstream5000 sequences for hg18 are not included in the BSgenome data
 	## package anymore. However they can easily be extracted from the full
-	## genome sequences with something like:
+	## genomic sequences with something like:
 	.
 	library(TxDb.Hsapiens.UCSC.hg18.knownGene)
 	txdb <- TxDb.Hsapiens.UCSC.hg18.knownGene
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
-	up1000seqs <- getSeq(genome, up1000)
+	up1000seqs <- getSeq(bsg, up1000)
 	.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
 	## that contains a gene model based on the exact same reference genome
