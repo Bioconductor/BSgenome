@@ -9,8 +9,8 @@ Suggests: @SUGGESTS@
 License: @LICENSE@
 organism: @ORGANISM@
 common_name: @COMMONNAME@
-genome: @GENOME@
 provider: @PROVIDER@
+genome: @GENOME@
 release_date: @RELEASEDATE@
 source_url: @SOURCEURL@
 biocViews: AnnotationData, Genetics, BSgenome, @ORGANISMBIOCVIEW@
