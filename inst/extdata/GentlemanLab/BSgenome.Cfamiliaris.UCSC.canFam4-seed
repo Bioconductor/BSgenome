@@ -1,0 +1,42 @@
+Package: BSgenome.Cfamiliaris.UCSC.canFam4
+Title: Full genomic sequences for Canis lupus familiaris (UCSC version canFam4)
+Description: Full genomic sequences for Canis lupus familiaris (Dog) as provided by UCSC (canFam4, Mar. 2020) and stored in Biostrings objects.
+Version: 1.4.2
+Suggests: GenomicFeatures
+organism: Canis lupus familiaris
+common_name: Dog
+provider: UCSC
+provider_version: canFam4
+release_date: Mar. 2020
+release_name: Uppsala University UU_Cfam_GSD_1.0
+source_url: http://hgdownload.cse.ucsc.edu/goldenPath/canFam4/bigZips/
+organism_biocview: Canis_familiaris
+BSgenomeObjname: Cfamiliaris
+seqnames: paste("chr", c(1:38, "X", "M"), sep="")
+circ_seqs: "chrM"
+mseqnames: "chrUn"
+SrcDataFiles: canFam4.fa.gz from http://hgdownload.cse.ucsc.edu/goldenPath/canFam4/bigZips/
+PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
+	.
+	## ---------------------------------------------------------------------
+	## Upstream sequences
+	## ---------------------------------------------------------------------
+	## Starting with BioC 3.0, the upstream1000, upstream2000, and
+	## upstream5000 sequences for canFam4 are not included in the BSgenome
+	## data package anymore. However they can easily be extracted from the
+	## full genomic sequences with something like:
+	.
+	library(GenomicFeatures)
+	txdb <- makeTxDbFromUCSC("canFam4", "refGene")
+	gn <- sort(genes(txdb))
+	up1000 <- flank(gn, width=1000)
+	up1000seqs <- getSeq(bsg, up1000)
+	.
+	## IMPORTANT: Make sure you use a TxDb package (or TxDb object),
+	## that contains a gene model based on the exact same reference genome
+	## as the BSgenome object you pass to getSeq(). Note that you can make
+	## your own custom TxDb object from various annotation resources.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
+	## and makeTxDbFromGFF() functions in the GenomicFeatures
+	## package.
+seqs_srcdir: /Users/it/Desktop/Development/working/Rlang/seqfiles
