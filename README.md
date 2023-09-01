@@ -1,4 +1,7 @@
-[<img src="https://www.bioconductor.org/images/logo/jpg/bioconductor_logo_rgb.jpg" width="200" align="right"/>](https://bioconductor.org/)
+[<img src="https://www.bioconductor.org/images/logo/jpg/bioconductor_logo_rgb.jpg" width="200" align="right"/>](https://bioconductor.org/)  
+
+[![R build
+status](https://github.com/Bioconductor/BSgenome/workflows/rworkflows/badge.svg)](https://github.com/Bioconductor/BSgenome/actions)
 
 **BSgenome** is an R/Bioconductor package that provides the software infrastructure for efficient representation of full genomes and their SNPs.
 
