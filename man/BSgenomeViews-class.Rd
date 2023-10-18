@@ -152,15 +152,13 @@ BSgenomeViews(subject, granges)
 
 \section{Constructors}{
   \describe{
-    \item{}{
-      \code{BSgenomeViews(subject, granges)}:
+    \item{\code{BSgenomeViews(subject, granges)}:}{
       Make a BSgenomeViews object by putting the views specified by
       \code{granges} on top of the genomic sequences stored in \code{subject}.
       See above for how argument \code{subject} and \code{granges} should be
       specified.
     }
-    \item{}{
-      \code{Views(subject, granges)}: Equivalent to
+    \item{\code{Views(subject, granges)}:}{ Equivalent to
       \code{BSgenomeViews(subject, granges)}. Provided for convenience.
     }
   }
@@ -169,37 +167,29 @@ BSgenomeViews(subject, granges)
 \section{Accessors}{
   In the code snippets below, \code{x} is a BSgenomeViews object.
   \describe{
-    \item{}{
-      \code{subject(x)}: Return the \link{BSgenome} object containing the
+    \item{\code{subject(x)}:}{ Return the \link{BSgenome} object containing the
       full genomic sequences on top of which the views in \code{x} are
       defined.
     }
-    \item{}{
-      \code{granges(x, use.mcols=FALSE)}: Return the genomic ranges of the
+    \item{\code{granges(x, use.mcols=FALSE)}:}{ Return the genomic ranges of the
       views as a \link[GenomicRanges]{GRanges} object. These ranges are
       relative to the genomic sequences stored in \code{subject(x)}.
     }
-    \item{}{
-      \code{length(x)}: The number of views in \code{x}.
+    \item{\code{length(x)}:}{ The number of views in \code{x}.
     }
-    \item{}{
-      \code{names(x)}: The names of the views in \code{x}.
+    \item{\code{names(x)}:}{ The names of the views in \code{x}.
     }
-    \item{}{
-      \code{seqnames(x)}, \code{start(x)}, \code{end(x)}, \code{width(x)},
-      \code{strand(x)}: Equivalent to \code{seqnames(granges(x))},
+    \item{\code{seqnames(x)}, \code{start(x)}, \code{end(x)}, \code{width(x)},
+      \code{strand(x)}:}{ Equivalent to \code{seqnames(granges(x))},
       \code{start(granges(x))}, \code{end(granges(x))},
       \code{width(granges(x))}, \code{strand(granges(x))}, respectively.
     }
-    \item{}{
-      \code{ranges(x, use.mcols=FALSE)}: Equivalent to
+    \item{\code{ranges(x, use.mcols=FALSE)}:}{ Equivalent to
       \code{ranges(granges(x, use.mcols), use.mcols)}.
     }
-    \item{}{
-      \code{elementNROWS(x)}: Equivalent to \code{width(x)}.
+    \item{\code{elementNROWS(x)}:}{ Equivalent to \code{width(x)}.
     }
-    \item{}{
-      \code{seqinfo(x)}: Equivalent to \code{seqinfo(subject(x))} and to
+    \item{\code{seqinfo(x)}:}{ Equivalent to \code{seqinfo(subject(x))} and to
       \code{seqinfo(granges(x))} (both are guaranteed to be the same).
       See \code{?\link[GenomeInfoDb]{seqinfo}} in the \pkg{GenomeInfoDb}
       package for more information.
@@ -210,29 +200,24 @@ BSgenomeViews(subject, granges)
 \section{Coercion}{
   In the code snippets below, \code{x} is a BSgenomeViews object.
   \describe{
-    \item{}{
-      \code{as(x, "DNAStringSet")}: Turn \code{x} into a
+    \item{\code{as(x, "DNAStringSet")}:}{ Turn \code{x} into a
       \link[Biostrings]{DNAStringSet} object by extxracting the DNA sequence
       corresponding to each view. Alternatively \code{as(x, "XStringSet")}
       can be used for this, and is equivalent to \code{as(x, "DNAStringSet")}.
     }
-    \item{}{
-      \code{as.character(x)}: Equivalent to
+    \item{\code{as.character(x)}:}{ Equivalent to
       \code{as.character(as(x, "DNAStringSet"))}.
     }
-    \item{}{
-      \code{as.data.frame(x)}: Turn \code{x} into a data.frame.
+    \item{\code{as.data.frame(x)}:}{ Turn \code{x} into a data.frame.
     }
   }
 }
 
 \section{Subsetting}{
   \describe{
-    \item{}{
-      \code{x[i]}: Select the views specified by \code{i}.
+    \item{\code{x[i]}:}{ Select the views specified by \code{i}.
     }
-    \item{}{
-      \code{x[[i]]}: Extract the one view specified by \code{i}.
+    \item{\code{x[[i]]}:}{ Extract the one view specified by \code{i}.
     }
   }
 }

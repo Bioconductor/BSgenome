@@ -12,12 +12,12 @@
 \title{Export a BSgenome object as a FASTA or twoBit file}
 
 \description{
-  \code{\link[rtracklayer]{export}} methods for \link{BSgenome} objects.
+  \code{\link[BiocIO]{export}} methods for \link{BSgenome} objects.
 
-  NOTE: The \code{\link[rtracklayer]{export}} generic function and most of
-  its methods are defined and documented in the \pkg{rtracklayer} package.
-  This man page only documents the 2 \code{\link[rtracklayer]{export}}
-  methods define in the \pkg{BSgenome} package.
+  NOTE: The \code{\link[BiocIO]{export}} generic function and most of
+  its methods are defined and documented in the \pkg{BiocIO} package.
+  This man page only documents the 2 \code{\link[BiocIO]{export}}
+  methods defined in the \pkg{BSgenome} package.
 }
 
 \usage{
@@ -36,11 +36,11 @@
     path to a FASTA or twoBit file, in which case either the file extension
     or the \code{format} argument needs to be \code{"fasta"}, \code{"twoBit"},
     or \code{"2bit"}.
-    Also note that in this case, the \code{\link[rtracklayer]{export}} method
+    Also note that in this case, the \code{\link[BiocIO]{export}} method
     that is called is either the method with signature
     \code{c("ANY", "character", "missing")} or the method with signature
     \code{c("ANY", "character", "character")}, both defined in the
-    \pkg{rtracklayer} package. If \code{object} is a \link{BSgenome} object
+    \pkg{BiocIO} package. If \code{object} is a \link{BSgenome} object
     and the file extension or the \code{format} argument is
     \code{"fasta"}, \code{"twoBit"}, or \code{"2bit"}, then the flow
     eventually reaches one of 2 methods documented here.
@@ -67,8 +67,10 @@
   \itemize{
     \item \link{BSgenome} objects.
 
-    \item The \code{\link[rtracklayer]{export}} generic, and
-          \link[rtracklayer]{FastaFile} and \link[rtracklayer]{TwoBitFile}
+    \item The \code{\link[BiocIO]{export}} generic function in the
+          \pkg{BiocIO} package.
+
+    \item \link[rtracklayer]{FastaFile} and \link[rtracklayer]{TwoBitFile}
           objects in the \pkg{rtracklayer} package.
   }
 }

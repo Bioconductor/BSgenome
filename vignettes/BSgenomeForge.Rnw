@@ -79,6 +79,12 @@ This vignette describes the process of forging a \term{BSgenome data package}.
 It is intended for Bioconductor users who want to make a new \term{BSgenome
 data package}, not for regular users of these packages.
 
+IMPORTANT NOTE: Starting with Bioconductor 3.17, a new package, the
+\Rpackage{BSgenomeForge} package, provides more user-friendly tools for
+creating a BSgenome data package from an NCBI assembly or UCSC genome.
+However the process described in this vignette still applies if your assembly
+or genome is not from NCBI or UCSC.
+
 Start {\R} (make sure you are using the latest release version), load the
 \Rpackage{BSgenome} package, and use the \Rfunction{available.genomes}
 function to get the list of \term{BSgenome data packages} available

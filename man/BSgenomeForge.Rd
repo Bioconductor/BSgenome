@@ -20,6 +20,11 @@
 
 \description{
   A set of functions for making a BSgenome data package.
+
+  IMPORTANT NOTE: A new package, the \pkg{BSgenomeForge} package,
+  provides more user-friendly tools for creating a BSgenome data package
+  from an NCBI assembly or UCSC genome. However, if your assembly or genome
+  is not from NCBI or UCSC, you should still use the tools documented below.
 }
 
 \usage{
@@ -149,6 +154,19 @@ forgeMasksFiles(seqnames, nmask_per_seq,
 }
 
 \author{H. Pagès}
+
+\seealso{
+  \itemize{
+    \item \code{\link[BSgenomeForge]{forgeBSgenomeDataPkgFromNCBI}} and
+          \code{\link[BSgenomeForge]{forgeBSgenomeDataPkgFromUCSC}} in the
+          \pkg{BSgenomeForge} package.
+
+    \item \code{\link{available.genomes}} to find BSgenome data packages
+          available in Bioconductor.
+
+    \item \link{BSgenome} objects.
+  }
+}
 
 \examples{
 seqs_srcdir <- system.file("extdata", package="BSgenome")

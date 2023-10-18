@@ -11,8 +11,10 @@ import(GenomeInfoDb)
 import(GenomicRanges)
 import(XVector)
 import(Biostrings)
-import(Rsamtools)
+importFrom(BiocIO, export)
+importMethodsFrom(BiocIO, export)
 import(rtracklayer)
+import(Rsamtools)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

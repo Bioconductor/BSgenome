@@ -2,7 +2,7 @@
 ### Some "export" methods for BSgenome objects
 ### -------------------------------------------------------------------------
 ###
-### Note: the export() generic is defined in the rtracklayer package.
+### Note: the export() generic is defined in the BiocIO package.
 ###
 
 
