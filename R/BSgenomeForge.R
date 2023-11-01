@@ -112,10 +112,18 @@ getSeqlengths <- function(seqnames, prefix="", suffix=".fa", seqs_srcdir=".",
         USE.NAMES=TRUE
     )
     if (!is.na(genome)) {
-        expected <- seqlengths(Seqinfo(genome=genome))
-        if (!identical(expected[names(ans)], ans))
-            stop("the sequences in the files have lengths that don't match ",
-                 "the lengths reported by 'Seqinfo(genome=\"", genome, "\")'")
+        si <- try(Seqinfo(genome=genome), silent=TRUE)
+        if (inherits(si, "try-error")) {
+            warning(wmsg("genome is unknown ('Seqinfo(genome=\"",
+                         genome, "\")' failed) ==> unable to check ",
+                         "the lengths of the sequences in the files"))
+        } else {
+            expected <- seqlengths(si)[names(ans)]
+            if (!identical(expected, ans))
+                stop(wmsg("the sequences in the files have lengths ",
+                          "that don't match the lengths reported ",
+                          "by 'Seqinfo(genome=\"", genome, "\")'"))
+        }
     }
     ans
 }
