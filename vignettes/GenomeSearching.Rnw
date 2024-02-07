@@ -74,11 +74,8 @@ version of Bioconductor (you need an internet connection so that
 \Rfunction{available.genomes} can query the Bioconductor package
 repositories).
 
-More genomes can be added if necessary. Note that the process of making a
-BSgenome data package is not yet documented but you are welcome to ask for
-help on the bioc-devel mailing list
-(\url{http://bioconductor.org/docs/mailList.html}) if you need a genome
-that is not yet available.
+Note that the \Rpackage{BSgenomeForge} package provides tools that you
+can use to make your own BSgenome data package.
 
 
 
