@@ -2,7 +2,7 @@ Package: BSgenome.Rnorvegicus.UCSC.rn6
 Title: Full genomic sequences for Rattus norvegicus (UCSC version rn6)
 Description: Full genomic sequences for Rattus norvegicus (Rat) as provided by UCSC (rn6, Jul. 2014) and stored in Biostrings objects.
 Version: 1.4.2
-Suggests: GenomicFeatures
+Suggests: txdbmaker
 organism: Rattus norvegicus
 common_name: Rat
 provider: UCSC
@@ -23,7 +23,7 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## The upstream sequences can easily be extracted from the full genome
 	## sequences with something like:
 	.
-	library(GenomicFeatures)
+	library(txdbmaker)
 	txdb <- makeTxDbFromUCSC("rn6", tablename="refGene")
 	up1000seqs <- extractUpstreamSeqs(bsg, txdb, width=1000)
 	.
@@ -32,7 +32,7 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## a genome with sequences identical to the sequences in rn6). Note
 	## that you can make a TxDb object from various annotation resources.
 	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
-	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
+	## makeTxDbFromGFF() functions in the txdbmaker package for more
 	## information.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Rnorvegicus.UCSC.rn6/seqs
 seqfile_name: rn6.2bit

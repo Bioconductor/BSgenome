@@ -2,7 +2,7 @@ Package: BSgenome.Gaculeatus.UCSC.gasAcu1
 Title: Full genomic sequences for Gasterosteus aculeatus (UCSC version gasAcu1)
 Description: Full genomic sequences for Gasterosteus aculeatus (Stickleback) as provided by UCSC (gasAcu1, Feb. 2006) and stored in Biostrings objects.
 Version: 1.4.2
-Suggests: GenomicFeatures
+Suggests: txdbmaker
 organism: Gasterosteus aculeatus 
 common_name: Stickleback 
 provider: UCSC
@@ -25,7 +25,7 @@ PkgExamples: bsg$chrI # same as bsg[["chrI"]]
 	## data package anymore. However they can easily be extracted from the
 	## full genomic sequences with something like:
 	.
-	library(GenomicFeatures)
+	library(txdbmaker)
 	txdb <- makeTxDbFromUCSC("gasAcu1", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
@@ -35,7 +35,6 @@ PkgExamples: bsg$chrI # same as bsg[["chrI"]]
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
 	## your own custom TxDb object from various annotation resources.
-	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
-	## and makeTxDbFromGFF() functions in the GenomicFeatures
-	## package.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
+	## makeTxDbFromGFF() functions in the txdbmaker package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Gaculeatus.UCSC.gasAcu1/seqs

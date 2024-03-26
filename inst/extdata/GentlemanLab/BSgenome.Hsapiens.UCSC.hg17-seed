@@ -2,7 +2,7 @@ Package: BSgenome.Hsapiens.UCSC.hg17
 Title: Full genomic sequences for Homo sapiens (UCSC version hg17)
 Description: Full genomic sequences for Homo sapiens (Human) as provided by UCSC (hg17, May 2004) and stored in Biostrings objects.
 Version: 1.4.2
-Suggests: GenomicFeatures
+Suggests: txdbmaker
 organism: Homo sapiens
 common_name: Human
 provider: UCSC
@@ -24,7 +24,7 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## package anymore. However they can easily be extracted from the full
 	## genomic sequences with something like:
 	.
-	library(GenomicFeatures)
+	library(txdbmaker)
 	txdb <- makeTxDbFromUCSC("hg17", "knownGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
@@ -34,8 +34,7 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
 	## your own custom TxDb object from various annotation resources.
-	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
-	## and makeTxDbFromGFF() functions in the GenomicFeatures
-	## package.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
+	## makeTxDbFromGFF() functions in the txdbmaker package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg17/seqs
 ondisk_seq_format: rda

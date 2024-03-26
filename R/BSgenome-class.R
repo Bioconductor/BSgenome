@@ -488,7 +488,7 @@ setMethod("show", "BSgenome",
                 "  See the makeTxDbFromUCSC(), ",
                 "makeTxDbFromBiomart(), and\n",
                 "  makeTxDbFromGFF() functions in the ",
-                "GenomicFeatures package."
+                "txdbmaker package."
             )
             .Defunct(msg=paste0(msg, collapse=""))
         }

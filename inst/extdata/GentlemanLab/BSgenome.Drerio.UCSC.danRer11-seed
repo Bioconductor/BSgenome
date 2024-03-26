@@ -2,7 +2,7 @@ Package: BSgenome.Drerio.UCSC.danRer11
 Title: Full genomic sequences for Danio rerio (UCSC version danRer11)
 Description: Full genomic sequences for Danio rerio (Zebrafish) as provided by UCSC (danRer11, May 2017) and stored in Biostrings objects.
 Version: 1.4.2
-Suggests: GenomicFeatures
+Suggests: txdbmaker
 organism: Danio rerio
 common_name: Zebrafish
 provider: UCSC
@@ -24,13 +24,13 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## are based on RefSeq genes (RefSeq Genes track in the Genome Browser).
 	## These can easily be extracted from the full genomic sequences with:
 	.
-	library(GenomicFeatures)
+	library(txdbmaker)
 	refGene_txdb <- suppressWarnings(makeTxDbFromUCSC("danRer11", "refGene"))
 	refGene_up1000seqs <- extractUpstreamSeqs(bsg, refGene_txdb)
 	.
 	## Note that you can make TxDb objects from various annotation
 	## resources. See the makeTxDbFromUCSC(), makeTxDbFromEnsembl(), and
-	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
+	## makeTxDbFromGFF() functions in the txdbmaker package for more
 	## information.
 	## IMPORTANT: Make sure you use a TxDb package (or TxDb object) that
 	## contains a gene model based on danRer11 or on a compatible genome

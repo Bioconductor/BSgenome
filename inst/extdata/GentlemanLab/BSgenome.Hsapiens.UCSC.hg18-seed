@@ -35,8 +35,7 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
 	## your own custom TxDb object from various annotation resources.
-	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
-	## and makeTxDbFromGFF() functions in the GenomicFeatures
-	## package.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
+	## makeTxDbFromGFF() functions in the txdbmaker package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Hsapiens.UCSC.hg18/seqs
 ondisk_seq_format: rda

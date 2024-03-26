@@ -2,7 +2,7 @@ Package: BSgenome.Dmelanogaster.UCSC.dm6
 Title: Full genomic sequences for Drosophila melanogaster (UCSC version dm6)
 Description: Full genomic sequences for Drosophila melanogaster (Fly) as provided by UCSC (dm6, Aug. 2014) and stored in Biostrings objects.
 Version: 1.4.2
-Suggests: GenomicFeatures
+Suggests: txdbmaker
 organism: Drosophila melanogaster
 common_name: Fly
 provider: UCSC
@@ -23,7 +23,7 @@ PkgExamples: bsg$chr2L  # same as bsg[["chr2L"]]
 	## The upstream sequences can easily be extracted from the full genome
 	## sequences with something like:
 	.
-	library(GenomicFeatures)
+	library(txdbmaker)
 	txdb <- makeTxDbFromUCSC("dm6", tablename="refGene")
 	up1000seqs <- extractUpstreamSeqs(bsg, txdb, width=1000)
 	.
@@ -32,7 +32,7 @@ PkgExamples: bsg$chr2L  # same as bsg[["chr2L"]]
 	## a genome with sequences identical to the sequences in dm6). Note
 	## that you can make a TxDb object from various annotation resources.
 	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
-	## makeTxDbFromGFF() functions in the GenomicFeatures package for more
+	## makeTxDbFromGFF() functions in the txdbmaker package for more
 	## information.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Dmelanogaster.UCSC.dm6/seqs
 seqfile_name: dm6.2bit

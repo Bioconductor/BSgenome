@@ -2,7 +2,6 @@ Package: BSgenome.Celegans.UCSC.ce11
 Title: Full genomic sequences for Caenorhabditis elegans (UCSC version ce11)
 Description: Full genomic sequences for Caenorhabditis elegans (Worm) as provided by UCSC (ce11, Feb. 2013) and stored in Biostrings objects.
 Version: 1.4.2
-Suggests: GenomicFeatures
 organism: Caenorhabditis elegans
 common_name: Worm
 provider: UCSC

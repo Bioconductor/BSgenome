@@ -2,7 +2,7 @@ Package: BSgenome.Btaurus.UCSC.bosTau6
 Title: Full genomic sequences for Bos taurus (UCSC version bosTau6)
 Description: Full genomic sequences for Bos taurus (Cow) as provided by UCSC (bosTau6, Nov. 2009) and stored in Biostrings objects.
 Version: 1.4.2
-Suggests: GenomicFeatures
+Suggests: txdbmaker
 organism: Bos taurus
 common_name: Cow
 provider: UCSC
@@ -25,7 +25,7 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## data package anymore. However they can easily be extracted from the
 	## full genomic sequences with something like:
 	.
-	library(GenomicFeatures)
+	library(txdbmaker)
 	txdb <- makeTxDbFromUCSC("bosTau6", "refGene")
 	gn <- sort(genes(txdb))
 	up1000 <- flank(gn, width=1000)
@@ -35,7 +35,6 @@ PkgExamples: bsg$chr1  # same as bsg[["chr1"]]
 	## that contains a gene model based on the exact same reference genome
 	## as the BSgenome object you pass to getSeq(). Note that you can make
 	## your own custom TxDb object from various annotation resources.
-	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(),
-	## and makeTxDbFromGFF() functions in the GenomicFeatures
-	## package.
+	## See the makeTxDbFromUCSC(), makeTxDbFromBiomart(), and
+	## makeTxDbFromGFF() functions in the txdbmaker package.
 seqs_srcdir: /fh/fast/morgan_m/BioC/BSgenomeForge/srcdata/BSgenome.Btaurus.UCSC.bosTau6/seqs
