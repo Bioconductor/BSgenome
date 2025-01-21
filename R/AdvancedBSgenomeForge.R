@@ -15,9 +15,10 @@ call_fun_in_BSgenomeForge <- function(fun, ...)
 {
     load_package_gracefully("BSgenomeForge", "starting with BioC 3.19, ",
                             "calling ", fun, "()")
-    msg <- c(fun, "() has moved to the BSgenomeForge package. Please ",
-             "call BSgenomeForge::", fun, "() to get rid of this warning.")
-    warning(wmsg(msg))
+    msg <- c(fun, "() has moved from BSgenome to the BSgenomeForge package, ",
+             "and is formally deprecated in BSgenome >= 1.75.1. Please call ",
+             "BSgenomeForge::", fun, "() to get rid of this warning.")
+    .Deprecated(msg=wmsg(msg))
     FUN <- base::get(fun, envir=asNamespace("BSgenomeForge"), inherits=FALSE)
     do.call(FUN, list(...))
 }
