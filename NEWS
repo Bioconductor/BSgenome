@@ -1,3 +1,14 @@
+CHANGES IN VERSION 1.76.0
+-------------------------
+
+DEPRECATED AND DEFUNCT
+
+    o Formally deprecate BSgenome::forgeMasksFile, BSgenome::forgeSeqFiles,
+      BSgenome::forgeSeqlengthsRdaFile, BSgenome::forgeSeqlengthsRdsFile,
+      BSgenome::forgeBSgenomeDataPkg, and BSgenome::forgeMaskedBSgenomeDataPkg.
+      All these functions are now defined in the BSgenomeForge package.
+
+
 CHANGES IN VERSION 1.74.0
 -------------------------
 
