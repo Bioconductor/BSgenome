@@ -177,7 +177,7 @@ inferRefAndAltAlleles <- function(gpos, genome)
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
     if (!is.null(genome)) {
         genome <- getBSgenome(genome)
-        seqlevelsStyle(genome) <- "NCBI"
+        GenomeInfoDb::seqlevelsStyle(genome) <- "NCBI"
     }
 
     df <- getBatchesBySeqnameFromOnDiskLongTable(x@snp_table, seqnames,
@@ -197,7 +197,7 @@ setMethod("snpsBySeqname", "ODLT_SNPlocs", .snpsBySeqname_ODLT_SNPlocs)
         stop(wmsg("'drop.rs.prefix' must be TRUE or FALSE"))
     if (!is.null(genome)) {
         genome <- getBSgenome(genome)
-        seqlevelsStyle(genome) <- "NCBI"
+        GenomeInfoDb::seqlevelsStyle(genome) <- "NCBI"
     }
 
     dots <- list(...)
@@ -230,7 +230,7 @@ setMethod("snpsByOverlaps", "ODLT_SNPlocs", .snpsByOverlaps_ODLT_SNPlocs)
     ifnotfound <- match.arg(ifnotfound)
     if (!is.null(genome)) {
         genome <- getBSgenome(genome)
-        seqlevelsStyle(genome) <- "NCBI"
+        GenomeInfoDb::seqlevelsStyle(genome) <- "NCBI"
     }
 
     x_rowids_env <- get_rowids_env(x@snp_table)

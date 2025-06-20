@@ -15,7 +15,7 @@ get_data_annotation_contrib_url <- function(type=getOption("pkgType"))
     contrib.url(BiocManager::repositories()["BioCann"], type=type)
 }
 
-### TODO: Move this to GenomeInfoDb.
+### TODO: Move this to the Seqinfo package.
 read_seqinfo_table <- function(filepath, genome=NA)
 {
     df <- read.table(filepath, stringsAsFactors=FALSE)

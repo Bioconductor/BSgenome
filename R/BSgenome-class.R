@@ -218,7 +218,8 @@ setMethod("seqinfo", "BSgenome",
 ### of its seqlevels), or altering its seqlengths or circularity flags!
 ### In other words, except for their seqnames() and genome(), Seqinfo
 ### objects 'new_seqinfo' and 'old_seqinfo' must be identical. This is all
-### we need to make the seqlevelsStyle() setter work on a BSgenome object.
+### we need to make the GenomeInfoDb::seqlevelsStyle() setter work on a
+### BSgenome object.
 .check_new2old_and_new_seqinfo <-
     function(new2old, new_seqinfo, old_seqinfo, context="")
 {

@@ -191,7 +191,7 @@ BSgenomeViews(subject, granges)
     }
     \item{\code{seqinfo(x)}:}{ Equivalent to \code{seqinfo(subject(x))} and to
       \code{seqinfo(granges(x))} (both are guaranteed to be the same).
-      See \code{?\link[GenomeInfoDb]{seqinfo}} in the \pkg{GenomeInfoDb}
+      See \code{?\link[Seqinfo]{seqinfo}} in the \pkg{Seqinfo}
       package for more information.
     }
   }
@@ -259,8 +259,8 @@ BSgenomeViews(subject, granges)
     \item The \link[Biostrings]{DNAStringSet} class in the \pkg{Biostrings}
           package.
 
-    \item The \link[GenomeInfoDb]{seqinfo} and related getters in the
-          \pkg{GenomeInfoDb} package for getting the sequence information
+    \item The \link[Seqinfo]{seqinfo} and related getters in the
+          \pkg{Seqinfo} package for getting the sequence information
           stored in an object.
 
     \item \link[GenomicFeatures]{TxDb} objects in the \pkg{GenomicFeatures}

@@ -6,17 +6,17 @@ biocViews: Genetics, Infrastructure, DataRepresentation, SequenceMatching,
 	Annotation, SNP
 URL: https://bioconductor.org/packages/BSgenome
 BugReports: https://github.com/Bioconductor/BSgenome/issues
-Version: 1.77.0
+Version: 1.77.1
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: person("Hervé", "Pagès", role=c("aut", "cre"),
 		  email="hpages.on.github@gmail.com")
 Depends: R (>= 2.8.0), methods, BiocGenerics (>= 0.13.8),
 	S4Vectors (>= 0.17.28), IRanges (>= 2.13.16),
-	GenomeInfoDb (>= 1.25.6), GenomicRanges (>= 1.31.10),
-	Biostrings (>= 2.47.6), BiocIO, rtracklayer
-Imports: utils, stats, matrixStats, XVector, Rsamtools
-Suggests: BiocManager,
+	Seqinfo, GenomicRanges (>= 1.61.1),
+	Biostrings (>= 2.77.2), BiocIO, rtracklayer (>= 1.69.1)
+Imports: utils, stats, matrixStats, XVector, Rsamtools (>= 2.25.1)
+Suggests: BiocManager, GenomeInfoDb,
 	BSgenome.Celegans.UCSC.ce2,
 	BSgenome.Hsapiens.UCSC.hg38,
 	BSgenome.Hsapiens.UCSC.hg38.masked,

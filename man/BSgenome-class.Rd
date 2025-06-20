@@ -173,7 +173,7 @@
 
 \seealso{
   \code{\link{available.genomes}},
-  \link[GenomeInfoDb]{GenomeDescription-class},
+  \link[Seqinfo]{GenomeDescription-class},
   \link{BSgenome-utils},
   \link[Biostrings]{DNAString-class},
   \link[Biostrings]{DNAStringSet-class},

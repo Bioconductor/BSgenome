@@ -245,6 +245,10 @@ inferRefAndAltAlleles(gpos, genome)
 
     \item \code{\link{injectSNPs}}
 
+    \item \code{\link[GenomeInfoDb]{seqlevelsStyle}} in the \pkg{GenomeInfoDb}
+          package to rename the seqlevels of an object according to a given
+          style.
+
     \item \code{\link[Biostrings]{IUPAC_CODE_MAP}} in the \pkg{Biostrings}
           package.
   }
@@ -276,6 +280,8 @@ library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 my_cds <- cds(txdb)
 seqlevels(my_cds, pruning.mode="coarse") <- c("chr22", "chrM")
+
+library(GenomeInfoDb)   # for seqlevelsStyle()
 seqlevelsStyle(my_cds)  # UCSC
 seqlevelsStyle(snps)    # NCBI
 seqlevelsStyle(my_cds) <- seqlevelsStyle(snps)

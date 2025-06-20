@@ -201,6 +201,10 @@
 
     \item \link{SNPlocs} packages and objects for molecular variations
           of class \emph{snp}.
+
+    \item \code{\link[GenomeInfoDb]{seqlevelsStyle}} in the \pkg{GenomeInfoDb}
+          package to rename the seqlevels of an object according to a given
+          style.
   }
 }
 
@@ -233,6 +237,8 @@ snpsByOverlaps(snps, "ch22:33.63e6-33.64e6",
 library(TxDb.Hsapiens.UCSC.hg38.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 hg38_cds <- cds(txdb)
+
+library(GenomeInfoDb)     # for seqlevelsStyle()
 seqlevelsStyle(hg38_cds)  # UCSC
 seqlevelsStyle(snps)      # dbSNP
 seqlevelsStyle(hg38_cds) <- seqlevelsStyle(snps)

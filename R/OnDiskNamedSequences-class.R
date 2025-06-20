@@ -66,7 +66,7 @@ setMethod("show", "OnDiskNamedSequences",
     {
         cat(class(object), " instance of length ", length(object),
             ":\n", sep="")
-        GenomeInfoDb:::compactPrintNamedAtomicVector(seqlengths(object))
+        Seqinfo:::compactPrintNamedAtomicVector(seqlengths(object))
     }
 )
 
