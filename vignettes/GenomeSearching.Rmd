@@ -1,0 +1,700 @@
+---
+title: "Efficient genome searching with Biostrings and the BSgenome data packages"
+author: "Hervé Pagès"
+date: "`r Sys.Date()`"
+output: BiocStyle::html_document
+package: BSgenome
+vignette: >
+  %\VignetteIndexEntry{Efficient genome searching with Biostrings and the BSgenome data packages}
+  %\VignetteKeywords{BSgenome, genome, DNA, RNA, Sequence, Biostrings, Sequence alignment, SNPs}
+  %\VignettePackage{BSgenome}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 7,
+  fig.height = 5
+)
+library(BiocStyle)
+```
+
+# The Biostrings-based genome data packages
+
+The Bioconductor project provides data packages that contain the full genome
+sequences of a given organism. These packages are called
+*Biostrings-based genome data packages* because the sequences they
+contain are stored in some of the basic containers defined in the
+`r Biocpkg('Biostrings')` package, like the `DNAString`,
+the `DNAStringSet` or the `MaskedDNAString` containers.
+Regardless of the particular sequence data that they contain, all the
+Biostrings-based genome data packages are very similar and can be
+manipulated in a consistent and easy way.
+They all require the `r Biocpkg('BSgenome')` package in order to work properly.
+This package, unlike the Biostrings-based genome data packages,
+is a software package that provides the infrastructure needed to
+support them (this is why the Biostrings-based genome data packages
+are also called *BSgenome data packages*).
+The `r Biocpkg('BSgenome')` package itself requires the `r Biocpkg('Biostrings')`
+package.
+
+See the man page for the `available.genomes` function
+(`?available.genomes`) for more information about how to get
+the list of all the BSgenome data packages currently available in your
+version of Bioconductor (you need an internet connection so that
+`available.genomes` can query the Bioconductor package
+repositories).
+
+Note that the **BSgenomeForge** package provides tools that you
+can use to make your own BSgenome data package.
+
+# Finding an arbitrary nucleotide pattern in a chromosome
+
+In this section we show how to find (or just count) the occurences of some
+arbitrary nucleotide pattern in a chromosome. The basic tool for this is
+the `matchPattern` (or `countPattern`) function
+from the `r Biocpkg('Biostrings')` package.
+
+First we need to install and load the BSgenome data package for the
+organism that we want to look at. In our case, we want to search
+chromosome I of *Caenorhabditis elegans*.
+
+UCSC provides several versions of the C. elegans genome: ce1, ce2 and ce4.
+These versions correspond to different *releases* from WormBase,
+which are the WS100, WS120 and WS170 releases, respectively.
+See <http://genome.ucsc.edu/FAQ/FAQreleases#release1> for the list
+of all UCSC genome releases and for the correspondance between UCSC
+versions and release names.
+
+The BSgenome data package for the ce2 genome is
+**BSgenome.Celegans.UCSC.ce2**. Note that ce1 and ce4 are not
+available in Bioconductor but they could be added if there is demand for
+them.
+
+See `?available.genomes` for how to install
+**BSgenome.Celegans.UCSC.ce2**.
+Then load the package and display the single object defined in it:
+
+```{r b1}
+library(BSgenome.Celegans.UCSC.ce2)
+ls("package:BSgenome.Celegans.UCSC.ce2")
+genome <- BSgenome.Celegans.UCSC.ce2
+genome
+```
+
+`genome` is a `BSgenome` object:
+
+```{r b2}
+class(genome)
+```
+
+When displayed, some basic information about the origin of the
+genome is shown (organism, genome, provider, etc...)
+followed by the index of *single* sequences and eventually
+an additional index of *multiple* sequences.
+Methods (adequately called *accessor methods*) are defined
+for individual access to this information:
+
+```{r b3}
+metadata(genome)
+seqnames(genome)
+seqinfo(genome)
+```
+
+See the man page for the `BSgenome` class (`?BSgenome`)
+for a complete list of accessor methods and their descriptions.
+
+Now we are ready to display chromosome I:
+
+```{r b4}
+genome$chrI
+```
+
+Note that this chrI sequence corresponds to the *forward* strand
+(aka *direct* or *sense* or *positive* or *plus* strand)
+of chromosome I.
+UCSC, and genome providers in general, don't provide files containing the
+nucleotide sequence of the *reverse* strand (aka *indirect*
+or *antisense* or *negative* or *minus* or *opposite* strand)
+of the chromosomes because these sequences can be deduced from the *forward*
+sequences by taking their reverse complements.
+The BSgenome data packages are no exceptions: they only
+provide the *forward* strand sequence of every chromosome.
+See `?reverseComplement` for more details about the reverse
+complement of a `DNAString` object.
+It is important to remember that, in practice, the *reverse* strand
+sequence is almost never needed.
+The reason is that, in fact, a *reverse* strand analysis
+can (and should) always be transposed into a *forward* strand analysis.
+Therefore trying to compute the *reverse* strand sequence of an entire
+chromosome by applying `reverseComplement` to its *forward*
+strand sequence is almost always a bad idea.
+See the *Finding an arbitrary nucleotide pattern in an entire genome* section
+of this document for how to find arbitrary patterns in the *reverse* strand
+of a chromosome.
+
+The number of bases in this sequence can be retrieved with:
+
+```{r b5}
+chrI <- genome$chrI
+length(chrI)
+```
+
+Some basic stats:
+
+```{r b6}
+afI <- alphabetFrequency(chrI)
+afI
+sum(afI) == length(chrI)
+```
+
+Count all *exact* matches of pattern `"ACCCAGGGC"`:
+
+```{r b7}
+p1 <- "ACCCAGGGC"
+countPattern(p1, chrI)
+```
+
+Like most pattern matching functions in `r Biocpkg('Biostrings')`,
+the `countPattern` and `matchPattern` functions
+support *inexact* matching. One form of inexact matching is to
+allow a few mismatching letters per match. Here we allow at most one:
+
+```{r b8}
+countPattern(p1, chrI, max.mismatch=1)
+```
+
+With the `matchPattern` function, the locations of the matches are
+stored in an `XStringViews` object:
+
+```{r b9}
+m1 <- matchPattern(p1, chrI, max.mismatch=1)
+m1[4:6]
+class(m1)
+```
+
+The `mismatch` function (new in `r Biocpkg('Biostrings')` 2)
+returns the positions of the mismatching letters for each match:
+
+```{r b10}
+mismatch(p1, m1[4:6])
+```
+
+Note: The `mismatch` method is in fact a particular case
+of a (vectorized) *alignment* function where only "replacements"
+are allowed. Current implementation is slow but this will be addressed.
+
+It may happen that a match is *out of limits* like in this example:
+
+```{r b11}
+p2 <- DNAString("AAGCCTAAGCCTAAGCCTAA")
+m2 <- matchPattern(p2, chrI, max.mismatch=2)
+m2[1:4]
+p2 == m2[1:4]
+mismatch(p2, m2[1:4])
+```
+
+The list of exact matches and the list of inexact matches
+can both be obtained with:
+
+```{r b12, results='hide'}
+m2[p2 == m2]
+m2[p2 != m2]
+```
+
+Note that the length of `m2[p2 == m2]` should be
+equal to `countPattern(p2, chrI, max.mismatch=0)`.
+
+# Finding an arbitrary nucleotide pattern in an entire genome
+
+Now we want to extend our analysis to the *forward* and *reverse*
+strands of all the C. elegans chromosomes.
+More precisely, here is the analysis we want to perform:
+
+- **The input dictionary:** Our input is a dictionary of 50 patterns. Each
+pattern is a short nucleotide sequence of 15 to 25 bases (As, Cs, Gs and Ts
+only, no Ns). It is stored in a FASTA file called `"ce2dict0.fa"`. See the
+*Finding all the patterns of a constant width dictionary in an entire genome*
+section of this document for a very efficient way to deal with the special case
+where all the patterns in the input dictionary have the same length.
+
+- **The target:** Our target (or subject) is the *forward* and *reverse* strands
+of the seven C. elegans chromosomes (14 sequences in total). We want to find and
+report all occurences (or hits) of every pattern in the target. Note that a
+given pattern can have 0, 1 or several hits in 0, 1 or 2 strands of 0, 1 or
+several chromosomes.
+
+- **Exact or inexact matching?** We are interested in exact matches only (for now).
+
+- **The output:** We want to put the results of this analysis in a file so we
+can send it to our collaborators for some post analysis work. Our collaborators
+are not necessarily familiar with R or Bioconductor so dumping a high-level R
+object (like a list or a data frame) into an .rda file is not an option. For
+maximum portability (one of our collaborators wants to use Microsoft Excel for
+the post analysis) we choose to put our results in a tabulated file where one
+line describes one hit. The columns (or fields) of this file will be (in this
+order):
+  - **seqname:** the name of the chromosome where the hit occurs.
+  - **start:** an integer giving the starting position of the hit.
+  - **end:** an integer giving the ending position of the hit.
+  - **strand:** a plus (`+`) for a hit in the positive strand or a minus (`-`)
+  for a hit in the negative strand.
+  - **patternID:** we use the unique ID provided for every pattern in the
+  `"ce2dict0.fa"` file.
+
+Let's start by loading the input dictionary with:
+
+```{r c1}
+ce2dict0_file <- system.file("extdata", "ce2dict0.fa", package="BSgenome")
+ce2dict0 <- readDNAStringSet(ce2dict0_file, "fasta")
+ce2dict0
+```
+
+Here is how we can write the functions that will perform our analysis:
+
+```{r c2}
+writeHits <- function(seqname, matches, strand, file="", append=FALSE)
+{
+    if (file.exists(file) && !append)
+        warning(
+            "existing file ", file, " will be overwritten with 'append=FALSE'"
+        )
+    if (!file.exists(file) && append)
+        warning("new file ", file, " will have no header with 'append=TRUE'")
+    hits <- data.frame(seqname=rep.int(seqname, length(matches)),
+                       start=start(matches),
+                       end=end(matches),
+                       strand=rep.int(strand, length(matches)),
+                       patternID=names(matches),
+                       check.names=FALSE)
+    write.table(hits, file=file, append=append, quote=FALSE, sep="\t",
+                row.names=FALSE, col.names=!append)
+}
+
+runAnalysis1 <- function(dict0, outfile="")
+{
+    library(BSgenome.Celegans.UCSC.ce2)
+    genome <- BSgenome.Celegans.UCSC.ce2
+    seqnames <- seqnames(genome)
+    seqnames_in1string <- paste(seqnames, collapse=", ")
+    cat("Target:", metadata(genome)$genome,
+        "chromosomes", seqnames_in1string, "\n")
+    append <- FALSE
+    for (seqname in seqnames) {
+        subject <- genome[[seqname]]
+        cat(">>> Finding all hits in chromosome", seqname, "...\n")
+        for (i in seq_len(length(dict0))) {
+            patternID <- names(dict0)[i]
+            pattern <- dict0[[i]]
+            plus_matches <- matchPattern(pattern, subject)
+            names(plus_matches) <- rep.int(patternID, length(plus_matches))
+            writeHits(seqname, plus_matches, "+", file=outfile, append=append)
+            append <- TRUE
+            rcpattern <- reverseComplement(pattern)
+            minus_matches <- matchPattern(rcpattern, subject)
+            names(minus_matches) <- rep.int(patternID, length(minus_matches))
+            writeHits(seqname, minus_matches, "-", file=outfile, append=append)
+        }
+        cat(">>> DONE\n")
+    }
+}
+```
+
+Some important notes about the implementation of the `runAnalysis1` function:
+
+- `subject <- genome[[seqname]]` is the code that actually loads a chromosome
+sequence into memory. Using only one sequence at a time is a good practice to
+avoid memory allocation problems on a machine with a limited amount of memory.
+For example, loading all the human chromosome sequences in memory would require
+more than 3GB of memory!
+
+- We have 2 nested `for` loops: the outer loop walks thru the target (7
+chromosomes) and the inner loop walks thru the set of patterns. Doing the other
+way around would be very inefficient, especially with a bigger number of
+patterns because this would require to load each chromosome sequence into memory
+as many times as the number of patterns. `runAnalysis1` loads each sequence only
+once.
+
+- We find the matches in the minus strand (`minus_matches`) by first taking the
+reverse complement of the current pattern (with
+`rcpattern <- reverseComplement(pattern)`) and NOT by taking the reverse
+complement of the current subject.
+
+Now we are ready to run the analysis and put the results in the
+`"ce2dict0_ana1.txt"` file:
+
+```{r c3}
+ofile <- file.path(tempdir(), "ce2dict0_ana1.txt")
+runAnalysis1(ce2dict0, outfile = ofile)
+```
+
+Here is some very simple example of post analysis:
+
+Get the total number of hits:
+
+```{r c4}
+hits1 <- read.table(ofile, header=TRUE)
+nrow(hits1)
+```
+
+Get the number of hits per chromosome:
+
+```{r c5}
+table(hits1$seqname)
+```
+
+Get the number of hits per pattern:
+
+```{r c6}
+hits1_table <- table(hits1$patternID)
+hits1_table
+```
+
+Get the pattern(s) with the higher number of hits:
+
+```{r c7}
+hits1_table[hits1_table == max(hits1_table)] # pattern(s) with more hits
+```
+
+Get the pattern(s) with no hits:
+
+```{r c8}
+setdiff(names(ce2dict0), hits1$patternID) # pattern(s) with no hits
+```
+
+And finally a function that can be used to plot the hits:
+
+```{r c9}
+plotGenomeHits <- function(bsgenome, seqnames, hits)
+{
+    chrlengths <- seqlengths(bsgenome)[seqnames]
+    XMAX <- max(chrlengths)
+    YMAX <- length(seqnames)
+    plot.new()
+    plot.window(c(1, XMAX), c(0, YMAX))
+    axis(1)
+    axis(
+        2,
+        at=seq_len(length(seqnames)),
+        labels=rev(seqnames),
+        tick=FALSE,
+        las=1
+    )
+    ## Plot the chromosomes
+    for (i in seq_len(length(seqnames)))
+        lines(c(1, chrlengths[i]), c(YMAX + 1 - i, YMAX + 1 - i), type="l")
+    ## Plot the hits
+    for (i in seq_len(nrow(hits))) {
+        seqname <- hits$seqname[i]
+        y0 <- YMAX + 1 - match(seqname, seqnames)
+        if (hits$strand[i] == "+") {
+            y <- y0 + 0.05
+            col <- "red"
+        } else {
+            y <- y0 - 0.05
+            col <- "blue"
+        }
+        lines(c(hits$start[i], hits$end[i]), c(y, y), type="l", col=col, lwd=3)
+    }
+}
+```
+
+Plot the hits found by `runAnalysis1` with:
+
+```{r c10, eval=FALSE}
+plotGenomeHits(genome, seqnames(genome), hits1)
+```
+
+# Some precautions when using `matchPattern`
+
+Improper use of `matchPattern` (or `countPattern`) can affect performance.
+
+If needed, the `matchPattern` and `countPattern` methods convert their first
+argument (the pattern) to an object of the same class than their second argument
+(the subject) before they pass it to the subroutine that actually implements the
+fast search algorithm.
+
+So if you need to reuse the same pattern a high number of times, it's a good
+idea to convert it *before* to pass it to the `matchPattern` or `countPattern`
+method. This way the conversion is done only once:
+
+```{r d1}
+library(hgu95av2probe)
+tmpseq <- DNAStringSet(hgu95av2probe$sequence)
+someStats <- function(v)
+{
+    GC <- DNAString("GC")
+    CG <- DNAString("CG")
+    sapply(seq_len(length(v)),
+           function(i) {
+               y <- v[[i]]
+               c(alphabetFrequency(y)[1:4],
+                 GC=countPattern(GC, y),
+                 CG=countPattern(CG, y))
+           }
+    )
+}
+someStats(tmpseq[1:10])
+```
+
+# Masking the chromosome sequences
+
+Starting with Bioconductor 2.2, the chromosome sequences in a *BSgenome data
+package* can have built-in masks.
+
+Starting with Bioconductor 2.3, there can be up to 4 built-in masks per
+sequence. These will always be (in this order): (1) the mask of assembly gaps,
+(2) the mask of intra-contig ambiguities, (3) the mask of repeat regions that
+were determined by the RepeatMasker software, and (4) the mask of repeat regions
+that were determined by the Tandem Repeats Finder software (where only repeats
+with period less than or equal to 12 were kept).
+
+For a given package, all the sequences will always have the same number of
+masks.
+
+```{r f1}
+library(BSgenome.Hsapiens.UCSC.hg38.masked)
+genome <- BSgenome.Hsapiens.UCSC.hg38.masked
+chrY <- genome$chrY
+chrY
+chrM <- genome$chrM
+chrM
+```
+
+The built-in masks are named consistenly across all the BSgenome data packages
+available in Bioconductor:
+
+| Name  | Active by default | Short description | Long description |
+|-------|-------------------|-------------------|------------------|
+| AGAPS | yes | assembly gaps | Masks the big N-blocks that have been placed between the contigs during the assembly. This mask is consistent with the Gap track from UCSC Genome Browser. |
+| AMB   | yes | intra-contig ambiguities | Masks any IUPAC ambiguity letter that was found in the contig regions of the original sequence. Note that only As, Cs, Gs and Ts remain unmasked when the AGAPS and AMB masks are both active (before SNPs are eventually injected, see below). |
+| RM    | no | RepeatMasker | Masks the repeat regions determined by the RepeatMasker software. This mask is consistent with the RepeatMasker track from UCSC Genome Browser. |
+| TRF   | no | Tandem Repeats Finder | Masks the tandem repeat regions that were determined by the Tandem Repeats Finder software (with period of 12 or less). |
+
+Table: The built-in masks provided by the BSgenome data packages.
+
+When displaying a masked sequence (here a `MaskedDNAString` object), the *masked
+width* and *masked ratio* are reported for each individual mask, as well as for
+all the masks together, and for all the active masks together.
+The *masked width* is the total number of nucleotide positions that are masked
+and the *masked ratio* is the *masked width* divided by the length of the
+sequence.
+
+To activate a mask, use the `active` replacement method in conjunction with the
+`masks` method. For example, to activate the RepeatMasker mask, do:
+
+```{r f2}
+active(masks(chrY))["RM"] <- TRUE
+chrY
+```
+
+As you can see, the *masked width* for all the active masks together (i.e. the
+total number of nucleotide positions that are masked by at least one active
+mask) is now the same as for the first mask. This represents a *masked ratio* of
+about 83%.
+
+Now when we use a function that is *mask aware*, like `alphabetFrequency`, the
+masked regions of the input sequence are ignored:
+
+```{r f3}
+active(masks(chrY)) <- FALSE
+active(masks(chrY))["AGAPS"] <- TRUE
+alphabetFrequency(unmasked(chrY))
+alphabetFrequency(chrY)
+```
+
+This output indicates that, for this chromosome, the assembly gaps correspond
+exactly to the regions in the sequence that were filled with the letter N. Note
+that this is not always the case: sometimes Ns, and other IUPAC ambiguity
+letters, can be found inside the contigs.
+
+When coercing a `MaskedXString` object to an `XStringViews` object, each
+non-masked region in the original sequence is converted into a view on the
+sequence:
+
+```{r f4}
+as(chrY, "XStringViews")
+```
+
+This can be used in conjonction with the `gaps` method to see the gaps between
+the views i.e. the masked regions themselves:
+
+```{r f5, results='hide'}
+gaps(as(chrY, "XStringViews"))
+```
+
+To extract the sizes of the assembly gaps:
+
+```{r f6}
+width(gaps(as(chrY, "XStringViews")))
+```
+
+Note that, if applied directly to `chrY`, `gaps` returns a `MaskedDNAString`
+object with a single mask masking the regions that are not masked in the
+original object:
+
+```{r f7}
+gaps(chrY)
+alphabetFrequency(gaps(chrY))
+```
+
+In fact, for any `MaskedDNAString` object, the following should always be
+`TRUE`, whatever the masks are:
+
+```{r f8}
+af0 <- alphabetFrequency(unmasked(chrY))
+af1 <- alphabetFrequency(chrY)
+af2 <- alphabetFrequency(gaps(chrY))
+all(af0 == af1 + af2)
+```
+
+With all chrY masks active:
+
+```{r f9}
+active(masks(chrY)) <- TRUE
+af1 <- alphabetFrequency(chrY)
+af1
+gaps(chrY)
+af2 <- alphabetFrequency(gaps(chrY))
+af2
+all(af0 == af1 + af2)
+```
+
+Now let's compare three different ways of finding all the occurences of the
+`"CANNTG"` consensus sequence in chrY. The Ns in this pattern need to be treated
+as wildcards i.e. they must match any letter in the subject.
+
+Without the mask feature, the first way to do it would be to use the
+`fixed=FALSE` option in the call to `matchPattern` (or `countPattern`):
+
+```{r f10}
+Ebox <- "CANNTG"
+active(masks(chrY)) <- FALSE
+countPattern(Ebox, chrY, fixed=FALSE)
+```
+
+The problem with this method is that the Ns in the subject are also treated as
+wildcards hence the abnormally high number of matches. A better method is to
+specify the *side* of the matching problem (i.e. *pattern* or *subject*) where
+the Ns should be treated as wildcards:
+
+```{r f11}
+countPattern(Ebox, chrY, fixed=c(pattern=FALSE,subject=TRUE))
+```
+
+Finally, `countPattern` being *mask aware*, this can be achieved more
+efficiently by just masking the assembly gaps and ambiguities:
+
+```{r f12}
+active(masks(chrY))[c("AGAPS", "AMB")] <- TRUE
+alphabetFrequency(chrY, baseOnly=TRUE)  # no ambiguities
+countPattern(Ebox, chrY, fixed=FALSE)
+```
+
+Note that some chromosomes can have Ns outside the assembly gaps:
+
+```{r f13}
+chr2 <- genome$chr2
+active(masks(chr2))[-2] <- FALSE
+alphabetFrequency(gaps(chr2))
+```
+
+so it is recommended to always keep the AMB mask active (in addition to the
+AGAPS mask) whatever the sequence is.
+
+Note that not all functions that work with an `XString` input are *mask aware*
+but more will be added in the near future. However, most of the times there is a
+alternate way to exclude some arbitrary regions from an analysis without having
+to use *mask aware* functions. This is described below in the *Hard masking*
+section.
+
+# Hard masking
+
+coming soon...
+
+# Injecting known SNPs in the chromosome sequences
+
+coming soon...
+
+# Finding all the patterns of a constant width dictionary in an entire genome
+
+The `matchPDict` function can be used instead of `matchPattern` for the kind of
+analysis described in the
+*Finding an arbitrary nucleotide pattern in an entire genome* section but it
+will be much faster (between 100x and 10000x faster depending on the size of the
+input dictionary).
+
+Note that a current limitation of `matchPDict` is that it only works with a
+dictionary of DNA patterns where all the patterns have the same number of
+nucleotides (constant width dictionary).
+
+See `?matchPDict` for more information.
+
+Here is how our `runAnalysis1` function can be modified in order to use
+`matchPDict` instead of `matchPattern`:
+
+```{r e1}
+runOneStrandAnalysis <- function(dict0, bsgenome, seqnames, strand,
+                                 outfile="", append=FALSE)
+{
+    cat("\nTarget: strand", strand, "of", metadata(bsgenome)$genome,
+        "chromosomes", paste(seqnames, collapse=", "), "\n")
+    if (strand == "-")
+        dict0 <- reverseComplement(dict0)
+    pdict <- PDict(dict0)
+    for (seqname in seqnames) {
+        subject <- bsgenome[[seqname]]
+        cat(
+            ">>> Finding all hits in strand",
+            strand,
+            "of chromosome",
+            seqname,
+            "...\n"
+        )
+        mindex <- matchPDict(pdict, subject)
+        matches <- extractAllMatches(subject, mindex)
+        writeHits(seqname, matches, strand, file=outfile, append=append)
+        append <- TRUE
+        cat(">>> DONE\n")
+    }
+}
+
+runAnalysis2 <- function(dict0, outfile="")
+{
+    library(BSgenome.Celegans.UCSC.ce2)
+    genome <- BSgenome.Celegans.UCSC.ce2
+    seqnames <- seqnames(genome)
+    runOneStrandAnalysis(
+        dict0, genome, seqnames, "+", outfile=outfile, append=FALSE
+    )
+    runOneStrandAnalysis(
+        dict0, genome, seqnames, "-", outfile=outfile, append=TRUE
+    )
+}
+```
+
+Remember that `matchPDict` only works if all the patterns in the input
+dictionary have the same length so for this 2nd analysis, we will truncate the
+patterns in `ce2dict0` to 15 nucleotides:
+
+```{r e2}
+ce2dict0cw15 <- DNAStringSet(ce2dict0, end=15)
+```
+
+Now we can run this 2nd analysis and put the results in the
+`"ce2dict0cw15_ana2.txt"` file:
+
+```{r e3}
+ofile <- file.path(tempdir(), "ce2dict0cw15_ana2.txt")
+runAnalysis2(ce2dict0cw15, outfile = ofile)
+```
+
+# Session info
+
+```{r g1}
+sessionInfo()
+```
