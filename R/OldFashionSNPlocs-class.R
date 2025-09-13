@@ -306,7 +306,7 @@ setMethod("snpsByOverlaps", "OldFashionSNPlocs",
 {
     if (!is.vector(snpid))
         stop("'snpid' must be an integer or character vector")
-    if (S4Vectors:::anyMissing(snpid))
+    if (anyNA(snpid))
         stop("'snpid' cannot contain NAs")
     if (is.numeric(snpid)) {
         if (!is.integer(snpid))
@@ -324,7 +324,7 @@ setMethod("snpsByOverlaps", "OldFashionSNPlocs",
         snpid <- substr(snpid, 3, nchar(snpid))
     }
     snpid <- suppressWarnings(as.integer(snpid))
-    if (S4Vectors:::anyMissing(snpid))
+    if (anyNA(snpid))
         stop("cannot extract the digital part of some ids in 'snpid'")
     snpid
 }

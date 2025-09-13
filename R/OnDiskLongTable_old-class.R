@@ -35,7 +35,7 @@ setClass("OnDiskLongTable_old",
 .OnDiskLongTable_old_check_breakpoints <- function(breakpoints)
 {
     if (!is.integer(breakpoints)
-     || S4Vectors:::anyMissing(breakpoints)
+     || anyNA(breakpoints)
      || is.unsorted(breakpoints, strictly=TRUE)
      || length(breakpoints) != 0L && breakpoints[[1L]] < 1L)
         stop(wmsg("invalid breakpoints found for OnDiskLongTable_old object"))
@@ -45,7 +45,7 @@ setClass("OnDiskLongTable_old",
 {
     if (!is.integer(rowids))
         stop(wmsg("'rowids' must be an integer vector"))
-    if (S4Vectors:::anyMissing(rowids) || anyDuplicated(rowids))
+    if (anyNA(rowids) || anyDuplicated(rowids))
         stop(wmsg("'rowids' cannot contain NAs or duplicated values"))
 }
 
@@ -384,7 +384,7 @@ setMethod("show", "OnDiskLongTable_old",
                   "no names): cannot use getBatchesFromOnDiskLongTable_old() ",
                   "on it"))
     if (!is.character(batch_labels)
-     || S4Vectors:::anyMissing(batch_labels)
+     || anyNA(batch_labels)
      || anyDuplicated(batch_labels))
         stop(wmsg("'batch_labels' must be a character vector ",
                   "with no NAs and no duplicates"))
@@ -395,7 +395,7 @@ setMethod("show", "OnDiskLongTable_old",
 {
     if (is.character(colidx)) {
         colidx <- match(colidx, colnames(x))
-        if (S4Vectors:::anyMissing(colidx))
+        if (anyNA(colidx))
             stop(wmsg("'colidx' contains invalid column names"))
         return(colidx)
     }

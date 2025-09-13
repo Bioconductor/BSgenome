@@ -90,7 +90,7 @@ setClass("OnDiskLongTable",
 .valid_OnDiskLongTable_breakpoints <- function(breakpoints)
 {
     if (!is.integer(breakpoints)
-     || S4Vectors:::anyMissing(breakpoints)
+     || anyNA(breakpoints)
      || is.unsorted(breakpoints, strictly=TRUE)
      || length(breakpoints) != 0L && breakpoints[[1L]] <= 0L)
         return(wmsg("invalid breakpoints found for OnDiskLongTable object"))
@@ -660,7 +660,7 @@ setMethod("show", "OnDiskLongTable",
         return(seq_len(ncol(x)))
     if (is.character(colidx)) {
         colidx <- match(colidx, colnames(x))
-        if (S4Vectors:::anyMissing(colidx))
+        if (anyNA(colidx))
             stop(wmsg("'colidx' contains invalid column names"))
         return(colidx)
     }
@@ -927,10 +927,10 @@ getRowsFromOnDiskLongTable <- function(x, rowidx, colidx=NULL,
     if (length(ls(x_rowids_env)) == 0L)
         stop(wmsg("'x' has no row ids: cannot use ",
                   "getRowsByIdFromOnDiskLongTable() on it"))
-    if (!is.integer(rowids) || S4Vectors:::anyMissing(rowids))
+    if (!is.integer(rowids) || anyNA(rowids))
         stop(wmsg("'rowids' must be an integer vector with no NAs"))
     rowidx <- lookup_rowids(rowids, x_rowids_env)
-    if (S4Vectors:::anyMissing(rowidx))
+    if (anyNA(rowidx))
         stop(wmsg("'rowids' contains invalid row ids"))
     rowidx
 }
