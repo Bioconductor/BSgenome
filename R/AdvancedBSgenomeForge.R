@@ -1,20 +1,10 @@
 ### Everything in this file has moved to BSgenomeForge!
 
 
-### TODO: Move this to S4Vectors (or BiocBaseUtils).
-load_package_gracefully <- function(package, ...)
-{
-    if (!requireNamespace(package, quietly=TRUE))
-        stop("Could not load package ", package, ". Is it installed?\n\n  ",
-             wmsg("Note that ", ..., " requires the ", package, " package. ",
-                  "Please install it with:"),
-             "\n\n    BiocManager::install(\"", package, "\")")
-}
-
 call_fun_in_BSgenomeForge <- function(fun, ...)
 {
-    load_package_gracefully("BSgenomeForge", "starting with BioC 3.19, ",
-                            "calling ", fun, "()")
+    S4Vectors:::load_package_gracefully("BSgenomeForge", "in order to use ",
+                                        fun, "() in BioC >= 3.19")
     msg <- c(fun, "() has moved from BSgenome to the BSgenomeForge package, ",
              "and is formally deprecated in BSgenome >= 1.75.1. Please call ",
              "BSgenomeForge::", fun, "() to get rid of this warning.")
