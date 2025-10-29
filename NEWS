@@ -1,3 +1,12 @@
+CHANGES IN VERSION 1.78.0
+-------------------------
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o The package now depends on the new Seqinfo package instead of
+      GenomeInfoDb.
+
+
 CHANGES IN VERSION 1.76.0
 -------------------------
 
