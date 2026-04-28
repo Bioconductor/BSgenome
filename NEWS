@@ -1,3 +1,14 @@
+CHANGES IN VERSION 1.80.0
+-------------------------
+
+DEPRECATED AND DEFUNCT
+
+    o Functions BSgenome::forgeMasksFile, BSgenome::forgeSeqFiles,
+      BSgenome::forgeSeqlengthsRdaFile, BSgenome::forgeSeqlengthsRdsFile,
+      BSgenome::forgeBSgenomeDataPkg, and BSgenome::forgeMaskedBSgenomeDataPkg
+      are now formally defunct in BioC 3.23 after being deprecated in BioC 3.22.
+
+
 CHANGES IN VERSION 1.78.0
 -------------------------
 
