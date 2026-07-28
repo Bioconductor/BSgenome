@@ -136,15 +136,7 @@ export(
 
     ## export-methods.R:
     writeBSgenomeToFasta,
-    writeBSgenomeToTwobit,
-
-    ## AdvancedBSgenomeForge.R:
-    forgeSeqlengthsRdsFile,
-    forgeSeqlengthsRdaFile,
-    forgeSeqFiles,
-    forgeMasksFiles,
-    forgeBSgenomeDataPkg,
-    forgeMaskedBSgenomeDataPkg
+    writeBSgenomeToTwobit
 )
 
 
