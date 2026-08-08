@@ -1,0 +1,17 @@
+---
+title: "How to forge a BSgenome data package"
+author: 
+  - name: Hervé Pagès
+    affiliation: Fred Hutchinson Cancer Research Center, Seattle, WA
+date: "`r Sys.Date()`"
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{How to forge a BSgenome data package}
+  %\VignetteKeywords{Genome, BSgenome, DNA, Sequence, UCSC, BSgenome data package}
+  %\VignettePackage{BSgenome}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette and all the tools described in it have moved to the
+`r BiocStyle::Biocpkg('BSgenomeForge')` package.
