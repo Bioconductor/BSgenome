@@ -122,7 +122,7 @@
     \item{\code{x[[name]]}}{
       Returns the sequence (single or multiple) in \code{x} named \code{name}
       (\code{name}  must be a single string).
-      No sequence is actually loaded into memory until this is explicitely
+      No sequence is actually loaded into memory until this is explicitly
       requested with a call to \code{x[[name]]} or \code{x$name}.
       When loaded, a sequence is kept in a cache. It will be automatically
       removed from the cache at garbage collection if it's not in use anymore
